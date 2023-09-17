@@ -1,6 +1,5 @@
 # SOEN490
-Concordia Capstone Project
-Lock & Learn
+Lock & Learn - Concordia Capstone Project
 
 # Stakeholder 
 Dr. Ali Akgunduz
