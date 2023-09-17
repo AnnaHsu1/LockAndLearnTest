@@ -1,6 +1,6 @@
 # SOEN490
 Concordia Capstone Project
-Study 2 Unlock
+Lock & Learn
 
 # Stakeholder 
 Dr. Ali Akgunduz
