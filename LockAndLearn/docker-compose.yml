@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  lockandlearn-expo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lockandlearn-expo-container
+    ports:
+      - 19006:19006
+
+# Create docker image
+# docker-compose build
+
+# Run docker container
+#docker-compose up

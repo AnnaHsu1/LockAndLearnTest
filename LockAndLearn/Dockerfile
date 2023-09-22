@@ -8,9 +8,10 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 19000
+EXPOSE 19006
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "web"]
+#CMD ["npm", "run", "android"] *todo on Android*
+#CMD ["npm", "run", "ios"] *todo on iOS*
 
-# docker build -t lockandlearn-app .
-# docker run -it -p 19000:19000 lockandlearn-app
+# Each service should have its own Dockerfile
