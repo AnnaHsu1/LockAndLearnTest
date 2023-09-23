@@ -5,6 +5,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>This is the beginning of Lock & Learn!</Text>
+      <Text>Test commit</Text>
       <StatusBar style="auto" />
     </View>
   );
