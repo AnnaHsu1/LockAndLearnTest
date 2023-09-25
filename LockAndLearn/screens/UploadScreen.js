@@ -7,9 +7,13 @@ const UploadScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.selectFiles}>Select files</Text>
+    <View>
+      {/* Image doesn't display -> to be fixed */}
       <Image source={require('../assets/uploadDashedZone.png')} style={styles.image} />
       <Text style={styles.supportedFormats}>Supported formats:</Text>
       <Text style={styles.supportedFormats}>PDF, TXT, DOCX</Text>
+    </View>
+      
       <Button title="Upload" />
       <StatusBar style="auto" />
     </View>

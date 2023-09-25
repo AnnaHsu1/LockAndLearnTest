@@ -8,6 +8,7 @@ const HomeScreen = ({ navigation }) => {
       <Button title="Log in" onPress={() => navigation.navigate("Login")} />
       <Button title="Sign up" onPress={() => navigation.navigate("Signup")} />
       <Button title="Upload" onPress={() => navigation.navigate("Upload")} />
+      <Button title="Uploading" onPress={() => navigation.navigate("Uploading")} />
       <StatusBar style="auto" />
     </View>
   );

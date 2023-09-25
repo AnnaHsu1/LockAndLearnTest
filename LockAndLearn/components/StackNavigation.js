@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import UploadScreen from "../screens/UploadScreen";
+import EditUploadScreen from "../screens/EditUploadScreen";
 import SignupScreen from "../screens/SignupScreen";
 
 const Stack = createNativeStackNavigator();
@@ -31,12 +32,12 @@ const StackNavigation = () => {
           name="Upload"
           component={UploadScreen}
           options={{ title: "Upload Study Material" }}
-        />
+        />        
         <Stack.Screen
-          name="Upload"
-          component={UploadScreen}
-          options={{ title: "Upload Study Material" }}
-        />
+        name="Uploading"
+        component={EditUploadScreen}
+        options={{ title: "Uploading files" }}
+      />
       </Stack.Navigator>
     </NavigationContainer>
   );
