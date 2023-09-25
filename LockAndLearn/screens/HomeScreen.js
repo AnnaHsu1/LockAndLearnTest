@@ -5,7 +5,8 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>HOME HOME HOME HOME</Text>
-      <Button title="Login" onPress={() => navigation.navigate("Login")} />
+      <Button title="Log in" onPress={() => navigation.navigate("Login")} />
+      <Button title="Sign up" onPress={() => navigation.navigate("Signup")} />
       <StatusBar style="auto" />
     </View>
   );
