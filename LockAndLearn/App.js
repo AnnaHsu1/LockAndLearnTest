@@ -1,14 +1,18 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import StackNavigation from "./components/StackNavigation";
 
-export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>This is the beginning of Lock & Learn!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <StackNavigation />
+      {/* <View style={styles.container}>
+        <Text>This is the beginning of Lock & Learn!</Text>
+        <StatusBar style="auto" />
+      </View> */}
+    </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -18,3 +22,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default App;

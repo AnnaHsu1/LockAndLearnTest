@@ -1,11 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, navigation } from "react-native";
+import { StyleSheet, Text, View, navigation } from "react-native";
 
-const HomeScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text>HOME HOME HOME HOME</Text>
-      <Button title="Login" onPress={() => navigation.navigate("Login")} />
+      <Text>LOGIN LOGIN LOGIN LOGIN LOGIN</Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -20,4 +19,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default LoginScreen;
