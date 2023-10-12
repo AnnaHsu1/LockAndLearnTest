@@ -33,7 +33,6 @@ const UploadScreen = ({ navigation }) => {
         <Button title="Select File" onPress={fileSelectedHandler} accept=".pdf, docx, .txt" ></Button>
       </View>
       <Text>{fileName}</Text>
-      <p />
       <Button title="Upload" />
       <StatusBar style="auto" />
     </View>
