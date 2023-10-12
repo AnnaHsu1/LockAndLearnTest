@@ -9,9 +9,12 @@ import {
   Image,
   navigation,
 } from "react-native";
+import { RadioButton } from 'react-native-paper';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const SignupScreen = ({ navigation }) => {
-  const [text, setText] = useState("");
+    const [text, setText] = useState("");
+    const [checked, setChecked] = React.useState('first');
 
   return (
     <View style={styles.container}>
@@ -23,29 +26,46 @@ const SignupScreen = ({ navigation }) => {
         defaultValue={text}
       />
 
-      <View style={styles.row}>
-        <View>
-          <Text style={styles.field}>First Name</Text>
-          <TextInput
-            style={styles.textbox}
-            onChangeText={(newText) => setText(newText)}
-            defaultValue={text}
-          />
-        </View>
+          <View style={styles.row}>
+              <View style={styles.nameInputContainer}>
+                  <Text style={styles.field}>First Name</Text>
+                  <TextInput
+                      style={styles.textbox}
+                      onChangeText={(newText) => setText(newText)}
+                      defaultValue={text}
+                  />
+              </View>
 
-        <View>
-          <Text style={styles.field}>Last Name</Text>
-          <TextInput
-            style={styles.textbox}
-            onChangeText={(newText) => setText(newText)}
-            defaultValue={text}
-          />
-        </View>
-      </View>
+              <View style={styles.nameInputContainer}>
+                  <Text style={styles.field}>Last Name</Text>
+                  <TextInput
+                      style={styles.textbox}
+                      onChangeText={(newText) => setText(newText)}
+                      defaultValue={text}
+                  />
+              </View>
+          </View>
+      
 
-      {/* <Text style={styles.title}>Select your account type</Text> */}
+          <Text style={styles.field}>Select your account type</Text> 
+          <View>
+              <RadioButton
+                  value="parent"
+                  status={checked === 'parent' ? 'checked' : 'unchecked'}
+                  onPress={() => setChecked('parent')}
+              /> <Text>Parent</Text>
+              <RadioButton
+                  value="teacher"
+                  status={checked === 'teacher' ? 'checked' : 'unchecked'}
+                  onPress={() => setChecked('teacher')}
+              /> <Text>Teacher</Text>
+          </View>
       <Text style={styles.field}>Birth Date</Text>
-
+          <TextInput
+              style={styles.textbox}
+              onChangeText={(newText) => setText(newText)}
+              defaultValue={text}
+          />
       <Text style={styles.field}>Password</Text>
       <TextInput
         style={styles.textbox}
@@ -70,19 +90,24 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "start",
-    justifyContent: "start",
+    alignItems: "center",
     marginLeft: 20,
     marginTop: 20,
   },
   row: {
     flexDirection: "row",
     width: "100%",
-  },
+    justifyContent: "center",
+    alignItems: "center"
+    },
+  nameInputContainer: {
+    marginRight: 10
+    },
   title: {
     color: "#4F85FF",
     fontFamily: "Montserrat",
-    fontSize: 20,
+      fontSize: 20,
+      textAlign: "left",
   },
   button: {
     color: "#ffffff",
