@@ -10,8 +10,12 @@ import {
 } from "react-native";
 
 const LockingSessionBeingsScreen = ({ navigation }) => {
-
-    // return(
-
-    // );
+  return (
+    <View style={{ flex: 1, backgroundColor: "#407BFF" }}>
+      <Text>Locking Session Begins</Text>
+      <Button title="End Session" onPress={() => navigation.goBack()} />
+    </View>
+  );
 };
+
+export default LockingSessionBeingsScreen;
