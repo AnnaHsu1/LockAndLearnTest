@@ -13,25 +13,55 @@ import { RadioButton } from 'react-native-paper';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const SignupScreen = ({ navigation }) => {
+    const [fdata, setFdata] = useState({
+        FirstName: '',
+        LastName: '',
+        Account: '',
+        Email: '',
+        Password: '',
+        CPassword:'',
+        DOB: '',
+    })
+    const [errormsg, setErrormsg] = useState(null);
     const [text, setText] = useState("");
     const [checked, setChecked] = React.useState('first');
-
+    const SendToBackend = () => {
+        console.log(fdata);
+        if (fdata.FirstName == '' ||
+            fdata.LastName == '' ||
+            fdata.Email == '' ||
+            fdata.Password == '' ||
+            fdata.CPassword == '' ||
+            fdata.DOB == '') {
+            setErrormsg('All fields are required');
+            return;
+        }
+        else {
+            if (fdata.Password != fdata.CPassword) {
+                setErrormsg('The passwords must be the same');
+                return;
+            }
+        }
+    }
   return (
     <View style={styles.container}>
+      {
+              errormsg ? <Text style={{ color: 'red' }}>{errormsg}</Text>:null
+          }
       <Text style={styles.title}>Create your account</Text>
       <Text style={styles.field}>Email</Text>
       <TextInput
         style={styles.textbox}
-        onChangeText={(newText) => setText(newText)}
+              onChangeText={(newText) => setFdata({...fdata, Email: newText})}
         defaultValue={text}
       />
-
+          
           <View style={styles.row}>
               <View style={styles.nameInputContainer}>
                   <Text style={styles.field}>First Name</Text>
                   <TextInput
                       style={styles.textbox}
-                      onChangeText={(newText) => setText(newText)}
+                      onChangeText={(newText) => setFdata({ ...fdata, FirstName: newText })}
                       defaultValue={text}
                   />
               </View>
@@ -40,7 +70,7 @@ const SignupScreen = ({ navigation }) => {
                   <Text style={styles.field}>Last Name</Text>
                   <TextInput
                       style={styles.textbox}
-                      onChangeText={(newText) => setText(newText)}
+                      onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
                       defaultValue={text}
                   />
               </View>
@@ -63,25 +93,34 @@ const SignupScreen = ({ navigation }) => {
       <Text style={styles.field}>Birth Date</Text>
           <TextInput
               style={styles.textbox}
-              onChangeText={(newText) => setText(newText)}
+              onChangeText={(newText) => setFdata({ ...fdata, DOB: newText })}
               defaultValue={text}
           />
       <Text style={styles.field}>Password</Text>
       <TextInput
-        style={styles.textbox}
-        onChangeText={(newText) => setText(newText)}
+              style={styles.textbox}
+              secureTextEntry={true }
+              onChangeText={(newText) => setFdata({ ...fdata, Password: newText })}
         defaultValue={text}
       />
 
       <Text style={styles.field}>Confirm password</Text>
       <TextInput
-        style={styles.textbox}
-        onChangeText={(newText) => setText(newText)}
+              style={styles.textbox}
+              secureTextEntry={true}
+              onChangeText={(newText) => setFdata({ ...fdata, CPassword: newText })}
         defaultValue={text}
-      />
-      <Button color="#4F85FF" title="Sign up" />
+          />
+          <Button color="#4F85FF"
+              onPress = {() => { SendToBackend(); }}
+              title="Sign up" />
 
-      <Text style={styles.link}>Already have an account? Sign in</Text>
+          <Text style={styles.link}>Already have an account? &nbsp;
+              <Text styles={styles.link}
+              onPress={() => navigation.navigate("Login")}>
+                  Sign in
+              </Text>
+          </Text>
       <StatusBar style="auto" />
     </View>
   );
