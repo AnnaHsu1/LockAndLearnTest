@@ -6,6 +6,7 @@ import LoginScreen from "../screens/LoginScreen";
 import UploadScreen from "../screens/UploadScreen";
 import EditUploadScreen from "../screens/EditUploadScreen";
 import SignupScreen from "../screens/SignupScreen";
+import LockingSessionBeginsScreen from "../screens/LockingSessionBeginsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,12 +33,17 @@ const StackNavigation = () => {
           name="Upload"
           component={UploadScreen}
           options={{ title: "Upload Study Material" }}
-        />        
+        />      
         <Stack.Screen
         name="Uploading"
         component={EditUploadScreen}
         options={{ title: "Uploading files" }}
-      />
+        />
+        <Stack.Screen
+        name="Locking"
+        component={LockingSessionBeginsScreen}
+        options={{ title: "Locking" }}
+        />  
       </Stack.Navigator>
     </NavigationContainer>
   );
