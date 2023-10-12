@@ -1,21 +1,28 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button, Image, navigation } from "react-native";
 import { React, useRef, useState } from "react";
+import * as DocumentPicker from "expo-document-picker";
+
 
 const UploadScreen = ({ navigation }) => {
-  const fileSelectedHandler = e => {
-    console.log(e.target.files[0]);
-    setFileName(e.target.files[0].name);
-  };
-  const inputRef = useRef(null);
-  const handleFile = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };
+
+  // const inputRef = useRef(null);
+  // const handleFile = () => {
+  //   if (inputRef.current) {
+  //     inputRef.current.click();
+  //   }
+  // };
   const [fileName, setFileName] = useState();
 
+  const fileSelectedHandler = async() => {
+
+    let result = await DocumentPicker.getDocumentAsync({});
+    console.log(result.output[0].name);
+    setFileName(result.output[0].name)
+  }
+
   return (
+  
     <View style={styles.container}>
       <Text style={styles.selectFiles}>Select files</Text>
       <View style={styles.uploadContainer}>
@@ -23,13 +30,11 @@ const UploadScreen = ({ navigation }) => {
         <Image source={require("../assets/uploadDashedZone.png")} style={styles.image} />
         <Text style={styles.supportedFormats}>Supported formats:</Text>
         <Text style={styles.supportedFormats}>PDF, TXT, DOCX</Text>
-        <input type="file" ref={inputRef} style={{ display: "none" }} onChange={fileSelectedHandler} accept=".pdf, docx, .txt" />
+        <Button title="Select File" onPress={fileSelectedHandler} accept=".pdf, docx, .txt" ></Button>
       </View>
-      <Button title="Choose a file" onPress={handleFile} />
       <Text>{fileName}</Text>
       <p />
       <Button title="Upload" />
-
       <StatusBar style="auto" />
     </View>
   );
@@ -57,8 +62,8 @@ const styles = StyleSheet.create({
     fontweight: "500",
     wordwrap: "breakword"
   },
-  image: {
-    zIndex: "1"
+  image:{
+    zIndex: 1,
   },
   supportedFormats: {
     color: "#ADADAD",
