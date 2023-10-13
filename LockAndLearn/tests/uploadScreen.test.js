@@ -1,7 +1,7 @@
 import { describe, expect, test } from "@jest/globals";
 import React from "react";
 import UploadScreen from "../screens/UploadScreen";
-import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react-native";
+import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import * as DocumentPicker from "expo-document-picker";
 
 jest.mock("expo-document-picker", () => ({
