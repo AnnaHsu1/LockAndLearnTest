@@ -11,7 +11,7 @@ const UploadScreen = () => {
   const fileSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === "web") {
-      const selectedFileNames = result.output.map(file => file.name);
+      const selectedFileNames = Array.from(result.output).map(file => file.name)
       const noDuplicateFiles = selectedFileNames.filter(name => !fileName.includes(name));
       setFileName([...fileName, ...noDuplicateFiles]);
     } else if (Platform.OS === "android") {
