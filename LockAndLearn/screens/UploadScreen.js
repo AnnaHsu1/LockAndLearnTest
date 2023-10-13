@@ -18,6 +18,7 @@ const UploadScreen = () => {
       const selectedFileNames = result.assets.map(file => file.name);
       const noDuplicateFiles = selectedFileNames.filter(name => !fileName.includes(name));
       setFileName([...fileName, ...noDuplicateFiles]);
+      console.log(result.assets);
     }
   };
 
