@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }) => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(fdata.email), // Send user data as JSON
+                    body: JSON.stringify(fdata), // Send user data as JSON
                 });
 
                 const data = await response.json();

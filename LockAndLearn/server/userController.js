@@ -17,18 +17,27 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ msg: "not all fields have been entered" });
         }
 
-        const user = await User.findOne({ email: email });
+/*        const user = await User.findOne({ email: email });
         if (!user) {
             return res
                 .status(400)
                 .json({ msg: "No account with this email has been registered" });
         }
-
+*/
         //checking password entered and comparing with hashed password in database
 /*        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "invalid credentials" });
         }*/
+        const user = await getUserByEmail(email);
+
+        if (!user) {
+            res.status(400).send(null);
+        }
+
+        else if (user.password !== password) {
+            res.status(400).send(null);
+        }
         const token = jwt.sign({ id: user._id }, process.env.DB_STRING);
         res.json({
             token,
@@ -44,15 +53,6 @@ router.post('/login', async (req, res) => {
     }
     
 
-    const user = await getUserByEmail(email);
-
-    if (!user) {
-        res.status(400).send(null);
-    }
-
-    else if (user.password !== password) {
-        res.status(400).send(null);
-    }
 
  /*   else if (user.password === password) {
 
