@@ -5,14 +5,16 @@ import * as DocumentPicker from "expo-document-picker";
 import { TouchableOpacity } from "react-native";
 
 const UploadScreen = () => {
-  const [fileName, setFileName] = useState();
+  const [fileName, setFileName] = useState([]);
 
   const fileSelectedHandler = async () => {
-    let result = await DocumentPicker.getDocumentAsync({});
+    let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === "web") {
-      setFileName(result.output[0].name);
+      const selectedFileNames = result.output.map(file => file.name);
+      setFileName([...fileName, ...selectedFileNames]);
     } else if (Platform.OS === "android") {
-      setFileName(result.assets[0].name);
+      const selectedFileNames = result.assets.map(file => file.name);
+      setFileName([...fileName, ...selectedFileNames]);
     }
   };
 
