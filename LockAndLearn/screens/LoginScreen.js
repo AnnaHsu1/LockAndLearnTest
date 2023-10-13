@@ -67,13 +67,12 @@ const useStyles = CreateResponsiveStyle(
     page: {
       backgroundColor: "#ffffff",
       maxWidth: wp("100%"),
-
       flex: 1,
       alignItems: "center",
     },
     container: {
       minWidth: wp("90%"),
-      minHeight: hp("60%"),
+      minHeight: hp("65%"),
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -82,20 +81,6 @@ const useStyles = CreateResponsiveStyle(
       display: "flex",
       width: "100%",
       paddingVertical: 10,
-    },
-    row: {
-      flexDirection: "row",
-    },
-    nameInput: {
-      justifyContent: "space-between",
-    },
-    radio: {
-      alignItems: "center",
-      justifyContent: "space-around",
-    },
-    radio_item: {
-      alignItems: "center",
-      alignContent: "center",
     },
     title: {
       color: "#4F85FF",
@@ -110,9 +95,6 @@ const useStyles = CreateResponsiveStyle(
     },
     field: {
       color: "#ADADAD",
-    },
-    checked: {
-      color: "#000",
     },
     link: {
       color: "#4F85FF",
@@ -132,12 +114,6 @@ const useStyles = CreateResponsiveStyle(
     full_width: {
       minWidth: "100%",
     },
-    auto_width: {
-      minWidth: "auto",
-    },
-    half_width: {
-      width: wp("40%"),
-    },
     bottomCloud: {
       display: "flex",
       justifyContent: "flex-end",
@@ -151,9 +127,6 @@ const useStyles = CreateResponsiveStyle(
       container: {
         minWidth: 500,
         width: 500,
-      },
-      half_width: {
-        width: 240,
       },
       bottomCloud: {
         width: wp("100%"),
