@@ -17,6 +17,7 @@ exports.createUser = async function createUser(fdata) {
   
       // Save the user to the database
       await newUser.save();
+
   
       return newUser;
     } catch (error) {
@@ -26,5 +27,37 @@ exports.createUser = async function createUser(fdata) {
 
       throw error;
     }
-  };
+};
+
+// Function to find a user by email and password for login
+exports.findUserByEmailAndPassword = async function findUserByEmailAndPassword(email, password) {
+    try {
+        // Find the user in the database by email and password
+        const user = await User.findOne({ email: email, password: password });
+
+        // If user is found, return the user object; otherwise, return null
+        return user;
+    } catch (error) {
+        // Log the error and throw an exception
+        console.error("Error finding user:", error);
+        throw error;
+    }
+};
+
+// Function to find a user by email and password for login
+exports.getUserByEmail = async function getUserByEmail(email) {
+    try {
+        // Find the user in the database by email and password
+        const user = await User.findOne({ email: email });
+
+        // If user is found, return the user object; otherwise, return null
+        return user;
+    } catch (error) {
+        // Log the error and throw an exception
+        console.error("Error finding user:", error);
+        throw error;
+    }
+};
+
+
 
