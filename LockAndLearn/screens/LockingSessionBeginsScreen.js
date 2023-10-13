@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View, Modal, Image, TouchableOpacity } from "react-native";
 
+// Import the navigation actions and hooks from React Navigation
+import { useNavigation } from "@react-navigation/native";
+
 const Spacer = ({ height, width }) => (
   <View style={{ height, width }} />
 );
 
-const LockingSessionBeginsScreen = ({ navigation }) => {
+const LockingSessionBeginsScreen = () => {
+  const navigation = useNavigation(); // Get the navigation object
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState("");
 
   const closeSession = () => {
-    if (password === "your_password") {
-      navigation.goBack();
+    if (password === "1234") {
+      // Navigate to the "Home" screen when the password is "1234"
+      navigation.navigate("Home");
     } else {
       // Handle incorrect password
+      setModalVisible(false);
     }
-    setModalVisible(false);
   };
 
   return (
@@ -39,7 +44,6 @@ const LockingSessionBeginsScreen = ({ navigation }) => {
         <Text style={styles.customButtonText}>End Session</Text>
       </TouchableOpacity>
       <Spacer height={20} />
-      {/* Add more spacing or other components as needed */}
       <Modal
         animationType="slide"
         transparent={true}
