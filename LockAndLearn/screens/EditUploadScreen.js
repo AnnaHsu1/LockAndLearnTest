@@ -83,7 +83,7 @@ const EditUploadScreen = ({ navigation }) => {
             {/* display button to confirm: uploading files */}
             <View style={{alignItems: "center", paddingLeft:"10%"}}>
               <TouchableOpacity
-                  style={styles.buttonUpload}
+                  style={[styles.buttonUpload, {marginTop:"3%"}, {marginBottom:"3%"}]}
                   testID="uploadButton">
                   <Text style={styles.buttonText}>Upload</Text>
                 </TouchableOpacity>
@@ -195,12 +195,12 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 8,
   },
   buttonText:{
     color: "#FFFFFF", 
     alignItems:"center", 
-    fontSize: 18, 
+    fontSize: 15, 
     fontWeight: "500"
   },
 });
