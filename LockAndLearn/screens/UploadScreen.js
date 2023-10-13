@@ -11,8 +11,9 @@ const UploadScreen = () => {
   const fileSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === "web") {
-      const selectedFileNames = result.output.map(file => file.name);
-      setFileName([...fileName, ...selectedFileNames]);
+      const selectedFileNames = Array.from(result.output).map(file => file.name)
+      setFileName([...fileName, selectedFileNames])
+
     } else if (Platform.OS === "android") {
       const selectedFileNames = result.assets.map(file => file.name);
       setFileName([...fileName, ...selectedFileNames]);
@@ -32,16 +33,12 @@ const UploadScreen = () => {
         <View style={{flex:1, alignItems: "center", justifyContent: "space-evenly",}}>
           {/* display button to upload file */}
           <TouchableOpacity testID="selectButton" onPress={fileSelectedHandler} accept=".pdf, docx, .txt">
-            <ImageBackground           
-              style={styles.imageUpload} 
-              source={require("../assets/uploadDashedZone.png")}>
+            <ImageBackground style={styles.imageUpload} source={require("../assets/uploadDashedZone.png")}>
               <Text style={styles.supportedFormats}>Supported formats:{"\n"}PDF, TXT, DOCX</Text>
             </ImageBackground>
           </TouchableOpacity>
-          <TouchableOpacity
-          style={styles.buttonUpload}
-          testID="uploadButton">
-          <Text style={styles.buttonText}>Upload</Text>
+          <TouchableOpacity style={styles.buttonUpload} testID="uploadButton">
+            <Text style={styles.buttonText}>Upload</Text>
           </TouchableOpacity>
           {/* display uploaded file */}
           <Text style={styles.filesText}>{fileName}</Text>

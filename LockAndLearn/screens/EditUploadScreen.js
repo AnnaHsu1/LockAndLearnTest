@@ -1,10 +1,9 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, Image, TextInput, navigation, Platform, ImageBackground } from "react-native";
+import { StyleSheet, Text, View, Button, Image, TextInput, Platform, ImageBackground } from "react-native";
 import {React, useState} from "react";
 import * as DocumentPicker from "expo-document-picker";
 import { TouchableOpacity } from "react-native";
 
-const EditUploadScreen = ({ navigation }) => {
+const EditUploadScreen = () => {
     const [text, setText] = useState("fileUpload1.pdf");    
     const nbFileUploaded = "2/3"
     const [fileName, setFileName] = useState();
@@ -20,7 +19,8 @@ const EditUploadScreen = ({ navigation }) => {
     const fileSelectedHandler = async () => {
       let result = await DocumentPicker.getDocumentAsync({});
       if (Platform.OS === "web") {
-        setFileName(result.output[0].name);
+        const selectedFileNames = Array.from(result.output).map(file => file.name)
+        setFileName([...fileName, selectedFileNames])
       } else if (Platform.OS === "android") {
         setFileName(result.assets[0].name);
       }
