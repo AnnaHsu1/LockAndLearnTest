@@ -33,20 +33,23 @@ const SignupScreen = ({ navigation }) => {
     CPassword: "",
     DOB: "",
   });
+
   const [errormsg, setErrormsg] = useState(null);
   const [text, setText] = useState("");
   const [checked, setChecked] = React.useState("first");
-  const SendToBackend = () => {
+
+  const handleSubmit = async () => {
     console.log(fdata);
+  
     if (
-      fdata.FirstName == "" ||
-      fdata.LastName == "" ||
-      fdata.Email == "" ||
-      fdata.Password == "" ||
-      fdata.CPassword == "" ||
-      fdata.DOB == ""
+      fdata.FirstName === "" ||
+      fdata.LastName === "" ||
+      fdata.Email === "" ||
+      fdata.Password === "" ||
+      fdata.CPassword === "" ||
+      fdata.DOB === ""
     ) {
-      setErrormsg("All fields are required");
+      setErrormsg("All fields are required.");
       return;
     } else {
       if (fdata.Password != fdata.CPassword) {
@@ -54,26 +57,49 @@ const SignupScreen = ({ navigation }) => {
         return;
       }
     }
-  };
-  return (
-    <View style={styles.container}>
-      {errormsg ? <Text style={{ color: "red" }}>{errormsg}</Text> : null}
-      <Text style={styles.title}>Create your account</Text>
-      <Text style={styles.field}>Email</Text>
-      <TextInput
-        style={styles.textbox}
-        onChangeText={(newText) => setFdata({ ...fdata, Email: newText })}
-        defaultValue={text}
-      />
 
-      <View style={styles.row}>
-        <View style={styles.nameInputContainer}>
-          <Text style={styles.field}>First Name</Text>
+    // Package the user data into a JSON format and ship it to the backend
+    try {
+      const response = await fetch('http://localhost:4000/users/signup', {  
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(fdata), // Send user data as JSON
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        // User created successfully
+        console.log("User created successfully in database!", data);
+      } else {
+        
+        // Store the error message in state
+        setErrormsg(data.message); 
+      }
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
+
+  };
+  
+  return (
+    <View style={styles.page}>
+      {/* <Image
+        style={styles.topCloud}
+        source={require("../assets/topClouds.png")}
+      /> */}
+      <View style={styles.container}>
+        {errormsg ? <Text style={{ color: "red" }}>{errormsg}</Text> : null}
+        <Text style={styles.title}>Create your account</Text>
+
+        {/* Email */}
+        <View style={styles.item}>
+          <Text style={styles.field}>Email</Text>
           <TextInput
-            style={styles.textbox}
-            onChangeText={(newText) =>
-              setFdata({ ...fdata, FirstName: newText })
-            }
+            style={[styles.textbox, styles.full_width]}
+            onChangeText={(newText) => setFdata({ ...fdata, Email: newText })}
             defaultValue={text}
           />
         </View>
@@ -176,7 +202,7 @@ const SignupScreen = ({ navigation }) => {
         <Button
           mode="contained"
           onPress={() => {
-            SendToBackend();
+            handleSubmit();
           }}
           style={[styles.button, styles.full_width]}
         >
