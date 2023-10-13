@@ -1,11 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, Image, navigation } from "react-native";
+import { StyleSheet, Text, View, Button, Image, navigation, Platform } from "react-native";
 import { React, useRef, useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
-
+import { TouchableOpacity } from "react-native";
 
 const UploadScreen = ({ navigation }) => {
-
   // const inputRef = useRef(null);
   // const handleFile = () => {
   //   if (inputRef.current) {
@@ -14,26 +13,24 @@ const UploadScreen = ({ navigation }) => {
   // };
   const [fileName, setFileName] = useState();
 
-  const fileSelectedHandler = async() => {
-
+  const fileSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    console.log(result.output[0].name);
-    setFileName(result.output[0].name)
-  }
+    setFileName(result.assets[0].name);
+    console.log(Platform.OS);
+  };
 
   return (
-  
     <View style={styles.container}>
       <Text style={styles.selectFiles}>Select files</Text>
       <View style={styles.uploadContainer}>
-        {/* Image doesn't display -> to be fixed */}
-        <Image source={require("../assets/uploadDashedZone.png")} style={styles.image} />
         <Text style={styles.supportedFormats}>Supported formats:</Text>
         <Text style={styles.supportedFormats}>PDF, TXT, DOCX</Text>
-        <Button title="Select File" onPress={fileSelectedHandler} accept=".pdf, docx, .txt" ></Button>
+        <TouchableOpacity testID="selectButton" title="Select File" onPress={fileSelectedHandler} accept=".pdf, docx, .txt">
+          <Image source={require("../assets/uploadDashedZone.png")} style={styles.image} />
+        </TouchableOpacity>
       </View>
       <Text>{fileName}</Text>
-      <Button title="Upload" />
+      <Button testID="uploadButton" title="Upload" />
       <StatusBar style="auto" />
     </View>
   );
@@ -56,20 +53,16 @@ const styles = StyleSheet.create({
   },
   selectFiles: {
     color: "#696969",
-    fontsize: "36px",
-    fontfamily: "Montserrat",
-    fontweight: "500",
-    wordwrap: "breakword"
+    fontSize: 36,
+    fontWeight: "500"
   },
-  image:{
-    zIndex: 1,
+  image: {
+    zIndex: 1
   },
   supportedFormats: {
     color: "#ADADAD",
-    fontsize: "15px",
-    fontfamily: "Montserrat",
-    fontweight: "600",
-    wordwrap: "breakword"
+    fontSize: 15,
+    fontWeight: "600"
   }
 });
 
