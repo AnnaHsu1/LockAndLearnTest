@@ -28,7 +28,7 @@ const LockingSessionBeginsScreen = () => {
     <View style={styles.container}>
       <View style={styles.centeredContent}>
         <Text style={styles.logoText}>It's time to</Text>
-        <Spacer height={20} />
+        <Spacer height={15} />
         <Text style={styles.logoTextBig}>LOCK & LEARN !</Text>
         <Spacer height={20} />
         <Image
