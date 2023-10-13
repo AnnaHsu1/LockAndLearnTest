@@ -1,26 +1,45 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Button, Modal, Image } from "react-native";
+import { StyleSheet, Text, TextInput, View, Modal, Image, TouchableOpacity } from "react-native";
+
+const Spacer = ({ height, width }) => (
+  <View style={{ height, width }} />
+);
 
 const LockingSessionBeginsScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState("");
 
   const closeSession = () => {
-    if (password === "your_password") { 
+    if (password === "your_password") {
       navigation.goBack();
     } else {
+      // Handle incorrect password
     }
     setModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../assets/homescreen.png")} 
-        style={styles.logo} 
-      />
-      <Button title="End Session" onPress={() => setModalVisible(true)} style={styles.endSessionButton} />
-
+      <Spacer height={20} />
+      <View style={styles.centeredContent}>
+        <Text style={styles.logoText}>It's time to</Text>
+        <Spacer height={20} />
+        <Text style={styles.logoTextBig}>LOCK & LEARN !</Text>
+        <Spacer height={20} />
+        <Image
+          source={require("../assets/favicon.png")} // Placeholder image
+          style={styles.logo}
+        />
+      </View>
+      <Spacer height={20} />
+      <TouchableOpacity
+        style={styles.customButton}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text style={styles.customButtonText}>End Session</Text>
+      </TouchableOpacity>
+      <Spacer height={20} />
+      {/* Add more spacing or other components as needed */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -33,12 +52,23 @@ const LockingSessionBeginsScreen = ({ navigation }) => {
               style={styles.modalInput}
               secureTextEntry={true}
               value={password}
-              onChangeText={text => setPassword(text)}
+              onChangeText={(text) => setPassword(text)}
             />
+            <Spacer height={20} />
             <View style={styles.modalButtons}>
-              <Button title="Enter" onPress={closeSession} />
-              <View style={styles.buttonSpacing} />
-              <Button title="Cancel" onPress={() => setModalVisible(false)} />
+              <TouchableOpacity
+                style={styles.customButton}
+                onPress={closeSession}
+              >
+                <Text style={styles.customButtonText}>Enter</Text>
+              </TouchableOpacity>
+              <Spacer width={10} />
+              <TouchableOpacity
+                style={styles.customButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.customButtonText}>Cancel</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -51,11 +81,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#407BFF",
+    alignItems: "center",
+    justifyContent: "center", // Center content vertically
   },
-  endSessionButton: {
-    position: "absolute",
-    top: 20,
-    right: 20,
+  centeredContent: {
+    alignItems: "center",
+  },
+  customButton: {
+    backgroundColor: "#FFFFFF", // Background color
+    padding: 10,
+    borderRadius: 5,
+  },
+  customButtonText: {
+    color: "#3E5CAA", // Text color
+    fontSize: 16,
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,
@@ -78,13 +118,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  buttonSpacing: {
-    width: 10, // Add spacing between the buttons
+  logo: {},
+  logoText: {
+    color: "#FFFFFF",
+    fontSize: 24, // Larger font size
+    marginTop: 20, // Add some space above the text
   },
-  logo: {
-    alignSelf: "center",
-    marginTop: "auto",
-    marginBottom: "auto",
+  logoTextBig: {
+    color: "#FFFFFF",
+    fontSize: 36, // Larger font size
   },
 });
 
