@@ -1,22 +1,19 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, Image, navigation, Platform } from "react-native";
-import { React, useRef, useState } from "react";
+import { StyleSheet, Text, View, Button, Image, Platform } from "react-native";
+import { React, useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import { TouchableOpacity } from "react-native";
 
-const UploadScreen = ({ navigation }) => {
-  // const inputRef = useRef(null);
-  // const handleFile = () => {
-  //   if (inputRef.current) {
-  //     inputRef.current.click();
-  //   }
-  // };
+const UploadScreen = () => {
   const [fileName, setFileName] = useState();
 
   const fileSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({});
-    setFileName(result.assets[0].name);
-    console.log(Platform.OS);
+    if (Platform.OS === "web") {
+      setFileName(result.output[0].name);
+    } else if (Platform.OS === "android") {
+      setFileName(result.assets[0].name);
+    }
   };
 
   return (
