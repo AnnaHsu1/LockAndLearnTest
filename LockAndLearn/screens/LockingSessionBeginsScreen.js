@@ -32,7 +32,7 @@ const LockingSessionBeginsScreen = () => {
         <Text style={styles.logoTextBig}>LOCK & LEARN !</Text>
         <Spacer height={20} />
         <Image
-          source={require("../assets/favicon.png")} // Placeholder image
+          source={require("../assets/sessionbeginslogo.png")} // Placeholder image
           style={styles.logo}
         />
       </View>
@@ -49,7 +49,14 @@ const LockingSessionBeginsScreen = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Enter Password:</Text>
+          <View style={styles.modalTitleContainer}>
+            <Image
+            source={require("../assets/profile.png")} // Profile image
+            style={styles.profilePic}
+            />
+            <Text style={styles.modalTitle}>End Session</Text>
+          </View>
+             <Text style={styles.modalText}>Enter Password:</Text>
             <TextInput
               style={[styles.modalInput, { borderColor: passwordBorderColor }]} // Apply border color dynamically
               secureTextEntry={true}
@@ -120,7 +127,25 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 10, // Add spacing below the text
+    color: '#3E5CAA', // Make text blue
   },
+  modalTitle: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#3E5CAA', // Make text blue
+    marginLeft: 20,
+  },
+  modalTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center', // Center vertically
+    alignItems: 'center', // Center horizontally
+    marginBottom: 30, // Add some margin at the bottom of the title
+  },
+  profilePic:{
+    width: 50,
+    height: 50,
+  },
+
   modalInput: {
     marginBottom: 10, // Add spacing below the input field
     borderWidth: 1, // Add a border
@@ -144,6 +169,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   logo: {
+    width: 130,
+    height: 130,
     marginTop: "25%", // Position the image 25% from the top
   },
   logoText: {
