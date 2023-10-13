@@ -5,172 +5,290 @@ import {
   Text,
   TextInput,
   View,
-  Button,
   Image,
   navigation,
 } from "react-native";
-import { RadioButton } from 'react-native-paper';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { RadioButton, Button } from "react-native-paper";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import {
+  CreateResponsiveStyle,
+  DEVICE_SIZES,
+  minSize,
+  useDeviceSize,
+} from "rn-responsive-styles";
 
 const SignupScreen = ({ navigation }) => {
-    const [fdata, setFdata] = useState({
-        FirstName: '',
-        LastName: '',
-        Account: '',
-        Email: '',
-        Password: '',
-        CPassword:'',
-        DOB: '',
-    })
-    const [errormsg, setErrormsg] = useState(null);
-    const [text, setText] = useState("");
-    const [checked, setChecked] = React.useState('first');
-    const SendToBackend = () => {
-        console.log(fdata);
-        if (fdata.FirstName == '' ||
-            fdata.LastName == '' ||
-            fdata.Email == '' ||
-            fdata.Password == '' ||
-            fdata.CPassword == '' ||
-            fdata.DOB == '') {
-            setErrormsg('All fields are required');
-            return;
-        }
-        else {
-            if (fdata.Password != fdata.CPassword) {
-                setErrormsg('The passwords must be the same');
-                return;
-            }
-        }
+  const styles = useStyles();
+  const deviceSize = useDeviceSize();
+
+  const [fdata, setFdata] = useState({
+    FirstName: "",
+    LastName: "",
+    Account: "",
+    Email: "",
+    Password: "",
+    CPassword: "",
+    DOB: "",
+  });
+  const [errormsg, setErrormsg] = useState(null);
+  const [text, setText] = useState("");
+  const [checked, setChecked] = React.useState("first");
+  const SendToBackend = () => {
+    console.log(fdata);
+    if (
+      fdata.FirstName == "" ||
+      fdata.LastName == "" ||
+      fdata.Email == "" ||
+      fdata.Password == "" ||
+      fdata.CPassword == "" ||
+      fdata.DOB == ""
+    ) {
+      setErrormsg("All fields are required");
+      return;
+    } else {
+      if (fdata.Password != fdata.CPassword) {
+        setErrormsg("The passwords must be the same");
+        return;
+      }
     }
+  };
   return (
-    <View style={styles.container}>
-      {
-              errormsg ? <Text style={{ color: 'red' }}>{errormsg}</Text>:null
-          }
-      <Text style={styles.title}>Create your account</Text>
-      <Text style={styles.field}>Email</Text>
-      <TextInput
-        style={styles.textbox}
-              onChangeText={(newText) => setFdata({...fdata, Email: newText})}
-        defaultValue={text}
-      />
-          
-          <View style={styles.row}>
-              <View style={styles.nameInputContainer}>
-                  <Text style={styles.field}>First Name</Text>
-                  <TextInput
-                      style={styles.textbox}
-                      onChangeText={(newText) => setFdata({ ...fdata, FirstName: newText })}
-                      defaultValue={text}
-                  />
-              </View>
+    <View style={styles.page}>
+      {/* <Image
+        style={styles.topCloud}
+        source={require("../assets/topClouds.png")}
+      /> */}
+      <View style={styles.container}>
+        {errormsg ? <Text style={{ color: "red" }}>{errormsg}</Text> : null}
+        <Text style={styles.title}>Create your account</Text>
 
-              <View style={styles.nameInputContainer}>
-                  <Text style={styles.field}>Last Name</Text>
-                  <TextInput
-                      style={styles.textbox}
-                      onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
-                      defaultValue={text}
-                  />
-              </View>
-          </View>
-      
-
-          <Text style={styles.field}>Select your account type</Text> 
-          <View>
-              <RadioButton
-                  value="parent"
-                  status={checked === 'parent' ? 'checked' : 'unchecked'}
-                  onPress={() => setChecked('parent')}
-              /> <Text>Parent</Text>
-              <RadioButton
-                  value="teacher"
-                  status={checked === 'teacher' ? 'checked' : 'unchecked'}
-                  onPress={() => setChecked('teacher')}
-              /> <Text>Teacher</Text>
-          </View>
-      <Text style={styles.field}>Birth Date</Text>
+        {/* Email */}
+        <View style={styles.item}>
+          <Text style={styles.field}>Email</Text>
           <TextInput
+            style={[styles.textbox, styles.full_width]}
+            onChangeText={(newText) => setFdata({ ...fdata, Email: newText })}
+            defaultValue={text}
+          />
+        </View>
+
+        {/* First name and Last name*/}
+        <View style={[styles.row, styles.nameInput]}>
+          <View style={styles.half_width}>
+            <Text style={styles.field}>First Name</Text>
+            <TextInput
               style={styles.textbox}
-              onChangeText={(newText) => setFdata({ ...fdata, DOB: newText })}
+              onChangeText={(newText) =>
+                setFdata({ ...fdata, FirstName: newText })
+              }
               defaultValue={text}
-          />
-      <Text style={styles.field}>Password</Text>
-      <TextInput
-              style={styles.textbox}
-              secureTextEntry={true }
-              onChangeText={(newText) => setFdata({ ...fdata, Password: newText })}
-        defaultValue={text}
-      />
+            />
+          </View>
 
-      <Text style={styles.field}>Confirm password</Text>
-      <TextInput
-              style={styles.textbox}
-              secureTextEntry={true}
-              onChangeText={(newText) => setFdata({ ...fdata, CPassword: newText })}
-        defaultValue={text}
-          />
-          <Button color="#4F85FF"
-              onPress = {() => { SendToBackend(); }}
-              title="Sign up" />
+          <View style={styles.half_width}>
+            <Text style={styles.field}>Last Name</Text>
+            <TextInput
+              style={[styles.textbox, styles.half_width]}
+              onChangeText={(newText) =>
+                setFdata({ ...fdata, LastName: newText })
+              }
+              defaultValue={text}
+            />
+          </View>
+        </View>
 
-          <Text style={styles.link}>Already have an account? &nbsp;
-              <Text styles={styles.link}
-              onPress={() => navigation.navigate("Login")}>
-                  Sign in
+        {/* Account type */}
+        <View style={styles.item}>
+          <Text style={styles.field}>Select your account type</Text>
+          <View style={[styles.radio, styles.row]}>
+            <View style={[styles.radio_item, styles.row]}>
+              <RadioButton
+                value="parent"
+                status={checked === "parent" ? "checked" : "unchecked"}
+                onPress={() => setChecked("parent")}
+                color="#4F85FF"
+              />
+              <Text
+                style={checked === "parent" ? styles.checked : styles.field}
+              >
+                Parent
               </Text>
-          </Text>
-      <StatusBar style="auto" />
+            </View>
+
+            <View style={[styles.radio_item, styles.row]}>
+              <RadioButton
+                value="teacher"
+                status={checked === "teacher" ? "checked" : "unchecked"}
+                onPress={() => setChecked("teacher")}
+                color="#4F85FF"
+              />
+              <Text
+                style={checked === "teacher" ? styles.checked : styles.field}
+              >
+                Teacher
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Birth date */}
+        <View style={styles.item}>
+          <Text style={styles.field}>Birth Date (YYYY-MM-DD)</Text>
+          <TextInput
+            style={[styles.textbox, styles.full_width]}
+            onChangeText={(newText) => setFdata({ ...fdata, DOB: newText })}
+            defaultValue={text}
+          />
+        </View>
+
+        {/* Password */}
+        <View style={styles.item}>
+          <Text style={styles.field}>Password</Text>
+          <TextInput
+            style={[styles.textbox, styles.full_width]}
+            secureTextEntry={true}
+            onChangeText={(newText) =>
+              setFdata({ ...fdata, Password: newText })
+            }
+            defaultValue={text}
+          />
+        </View>
+
+        {/* Confirm password */}
+        <View style={styles.item}>
+          <Text style={styles.field}>Confirm password</Text>
+          <TextInput
+            style={[styles.textbox, styles.full_width]}
+            secureTextEntry={true}
+            onChangeText={(newText) =>
+              setFdata({ ...fdata, CPassword: newText })
+            }
+            defaultValue={text}
+          />
+        </View>
+
+        <Button
+          mode="contained"
+          onPress={() => {
+            SendToBackend();
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          SIGN UP
+        </Button>
+
+        <Text style={styles.link} onPress={() => navigation.navigate("Login")}>
+          Already have an account? Sign in
+        </Text>
+        <StatusBar style="auto" />
+      </View>
+      <Image
+        style={styles.bottomCloud}
+        source={require("../assets/bottomClouds.png")}
+      />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    marginLeft: 20,
-    marginTop: 20,
-  },
-  row: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center"
+const useStyles = CreateResponsiveStyle(
+  {
+    page: {
+      backgroundColor: "#ffffff",
+      maxWidth: wp("100%"),
+      flex: 1,
+      alignItems: "center",
     },
-  nameInputContainer: {
-    marginRight: 10
+    container: {
+      minWidth: wp("90%"),
+      paddingLeft: 20,
+      paddingRight: 20,
+      paddingTop: 20,
     },
-  title: {
-    color: "#4F85FF",
-    fontFamily: "Montserrat",
-      fontSize: 20,
+    item: {
+      display: "flex",
+      width: "100%",
+      paddingVertical: 10,
+    },
+    row: {
+      flexDirection: "row",
+    },
+    nameInput: {
+      justifyContent: "space-between",
+    },
+    radio: {
+      alignItems: "center",
+      justifyContent: "space-around",
+    },
+    radio_item: {
+      alignItems: "center",
+      alignContent: "center",
+    },
+    title: {
+      color: "#4F85FF",
+      fontSize: 24,
       textAlign: "left",
+    },
+    button: {
+      color: "#ffffff",
+      backgroundColor: "#4F85FF",
+      borderRadius: 10,
+    },
+    field: {
+      color: "#ADADAD",
+    },
+    checked: {
+      color: "#000",
+    },
+    link: {
+      color: "#4F85FF",
+      paddingTop: 10,
+      textAlign: "center",
+    },
+    textbox: {
+      display: "flex",
+      minHeight: 30,
+      borderRadius: 10,
+      borderColor: "#407BFF",
+      borderStyle: "solid",
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderWidth: 1,
+    },
+    full_width: {
+      minWidth: "100%",
+    },
+    auto_width: {
+      minWidth: "auto",
+    },
+    half_width: {
+      width: wp("40%"),
+    },
+    bottomCloud: {
+      width: wp("100%"),
+      height: 250,
+      resizeMode: "stretch",
+    },
   },
-  button: {
-    color: "#ffffff",
-    backgroundColor: "#4F85FF",
-    fontFamily: "Montserrat",
-    fontSize: 20,
-  },
-  field: {
-    color: "#ADADAD",
-    fontFamily: "Montserrat",
-    fontSize: 15,
-  },
-  link: {
-    color: "#4F85FF",
-    fontFamily: "Montserrat",
-    fontSize: 15,
-  },
-  textbox: {
-    minHeight: 50,
-    borderRadius: 10,
-    borderColor: "#407BFF",
-    borderStyle: "solid",
-    borderWidth: 1,
-  },
-});
+  {
+    [minSize(DEVICE_SIZES.MD)]: {
+      container: {
+        minWidth: 500,
+        width: 500,
+      },
+      half_width: {
+        width: 240,
+      },
+      bottomCloud: {
+        width: wp("100%"),
+        height: 300,
+        resizeMode: "stretch",
+        flex: 1,
+      },
+    },
+  }
+);
 
 export default SignupScreen;
