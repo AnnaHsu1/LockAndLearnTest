@@ -1,30 +1,31 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View, Button, Modal } from "react-native";
+import { StyleSheet, Text, TextInput, View, Button, Modal, Image } from "react-native";
 
 const LockingSessionBeginsScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState("");
 
   const closeSession = () => {
-    if (password === "1234") {
-      // Redirect to the "Home" screen when the correct password is entered
-      navigation.navigate("Home");
+    if (password === "your_password") { 
+      navigation.goBack();
     } else {
-      // Handle incorrect password
-      alert("Incorrect password. Please try again.");
     }
     setModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>It's time to LOCK & LEARN</Text>
-      </View>
-
+      <Image
+        source={require("../assets/homescreen.png")} 
+        style={styles.logo} 
+      />
       <Button title="End Session" onPress={() => setModalVisible(true)} style={styles.endSessionButton} />
 
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Enter Password:</Text>
@@ -50,16 +51,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#407BFF",
-    alignItems: "center",
-  },
-  headerContainer: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  headerText: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    textAlign: "center",
   },
   endSessionButton: {
     position: "absolute",
@@ -70,25 +61,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
   },
   modalContent: {
     backgroundColor: "#fff",
-    padding: 30,
-    borderRadius: 10,
+    padding: 30, // Increase the padding for a bigger modal
+    borderRadius: 10, // Rounded corners
   },
   modalText: {
-    marginBottom: 10,
+    marginBottom: 10, // Add spacing below the text
   },
   modalInput: {
-    marginBottom: 10,
+    marginBottom: 10, // Add spacing below the input field
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
   },
   buttonSpacing: {
-    width: 10,
+    width: 10, // Add spacing between the buttons
+  },
+  logo: {
+    alignSelf: "center",
+    marginTop: "auto",
+    marginBottom: "auto",
   },
 });
 
