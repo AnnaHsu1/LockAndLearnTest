@@ -67,8 +67,9 @@ const LoginScreen = ({ navigation }) => {
                 });
 
                 const data = await response.json();
+                console.log(response.status);
 
-                if (response.status === 201) {
+                if (response.status === 200) {
                     // User created successfully
                     console.log("User log in!", data);
                 } else {
