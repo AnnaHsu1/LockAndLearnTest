@@ -12,9 +12,6 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Button } from "react-native-paper";
-import axios from 'axios';
-
-const apiURL = "http://localhost:4000/";
 
 const LoginScreen = ({ navigation }) => {
   const styles = useStyles();
@@ -27,9 +24,6 @@ const LoginScreen = ({ navigation }) => {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [errormsg, setErrormsg] = useState(null);
- /*   async function loginUser(credentials) {
-        return await axios.post(apiURL + "users/login", credentials).catch(() => { return null });
-    }*/
 
     const validate = () => {
         let emailError = "";

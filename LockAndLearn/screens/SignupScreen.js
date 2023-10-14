@@ -39,24 +39,8 @@ const SignupScreen = ({ navigation }) => {
   const [checked, setChecked] = React.useState("first");
 
   const handleSubmit = async () => {
+
     console.log(fdata);
-  
-    if (
-      fdata.FirstName === "" ||
-      fdata.LastName === "" ||
-      fdata.Email === "" ||
-      fdata.Password === "" ||
-      fdata.CPassword === "" ||
-      fdata.DOB === ""
-    ) {
-      setErrormsg("All fields are required.");
-      return;
-    } else {
-      if (fdata.Password != fdata.CPassword) {
-        setErrormsg("The passwords must be the same");
-        return;
-      }
-    }
 
     // Package the user data into a JSON format and ship it to the backend
     try {
@@ -73,13 +57,14 @@ const SignupScreen = ({ navigation }) => {
       if (response.status === 201) {
         // User created successfully
         console.log("User created successfully in database!", data);
+        //Add redirect
       } else {
         
-        // Store the error message in state
-        setErrormsg(data.message); 
+        // Store the error message in state, if any
+        setErrormsg(data.msg); 
       }
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Submitting error when creating user:", error);
     }
 
   };

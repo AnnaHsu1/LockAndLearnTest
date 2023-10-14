@@ -4,14 +4,14 @@ const User = require('./UserSchema'); // Import the User model from UserSchema.j
 exports.createUser = async function createUser(fdata) {
     try {
       // Extract the relevant data from fdata
-      const { FirstName, LastName, Email, Password, DOB } = fdata;
+      const { FirstName, LastName, Email, passwordHash, DOB } = fdata;
   
       // Create a new User instance with the extracted user data
       const newUser = new User({
         firstName: FirstName,
         lastName: LastName,
         email: Email,
-        password: Password,
+        password: passwordHash,
         birthDate: DOB, // Need to Convert DOB to a Date object
       });
   
