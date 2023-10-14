@@ -62,9 +62,8 @@ router.post('/login', async (req, res) => {
 })
 
 // Handle user registration
-router.post('/signup', async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
-
     // Extract user data from the request body
     console.log(req.body);
     const { FirstName, LastName, Email, Password, CPassword, DOB} = req.body;
@@ -107,16 +106,21 @@ router.post('/signup', async (req, res) => {
     console.log(passwordHash);
 
     // Call the createUser function to create a new user
-    const user = await createUser({ FirstName, LastName, Email, passwordHash, DOB});
+    const user = await createUser({
+      FirstName,
+      LastName,
+      Email,
+      Password,
+      DOB,
+    });
 
     // Respond with the newly created user
     res.status(201).json(user);
-
   } catch (error) {
 
     // Handle errors if createUser function fails
-    console.error('Error creating user:', error);
-    res.status(500).json({ error: 'Unable to create user' });
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Unable to create user" });
   }
 });
 
