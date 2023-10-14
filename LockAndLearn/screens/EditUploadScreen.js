@@ -71,7 +71,7 @@ const EditUploadScreen = () => {
             const fileType = splitName[splitName.length - 1];
             console.log(fileType);
             return (
-              <View>
+              <View key={index}>
                 <View key={index} style={[styles.rows, fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? styles.successRowUpload : styles.errorRowUpload]}>
                   <View style={styles.rowUpload}>
                     <TextInput style={styles.errorTextbox} onChangeText={newText => setFileName(newText)} defaultValue={name} />
