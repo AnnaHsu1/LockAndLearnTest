@@ -110,7 +110,7 @@ router.post("/signup", async (req, res) => {
       FirstName,
       LastName,
       Email,
-      Password,
+      passwordHash,
       DOB,
     });
 
