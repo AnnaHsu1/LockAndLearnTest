@@ -42,13 +42,13 @@ const EditUploadScreen = () => {
   }
     
 
-    fetch("http://localhost:4000/files/uploadFiles", {
-        method: 'POST',
-        body: fileData,
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-    })
+ await fetch("http://localhost:4000/files/uploadFiles", {
+    method: 'POST',
+    body: fileData,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  })
     .then((res) => console.log(res))
     .catch((err) => ("Error occured", err));
   }

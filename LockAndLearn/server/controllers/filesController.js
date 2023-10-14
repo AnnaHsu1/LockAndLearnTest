@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const router = express.Router();
 
 // Configure multer storage and file name
 const storage = multer.diskStorage({
@@ -15,13 +16,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const uploadFiles = async (req, res) => {
+router.post('/uploadFiles', async (req, res) => {
   
-  console.log("!!!!")
-
+  console.log("!!!!");
   try {
     // Use multer upload instance
+    console.log("1111");
     upload.array('files');
+    console.log("222");
     res.status(201).json({ message: "Successfully uploaded files" });
    } catch (error) {
       return res.status(400).json({ error: err.message });
@@ -57,6 +59,6 @@ const uploadFiles = async (req, res) => {
 
     // // Attach files to the request object
     // req.files = files;
-  };
+  });
 
-module.exports = uploadFiles;
+  module.exports = router;
