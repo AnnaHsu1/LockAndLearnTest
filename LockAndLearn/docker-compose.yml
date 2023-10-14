@@ -1,12 +1,23 @@
 version: '3.8'
 services:
-  lockandlearn-expo:
+  frontend:
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
     container_name: lockandlearn-expo-container
     ports:
       - 19006:19006
+  
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: lockandlearn-mongodb-container
+    ports:
+      - 4000:4000
+    depends_on:
+      - frontend
+    
 
 # Create docker image
 # docker-compose build
