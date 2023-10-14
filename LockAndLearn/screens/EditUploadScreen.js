@@ -1,26 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, Image, TextInput, navigation, Platform, ImageBackground } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, Platform, ImageBackground } from "react-native";
 import { React, useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import { TouchableOpacity } from "react-native";
 
-const EditUploadScreen = ({ navigation }) => {
-  const [text, setText] = useState("fileUpload1.pdf");
-  const nbFileUploaded = "2/3";
+const EditUploadScreen = () => {
   const [fileName, setFileName] = useState([]);
-  const uploadedFiles = [
-    { id: 1, type: "successful" },
-    { id: 2, type: "error" },
-    { id: 3, type: "successful" },
-    { id: 4, type: "error" },
-    { id: 5, type: "error" }
-  ];
 
   // receive file uploaded by user and (to be redirect to server)
   const fileSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === "web") {
-      const selectedFileNames = result.output.map(file => file.name);
+      const selectedFileNames = Array.from(result.output).map(file => file.name);
       const noDuplicateFiles = selectedFileNames.filter(name => !fileName.includes(name));
       setFileName([...fileName, ...noDuplicateFiles]);
     } else if (Platform.OS === "android") {
@@ -28,6 +19,11 @@ const EditUploadScreen = ({ navigation }) => {
       const noDuplicateFiles = selectedFileNames.filter(name => !fileName.includes(name));
       setFileName([...fileName, ...noDuplicateFiles]);
     }
+  };
+
+  const deleteFile = index => {
+    const filesAfterDeletion = fileName.filter((name, i) => i != index);
+    setFileName(filesAfterDeletion);
   };
 
   return (
@@ -45,28 +41,30 @@ const EditUploadScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.containerUploaded}>
-          <Text style={styles.uploadFiles}>Uploads - {nbFileUploaded} files</Text>
+          <Text style={styles.uploadFiles}>Uploads - {fileName.length} files</Text>
           {/* display rows for each uploaded file */}
-          {fileName.map((name, index) => (
-            <View>
-              <View key={index} style={[styles.rows, file.type === "successful" ? styles.successRowUpload : styles.errorRowUpload]}>
-                <View style={styles.rowUpload}>
-                  <TextInput style={styles.errorTextbox} onChangeText={newText => setFileName(newText)} defaultValue={name} />
-                  <TouchableOpacity testID="deleteButton" style={styles.buttonDelete} onPress={() => ""}>
-                    {file.type === "successful" && <Image style={{ height: 20, width: 20 }} source={require("../assets/bxs_x-circle.png")} />}
-                    {file.type === "error" && <Image style={{ height: 20, width: 20 }} source={require("../assets/trash.png")} />}
-                  </TouchableOpacity>
-                </View>
-              </View>
+          {fileName.map((name, index) => {
+            const splitName = name.split(".");
+            const fileType = splitName[splitName.length - 1];
+            console.log(fileType);
+            return (
               <View>
-                {file.type === "error" && (
+                <View key={index} style={[styles.rows, fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? styles.successRowUpload : styles.errorRowUpload]}>
+                  <View style={styles.rowUpload}>
+                    <TextInput style={styles.errorTextbox} onChangeText={newText => setFileName(newText)} defaultValue={name} />
+                    <TouchableOpacity testID="deleteButton" style={styles.buttonDelete} onPress={() => deleteFile(index)}>
+                      {fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? <Image style={{ height: 20, width: 20 }} source={require("../assets/bxs_x-circle.png")} /> : <Image style={{ height: 20, width: 20 }} source={require("../assets/trash.png")} />}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? null : (
                   <View style={styles.errorMsgRow}>
                     <Text style={styles.errorText}>This format is not supported. Please try again.</Text>
                   </View>
                 )}
               </View>
-            </View>
-          ))}
+            );
+          })}
           {/* display button to confirm: uploading files */}
           <View style={{ alignItems: "center", paddingLeft: "10%" }}>
             <TouchableOpacity style={[styles.buttonUpload, { marginTop: "3%" }, { marginBottom: "3%" }]} testID="uploadButton">
