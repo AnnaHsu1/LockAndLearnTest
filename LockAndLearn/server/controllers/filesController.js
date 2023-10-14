@@ -24,7 +24,7 @@
 // //router.post('/uploadFiles', upload.array("files"));
 
 // // router.post('/uploadFiles', async (req, res) => {
-  
+
 // //   console.log("!!!!");
 // //   try {
 // //     // Use multer upload instance
@@ -70,11 +70,12 @@
 
 //   module.exports = router;
 
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var path = require('path');
-var fs = require('fs');
-var multer  = require('multer')
+var path = require("path");
+var fs = require("fs");
+var multer = require("multer");
+const { createUploadedFiles } = require("../uploadedFilesManager");
 
 //Configure multer storage and file name
 const storage = multer.diskStorage({
@@ -83,14 +84,14 @@ const storage = multer.diskStorage({
   //       cb(null, 'uploads/');
   //     },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    cb(null, Date.now() + "-" + file.originalname);
   }
 });
 
 const upload = multer({ storage: storage });
 
-router.post('/uploadFiles',upload.array('files') ,function (req, res, next) {
-  console.log("!!!!")
+router.post("/uploadFiles", upload.array("files"), async (req, res, next) => {
+  const uploadedFiles = await createUploadedFiles(req.files);
   res.status(201).json({ message: "Successfully uploaded files" });
 });
 

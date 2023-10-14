@@ -17,7 +17,7 @@ const EditUploadScreen = () => {
       setFileName([...fileName, ...noDuplicateFiles]);
       setFiles(result.output);
     } else if (Platform.OS === "android") {
-      setFiles([result.assets])
+      setFiles([result.assets]);
       const selectedFileNames = result.assets.map(file => file.name);
       const noDuplicateFiles = selectedFileNames.filter(name => !fileName.includes(name));
       setFileName([...fileName, ...noDuplicateFiles]);
@@ -31,26 +31,24 @@ const EditUploadScreen = () => {
   };
   const uploadFilesHandler = async () => {
     const fileData = new FormData();
-    console.log(files)
+    console.log(files);
     Array.from(files).map(file => {
-      console.log(file)
-      fileData.append("files", file)
-    })
+      console.log(file);
+      fileData.append("files", file);
+    });
 
     for (var key of fileData.entries()) {
-      console.log(key[0] + ', ' + key[1].name);
-  }
-  
-  await fetch("http://localhost:4000/files/uploadFiles", {
-    method: 'POST',
-    body: fileData,
+      console.log(key[0] + ", " + key[1].name);
+    }
 
-  })
-    .then((res) => console.log(res))
-    .catch((err) => ("Error occured", err));
-  }
+    await fetch("http://localhost:4000/files/uploadFiles", {
+      method: "POST",
+      body: fileData
+    })
+      .then(res => console.log(res))
+      .catch(err => ("Error occured", err));
+  };
 
-  
   return (
     // display the blue background on top of screen
     <ImageBackground source={require("../assets/backgroundCloudyBlobsFull.png")} resizeMode="cover" style={styles.container}>
@@ -93,7 +91,9 @@ const EditUploadScreen = () => {
           {/* display button to confirm: uploading files */}
           <View style={{ alignItems: "center", paddingLeft: "10%" }}>
             <TouchableOpacity style={[styles.buttonUpload, { marginTop: "3%" }, { marginBottom: "3%" }]} testID="uploadButton">
-              <Text style={styles.buttonText} onPress={uploadFilesHandler}>Upload</Text>
+              <Text style={styles.buttonText} onPress={uploadFilesHandler}>
+                Upload
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
