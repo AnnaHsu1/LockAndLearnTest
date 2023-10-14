@@ -40,19 +40,17 @@ const EditUploadScreen = () => {
     for (var key of fileData.entries()) {
       console.log(key[0] + ', ' + key[1].name);
   }
-    
-
- await fetch("http://localhost:4000/files/uploadFiles", {
+  
+  await fetch("http://localhost:4000/files/uploadFiles", {
     method: 'POST',
     body: fileData,
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
+
   })
     .then((res) => console.log(res))
     .catch((err) => ("Error occured", err));
   }
 
+  
   return (
     // display the blue background on top of screen
     <ImageBackground source={require("../assets/backgroundCloudyBlobsFull.png")} resizeMode="cover" style={styles.container}>
