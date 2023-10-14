@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Button, navigation } from "react-native";
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Button title="Log in" onPress={() => navigation.navigate("Login")} />
+      <Button title="Log in" onPress={() => navigation.navigate("Login")} testID="loginButton"/>
       <Button title="Sign up" onPress={() => navigation.navigate("Signup")} />
       <Button title="Upload" onPress={() => navigation.navigate("Upload")} />
       <Button title="Uploading" onPress={() => navigation.navigate("Uploading")} />

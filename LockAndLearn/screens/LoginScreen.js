@@ -13,17 +13,21 @@ import {
 } from "react-native-responsive-screen";
 import { Button } from "react-native-paper";
 
-const LoginScreen = ({ navigation }) => {
-  const styles = useStyles();
-  const deviceSize = useDeviceSize();
+const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
+
+    const styles = useStyles();
+    const deviceSize = useDeviceSize();
+
     const [text, setText] = useState("");
     const [fdata, setFdata] = useState({
         email: "",
         password: "",
-    });
+      });
+
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
-    const [errormsg, setErrormsg] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+    const [displayMsg, setDisplayMsg] = useState(null);
 
     const validate = () => {
         let emailError = "";
@@ -33,10 +37,10 @@ const LoginScreen = ({ navigation }) => {
         setPasswordError("");
 
         if (!fdata.email.includes('@')) {
-            emailError = "Invalid Email";
+            emailError = "Please input a valid email.";
         }
         if (!fdata.password) {
-            passwordError = "Invalid Password";
+            passwordError = "Please input a password.";
         }
         if (emailError) {
             setEmailError(emailError);
@@ -48,9 +52,12 @@ const LoginScreen = ({ navigation }) => {
         }
         return true
     };
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
         const isValid = validate();
         if (isValid) {
+
+            console.log("Fields are appropriate", fdata);
+            
             try {
                 const response = await fetch('http://localhost:4000/users/login',  {
                     method: "POST",
@@ -61,15 +68,16 @@ const LoginScreen = ({ navigation }) => {
                 });
 
                 const data = await response.json();
-                console.log(response.status);
 
-                if (response.status === 200) {
-                    // User created successfully
-                    console.log("User log in!", data);
+                if (response.status === 201) {
+                    // User logged in successfully
+                    console.log("User successfully logged in!", data);
+                    setDisplayMsg('Credentials are valid, welcome back' + " " + data.user.firstName + " " + data.user.lastName + '!');
                 } else {
 
                     // Store the error message in state
-                    setErrormsg(data.message);
+                    console.log(data.msg);
+                    setErrorMsg(data.msg);
                 }
             } catch (error) {
                 console.error("Error logging user:", error);
@@ -95,8 +103,9 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.container}>
 
               <Text style={styles.title}>Log in to your _____ account</Text>
-              {emailError ? <Text style={{ color: "red" }}>{emailError}</Text> : null}
-              {passwordError ? <Text style={{ color: "red" }}>{passwordError}</Text> : null}
+              {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
+              {displayMsg ? <Text style={{ color: "green" }}>{displayMsg}</Text> : null}
+              {/* {passwordError ? <Text style={{ color: "red" }}>{passwordError}</Text> : null} */}
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
           <TextInput
@@ -110,6 +119,7 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.field}>Password</Text>
           <TextInput
             style={[styles.textbox, styles.full_width]}
+            //secureTextEntry={true}
             onChangeText={(newText) => setFdata({ ...fdata, password: newText })}
             defaultValue={text}
           />

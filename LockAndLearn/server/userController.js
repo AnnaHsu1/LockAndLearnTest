@@ -10,51 +10,36 @@ const router = express.Router();
 //Handle user sign in
 router.post('/login', async (req, res) => {
     try {
+        console.log(req.body);
         const { email, password } = req.body;
+
         //validate
 
-        if (!email || !password) {
+        if (!email, !password) {
             return res.status(400).json({ msg: "All fields must be filled." });
         }
-
-/*        const user = await User.findOne({ email: email });
-        if (!user) {
-            return res
-                .status(400)
-                .json({ msg: "No account with this email has been registered" });
-        }
-*/
-        //checking password entered and comparing with hashed password in database
-/*        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ msg: "invalid credentials" });
-        }*/
-
+        
         // Call the getUserByEmail function, and return the user object if found
         const user = await getUserByEmail(email);
 
-        // If the email doesn't exit, return a 400 error
+        // If the email doesn't exist
         if (!user) {
-            res.status(400).send(null);
+            return res.status(400).json({ msg: "Account with that email does not exist." });
         }
 
-        // Password check with the input
-        else if (user.password !== password) {
-            res.status(400).send(null);
+        // Password check with the input using bcrypt
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ msg: "Invalid credentials." });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.DB_STRING);
-        res.json({
-            token,
-            user: {
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            }
-        });
+        // Create a session token for the user
+        req.session.userId = user._id;
+        res.status(201).json({ msg: "Login successful.", user: user });
+
     } catch (error) {
-        res.status(500).json({err:error.message})
+        console.error('Error logging user:', error);
+        res.status(500).json({msg: "Unexpected error."})
     }
     
 
@@ -77,9 +62,8 @@ router.post('/login', async (req, res) => {
 })
 
 // Handle user registration
-router.post('/signup', async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
-
     // Extract user data from the request body
     console.log(req.body);
     const { FirstName, LastName, Email, Password, CPassword, DOB} = req.body;
@@ -106,7 +90,7 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ msg: "Invalid date of birth. Date cannot be ahead of today." });
     };
 
-    if (!(Email.includes('@') || Email.includes('.'))) {
+    if (!(Email.includes('@') && Email.includes('.'))) {
         return res.status(400).json({ msg: "Invalid email format." });
     };
 
@@ -122,16 +106,21 @@ router.post('/signup', async (req, res) => {
     console.log(passwordHash);
 
     // Call the createUser function to create a new user
-    const user = await createUser({ FirstName, LastName, Email, passwordHash, DOB});
+    const user = await createUser({
+      FirstName,
+      LastName,
+      Email,
+      Password,
+      DOB,
+    });
 
     // Respond with the newly created user
     res.status(201).json(user);
-
   } catch (error) {
 
     // Handle errors if createUser function fails
-    console.error('Error creating user:', error);
-    res.status(500).json({ error: 'Unable to create user' });
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Unable to create user" });
   }
 });
 
