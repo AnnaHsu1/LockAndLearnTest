@@ -1,6 +1,8 @@
 # SOEN490
 Lock & Learn - Concordia Capstone Project
 
+Lock & Learn empowers parents to control their child's device usage with a lesson-based lock mechanism, ensuring focused study time. This app provides peace of mind by minimizing digital distractions during study sessions. The main features include a locking mechanism, teaching & study material, purchasing of material, and custom configurations. 
+
 # Stakeholder 
 Dr. Ali Akgunduz
 
