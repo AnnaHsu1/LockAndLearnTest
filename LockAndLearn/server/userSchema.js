@@ -22,7 +22,10 @@ const UserSchema = new mongoose.Schema({
   birthDate: {
     type: String,
     required: true,
-  }
+  },
+  filesUploaded: {
+    type: Buffer
+  },
 });
 
 const User = mongoose.model('User', UserSchema, collectionName); // Where the item will be stored in the database

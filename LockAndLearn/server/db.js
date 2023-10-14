@@ -30,5 +30,6 @@ app.use(express.json());
 const userRoutes = require('./userController');
 
 app.use('/users', userRoutes);
+app.use('/files', require("./routes/uploadFileRoutes"));
 
 app.listen(port, () => console.log("Backend server listening on port 4000."));
