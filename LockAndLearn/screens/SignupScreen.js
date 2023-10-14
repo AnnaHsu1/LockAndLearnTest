@@ -60,11 +60,11 @@ const SignupScreen = ({ navigation }) => {
         //Add redirect
       } else {
         
-        // Store the error message in state, if any
+        // Store the error message for display, if any
         setErrormsg(data.msg); 
       }
     } catch (error) {
-      console.error("Submitting error when creating user:", error);
+        console.error("Submitting error when creating user:", error);
     }
 
   };
