@@ -4,10 +4,14 @@
     "description": "Custom package.json for Docker",
     "main": "db.js",
     "dependencies": {
+      "bcrypt": "^5.1.1",
+      "date-fns": "^2.30.0",
       "dotenv": "^16.3.1",
+      "express-session": "^1.17.3",
       "mongodb": "^6.1.0",
       "mongoose": "^7.6.1",
       "cors": "^2.8.5",
+      "jsonwebtoken": "^9.0.2",
       "express": "^4.18.2"
     }
   }
