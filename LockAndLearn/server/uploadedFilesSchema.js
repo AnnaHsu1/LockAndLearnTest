@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const collectionName = "UploadFiles";
 
-//Basic User Schema for a user
+//Basic uploadedFilesSchema for file
 const uploadedFilesSchema = new mongoose.Schema({
   files: {
     type: Array
