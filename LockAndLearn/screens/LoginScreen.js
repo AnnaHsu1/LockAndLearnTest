@@ -30,8 +30,9 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
         setEmailError("");
         setPasswordError("");
 
-        if (!fdata.email.includes('@')) {
+        if (!fdata.email.includes('@') || !fdata.email.includes('.')) {
             emailError = "Please input a valid email.";
+            setEmailError(emailError);
         }
         if (!fdata.password) {
             passwordError = "Please input a password.";
@@ -48,6 +49,8 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
     };
     const handleSubmit = async () => {
         const isValid = validate();
+        console.log(emailError);
+        console.log(passwordError);
         if (isValid) {
 
             console.log("Fields are appropriate", fdata);
@@ -64,11 +67,11 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
                 const data = await response.json();
 
                 if (response.status === 201) {
+                    setErrorMsg(null);
                     // User logged in successfully
                     console.log("User successfully logged in!", data);
                     setDisplayMsg('Credentials are valid, welcome back' + " " + data.user.firstName + " " + data.user.lastName + '!');
                 } else {
-
                     // Store the error message in state
                     console.log(data.msg);
                     setErrorMsg(data.msg);
@@ -97,26 +100,31 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
       <View style={styles.container}>
 
               <Text style={styles.title}>Log in to your _____ account</Text>
-              {errorMsg ? <Text style={{ color: "red" }}>{errorMsg}</Text> : null}
+              
+              {errorMsg ? <Text style={styles.box}>{errorMsg}</Text> : null}
+              
+              
               {displayMsg ? <Text style={{ color: "green" }}>{displayMsg}</Text> : null}
-              {/* {passwordError ? <Text style={{ color: "red" }}>{passwordError}</Text> : null} */}
+             
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
           <TextInput
             style={[styles.textbox, styles.full_width]}
             onChangeText={(newText) => setFdata({ ...fdata, email: newText })}
             defaultValue={text}
-          />
+            />
+            {emailError ? <Text style={{ color: "red" }}>{emailError}</Text> : null}
         </View>
 
         <View style={styles.item}>
           <Text style={styles.field}>Password</Text>
           <TextInput
             style={[styles.textbox, styles.full_width]}
-            //secureTextEntry={true}
+            secureTextEntry={true}
             onChangeText={(newText) => setFdata({ ...fdata, password: newText })}
             defaultValue={text}
-          />
+            />
+            {passwordError ? <Text style={{ color: "red" }}>{passwordError}</Text> : null}
         </View>
 
         <Button
@@ -185,6 +193,13 @@ const useStyles = CreateResponsiveStyle(
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: 1,
+     },
+    box: {
+        borderWidth: 1,
+        borderColor: 'red', 
+        color: 'red',
+        padding: 10, 
+        marginTop: 10,
     },
     full_width: {
       minWidth: '100%',

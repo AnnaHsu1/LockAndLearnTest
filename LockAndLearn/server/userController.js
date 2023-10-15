@@ -7,7 +7,7 @@ const { createUser, getUserByEmail } = require("./userManager.js");
 const router = express.Router();
 
 //Handle user sign in
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     console.log(req.body);
     const { email, password } = req.body;
@@ -67,7 +67,7 @@ router.post('/signup', async (req, res) => {
     const { FirstName, LastName, Email, Password, CPassword, DOB } = req.body;
 
     // Input validations
-    if ((!FirstName, !LastName, !Email, !Password, !CPassword, !DOB)) {
+    if ((!FirstName || !LastName ||!Email || !Password || !CPassword || !DOB)) {
       return res.status(400).json({ msg: "All fields must be filled." });
     }
     if (!(Email.includes("@") && Email.includes("."))) {

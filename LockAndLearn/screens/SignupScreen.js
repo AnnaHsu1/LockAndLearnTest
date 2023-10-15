@@ -23,36 +23,18 @@ const SignupScreen = ({ navigation }) => {
   });
 
     const [errors, setErrors] = useState({
-        FirstName: "",
-        LastName: "",
+        Fields:"",
         Email: "",
         Password: "",
         CPassword: "",
         DOB: "",
     });
-  const [errormsg, setErrormsg] = useState(null);
+  
   const [text, setText] = useState('');
   const [checked, setChecked] = React.useState('first');
 
   const handleSubmit = async () => {
     console.log(fdata);
-
-    if (
-      fdata.FirstName === '' ||
-      fdata.LastName === '' ||
-      fdata.Email === '' ||
-      fdata.Password === '' ||
-      fdata.CPassword === '' ||
-      fdata.DOB === ''
-    ) {
-      setErrormsg('All fields are required.');
-      return;
-    } else {
-      if (fdata.Password != fdata.CPassword) {
-        setErrormsg('The passwords must be the same');
-        return;
-      }
-    }
 
     // Package the user data into a JSON format and ship it to the backend
     try {
@@ -68,8 +50,7 @@ const SignupScreen = ({ navigation }) => {
       
         if (response.status === 201) {
             setErrors({
-                FirstName: "",
-                LastName: "",
+                Fields:"",
                 Email: "",
                 Password: "",
                 CPassword: "",
@@ -80,8 +61,7 @@ const SignupScreen = ({ navigation }) => {
         //Add redirect
         } else {
             setErrors({
-                FirstName: "",
-                LastName: "",
+                Fields: "",
                 Email: "",
                 Password: "",
                 CPassword: "",
@@ -90,7 +70,7 @@ const SignupScreen = ({ navigation }) => {
             if (data.msg === "All fields must be filled.") {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
-                    FirstName: data.msg,
+                    Fields: data.msg,
                 }));
             }
             else if (data.msg === "Invalid email format." || data.msg === "Email is already in use." || data.msg === "Email is already in use.") {
@@ -120,8 +100,6 @@ const SignupScreen = ({ navigation }) => {
             }
             
             
-        // Store the error message for display, if any
-        //setErrormsg(data.msg);
       }
     } catch (error) {
       console.error("Submitting error when creating user:", error);
@@ -135,9 +113,9 @@ const SignupScreen = ({ navigation }) => {
         source={require("../assets/topClouds.png")}
       /> */}
           <View style={styles.container}>
-              {errors.FirstName ? <Text style={{ color: "red" }}>{errors.FirstName}</Text> : null}
+              
         <Text style={styles.title}>Create your account</Text>
-
+           {errors.Fields ?<Text style={styles.box}>{errors.Fields}</Text> : null}
         {/* Email */}
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
@@ -338,6 +316,13 @@ const useStyles = CreateResponsiveStyle(
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: 1,
+     },
+    box: {
+        borderWidth: 1,
+        borderColor: 'red',
+        color: 'red',
+        padding: 10,
+        marginTop: 10,
     },
     full_width: {
       minWidth: '100%',
