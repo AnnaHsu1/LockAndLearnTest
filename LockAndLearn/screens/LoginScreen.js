@@ -112,9 +112,10 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
           <TextInput
+            testID="email-input"
             style={[styles.textbox, styles.full_width]}
+            value={fdata.email}
             onChangeText={(newText) => setFdata({ ...fdata, email: newText })}
-            defaultValue={text}
           />
           {emailError ? <Text style={{ color: 'red' }}>{emailError}</Text> : null}
         </View>
@@ -122,15 +123,17 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
         <View style={styles.item}>
           <Text style={styles.field}>Password</Text>
           <TextInput
+            testID="password-input"
             style={[styles.textbox, styles.full_width]}
             secureTextEntry={true}
+            value={fdata.password}
             onChangeText={(newText) => setFdata({ ...fdata, password: newText })}
-            defaultValue={text}
           />
           {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
         </View>
 
         <Button
+          testID="login-button"
           mode="contained"
           onPress={() => {
             handleSubmit();

@@ -105,7 +105,6 @@ const SignupScreen = ({ navigation }) => {
 
   return (
     <View style={styles.page}>
-
       <View style={styles.container}>
         <Text style={styles.title}>Create your account</Text>
         {errors.Fields ? <Text style={styles.box}>{errors.Fields}</Text> : null}
@@ -210,7 +209,7 @@ const SignupScreen = ({ navigation }) => {
         </View>
 
         <Button
-          testID="signupButton"
+          testID="signup-button"
           mode="contained"
           onPress={() => {
             handleSubmit();
