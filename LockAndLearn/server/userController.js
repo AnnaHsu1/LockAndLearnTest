@@ -70,6 +70,14 @@ router.post('/signup', async (req, res) => {
     if ((!FirstName, !LastName, !Email, !Password, !CPassword, !DOB)) {
       return res.status(400).json({ msg: "All fields must be filled." });
     }
+    if (!(Email.includes("@") && Email.includes("."))) {
+      return res.status(400).json({ msg: "Invalid email format." });
+    }
+
+    const emailCheck = await getUserByEmail(Email);
+    if (emailCheck) {
+      return res.status(400).json({ msg: "Email is already in use." });
+    }
 
     if (Password.length < 6) {
       return res
@@ -90,15 +98,6 @@ router.post('/signup', async (req, res) => {
       return res
         .status(400)
         .json({ msg: "Invalid date of birth. Date cannot be ahead of today." });
-    }
-
-    if (!(Email.includes("@") && Email.includes("."))) {
-      return res.status(400).json({ msg: "Invalid email format." });
-    }
-
-    const emailCheck = await getUserByEmail(Email);
-    if (emailCheck) {
-      return res.status(400).json({ msg: "Email is already in use." });
     }
 
     //Encrypt the input password
