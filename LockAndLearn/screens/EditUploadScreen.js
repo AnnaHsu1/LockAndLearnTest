@@ -8,7 +8,7 @@ const EditUploadScreen = () => {
   const [fileName, setFileName] = useState([]);
   const [files, setFiles] = useState(null);
 
-  // receive file uploaded by user and (to be redirect to server)
+  // function handling with file uploaded by user and its names
   const fileSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === "web") {
@@ -25,10 +25,15 @@ const EditUploadScreen = () => {
     }
   };
 
+  // function deleting files that are selected by user
   const deleteFile = index => {
-    const filesAfterDeletion = fileName.filter((name, i) => i != index);
-    setFileName(filesAfterDeletion);
+    const filesAfterDeletionName = fileName.filter((_name, i) => i !== index);
+    setFileName(filesAfterDeletionName);  
+    const filteredFiles = Array.from(files).filter(file => filesAfterDeletionName.includes(file.name));
+    setFiles(filteredFiles)
   };
+
+  // function to send uploaded files to server
   const uploadFilesHandler = async () => {
     const fileData = new FormData();
     console.log(files);
@@ -72,9 +77,9 @@ const EditUploadScreen = () => {
             console.log(fileType);
             return (
               <View key={index}>
-                <View key={index} style={[styles.rows, fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? styles.successRowUpload : styles.errorRowUpload]}>
+                <View key={index} style={[fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? styles.successRowUpload : styles.errorRowUpload]}>
                   <View style={styles.rowUpload}>
-                    <TextInput style={styles.errorTextbox} onChangeText={newText => setFileName(newText)} defaultValue={name} />
+                    <TextInput style={styles.errorTextbox} onChangeText={newText => setFileName(newText)} value={name} />
                     <TouchableOpacity testID="deleteButton" style={styles.buttonDelete} onPress={() => deleteFile(index)}>
                       {fileType == "pdf" || fileType == "doc" || fileType == "docx" || fileType == "txt" ? <Image style={{ height: 20, width: 20 }} source={require("../assets/bxs_x-circle.png")} /> : <Image style={{ height: 20, width: 20 }} source={require("../assets/trash.png")} />}
                     </TouchableOpacity>
@@ -90,8 +95,8 @@ const EditUploadScreen = () => {
           })}
           {/* display button to confirm: uploading files */}
           <View style={{ alignItems: "center", paddingLeft: "10%" }}>
-            <TouchableOpacity style={[styles.buttonUpload, { marginTop: "3%" }, { marginBottom: "3%" }]} testID="uploadButton">
-              <Text style={styles.buttonText} onPress={uploadFilesHandler}>
+            <TouchableOpacity onPress={uploadFilesHandler} style={[styles.buttonUpload, { marginTop: "3%" }, { marginBottom: "3%" }]} testID="uploadButton">
+              <Text style={styles.buttonText}>
                 Upload
               </Text>
             </TouchableOpacity>
@@ -155,9 +160,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginTop: "0.5%",
     marginBottom: "0.5%"
-  },
-  rows: {
-    // marginBottom:"1%",
   },
   rowUpload: {
     flexDirection: "row",
