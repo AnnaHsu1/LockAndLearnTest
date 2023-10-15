@@ -1,13 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Image,
-  navigation,
-} from "react-native";
+import { Text, TextInput, View, Image, navigation } from "react-native";
 import { RadioButton, Button } from "react-native-paper";
 import {
   widthPercentageToDP as wp,
@@ -39,12 +32,11 @@ const SignupScreen = ({ navigation }) => {
   const [checked, setChecked] = React.useState("first");
 
   const handleSubmit = async () => {
-
     console.log(fdata);
 
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {  
+      const response = await fetch("http://localhost:4000/users/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,16 +51,14 @@ const SignupScreen = ({ navigation }) => {
         console.log("User created successfully in database!", data);
         //Add redirect
       } else {
-        
         // Store the error message for display, if any
-        setErrormsg(data.msg); 
+        setErrormsg(data.msg);
       }
     } catch (error) {
-        console.error("Submitting error when creating user:", error);
+      console.error("Submitting error when creating user:", error);
     }
-
   };
-  
+
   return (
     <View style={styles.page}>
       {/* <Image
@@ -83,9 +73,10 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
           <TextInput
+            testID="email-input"
             style={[styles.textbox, styles.full_width]}
+            value={fdata.Email}
             onChangeText={(newText) => setFdata({ ...fdata, Email: newText })}
-            defaultValue={text}
           />
         </View>
 
@@ -94,7 +85,9 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.half_width}>
             <Text style={styles.field}>First Name</Text>
             <TextInput
+              testID="first-name-input"
               style={styles.textbox}
+              value={fdata.FirstName}
               onChangeText={(newText) =>
                 setFdata({ ...fdata, FirstName: newText })
               }
@@ -105,7 +98,9 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.half_width}>
             <Text style={styles.field}>Last Name</Text>
             <TextInput
+              testID="last-name-input"
               style={[styles.textbox, styles.half_width]}
+              value={fdata.LastName}
               onChangeText={(newText) =>
                 setFdata({ ...fdata, LastName: newText })
               }
@@ -152,7 +147,9 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.item}>
           <Text style={styles.field}>Birth Date (YYYY-MM-DD)</Text>
           <TextInput
+            testID="birthdate-input"
             style={[styles.textbox, styles.full_width]}
+            value={fdata.DOB}
             onChangeText={(newText) => setFdata({ ...fdata, DOB: newText })}
             defaultValue={text}
           />
@@ -162,8 +159,10 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.item}>
           <Text style={styles.field}>Password</Text>
           <TextInput
+            testID="password-input"
             style={[styles.textbox, styles.full_width]}
             secureTextEntry={true}
+            value={fdata.Password}
             onChangeText={(newText) =>
               setFdata({ ...fdata, Password: newText })
             }
@@ -175,8 +174,10 @@ const SignupScreen = ({ navigation }) => {
         <View style={styles.item}>
           <Text style={styles.field}>Confirm password</Text>
           <TextInput
+            testID="cpassword-input"
             style={[styles.textbox, styles.full_width]}
             secureTextEntry={true}
+            value={fdata.CPassword}
             onChangeText={(newText) =>
               setFdata({ ...fdata, CPassword: newText })
             }
@@ -185,6 +186,7 @@ const SignupScreen = ({ navigation }) => {
         </View>
 
         <Button
+          testID="signupButton"
           mode="contained"
           onPress={() => {
             handleSubmit();
@@ -194,7 +196,11 @@ const SignupScreen = ({ navigation }) => {
           SIGN UP
         </Button>
 
-        <Text style={styles.link} onPress={() => navigation.navigate("Login")}>
+        <Text
+          testID="login-link"
+          style={styles.link}
+          onPress={() => navigation.navigate("Login")}
+        >
           Already have an account? Sign in
         </Text>
         <StatusBar style="auto" />
