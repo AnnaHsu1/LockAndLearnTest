@@ -60,7 +60,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Handle user registration
-router.post("/signup", async (req, res) => {
+router.post('/signup', async (req, res) => {
   try {
     // Extract user data from the request body
     console.log(req.body);
@@ -120,8 +120,8 @@ router.post("/signup", async (req, res) => {
     res.status(201).json(user);
   } catch (error) {
     // Handle errors if createUser function fails
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Unable to create user" });
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'Unable to create user' });
   }
 });
 

@@ -12,13 +12,12 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("Connected to MongoDB Atlas.");
+    console.log('Connected to MongoDB Atlas.');
   })
   .catch((e) => console.log(e.message));
 
 // Export the mongoose connection for use in other modules
-module.exports = mongoose;  
-
+module.exports = mongoose;
 
 //Routing Logic for backend server
 
@@ -40,4 +39,4 @@ const userRoutes = require('./userController');
 
 app.use('/users', userRoutes);
 
-app.listen(port, () => console.log("Backend server listening on port 4000."));
+app.listen(port, () => console.log('Backend server listening on port 4000.'));

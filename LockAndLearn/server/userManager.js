@@ -58,6 +58,3 @@ exports.getUserByEmail = async function getUserByEmail(email) {
         throw error;
     }
 };
-
-
-
