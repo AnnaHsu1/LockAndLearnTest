@@ -168,8 +168,8 @@ const styles = StyleSheet.create({
   },
   successRowUpload: {
     borderRadius: 10,
-    borderColor: "#61A750",
-    borderStyle: "solid",
+    borderColor: '#61A750',
+    borderStyle: 'solid',
     borderWidth: 1,
     marginBottom: "1%"
   },

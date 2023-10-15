@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const collectionName = "User";
+const mongoose = require('mongoose');
+const collectionName = 'User';
 
 //Basic User Schema for a user
 const UserSchema = new mongoose.Schema({
@@ -23,12 +23,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  filesUploaded: {
-    type: Buffer
-  },
 });
 
 const User = mongoose.model('User', UserSchema, collectionName); // Where the item will be stored in the database
 module.exports = User; // Export the User model
-
-

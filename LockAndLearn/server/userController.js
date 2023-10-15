@@ -1,15 +1,14 @@
 const express = require('express');
-const { createUser } = require('./userManager');
+const { createUser } = require('./userManager.js');
 const router = express.Router();
 // const jwt = require('jsonwebtoken');
 
 // Handle user registration
 router.post('/signup', async (req, res) => {
   try {
-
     // Extract user data from the request body
     console.log(req.body);
-    const { FirstName, LastName, Email, Password, DOB} = req.body;
+    const { FirstName, LastName, Email, Password, DOB } = req.body;
 
     /* // Generate a JWT token
     const token = jwt.sign(
@@ -21,11 +20,16 @@ router.post('/signup', async (req, res) => {
     ); */
 
     // Call the createUser function to create a new user
-    const user = await createUser({ FirstName, LastName, Email, Password, DOB});
+    const user = await createUser({
+      FirstName,
+      LastName,
+      Email,
+      Password,
+      DOB,
+    });
 
     // Respond with the newly created user
     res.status(201).json(user);
-
   } catch (error) {
     // Handle errors if createUser function fails
     console.error('Error creating user:', error);
