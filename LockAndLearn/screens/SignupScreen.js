@@ -22,14 +22,14 @@ const SignupScreen = ({ navigation }) => {
     DOB: '',
   });
 
-    const [errors, setErrors] = useState({
-        Fields:"",
-        Email: "",
-        Password: "",
-        CPassword: "",
-        DOB: "",
-    });
-  
+  const [errors, setErrors] = useState({
+    Fields: '',
+    Email: '',
+    Password: '',
+    CPassword: '',
+    DOB: '',
+  });
+
   const [text, setText] = useState('');
   const [checked, setChecked] = React.useState('first');
 
@@ -47,75 +47,69 @@ const SignupScreen = ({ navigation }) => {
       });
 
       const data = await response.json();
-      
-        if (response.status === 201) {
-            setErrors({
-                Fields:"",
-                Email: "",
-                Password: "",
-                CPassword: "",
-                DOB: "",
-            });
+
+      if (response.status === 201) {
+        setErrors({
+          Fields: '',
+          Email: '',
+          Password: '',
+          CPassword: '',
+          DOB: '',
+        });
         // User created successfully
-        console.log("User created successfully in database!", data);
+        console.log('User created successfully in database!', data);
         //Add redirect
-        } else {
-            setErrors({
-                Fields: "",
-                Email: "",
-                Password: "",
-                CPassword: "",
-                DOB: "",
-            });
-            if (data.msg === "All fields must be filled.") {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    Fields: data.msg,
-                }));
-            }
-            else if (data.msg === "Invalid email format." || data.msg === "Email is already in use." || data.msg === "Email is already in use.") {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  Email: data.msg,
-              }));
-            }
-            else if (data.msg === "Password must be at least 6 characters long.") {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    Password: data.msg,
-                }));
-            }
-            else if (data.msg === "Passwords must match.") {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    CPassword: data.msg,
-                }));
-            }
-            
-            else if (data.msg === "Invalid date of birth. Date cannot be ahead of today.") {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    DOB: data.msg,
-                }));
-            }
-            
-            
+      } else {
+        setErrors({
+          Fields: '',
+          Email: '',
+          Password: '',
+          CPassword: '',
+          DOB: '',
+        });
+        if (data.msg === 'All fields must be filled.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Fields: data.msg,
+          }));
+        } else if (
+          data.msg === 'Invalid email format.' ||
+          data.msg === 'Email is already in use.' ||
+          data.msg === 'Email is already in use.'
+        ) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Email: data.msg,
+          }));
+        } else if (data.msg === 'Password must be at least 6 characters long.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Password: data.msg,
+          }));
+        } else if (data.msg === 'Passwords must match.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            CPassword: data.msg,
+          }));
+        } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            DOB: data.msg,
+          }));
+        }
       }
     } catch (error) {
-      console.error("Submitting error when creating user:", error);
+      console.error('Submitting error when creating user:', error);
     }
   };
 
   return (
     <View style={styles.page}>
-      {/* <Image
-        style={styles.topCloud}
-        source={require("../assets/topClouds.png")}
-      /> */}
-          <View style={styles.container}>
-              
+
+      <View style={styles.container}>
         <Text style={styles.title}>Create your account</Text>
-           {errors.Fields ?<Text style={styles.box}>{errors.Fields}</Text> : null}
+        {errors.Fields ? <Text style={styles.box}>{errors.Fields}</Text> : null}
+
         {/* Email */}
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
@@ -124,8 +118,8 @@ const SignupScreen = ({ navigation }) => {
             style={[styles.textbox, styles.full_width]}
             value={fdata.Email}
             onChangeText={(newText) => setFdata({ ...fdata, Email: newText })}
-                  />
-            {errors.Email ? <Text style={{ color: "red" }}>{errors.Email}</Text> : null}
+          />
+          {errors.Email ? <Text style={{ color: 'red' }}>{errors.Email}</Text> : null}
         </View>
 
         {/* First name and Last name*/}
@@ -136,10 +130,7 @@ const SignupScreen = ({ navigation }) => {
               testID="first-name-input"
               style={styles.textbox}
               value={fdata.FirstName}
-              onChangeText={(newText) =>
-                setFdata({ ...fdata, FirstName: newText })
-              }
-              defaultValue={text}
+              onChangeText={(newText) => setFdata({ ...fdata, FirstName: newText })}
             />
           </View>
 
@@ -149,10 +140,7 @@ const SignupScreen = ({ navigation }) => {
               testID="last-name-input"
               style={[styles.textbox, styles.half_width]}
               value={fdata.LastName}
-              onChangeText={(newText) =>
-                setFdata({ ...fdata, LastName: newText })
-              }
-              defaultValue={text}
+              onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
             />
           </View>
         </View>
@@ -191,25 +179,21 @@ const SignupScreen = ({ navigation }) => {
             style={[styles.textbox, styles.full_width]}
             value={fdata.DOB}
             onChangeText={(newText) => setFdata({ ...fdata, DOB: newText })}
-            defaultValue={text}
-            />
-            {errors.DOB ? <Text style={{ color: "red" }}>{errors.DOB}</Text> : null}
+          />
+          {errors.DOB ? <Text style={{ color: 'red' }}>{errors.DOB}</Text> : null}
         </View>
 
         {/* Password */}
         <View style={styles.item}>
-                  <Text style={styles.field}>Password</Text>
+          <Text style={styles.field}>Password</Text>
           <TextInput
             testID="password-input"
             style={[styles.textbox, styles.full_width]}
             secureTextEntry={true}
             value={fdata.Password}
-            onChangeText={(newText) =>
-              setFdata({ ...fdata, Password: newText })
-            }
-            defaultValue={text}
+            onChangeText={(newText) => setFdata({ ...fdata, Password: newText })}
           />
-        {errors.Password ? <Text style={{ color: "red" }}>{errors.Password}</Text> : null}
+          {errors.Password ? <Text style={{ color: 'red' }}>{errors.Password}</Text> : null}
         </View>
 
         {/* Confirm password */}
@@ -220,12 +204,9 @@ const SignupScreen = ({ navigation }) => {
             style={[styles.textbox, styles.full_width]}
             secureTextEntry={true}
             value={fdata.CPassword}
-            onChangeText={(newText) =>
-              setFdata({ ...fdata, CPassword: newText })
-            }
-            defaultValue={text}
-                  />
-        {errors.CPassword ? <Text style={{ color: "red" }}>{errors.CPassword}</Text> : null}
+            onChangeText={(newText) => setFdata({ ...fdata, CPassword: newText })}
+          />
+          {errors.CPassword ? <Text style={{ color: 'red' }}>{errors.CPassword}</Text> : null}
         </View>
 
         <Button
@@ -239,11 +220,7 @@ const SignupScreen = ({ navigation }) => {
           SIGN UP
         </Button>
 
-        <Text
-          testID="login-link"
-          style={styles.link}
-          onPress={() => navigation.navigate("Login")}
-        >
+        <Text testID="login-link" style={styles.link} onPress={() => navigation.navigate('Login')}>
           Already have an account? Sign in
         </Text>
         <StatusBar style="auto" />
@@ -316,13 +293,13 @@ const useStyles = CreateResponsiveStyle(
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: 1,
-     },
+    },
     box: {
-        borderWidth: 1,
-        borderColor: 'red',
-        color: 'red',
-        padding: 10,
-        marginTop: 10,
+      borderWidth: 1,
+      borderColor: 'red',
+      color: 'red',
+      padding: 10,
+      marginTop: 10,
     },
     full_width: {
       minWidth: '100%',
