@@ -1,7 +1,6 @@
 import { describe, expect, test, beforeAll } from '@jest/globals';
 import { render, fireEvent, act } from '@testing-library/react-native';
 import SignUpScreen from '../screens/SignupScreen';
-import { mock } from 'node:test';
 const fetchMock = require('jest-fetch-mock');
 fetchMock.enableMocks();
 
