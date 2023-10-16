@@ -4,7 +4,6 @@ import SignUpScreen from '../screens/SignupScreen';
 import { mock } from 'node:test';
 const fetchMock = require('jest-fetch-mock');
 fetchMock.enableMocks();
-const FormData = require('form-data');
 
 const mockUser = {
   FirstName: 'testFirst',
