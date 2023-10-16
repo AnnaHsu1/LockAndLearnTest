@@ -97,7 +97,7 @@ router.post('/signup', async (req, res) => {
     if (!isValid) {
       return res
         .status(400)
-        .json({ msg: "Invalid date of birth. Date cannot be ahead of today." });
+        .json({ msg: "Invalid date of birth." });
     }
 
     //Encrypt the input password
