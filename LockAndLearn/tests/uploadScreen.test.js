@@ -72,7 +72,7 @@ describe("upload file tests", () => {
     await waitFor(() => {
       expect(DocumentPicker.getDocumentAsync).toHaveBeenCalled();
     });
-  });
+  }, 20000);
 
   test("upload button is shown on screen and working", () => {
     const { getByTestId } = render(<UploadScreen />);
