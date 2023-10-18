@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-const express = require('express');
+const mongoose = require("mongoose");
+const express = require("express");
+const session = require('express-session');
 const router = express.Router();
 const cors = require('cors');
 require('dotenv').config();
@@ -19,12 +20,20 @@ mongoose
 module.exports = mongoose;
 
 //Routing Logic for backend server
+
+const secretKey = process.env.SESSION_SECRET // Secret key for session stored in .env file
+
 const app = express();
 app.use(cors());
+app.use(express.json());
+app.use(session({
+  secret: secretKey,
+  resave: false,
+  saveUninitialized: true,
+}));
 
 const port = 4000;
 app.set('port', port);
-app.use(express.json());
 
 const userRoutes = require('./userController');
 
