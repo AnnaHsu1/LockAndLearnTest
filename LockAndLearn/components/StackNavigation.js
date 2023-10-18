@@ -14,21 +14,9 @@ const StackNavigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: "Welcome" }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ title: "Login" }}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={SignupScreen}
-          options={{ title: "Sign up" }}
-        />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Welcome' }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+        <Stack.Screen name="Signup" component={SignupScreen} options={{ title: 'Sign up' }} />
         <Stack.Screen
           name="Upload"
           component={UploadScreen}
