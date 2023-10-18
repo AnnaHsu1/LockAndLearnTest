@@ -13,7 +13,7 @@ jest.mock('@react-navigation/native', () => ({
   
 
 describe('LockingSessionBeginsScreen', () => {
-    it('should render static components', () => {
+    it('should render static components intially', () => {
         const { getByTestId, queryByText } = render(<LockingSessionBeginsScreen />);
 
         // checks that all text that should be visible is rendered
@@ -24,6 +24,10 @@ describe('LockingSessionBeginsScreen', () => {
 
         // this should not yet be visible
         expect(queryByText("Enter Password:")).toBeNull();
+ 
+    });
+    it('should render End Session components after clicking button', () => {
+        const { getByTestId, queryByText } = render(<LockingSessionBeginsScreen />);
 
         // simulate a click on the "End Session" button
         fireEvent.press(getByTestId('endSessionButton'));

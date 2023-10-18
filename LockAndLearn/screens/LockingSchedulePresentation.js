@@ -23,25 +23,26 @@ const LockingSchedulePresentation = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>9:41</Text>
-        <TouchableOpacity style={styles.endSessionButton} onPress={() => setModalVisible(true)}>
+        <Text style={styles.headerText} testID="header-time">9:41</Text>
+        <TouchableOpacity style={styles.endSessionButton} onPress={() => setModalVisible(true)} testID="end-session-button">
           <Text style={styles.endSessionText}>End Session</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.lessonContent}>
-        <Text style={styles.lessonTitle}>Lesson Schedule</Text>
-        <Text style={styles.subject}>Math</Text>
-        <Text style={styles.duration}>⏱️ 1h40</Text>
-        <Text style={styles.details}>• Additions</Text>
-        <Text style={styles.details}>• Subtractions</Text>
-        <Text style={styles.details}>• Quiz (30 questions)</Text>
-        <Text style={styles.passCriteria}>
+        <Text style={styles.lessonTitle} testID="lesson-title">Lesson Schedule</Text>
+        <Text style={styles.subject} testID="subject-text">Math</Text>
+        <Text style={styles.duration} testID="subject-time">⏱️ 1h40</Text>
+        <Text style={styles.details} testID="subject-title1">• Additions</Text>
+        <Text style={styles.details} testID="subject-title2">• Subtractions</Text>
+        <Text style={styles.details} testID="subject-quiz">• Quiz (30 questions)</Text>
+        <Text style={styles.passCriteria} testID="subject-passCriteria">
           The quiz must be passed with a grade of 75% or higher
         </Text>
         <TouchableOpacity
             style={styles.startLearningButton}
             onPress={() => navigation.navigate('StudyMaterial')}
+            testID="start-learning-button"
         >
             <Text style={styles.startLearningText}>Start Learning</Text>
         </TouchableOpacity>
@@ -54,10 +55,11 @@ const LockingSchedulePresentation = () => {
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>End Session</Text>
-            <Text style={styles.modalText}>Enter Password:</Text>
+            <Text style={styles.modalTitle} testID="modal-title">End Session</Text>
+            <Text style={styles.modalText} testID="enterPasswordText">Enter Password:</Text>
             <TextInput
               style={[styles.modalInput, { borderColor: passwordBorderColor }]}
+              testID="passwordInput"
               secureTextEntry={true}
               value={password}
               onChangeText={(text) => {
