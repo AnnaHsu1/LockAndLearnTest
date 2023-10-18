@@ -8,8 +8,8 @@ const LockingSchedulePresentation = () => {
 
   const closeSession = () => {
     if (password === '1234') {
-      // Handle session end logic here
-      setModalVisible(false);
+      // Navigate to the "Home" screen when the password is "1234"
+      navigation.navigate("Home");
     } else {
       setPasswordBorderColor('red');
     }
