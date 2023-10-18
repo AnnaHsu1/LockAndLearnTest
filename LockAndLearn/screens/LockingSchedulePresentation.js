@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, TextInput } from 'react-native';
 
+// Import the navigation actions and hooks from React Navigation
+import { useNavigation } from "@react-navigation/native";
+
 const LockingSchedulePresentation = () => {
+    const navigation = useNavigation();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordBorderColor, setPasswordBorderColor] = useState('#407BFF');
@@ -34,8 +39,11 @@ const LockingSchedulePresentation = () => {
         <Text style={styles.passCriteria}>
           The quiz must be passed with a grade of 75% or higher
         </Text>
-        <TouchableOpacity style={styles.startLearningButton}>
-          <Text style={styles.startLearningText}>Start Learning</Text>
+        <TouchableOpacity
+            style={styles.startLearningButton}
+            onPress={() => navigation.navigate('StudyMaterial')}
+        >
+            <Text style={styles.startLearningText}>Start Learning</Text>
         </TouchableOpacity>
         {/* <Image
           source={require('../assets/learning_illustration.png')}
