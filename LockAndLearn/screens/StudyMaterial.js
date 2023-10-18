@@ -1,12 +1,28 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
 
 const StudyMaterial = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordBorderColor, setPasswordBorderColor] = useState('#407BFF');
+
+  const closeSession = () => {
+    if (password === '1234') {
+        navigation.navigate("Home");
+    } else {
+      // Handle incorrect password
+      setPasswordBorderColor('red'); // Change border color to red
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>9:41</Text>
-        <TouchableOpacity style={styles.endSessionButton}>
+        <TouchableOpacity
+          style={styles.endSessionButton}
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={styles.endSessionText}>End Session</Text>
         </TouchableOpacity>
       </View>
@@ -18,6 +34,43 @@ const StudyMaterial = () => {
           <Text style={styles.takeQuizText}>Take Quiz</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Enter Password:</Text>
+            <TextInput
+              style={[styles.modalInput, { borderColor: passwordBorderColor }]}
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                setPasswordBorderColor('#407BFF'); // Reset border color when typing
+              }}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={closeSession}
+              >
+                <Text style={styles.modalButtonText}>Enter</Text>
+              </TouchableOpacity>
+              {/* Make sure to add Spacer component if used */}
+              {/* <Spacer width={10} /> */}
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -71,6 +124,47 @@ const styles = StyleSheet.create({
     color: '#3E5CAA',
     fontSize: 18,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 30,
+    width: '80%',
+    height: '40%',
+    borderRadius: 10,
+    justifyContent: 'center',
+  },
+  modalText: {
+    marginBottom: 10,
+    color: '#3E5CAA',
+  },
+  modalInput: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#407BFF',
+    borderRadius: 5,
+    padding: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    backgroundColor: '#407BFF',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+  },
+  modalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
+  },
 });
 
 export default StudyMaterial;
+
