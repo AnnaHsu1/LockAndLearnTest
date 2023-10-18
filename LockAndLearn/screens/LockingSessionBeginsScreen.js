@@ -40,25 +40,25 @@ const LockingSessionBeginsScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.centeredContent}>
-        <Text style={styles.logoText}>It's time to</Text>
+        <Text style={styles.logoText} testID="itsTimeText">It's time to</Text>
         <Spacer height={15} />
-        <Text style={styles.logoTextBig}>LOCK & LEARN !</Text>
+        <Text style={styles.logoTextBig} testID="lockAndLearnText">LOCK & LEARN !</Text>
         <Spacer height={20} />
         <Image
           source={require("../assets/sessionbeginslogo.png")} // Placeholder image
-          style={styles.logo}
+          style={styles.logo} testID="sessionBeginsLogo"
         />
       </View>
       <TouchableOpacity
         style={styles.customButton}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setModalVisible(true)} testID="endSessionButton"
       >
         <Text style={styles.customButtonText}>End Session</Text>
       </TouchableOpacity>
       <Modal
         animationType="slide"
         transparent={true}
-        visible={modalVisible}
+        visible={modalVisible} testID="endSessionModal"
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -66,12 +66,14 @@ const LockingSessionBeginsScreen = () => {
             <Image
             source={require("../assets/profile.png")} // Profile image
             style={styles.profilePic}
+            testID="profileImage"
             />
             <Text style={styles.modalTitle}>End Session</Text>
           </View>
-             <Text style={styles.modalText}>Enter Password:</Text>
+             <Text style={styles.modalText} testID="enterPasswordText">Enter Password:</Text>
             <TextInput
               style={[styles.modalInput, { borderColor: passwordBorderColor }]} // Apply border color dynamically
+              testID="passwordInput"
               secureTextEntry={true}
               value={password}
               onChangeText={(text) => {
