@@ -8,6 +8,7 @@ import EditUploadScreen from "../screens/EditUploadScreen";
 import SignupScreen from "../screens/SignupScreen";
 import LockingSessionBeginsScreen from "../screens/LockingSessionBeginsScreen";
 import LockingSchedulePresentation from "../screens/LockingSchedulePresentation";
+import StudyMaterial from "../screens/StudyMaterial";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,11 @@ const StackNavigation = () => {
         name="LockingSchedulePresentation"
         component={LockingSchedulePresentation}
         options={{ title: "LockingSchedulePresentation" }}
+        /> 
+        <Stack.Screen
+        name="StudyMaterial"
+        component={StudyMaterial}
+        options={{ title: "StudyMaterial" }}
         /> 
       </Stack.Navigator>
     </NavigationContainer>
