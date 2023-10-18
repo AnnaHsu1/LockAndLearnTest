@@ -26,7 +26,7 @@ const LockingSessionBeginsScreen = () => {
 
   useEffect(() => {
     // Use useEffect to run the navigation code after a delay
-    const delay = 10000; // 10 seconds in milliseconds
+    const delay = 5000; // 5 seconds in milliseconds
 
     const timer = setTimeout(() => {
       // Navigate to the "LockingSchedulePresentation" screen after the delay
