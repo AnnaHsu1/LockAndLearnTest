@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, TextInput, View, Modal, Image, TouchableOpacity } from "react-native";
 
 // Import the navigation actions and hooks from React Navigation
