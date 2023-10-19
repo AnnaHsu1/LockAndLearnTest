@@ -1,11 +1,14 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/HomeScreen';
-import LoginScreen from '../screens/LoginScreen';
-import UploadScreen from '../screens/UploadScreen';
-import EditUploadScreen from '../screens/EditUploadScreen';
-import SignupScreen from '../screens/SignupScreen';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeScreen from "../screens/HomeScreen";
+import LoginScreen from "../screens/LoginScreen";
+import UploadScreen from "../screens/UploadScreen";
+import EditUploadScreen from "../screens/EditUploadScreen";
+import SignupScreen from "../screens/SignupScreen";
+import LockingSessionBeginsScreen from "../screens/LockingSessionBeginsScreen";
+import LockingSchedulePresentation from "../screens/LockingSchedulePresentation";
+import StudyMaterial from "../screens/StudyMaterial";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,13 +22,28 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Upload"
           component={UploadScreen}
-          options={{ title: 'Upload Study Material' }}
+          options={{ title: "Upload Study Material" }}
+        />      
+        <Stack.Screen
+        name="Uploading"
+        component={EditUploadScreen}
+        options={{ title: "Uploading files" }}
         />
         <Stack.Screen
-          name="Uploading"
-          component={EditUploadScreen}
-          options={{ title: 'Uploading files' }}
-        />
+        name="Locking"
+        component={LockingSessionBeginsScreen}
+        options={{ title: "Locking" }}
+        />  
+        <Stack.Screen
+        name="LockingSchedulePresentation"
+        component={LockingSchedulePresentation}
+        options={{ title: "LockingSchedulePresentation" }}
+        /> 
+        <Stack.Screen
+        name="StudyMaterial"
+        component={StudyMaterial}
+        options={{ title: "StudyMaterial" }}
+        /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
