@@ -18,20 +18,20 @@ const StudyMaterial = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>9:41</Text>
+        <Text style={styles.headerText} testID="lessonTime">9:41</Text>
         <TouchableOpacity
           style={styles.endSessionButton}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.endSessionText}>End Session</Text>
+          <Text style={styles.endSessionText} testID="endSessionButton">End Session</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.studyContent}>
-        <Text style={styles.lessonTitle}>Additions</Text>
-        <Text style={styles.studyDetail}>1 + 1 = 2</Text>
+        <Text style={styles.lessonTitle} testID="lesonTitle">Additions</Text>
+        <Text style={styles.studyDetail} testID="lesonContent">1 + 1 = 2</Text>
         <TouchableOpacity style={styles.takeQuizButton}>
-          <Text style={styles.takeQuizText}>Take Quiz</Text>
+          <Text style={styles.takeQuizText} testID="takeQuizButton">Take Quiz</Text>
         </TouchableOpacity>
       </View>
 
@@ -42,9 +42,10 @@ const StudyMaterial = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Enter Password:</Text>
+            <Text style={styles.modalText} testID="enterPasswordText">Enter Password:</Text>
             <TextInput
               style={[styles.modalInput, { borderColor: passwordBorderColor }]}
+              testID="passwordInput"
               secureTextEntry={true}
               value={password}
               onChangeText={(text) => {
