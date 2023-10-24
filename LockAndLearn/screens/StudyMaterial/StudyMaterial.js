@@ -8,7 +8,7 @@ const StudyMaterial = () => {
 
   const closeSession = () => {
     if (password === '1234') {
-        navigation.navigate("Home");
+      navigation.navigate('Home');
     } else {
       // Handle incorrect password
       setPasswordBorderColor('red'); // Change border color to red
@@ -18,31 +18,36 @@ const StudyMaterial = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText} testID="lessonTime">9:41</Text>
-        <TouchableOpacity
-          style={styles.endSessionButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.endSessionText} testID="endSessionButton">End Session</Text>
+        <Text style={styles.headerText} testID="lessonTime">
+          9:41
+        </Text>
+        <TouchableOpacity style={styles.endSessionButton} onPress={() => setModalVisible(true)}>
+          <Text style={styles.endSessionText} testID="endSessionButton">
+            End Session
+          </Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.studyContent}>
-        <Text style={styles.lessonTitle} testID="lesonTitle">Additions</Text>
-        <Text style={styles.studyDetail} testID="lesonContent">1 + 1 = 2</Text>
+        <Text style={styles.lessonTitle} testID="lesonTitle">
+          Additions
+        </Text>
+        <Text style={styles.studyDetail} testID="lesonContent">
+          1 + 1 = 2
+        </Text>
         <TouchableOpacity style={styles.takeQuizButton}>
-          <Text style={styles.takeQuizText} testID="takeQuizButton">Take Quiz</Text>
+          <Text style={styles.takeQuizText} testID="takeQuizButton">
+            Take Quiz
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-      >
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText} testID="enterPasswordText">Enter Password:</Text>
+            <Text style={styles.modalText} testID="enterPasswordText">
+              Enter Password:
+            </Text>
             <TextInput
               style={[styles.modalInput, { borderColor: passwordBorderColor }]}
               testID="passwordInput"
@@ -54,18 +59,12 @@ const StudyMaterial = () => {
               }}
             />
             <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={closeSession}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={closeSession}>
                 <Text style={styles.modalButtonText}>Enter</Text>
               </TouchableOpacity>
               {/* Make sure to add Spacer component if used */}
               {/* <Spacer width={10} /> */}
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setModalVisible(false)}
-              >
+              <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalButtonText}>Cancel</Text>
               </TouchableOpacity>
             </View>
@@ -168,4 +167,3 @@ const styles = StyleSheet.create({
 });
 
 export default StudyMaterial;
-

@@ -224,7 +224,7 @@ const SignupScreen = ({ navigation }) => {
         </Text>
         <StatusBar style="auto" />
       </View>
-      <Image style={styles.bottomCloud} source={require('../assets/bottomClouds.png')} />
+      <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
     </View>
   );
 };

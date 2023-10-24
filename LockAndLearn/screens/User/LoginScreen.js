@@ -146,7 +146,7 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
         <Text style={styles.link}>Forgot password?</Text>
         <StatusBar style="auto" />
       </View>
-      <Image style={styles.bottomCloud} source={require('../assets/bottomClouds.png')} />
+      <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
     </View>
   );
 };
