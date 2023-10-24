@@ -9,6 +9,7 @@ import SignupScreen from '../screens/User/SignupScreen';
 import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsScreen';
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
+import LandingPage from '../screens/User/LandingPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,11 @@ const StackNavigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Welcome' }} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: 'Lock & Learn', headerShown: false }}
+        />
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
         <Stack.Screen name="Signup" component={SignupScreen} options={{ title: 'Sign up' }} />
         <Stack.Screen
@@ -43,6 +48,11 @@ const StackNavigation = () => {
           name="StudyMaterial"
           component={StudyMaterial}
           options={{ title: 'StudyMaterial' }}
+        />
+        <Stack.Screen
+          name="UserLandingPage"
+          component={LandingPage}
+          options={{ title: 'LandingPage' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

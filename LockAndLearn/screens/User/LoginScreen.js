@@ -103,7 +103,7 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Text style={styles.title}>Log in to your _____ account</Text>
+        <Text style={styles.title}>Log in to your account</Text>
 
         {errorMsg ? <Text style={styles.box}>{errorMsg}</Text> : null}
 
@@ -135,9 +135,7 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
         <Button
           testID="login-button"
           mode="contained"
-          onPress={() => {
-            handleSubmit();
-          }}
+          onPress={() => navigation.navigate('UserLandingPage')}
           style={[styles.button, styles.full_width]}
         >
           LOG IN
