@@ -18,6 +18,7 @@ const LandingPage = ({ navigation, setToken }) => {
       <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
       <Button title="Uploading" onPress={() => navigation.navigate('Uploading')} />
       <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
+      <Button title="Log out" onPress={() => navigation.navigate('Home')} />
       <StatusBar style="auto" />
     </View>
   );
