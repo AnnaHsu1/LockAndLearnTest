@@ -7,59 +7,55 @@ import {
 import { Button } from 'react-native-paper';
 
 const HomeScreen = ({ navigation }) => {
-  const { windowDimension, setWindowDimension } = useState(Dimensions.get('window'));
-  useEffect(() => {
-    const updateDimensions = () => {
-      setWindowDimension(Dimensions.get('window'));
-      console.log(windowDimension.width, windowDimension.height);
-    };
+  const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
 
-    Dimensions.addEventListener('change', updateDimensions);
+  const updateDimensions = () => {
+    setWindowDimensions(Dimensions.get('window'));
+  };
 
-    return () => {
-      Dimensions.removeEventListener('change', updateDimensions);
-    };
-  }, []);
+  Dimensions.addEventListener('change', updateDimensions);
 
   return (
     <View style={styles.test}>
-      <ImageBackground
-        source={require('../assets/homescreen_web.png')}
-        style={[
-          styles.backgroundImage,
-          // { width: windowDimension.width, height: windowDimension.height },
-        ]}
-      >
-        <View style={styles.container}>
-          <View>
-            <Text style={styles.title}>
-              Welcome to <br></br> Lock & Learn
-            </Text>
-            <Button
-              mode="contained"
-              style={styles.button}
-              textColor="#3E5CAA"
-              onPress={() => navigation.navigate('Signup')}
-            >
-              <Text>Tutor</Text>
-            </Button>
-            <Button
-              mode="contained"
-              style={styles.button}
-              textColor="#3E5CAA"
-              onPress={() => navigation.navigate('Signup')}
-            >
-              Parent
-            </Button>
-            <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
-              Already have an account? Sign in
-            </Text>
-            <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
-              Go to Landing Page
-            </Text>
+      {windowDimensions.width > 1200 ? (
+        <ImageBackground
+          source={require('../assets/homescreen_web.png')}
+          style={[
+            styles.backgroundImage,
+            { width: windowDimensions.width, height: windowDimensions.height },
+          ]}
+        >
+          <View style={styles.container}>
+            <View>
+              <Text style={styles.title}>
+                Welcome to <br></br> Lock & Learn
+              </Text>
+              <Button
+                mode="contained"
+                style={styles.button}
+                textColor="#3E5CAA"
+                onPress={() => navigation.navigate('Signup')}
+              >
+                <Text>Tutor</Text>
+              </Button>
+              <Button
+                mode="contained"
+                style={styles.button}
+                textColor="#3E5CAA"
+                onPress={() => navigation.navigate('Signup')}
+              >
+                Parent
+              </Button>
+              <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
+                Already have an account? Sign in
+              </Text>
+              <Text style={styles.link} onPress={() => navigation.navigate('Landing')}>
+                Go to Landing Page
+              </Text>
+            </View>
           </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
+      ) : null}
     </View>
   );
 };
