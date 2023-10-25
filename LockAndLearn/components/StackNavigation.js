@@ -54,6 +54,16 @@ const StackNavigation = () => {
           component={LandingPage}
           options={{ title: 'LandingPage' }}
         />
+        <Stack.Screen
+          name="SelectWorkPackageScreen"
+          component={SelectWorkPackageScreen}
+          options={{ title: 'SelectWorkPackageScreen' }}
+        />        
+        <Stack.Screen
+          name="QuestionsOverviewScreen"
+          component={QuestionsOverviewScreen}
+          options={{ title: 'QuestionsOverviewScreen' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
