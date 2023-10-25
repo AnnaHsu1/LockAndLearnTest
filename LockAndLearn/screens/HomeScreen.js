@@ -1,5 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, navigation, ImageBackground } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, navigation, ImageBackground, Dimensions } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -7,49 +7,70 @@ import {
 import { Button } from 'react-native-paper';
 
 const HomeScreen = ({ navigation }) => {
-  return (
-    <ImageBackground
-      source={require('../assets/homescreen_web.png')}
-      style={styles.backgroundImage}
-    >
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.title}>
-            Welcome to <br></br> Lock & Learn
-          </Text>
-          <Button
-            mode="contained"
-            style={styles.button}
-            textColor="#3E5CAA"
-            onPress={() => navigation.navigate('Signup')}
-          >
-            <Text>Tutor</Text>
-          </Button>
-          <Button
-            mode="contained"
-            style={styles.button}
-            textColor="#3E5CAA"
-            onPress={() => navigation.navigate('Signup')}
-          >
-            Parent
-          </Button>
-          <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
-            Already have an account? Sign in
-          </Text>
-        </View>
+  const { windowDimension, setWindowDimension } = useState(Dimensions.get('window'));
+  useEffect(() => {
+    const updateDimensions = () => {
+      setWindowDimension(Dimensions.get('window'));
+      console.log(windowDimension.width, windowDimension.height);
+    };
 
-        {/* <Button title="Log in" onPress={() => navigation.navigate('Login')} />
-        <Button title="Sign up" onPress={() => navigation.navigate('Signup')} />
-        <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
-        <Button title="Uploading" onPress={() => navigation.navigate('Uploading')} />
-        <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
-        <StatusBar style="auto" /> */}
-      </View>
-    </ImageBackground>
+    Dimensions.addEventListener('change', updateDimensions);
+
+    return () => {
+      Dimensions.removeEventListener('change', updateDimensions);
+    };
+  }, []);
+
+  return (
+    <View style={styles.test}>
+      <ImageBackground
+        source={require('../assets/homescreen_web.png')}
+        style={[
+          styles.backgroundImage,
+          // { width: windowDimension.width, height: windowDimension.height },
+        ]}
+      >
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.title}>
+              Welcome to <br></br> Lock & Learn
+            </Text>
+            <Button
+              mode="contained"
+              style={styles.button}
+              textColor="#3E5CAA"
+              onPress={() => navigation.navigate('Signup')}
+            >
+              <Text>Tutor</Text>
+            </Button>
+            <Button
+              mode="contained"
+              style={styles.button}
+              textColor="#3E5CAA"
+              onPress={() => navigation.navigate('Signup')}
+            >
+              Parent
+            </Button>
+            <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
+              Already have an account? Sign in
+            </Text>
+            <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
+              Go to Landing Page
+            </Text>
+          </View>
+        </View>
+      </ImageBackground>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  test: {
+    flex: 1,
+    width: wp('100%'),
+    height: hp('100%'),
+    backgroundColor: '#4F85FF',
+  },
   container: {
     position: 'absolute',
     width: wp('30%'),
@@ -62,10 +83,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     resizeMode: 'cover',
-    paddingLeft: 50,
-    backgroundColor: '#4F85FF',
-    width: wp('100%'),
-    height: hp('100%'),
+    flex: 1,
   },
   title: {
     color: '#3E5CAA',
