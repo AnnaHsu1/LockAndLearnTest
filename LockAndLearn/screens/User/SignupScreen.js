@@ -59,6 +59,7 @@ const SignupScreen = ({ navigation }) => {
         // User created successfully
         console.log('User created successfully in database!', data);
         //Add redirect
+        navigation.navigate('UserLandingPage');
       } else {
         setErrors({
           Fields: '',
