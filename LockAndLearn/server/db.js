@@ -24,12 +24,16 @@ module.exports = mongoose;
 const secretKey = process.env.SESSION_SECRET // Secret key for session stored in .env file
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:19006', // Replace with your frontend origin
+    credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+}));
 app.use(express.json());
 app.use(session({
   secret: secretKey,
   resave: false,
   saveUninitialized: true,
+  cookie: { maxAge: 3600000 }, // 1 hour session expiration
 }));
 
 const port = 4000;

@@ -6,6 +6,25 @@ const User = require("./userSchema.js");
 const { createUser, getUserByEmail } = require("./userManager.js");
 const router = express.Router();
 
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+    console.log("authenticating");
+    if (req.session.userId) {
+        // User is authenticated, proceed to the next middleware or route handler
+        return next();
+    } else {
+        // User is not authenticated, redirect to the sign-in page
+        return res.redirect('/signin');
+    }
+};
+
+// Protected route for landing page
+router.get('/UserLandingPage', isAuthenticated, (req, res) => {
+    console.log("came here");
+    // Render your landing page template or send any response you need
+    res.send('Welcome to the landing page!');
+});
+
 //Handle user sign in
 router.post('/login', async (req, res) => {
   try {
@@ -35,7 +54,10 @@ router.post('/login', async (req, res) => {
     }
 
     // Create a session token for the user
-    req.session.userId = user._id;
+      req.session.userId = user._id;
+      res.render("UserLandingPage");
+    console.log("log")
+    console.log(req.session.userId);
     res.status(201).json({ msg: "Login successful.", user: user });
   } catch (error) {
     console.error("Error logging user:", error);
@@ -115,6 +137,13 @@ router.post('/signup', async (req, res) => {
       DOB,
     });
 
+    if (user) {
+        req.session.userId = user._id;
+        console.log("test");
+        console.log(req.session.userId);
+        //res.redirect('UserLandingPage');
+    }
+    
     // Respond with the newly created user
     res.status(201).json(user);
   } catch (error) {
@@ -122,6 +151,24 @@ router.post('/signup', async (req, res) => {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'Unable to create user' });
   }
+});
+
+// Handle user registration
+router.post('/logout', async (req, res) => {
+    try {
+        console.log("logout");
+        // delete session object
+        req.session.destroy(function (err) {
+            if (err) {
+                return next(err);
+            } else {
+                console.log("success");
+            }
+        });
+    } catch (error) {
+        console.error('Error logging out user:', error);
+        res.status(500).json({ error: 'Unable to logout' });
+    }
 });
 
 module.exports = router;
