@@ -77,6 +77,7 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
               data.user.lastName +
               '!'
           );
+          navigation.navigate('UserLandingPage');
         } else {
           // Store the error message in state
           console.log(data.msg);
@@ -135,7 +136,9 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
         <Button
           testID="login-button"
           mode="contained"
-          onPress={() => navigation.navigate('UserLandingPage')}
+          onPress={() => {
+            handleSubmit();
+          }}
           style={[styles.button, styles.full_width]}
         >
           LOG IN
