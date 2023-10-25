@@ -49,7 +49,7 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                 Already have an account? Sign in
               </Text>
-              <Text style={styles.link} onPress={() => navigation.navigate('Landing')}>
+              <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
                 Go to Landing Page
               </Text>
             </View>

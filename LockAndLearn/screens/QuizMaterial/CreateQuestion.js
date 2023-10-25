@@ -6,6 +6,7 @@ const CreateQuestion = () => {
     const navigation = useNavigation();
     const [questionText, setQuestionText] = useState('');
     const [questionType, setQuestionType] = useState('');
+    const [inputs, setInputs] = useState(['']);
     const [answer, setAnswer] = useState('');
     const [isTrue, setIsTrue] = useState(false);
     const [multipleChoiceAnswers, setMultipleChoiceAnswers] = useState({
@@ -15,7 +16,7 @@ const CreateQuestion = () => {
         D: { text: '', isCorrect: false },
     });
 
-    const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Another Type"];
+    const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Fill In The Blanks", "Another Type"];
 
     const handleCreateQuestion = () => {
         // Handle creating the question, including questionText, questionType, and answer or True/False value
@@ -31,6 +32,12 @@ const CreateQuestion = () => {
         updatedAnswers[key].isCorrect = true;
         setMultipleChoiceAnswers(updatedAnswers);
     };
+    const addInput = () => {
+        setInputs(prevInputs => [...prevInputs, '']);
+    }
+    const removeInput = (index) => {
+        setInputs(prevInputs => prevInputs.filter((_, idx) => idx !== index));
+    }
 
     return (
         <ImageBackground
@@ -105,7 +112,32 @@ const CreateQuestion = () => {
                         ))}
                     </View>
                 )}
-                {questionType !== "True or False" && questionType !== "Multiple Choice Question" && (
+                {questionType === "Fill In The Blanks" && (
+                    <>
+                    <Text>Enter words you want to be blank here:</Text>
+                    {inputs.map((input, index) => (
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <TextInput
+                                style={styles.answerInput}
+                                placeholder="Enter Word"
+                                value={input}
+                                onChangeText={(text) => {
+                                    const newInputs = [...inputs];
+                                    newInputs[index] = text;
+                                    setInputs(newInputs);
+                                }}
+                            />
+                            <TouchableOpacity style={styles.removeButton} onPress={() => removeInput(index)}>
+                                <Text style={styles.buttonText}>-</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                    <TouchableOpacity style={styles.addButton} onPress={addInput}>
+                        <Text style={styles.buttonText}>+</Text>
+                    </TouchableOpacity>
+                    </>
+                )}
+                {questionType !== "True or False" && questionType !== "Multiple Choice Question" && questionType !== "Fill In The Blanks" && (
                     <TextInput
                         style={styles.answerInput}
                         placeholder="Enter the answer here"
@@ -214,6 +246,28 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    addButton: {
+        backgroundColor: '#407BFF', 
+        width: 30, 
+        height: 30, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        borderRadius: 15, 
+        margin: 5
+    },
+    removeButton: {
+        backgroundColor: 'red', 
+        width: 25, 
+        height: 25, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        borderRadius: 12.5, 
+        marginLeft: 10
+    },
+    buttonText: {
+        color: 'white', 
+        fontWeight: 'bold'
     },
 });
 
