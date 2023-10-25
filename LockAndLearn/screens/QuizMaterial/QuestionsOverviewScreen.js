@@ -36,10 +36,7 @@ const QuestionsOverviewScreen = () => {
                     <TouchableOpacity
                         key={question.id}
                         onPress={() => {
-                            // Navigate to QuestionsOverviewScreen
-                            navigation.navigate('QuestionsOverviewScreen', {
-                                questionId: question.id, // pass id
-                            });
+                            //goes on a page/modal where we can edit the question
                         }}
                     >
                         <Text style={styles.questionItem}>{question.name}</Text>
@@ -50,7 +47,10 @@ const QuestionsOverviewScreen = () => {
                 <TouchableOpacity
                     style={styles.createQuestionButton}
                     onPress={() => {
-
+                        // Navigate to the CreateQuestion screen
+                        navigation.navigate('CreateQuestion', {
+                            // You can pass any additional data or parameters if needed
+                        });
                     }}
                 >
                     <Text style={styles.createQuestionButtonText}>Create Question</Text>
