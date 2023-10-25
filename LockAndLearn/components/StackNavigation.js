@@ -10,6 +10,8 @@ import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsS
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
+import SelectWorkPackageScreen from '../screens/QuizMaterial/SelectWorkPackageScreen';
+import QuestionsOverviewScreen from '../screens/QuizMaterial/QuestionsOverviewScreen';
 
 const Stack = createNativeStackNavigator();
 

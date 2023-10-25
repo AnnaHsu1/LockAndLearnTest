@@ -18,8 +18,7 @@ const LandingPage = ({ navigation, setToken }) => {
       <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
       <Button title="Uploading" onPress={() => navigation.navigate('Uploading')} />
       <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
-      <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
-      <Button title="Quiz Material" onPress={() => navigation.navigate('QuizMaterial')} />
+      <Button title="Quiz Material" onPress={() => navigation.navigate('SelectWorkPackageScreen')} />
       <StatusBar style="auto" />
     </View>
   );
