@@ -64,10 +64,10 @@ router.post('/signup', async (req, res) => {
     try {
         // Extract user data from the request body
         console.log(req.body);
-        const { FirstName, LastName, Email, Account, Password, CPassword, DOB } = req.body;
+        const { FirstName, LastName, Email, isParent, Password, CPassword, DOB } = req.body;
 
         // Input validations
-        if ((!FirstName || !LastName || !Email || !Password || !CPassword || !DOB || !Account)) {
+        if ((!FirstName || !LastName || !Email || !Password || !CPassword || !DOB || !isParent)) {
             return res.status(400).json({ msg: "All fields must be filled." });
         }
         if (!(Email.includes("@") && Email.includes("."))) {
@@ -110,7 +110,7 @@ router.post('/signup', async (req, res) => {
         const user = await createUser({
             FirstName,
             LastName,
-            Account,
+            isParent,
             Email,
             passwordHash,
             DOB,

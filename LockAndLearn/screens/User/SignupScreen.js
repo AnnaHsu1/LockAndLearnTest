@@ -15,7 +15,7 @@ const SignupScreen = ({ navigation }) => {
     const [fdata, setFdata] = useState({
         FirstName: '',
         LastName: '',
-        Account: '',
+        isParent: null,
         Email: '',
         Password: '',
         CPassword: '',
@@ -37,7 +37,7 @@ const SignupScreen = ({ navigation }) => {
     useEffect(() => {
         setFdata((prevFdata) => ({
             ...prevFdata,
-            Account: checked,
+            isParent: checked,
         }));
     }, [checked]);
 
