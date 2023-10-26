@@ -1,7 +1,6 @@
 const express = require("express");
 const { parseISO, isBefore } = require("date-fns");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const User = require("./userSchema.js");
 const { createUser, getUserByEmail } = require("./userManager.js");
 const router = express.Router();
@@ -9,7 +8,7 @@ const router = express.Router();
 // Middleware to check if the user is authenticated
 const isAuthenticated = (req, res, next) => {
     console.log("authenticating");
-    if (req.session.userId) {
+    if (req.session.sessionID) {
         // User is authenticated, proceed to the next middleware or route handler
         return next();
     } else {
@@ -17,6 +16,19 @@ const isAuthenticated = (req, res, next) => {
         return res.redirect('/signin');
     }
 };
+
+// Check user's authentication status
+router.get('/authCheck', (req, res) => {
+  if (req.cookies.userSession) {
+    // User is authenticated, respond with an authentication status
+    res.json({ isAuthenticated: true });
+    console.log('Cookie ID:' + req.cookies.userSession);
+  } else {
+    // User is not authenticated, respond with an authentication status
+    res.json({ isAuthenticated: false });
+    console.log("No req.session.sessionID to be found.");
+  }
+});
 
 // Protected route for landing page
 router.get('/UserLandingPage', isAuthenticated, (req, res) => {
@@ -53,32 +65,22 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials." });
     }
 
-    // Create a session token for the user
-      req.session.userId = user._id;
-      res.render("UserLandingPage");
-    console.log("log")
-    console.log(req.session.userId);
-    res.status(201).json({ msg: "Login successful.", user: user });
+  const sessionUser = {
+    id: user._id,
+    email: user.email,
+  };
+
+   req.session.user = sessionUser;
+   req.session.sessionID = user._id.toString();
+
+   res.cookie('userSession', req.session.sessionID, { httpOnly: true });
+   res.status(201).json({ msg: "Login successful.", user: user });
+
+
   } catch (error) {
     console.error("Error logging user:", error);
     res.status(500).json({ msg: "Unexpected error." });
   }
-
-  /*   else if (user.password === password) {
-
-        const token = jwt.sign(
-            { email: email },
-            process.env.TOKEN_KEY,
-            {
-                expiresIn: "2h",
-            }
-        );
-
-        res.status(200).send({
-            ...user,
-            token: token
-        })
-    }*/
 });
 
 // Handle user registration
@@ -137,15 +139,29 @@ router.post('/signup', async (req, res) => {
       DOB,
     });
 
+    // TO FIX // A session can't be created upon signup  as of right now
     if (user) {
-        req.session.userId = user._id;
-        console.log("test");
-        console.log(req.session.userId);
-        //res.redirect('UserLandingPage');
+
+        req.session.userId = user._id.toString();
+
+        console.log("User created now we create session:" + user.firstName);
+
+        const sessionUser = {
+          id: user._id,
+          email: user.email,
+        };
+      
+         req.session.user = sessionUser;
+         req.session.sessionID = user._id.toString();
+
+         console.log("Session ID:" + req.session.sessionID);
+      
     }
-    
-    // Respond with the newly created user
-    res.status(201).json(user);
+
+    // Respond with a cookie containing the sessionID and the user.
+    res.cookie('userSession', "yes", { httpOnly: true });
+    res.status(201).json({ msg: "Signup successful.", user: user });
+
   } catch (error) {
     // Handle errors if createUser function fails
     console.error('Error creating user:', error);

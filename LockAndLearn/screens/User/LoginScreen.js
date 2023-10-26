@@ -8,9 +8,11 @@ import {
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
 
-const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
+
+const LoginScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const api_url = '192.168.1.44'; // TO MODIFY
 
   const [text, setText] = useState('');
   const [fdata, setFdata] = useState({
@@ -55,7 +57,7 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
       console.log('Fields are appropriate', fdata);
 
       try {
-        const response = await fetch('http://localhost:4000/users/login', {
+        const response = await fetch('http://'+ api_url +':4000/users/login', {
           method: 'POST',
           credentials: 'include', // Ensure credentials are included
           headers: {

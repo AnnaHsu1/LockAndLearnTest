@@ -10,11 +10,12 @@ import {
 const LandingPage = ({ navigation, setToken }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const api_url = '192.168.1.44'; // TO MODIFY
     const handleLogout = async () => {
         try {
             console.log("loggin out");
             // Make a POST request to the logout endpoint using fetch
-            const response = await fetch('http://localhost:4000/users/logout', {
+            const response = await fetch('http://'+ api_url + ':4000/users/logout', {
                 method: 'POST',
                 credentials: 'include', // Include credentials (cookies) in the request
             });

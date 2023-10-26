@@ -11,6 +11,7 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 const SignupScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const api_url = '192.168.1.44'; // TO MODIFY
 
   const [fdata, setFdata] = useState({
     FirstName: '',
@@ -38,7 +39,7 @@ const SignupScreen = ({ navigation }) => {
 
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {
+      const response = await fetch('http://'+ api_url + ':4000/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
