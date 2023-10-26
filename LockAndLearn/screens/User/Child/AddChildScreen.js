@@ -54,7 +54,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
         console.log(fdata);
         // Package the user data into a JSON format and ship it to the backend
         try {
-            const response = await fetch('http://localhost:4000/users/addchild', {
+            const response = await fetch('http://localhost:4000/childs/addchild', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
