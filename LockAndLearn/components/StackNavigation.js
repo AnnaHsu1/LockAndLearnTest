@@ -59,7 +59,7 @@ const StackNavigation = () => {
         <Stack.Screen
           name="ParentAccount"
           component={ParentAccount}
-          options={{ title: 'Parent Account' }}
+          options={{ title: 'Manage children' }}
         />
         <Stack.Screen
           name="AddChild"

@@ -12,10 +12,63 @@ const AddChildScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
 
+  const [text, setText] = useState('');
+
+  const [fdata, setFdata] = useState({
+    FirstName: '',
+    LastName: '',
+    Grade: '',
+  });
+
+  const addChild = () => {};
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
         <Text style={styles.title}>Add child</Text>
+
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={styles.half_width}>
+            <Text style={styles.field}>First Name</Text>
+            <TextInput
+              testID="first-name-input"
+              style={[styles.textbox, styles.half_width]}
+              value={fdata.FirstName}
+              onChangeText={(newText) => setFdata({ ...fdata, FirstName: newText })}
+            />
+          </View>
+
+          <View style={styles.half_width}>
+            <Text style={styles.field}>Last Name</Text>
+            <TextInput
+              testID="last-name-input"
+              style={[styles.textbox, styles.half_width]}
+              value={fdata.LastName}
+              onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
+            />
+          </View>
+        </View>
+
+        <View style={styles.input}>
+          <Text style={styles.field}>Grade</Text>
+          <TextInput
+            testID="grade-input"
+            style={[styles.textbox, styles.full_width]}
+            value={fdata.Grade}
+            onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}
+          />
+        </View>
+
+        <Button
+          testID="signup-button"
+          mode="contained"
+          onPress={() => {
+            addChild();
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.child}>Add Child</Text>
+        </Button>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
@@ -47,13 +100,15 @@ const useStyles = CreateResponsiveStyle(
       color: '#ffffff',
       backgroundColor: '#4F85FF',
       borderRadius: 10,
-      marginTop: 10,
-      height: 78,
-      justifyContent: 'center',
-      alignItems: 'flex-start',
+    },
+    field: {
+      color: '#ADADAD',
     },
     full_width: {
       minWidth: '100%',
+    },
+    half_width: {
+      width: wp('40%'),
     },
     bottomCloud: {
       display: 'flex',
@@ -62,15 +117,20 @@ const useStyles = CreateResponsiveStyle(
       height: 250,
       resizeMode: 'stretch',
     },
-    text: {
-      color: '#ADADAD',
-      fontSize: 20,
+    input: {
+      display: 'flex',
+      width: '100%',
+      paddingVertical: 10,
     },
-    child: {
-      paddingLeft: 10,
-      textAlign: 'center',
-      justifyContent: 'center',
-      fontSize: 20,
+    textbox: {
+      display: 'flex',
+      minHeight: 30,
+      borderRadius: 10,
+      borderColor: '#407BFF',
+      borderStyle: 'solid',
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderWidth: 1,
     },
   },
   {
@@ -84,6 +144,9 @@ const useStyles = CreateResponsiveStyle(
         height: 300,
         resizeMode: 'stretch',
         flex: 1,
+      },
+      half_width: {
+        width: 225,
       },
     },
   }
