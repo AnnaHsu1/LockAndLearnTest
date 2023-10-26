@@ -8,46 +8,14 @@ import {
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
 
-const ParentAccountScreen = ({ navigation, setToken }) => {
+const AddChildScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
-
-  const [children, setChildren] = useState([
-    { name: 'Andrew' },
-    { name: 'Vanessa' },
-    { name: 'John' },
-  ]);
-
-  const selectChild = (child) => {
-    console.log("Child's name: ", child);
-  };
 
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Text style={styles.title}>Welcome back </Text>
-        <Text style={styles.text}>Select a child </Text>
-        {children.map((child) => (
-          <Button
-            testID="login-button"
-            mode="contained"
-            onPress={() => {
-              selectChild(child.name);
-            }}
-            style={[styles.button, styles.full_width]}
-            key={child.name}
-          >
-            <Icon source="account-circle" color="#fff" size={20} />
-            <Text style={styles.child}>{child.name}</Text>
-          </Button>
-        ))}
-        <StatusBar style="auto" />
-        <Text
-          style={[styles.text, { color: '#4F85FF', textAlign: 'center', paddingTop: 20 }]}
-          onPress={() => navigation.navigate('AddChild')}
-        >
-          + Add Child
-        </Text>
+        <Text style={styles.title}>Add child</Text>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
@@ -121,4 +89,4 @@ const useStyles = CreateResponsiveStyle(
   }
 );
 
-export default ParentAccountScreen;
+export default AddChildScreen;
