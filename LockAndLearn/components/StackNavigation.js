@@ -10,6 +10,7 @@ import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsS
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
+import ParentAccount from '../screens/User/ParentAccountScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,11 @@ const StackNavigation = () => {
           name="UserLandingPage"
           component={LandingPage}
           options={{ title: 'LandingPage' }}
+        />
+        <Stack.Screen
+            name="ParentAccount"
+            component={ParentAccount}
+            options={{ title: 'ParentAccount' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
