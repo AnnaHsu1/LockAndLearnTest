@@ -50,8 +50,30 @@ const AddChildScreen = ({ navigation, setToken }) => {
     LastName: '',
     Grade: '',
   });
+    const addChild = async () => {
+        console.log(fdata);
+        // Package the user data into a JSON format and ship it to the backend
+        try {
+            const response = await fetch('http://localhost:4000/users/addchild', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(fdata), // Send user data as JSON
+            });
 
-  const addChild = () => {};
+            const data = await response.json();
+
+            if (response.status === 201) {
+         
+                // User created successfully
+                console.log('child added successfully in database!', data);
+                //Add redirect
+            }
+        } catch (error) {
+            console.error('Submitting error when adding child:', error);
+        }
+    };
 
   return (
     <View style={styles.page}>
