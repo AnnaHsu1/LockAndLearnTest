@@ -10,7 +10,11 @@ const UserSchema = new mongoose.Schema({
   lastName: {
     type: String,
     required: true,
-  },
+    },
+  isParent: {
+        type: Boolean,
+        required: true,
+    },
   email: {
     type: String,
       required: true,
