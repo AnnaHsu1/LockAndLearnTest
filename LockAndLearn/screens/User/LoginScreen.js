@@ -77,7 +77,11 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
               data.user.lastName +
               '!'
           );
-          navigation.navigate('ParentAccount');
+          if (data.user.isParent) {
+            navigation.navigate('ParentAccount');
+          } else {
+            navigation.navigate('UserLandingPage');
+          }
         } else {
           // Store the error message in state
           console.log(data.msg);
