@@ -1,5 +1,6 @@
 const { createChild } = require("../childManager.js");
-
+const express = require("express");
+const router = express.Router();
 // Handle user registration
 router.post('/addchild', async (req, res) => {
     try {

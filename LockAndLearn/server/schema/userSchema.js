@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const collectionName = 'User';
+const Child = require('./childSchema.js')
 
 //Basic User Schema for a user
 const UserSchema = new mongoose.Schema({
@@ -32,21 +33,6 @@ const UserSchema = new mongoose.Schema({
     discriminatorKey: 'role',
 });
 
-const childSchema = new mongoose.Schema({
-    // Define the schema for child information
-    firstName: {
-        type: String,
-        required: true,
-    },
-    lastName: {
-        type: String,
-        required: true,
-    },
-    grade: {
-        type: String,
-        required: true,
-    }
-});
 
 const parentSchema = new mongoose.Schema({
     // Fields for parent information

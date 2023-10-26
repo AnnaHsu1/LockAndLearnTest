@@ -2,7 +2,7 @@ const express = require("express");
 const { parseISO, isBefore } = require("date-fns");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../schema/userSchema.js");
+const User = require("../schema/childSchema.js");
 const { createUser, getUserByEmail } = require("../userManager.js");
 const router = express.Router();
 

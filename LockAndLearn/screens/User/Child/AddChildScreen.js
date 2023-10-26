@@ -50,11 +50,13 @@ const AddChildScreen = ({ navigation, setToken }) => {
     LastName: '',
     Grade: '',
   });
+
+  const [errors, setErrors] = useState('');
     const addChild = async () => {
         console.log(fdata);
         // Package the user data into a JSON format and ship it to the backend
         try {
-            const response = await fetch('http://localhost:4000/childs/addchild', {
+            const response = await fetch('http://localhost:4000/child/addchild', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,10 +67,16 @@ const AddChildScreen = ({ navigation, setToken }) => {
             const data = await response.json();
 
             if (response.status === 201) {
-         
+                setErrors("");
                 // User created successfully
                 console.log('child added successfully in database!', data);
                 //Add redirect
+                navigation.navigate('ParentAccount');
+            } else {
+                
+                if (data.msg === 'All fields must be filled.') {
+                    setErrors(data.msg);
+                }
             }
         } catch (error) {
             console.error('Submitting error when adding child:', error);
@@ -79,7 +87,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
     <View style={styles.page}>
       <View style={styles.container}>
         <Text style={styles.title}>Add child</Text>
-
+         {errors ? <Text style={styles.box}>{errors}</Text> : null}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={styles.half_width}>
             <Text style={styles.field}>First Name</Text>
@@ -162,6 +170,12 @@ const useStyles = CreateResponsiveStyle(
     },
     half_width: {
       width: wp('40%'),
+    },
+    box: {
+        borderWidth: 1,
+        borderColor: 'red',
+        color: 'red',
+        padding: 10,
     },
     bottomCloud: {
       display: 'flex',

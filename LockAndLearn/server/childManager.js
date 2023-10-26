@@ -1,4 +1,4 @@
-const Child = require('./schema/userSchema.js'); // Import the User model from UserSchema.js
+const Child = require('./schema/childSchema.js'); // Import the User model from UserSchema.js
 
 // Function to create a user within DB
 exports.createChild = async function createChild(fdata) {
