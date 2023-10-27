@@ -20,19 +20,19 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
+import { IPV4 } from '../components/APIUrl';
 
 const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
-  const api_url = '192.168.1.44'; // TO MODIFY
+  const api_url = IPV4; // TO MODIFY
 
   //Checks for any cookies stored in the browser
   useEffect(() => {
-
     // Make an API request to check authentication status
-    fetch('http://'+ api_url + ':4000/users/authCheck', {
+    fetch('http://' + api_url + ':4000/users/authCheck', {
       method: 'GET',
       credentials: 'include', // Include cookies in the request
     })
@@ -43,7 +43,7 @@ const HomeScreen = ({ navigation }) => {
           throw new Error('User is not authenticated');
         }
       })
-      .then(data => {
+      .then((data) => {
         // Check the authentication status from the parsed data
         const isAuthenticated = data.isAuthenticated;
         setIsAuthenticated(isAuthenticated);
