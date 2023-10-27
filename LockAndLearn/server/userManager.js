@@ -1,7 +1,7 @@
 //const User = require('./schema/userSchema.js'); // Import the User model from UserSchema.js
 const User = require('./schema/userSchema.js');
-const Parent = require('./schema/parentSchema.js');
-const Teacher = require('./schema/teacherSchema.js');
+//const Parent = require('./schema/parentSchema.js');
+//const Teacher = require('./schema/teacherSchema.js');
 
 
 // Function to create a user within DB

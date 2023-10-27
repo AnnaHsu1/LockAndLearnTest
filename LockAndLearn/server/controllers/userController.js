@@ -170,18 +170,19 @@ router.post('/signup', async (req, res) => {
     }
   });
 
-// Handle user registration
+// Handle user logout
 router.post('/logout', async (req, res) => {
     try {
-        console.log("logout");
-        // delete session object
-        req.session.destroy(function (err) {
-            if (err) {
-                return next(err);
-            } else {
-                console.log("success");
-            }
-        });
+
+        //console.log("Initial cookie value: " + req.cookies.userSession );
+
+        // Clear the user's cookie
+        res.clearCookie('userSession', { httpOnly: true });
+        res.status(201).json({ msg: "Logout successful."});
+
+        // Delete session from the DB
+        req.session = null;
+        
     } catch (error) {
         console.error('Error logging out user:', error);
         res.status(500).json({ error: 'Unable to logout' });
