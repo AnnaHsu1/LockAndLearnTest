@@ -140,7 +140,7 @@ router.post('/signup', async (req, res) => {
         DOB,
       });
   
-      // TO FIX // A session can't be created upon signup  as of right now
+      // TO FIX // A session can't be created upon signup as of right now
       if (user) {
   
           req.session.userId = user._id.toString();
@@ -159,10 +159,6 @@ router.post('/signup', async (req, res) => {
         
       }
   
-      // Respond with a cookie containing the sessionID and the user.
-      res.cookie('userSession', "yes", { httpOnly: true });
-      res.status(201).json({ msg: "Signup successful.", user: user });
-  
     } catch (error) {
       // Handle errors if createUser function fails
       console.error('Error creating user:', error);
@@ -174,14 +170,14 @@ router.post('/signup', async (req, res) => {
 router.post('/logout', async (req, res) => {
     try {
 
-        //console.log("Initial cookie value: " + req.cookies.userSession );
+        // Delete session from the DB // DOESN'T WORK
+        req.session.destroy();
 
         // Clear the user's cookie
         res.clearCookie('userSession', { httpOnly: true });
+
         res.status(201).json({ msg: "Logout successful."});
 
-        // Delete session from the DB
-        req.session = null;
         
     } catch (error) {
         console.error('Error logging out user:', error);
