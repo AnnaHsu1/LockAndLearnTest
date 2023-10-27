@@ -28,6 +28,12 @@ exports.createUser = async function createUser(fdata) {
             // If user is a teacher, create a teacher instance (if needed)
             const teacher = new Teacher({
                 // Teacher-specific fields can be added here
+                firstName: FirstName,
+                lastName: LastName,
+                isParent: isParent,
+                email: Email,
+                password: passwordHash,
+                birthDate: DOB, // Need to Convert DOB to a Date object
             });
 
             teacher.save()
