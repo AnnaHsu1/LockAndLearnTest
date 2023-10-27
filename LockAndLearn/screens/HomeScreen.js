@@ -25,7 +25,6 @@ const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
-<<<<<<< HEAD
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
   const api_url = '192.168.1.44'; // TO MODIFY
 
@@ -54,8 +53,6 @@ const HomeScreen = ({ navigation }) => {
       });
   }, []);
 
-=======
->>>>>>> 70cb6779ba3f770e04e0bd6d95c8d0a7ded2b03d
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));
   };
