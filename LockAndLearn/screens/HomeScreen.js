@@ -1,5 +1,20 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, navigation, ImageBackground, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  navigation,
+  ImageBackground,
+  Dimensions,
+} from 'react-native';
+import {
+  CreateResponsiveStyle,
+  DEVICE_SIZES,
+  maxSize,
+  minSize,
+  useDeviceSize,
+} from 'rn-responsive-styles';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -7,7 +22,10 @@ import {
 import { Button } from 'react-native-paper';
 
 const HomeScreen = ({ navigation }) => {
+  const styles = useStyles();
+  const deviceSize = useDeviceSize();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
+<<<<<<< HEAD
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
   const api_url = '192.168.1.44'; // TO MODIFY
 
@@ -36,6 +54,8 @@ const HomeScreen = ({ navigation }) => {
       });
   }, []);
 
+=======
+>>>>>>> 70cb6779ba3f770e04e0bd6d95c8d0a7ded2b03d
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));
   };
@@ -43,7 +63,7 @@ const HomeScreen = ({ navigation }) => {
   Dimensions.addEventListener('change', updateDimensions);
 
   return (
-    <View style={styles.test}>
+    <View style={styles.container}>
       {windowDimensions.width > 1200 ? (
         <ImageBackground
           source={require('../assets/homescreen_web.png')}
@@ -52,7 +72,7 @@ const HomeScreen = ({ navigation }) => {
             { width: windowDimensions.width, height: windowDimensions.height },
           ]}
         >
-          <View style={styles.container}>
+          <View style={styles.web}>
             <View>
               <Text style={styles.title}>
                 Welcome to <br></br> Lock & Learn
@@ -94,62 +114,136 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                 Already have an account? Sign in
               </Text>
-              <Text style={styles.link} onPress={() => navigation.navigate('Landing')}>
+              <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
                 Go to Landing Page
               </Text>
             </View>
           </View>
         </ImageBackground>
-      ) : null}
+      ) : (
+        <View
+          style={[
+            styles.mobile,
+            { width: windowDimensions.width, height: windowDimensions.height },
+          ]}
+        >
+          <View style={styles.mobile_container}>
+            <Image
+              style={styles.mobile_image}
+              source={require('../assets/homescreen_mobile.png')}
+            />
+            <View style={styles.main_container}>
+              <View style={styles.content}>
+                <Text style={styles.title}>
+                  Welcome to <br></br> Lock & Learn
+                </Text>
+                <Button
+                  mode="contained"
+                  style={styles.button}
+                  textColor="#3E5CAA"
+                  onPress={() => navigation.navigate('Signup')}
+                >
+                  <Text>Tutor</Text>
+                </Button>
+                <Button
+                  mode="contained"
+                  style={styles.button}
+                  textColor="#3E5CAA"
+                  onPress={() => navigation.navigate('Signup')}
+                >
+                  Parent
+                </Button>
+                <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
+                  Already have an account? Sign in
+                </Text>
+                <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
+                  Go to Landing Page
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  test: {
-    flex: 1,
-    width: wp('100%'),
-    height: hp('100%'),
-    backgroundColor: '#4F85FF',
+const useStyles = CreateResponsiveStyle(
+  {
+    container: {
+      minWidth: wp('100%'),
+      minHeight: hp('100%'),
+      backgroundColor: '#4F85FF',
+    },
+    web: {
+      position: 'absolute',
+      width: wp('30%'),
+      height: hp('100%'),
+      right: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#fff',
+      borderRadius: 20,
+    },
+    mobile: {
+      alignItems: 'center',
+    },
+    mobile_container: {
+      width: 500,
+      height: hp('100%'),
+    },
+    mobile_image: {
+      resizeMode: 'contain',
+      height: hp('60%'),
+    },
+    backgroundImage: {
+      resizeMode: 'cover',
+      flex: 1,
+    },
+    main_container: {
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    content: {
+      paddingVertical: 30,
+    },
+    title: {
+      color: '#3E5CAA',
+      textAlign: 'center',
+      fontFamily: 'Montserrat',
+      fontSize: 48,
+      fontStyle: 'normal',
+      fontWeight: '600',
+      lineHeight: 'normal',
+      marginBottom: 50,
+    },
+    button: {
+      borderRadius: 20,
+      backgroundColor: '#C6D8FF',
+      color: '#3E5CAA',
+      fontSize: 20,
+      fontStyle: 'normal',
+      fontWeight: 600,
+      marginVertical: 25,
+    },
+    link: {
+      color: '#3E5CAA',
+      paddingTop: 10,
+      textAlign: 'center',
+    },
   },
-  container: {
-    position: 'absolute',
-    width: wp('30%'),
-    height: hp('100%'),
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 20,
-  },
-  backgroundImage: {
-    resizeMode: 'cover',
-    flex: 1,
-  },
-  title: {
-    color: '#3E5CAA',
-    textAlign: 'center',
-    fontFamily: 'Montserrat',
-    fontSize: 48,
-    fontStyle: 'normal',
-    fontWeight: '600',
-    lineHeight: 'normal',
-    marginBottom: 50,
-  },
-  button: {
-    borderRadius: 20,
-    backgroundColor: '#C6D8FF',
-    color: '#3E5CAA',
-    fontSize: 20,
-    fontStyle: 'normal',
-    fontWeight: 600,
-    marginVertical: 25,
-  },
-  link: {
-    color: '#3E5CAA',
-    paddingTop: 10,
-    textAlign: 'center',
-  },
-});
+  {
+    [maxSize(DEVICE_SIZES.LG)]: {
+      title: {
+        marginBottom: 20,
+        fontSize: 30,
+      },
+      button: {
+        marginVertical: 10,
+      },
+    },
+  }
+);
 
 export default HomeScreen;
