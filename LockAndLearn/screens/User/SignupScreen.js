@@ -7,10 +7,12 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { IPV4 } from '../../components/APIUrl';
 
 const SignupScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const api_url = IPV4; // TO MODIFY
 
   const [fdata, setFdata] = useState({
     FirstName: '',
@@ -45,7 +47,7 @@ const SignupScreen = ({ navigation }) => {
     console.log(fdata);
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {
+      const response = await fetch('http://' + api_url + ':4000/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,6 +68,7 @@ const SignupScreen = ({ navigation }) => {
         // User created successfully
         console.log('User created successfully in database!', data);
         //Add redirect
+        navigation.navigate('UserLandingPage');
       } else {
         setErrors({
           Fields: '',
