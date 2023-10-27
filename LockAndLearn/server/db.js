@@ -56,6 +56,7 @@ app.use(
     store: store,
     resave: false,
     saveUninitialized: false,
+    unset: 'destroy',
     //cookie: { maxAge: 3600000 }, // 1 hour session expiration
     cookie: {
       sameSite: 'none',

@@ -108,12 +108,12 @@ const HomeScreen = ({ navigation }) => {
                   </Button>
                 </>
               )}
-              <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
+              {!isAuthenticated ? (<Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                 Already have an account? Sign in
-              </Text>
-              <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
+              </Text>) : null}
+              {isAuthenticated ? (<Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
                 Go to Landing Page
-              </Text>
+              </Text>) : null}
             </View>
           </View>
         </ImageBackground>
