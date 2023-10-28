@@ -10,6 +10,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { IPV4 } from '../../components/APIUrl';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -24,10 +25,12 @@ const SignupScreen = ({ navigation }) => {
   });
   const [text, setText] = useState('');
   const [checked, setChecked] = React.useState('first');
+  const api_url = IPV4; // TO MODIFY
+
   const [fdata, setFdata] = useState({
     FirstName: '',
     LastName: '',
-    Account: '',
+    isParent: null,
     Email: '',
     Password: '',
     CPassword: '',
@@ -84,12 +87,19 @@ const SignupScreen = ({ navigation }) => {
     }
   };
 
+  // useEffect to watch for changes in checked state and update fdata.Account
+  useEffect(() => {
+    setFdata((prevFdata) => ({
+      ...prevFdata,
+      isParent: checked,
+    }));
+  }, [checked]);
+
   const handleSubmit = async () => {
     console.log(fdata);
-
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {
+      const response = await fetch('http://' + api_url + ':4000/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,6 +120,7 @@ const SignupScreen = ({ navigation }) => {
         // User created successfully
         console.log('User created successfully in database!', data);
         //Add redirect
+        navigation.navigate('UserLandingPage');
       } else {
         setErrors({
           Fields: '',
@@ -201,22 +212,22 @@ const SignupScreen = ({ navigation }) => {
           <View style={[styles.radio, styles.row]}>
             <View style={[styles.radio_item, styles.row]}>
               <RadioButton
-                value="parent"
-                status={checked === 'parent' ? 'checked' : 'unchecked'}
-                onPress={() => setChecked('parent')}
+                value="true"
+                status={checked === 'true' ? 'checked' : 'unchecked'}
+                onPress={() => setChecked('true')}
                 color="#4F85FF"
               />
-              <Text style={checked === 'parent' ? styles.checked : styles.field}>Parent</Text>
+              <Text style={checked === 'true' ? styles.checked : styles.field}>Parent</Text>
             </View>
 
             <View style={[styles.radio_item, styles.row]}>
               <RadioButton
-                value="teacher"
-                status={checked === 'teacher' ? 'checked' : 'unchecked'}
-                onPress={() => setChecked('teacher')}
+                value="false"
+                status={checked === 'false' ? 'checked' : 'unchecked'}
+                onPress={() => setChecked('false')}
                 color="#4F85FF"
               />
-              <Text style={checked === 'teacher' ? styles.checked : styles.field}>Teacher</Text>
+              <Text style={checked === 'false' ? styles.checked : styles.field}>Teacher</Text>
             </View>
           </View>
         </View>
@@ -394,7 +405,7 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       half_width: {
-        width: 240,
+        width: 225,
       },
       bottomCloud: {
         width: wp('100%'),
