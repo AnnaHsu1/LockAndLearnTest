@@ -20,65 +20,13 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-WebBrowser.maybeCompleteAuthSession();
 
 const HomeScreen = ({ navigation }) => {
-  const [userInfo, setUserInfo] = useState(null);
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
-    iosClientId: '113548474045-a3e9t8mijs7s0c9v9ht3ilvlgsjm64oj.apps.googleusercontent.com',
-    webClientId: '113548474045-vuk7am9h5b8ug7c1tudd36pcsagv4l6b.apps.googleusercontent.com',
-  });
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));
-  };
-
-  // Handle google sign in when user attempts to login
-  useEffect(() => {
-    handleGoogleSignIn();
-  }, [response]);
-
-  async function handleGoogleSignIn() {
-    const user = await AsyncStorage.getItem('@user');
-    if (!user) {
-      if (response.type === 'success') {
-        await getUserInfo(response.authentication.accessToken);
-      } else {
-        console.log('Google sign in failed');
-      }
-    } else {
-      setUserInfo(JSON.parse(user));
-    }
-  }
-
-  async function handleGoogleSignOut() {
-    const user = await AsyncStorage.getItem('@user');
-    if (user) {
-      await AsyncStorage.removeItem('@user');
-      setUserInfo(null);
-    }
-  }
-
-  const getUserInfo = async (token) => {
-    if (!token) return;
-    try {
-      const response = await fetch('https://www.googleapis.com/userinfo/v2/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const user = await response.json();
-      await AsyncStorage.setItem('@user', JSON.stringify(user));
-      setUserInfo(user);
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   Dimensions.addEventListener('change', updateDimensions);
@@ -104,15 +52,7 @@ const HomeScreen = ({ navigation }) => {
                 textColor="#3E5CAA"
                 onPress={() => navigation.navigate('Signup')}
               >
-                <Text>Tutor</Text>
-              </Button>
-              <Button
-                mode="contained"
-                style={styles.button}
-                textColor="#3E5CAA"
-                onPress={() => navigation.navigate('Signup')}
-              >
-                Parent
+                <Text>Sign up</Text>
               </Button>
               <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                 Already have an account? Sign in
@@ -146,15 +86,7 @@ const HomeScreen = ({ navigation }) => {
                   textColor="#3E5CAA"
                   onPress={() => navigation.navigate('Signup')}
                 >
-                  <Text>Tutor</Text>
-                </Button>
-                <Button
-                  mode="contained"
-                  style={styles.button}
-                  textColor="#3E5CAA"
-                  onPress={() => navigation.navigate('Signup')}
-                >
-                  Parent
+                  <Text>Sign up</Text>
                 </Button>
                 <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                   Already have an account? Sign in
@@ -162,23 +94,6 @@ const HomeScreen = ({ navigation }) => {
                 <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
                   Go to Landing Page
                 </Text>
-                {JSON.stringify(userInfo)}
-                <Button
-                  mode="contained"
-                  style={styles.button}
-                  textColor="#3E5CAA"
-                  onPress={() => promptAsync()}
-                >
-                  Sign in with google
-                </Button>
-                <Button
-                  mode="contained"
-                  style={styles.button}
-                  textColor="#3E5CAA"
-                  onPress={() => handleGoogleSignOut()}
-                >
-                  Sign out
-                </Button>
               </View>
             </View>
           </View>

@@ -1,5 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, TextInput, View, Image, navigation } from 'react-native';
 import { RadioButton, Button } from 'react-native-paper';
 import {
@@ -8,10 +11,19 @@ import {
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 
+WebBrowser.maybeCompleteAuthSession();
+
 const SignupScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
-
+  const [userInfo, setUserInfo] = useState(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
+    iosClientId: '113548474045-a3e9t8mijs7s0c9v9ht3ilvlgsjm64oj.apps.googleusercontent.com',
+    webClientId: '113548474045-vuk7am9h5b8ug7c1tudd36pcsagv4l6b.apps.googleusercontent.com',
+  });
+  const [text, setText] = useState('');
+  const [checked, setChecked] = React.useState('first');
   const [fdata, setFdata] = useState({
     FirstName: '',
     LastName: '',
@@ -30,8 +42,47 @@ const SignupScreen = ({ navigation }) => {
     DOB: '',
   });
 
-  const [text, setText] = useState('');
-  const [checked, setChecked] = React.useState('first');
+
+  // Handle google sign in when user attempts to login
+  useEffect(() => {
+    handleGoogleSignIn();
+  }, [response]);
+
+  async function handleGoogleSignIn() {
+    const user = await AsyncStorage.getItem('@user');
+    if (!user) {
+      if (response.type === 'success') {
+        await getUserInfo(response.authentication.accessToken);
+      } else {
+        console.log('Google sign in failed');
+      }
+    } else {
+      setUserInfo(JSON.parse(user));
+    }
+  }
+
+  async function handleGoogleSignOut() {
+    const user = await AsyncStorage.getItem('@user');
+    if (user) {
+      await AsyncStorage.removeItem('@user');
+      setUserInfo(null);
+    }
+  }
+
+  const getUserInfo = async (token) => {
+    if (!token) return;
+    try {
+      const response = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const user = await response.json();
+      await AsyncStorage.setItem('@user', JSON.stringify(user));
+      setUserInfo(user);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleSubmit = async () => {
     console.log(fdata);
@@ -222,6 +273,27 @@ const SignupScreen = ({ navigation }) => {
         <Text testID="login-link" style={styles.link} onPress={() => navigation.navigate('Login')}>
           Already have an account? Sign in
         </Text>
+
+        {/* <Text>{userInfo ? JSON.stringify(userInfo) : null}</Text> */}
+        { !userInfo ? 
+        <Button
+          mode="contained"
+          style={[styles.button, {marginTop: 10}]}
+          textColor="#fff"
+          onPress={() => promptAsync()}
+        >
+          Create an account with Google
+        </Button>
+        :
+        <Button
+          mode="contained"
+          style={[styles.button, {marginTop: 10}]}
+          textColor="#fff"
+          onPress={() => handleGoogleSignOut()}
+        >
+          Sign out
+        </Button>
+        }
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />

@@ -7,6 +7,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
   const styles = useStyles();
@@ -77,6 +78,7 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
               data.user.lastName +
               '!'
           );
+          await AsyncStorage.setItem('@token', JSON.stringify(data.user));
           navigation.navigate('UserLandingPage');
         } else {
           // Store the error message in state
