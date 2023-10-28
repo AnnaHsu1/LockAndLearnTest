@@ -24,7 +24,7 @@ const SelectWorkPackageScreen = () => {
 
         try {
             // Send a POST request to create the quiz
-            const response = await fetch('http://localhost:4000/quizzes/', {
+            const response = await fetch('http://localhost:4000/quizzes/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

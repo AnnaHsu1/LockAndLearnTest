@@ -3,7 +3,7 @@ const router = express.Router();
 const Quiz = require('../server/quizSchema.js'); 
 
 // Create a new quiz
-router.post('/', async (req, res) => {
+router.post('/create', async (req, res) => {
   try {
     const { name, workPackageId, questions } = req.body;
     const newQuiz = new Quiz({ name, workPackageId, questions });
