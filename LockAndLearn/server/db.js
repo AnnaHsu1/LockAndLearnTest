@@ -39,5 +39,6 @@ const userRoutes = require('./userController');
 
 app.use('/users', userRoutes);
 app.use('/files', require("./controllers/filesController"))
+app.use('/quizzes', require('./quizController'));
 
 app.listen(port, () => console.log('Backend server listening on port 4000.'));

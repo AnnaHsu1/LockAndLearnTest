@@ -2,8 +2,9 @@ import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, Touchabl
 import React, { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
 
-const CreateQuestion = () => {
+const CreateQuestion = ({ route }) => {
     const navigation = useNavigation();
+    const { workPackageId } = route.params;
     const [questionText, setQuestionText] = useState('');
     const [questionType, setQuestionType] = useState('');
     const [inputs, setInputs] = useState(['']);
@@ -147,7 +148,12 @@ const CreateQuestion = () => {
                 )}
                 <TouchableOpacity
                     style={styles.createQuestionButton}
-                    onPress={handleCreateQuestion}
+                    onPress={() => {
+                        // Navigate to the QuestionsOverviewScreen and pass the workPackageId
+                        navigation.navigate('QuestionsOverviewScreen', {
+                        //    workPackageId: workPackage.id, // pass id
+                        });
+                    }}
                 >
                     <Text style={styles.createQuestionButtonText}>Create Question</Text>
                 </TouchableOpacity>
