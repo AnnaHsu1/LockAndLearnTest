@@ -96,6 +96,17 @@ router.delete('/deleteQuestion/:quizId/:questionIndex', async (req, res) => {
   }
 });
 
+// Delete a specific quiz by ID
+router.delete('/deleteQuiz/:quizId', async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    await Quiz.findByIdAndRemove(quizId);
+    res.json({ message: 'Quiz deleted' });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 
 // Get a specific quiz by ID
 router.get('/quiz/:quizId', async (req, res) => {
@@ -123,18 +134,5 @@ router.put('/:quizId', async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
-
-// Delete a specific quiz by ID
-router.delete('/:quizId', async (req, res) => {
-  try {
-    const quizId = req.params.quizId;
-    await Quiz.findByIdAndRemove(quizId);
-    res.json({ message: 'Quiz deleted' });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-
 
 module.exports = router;

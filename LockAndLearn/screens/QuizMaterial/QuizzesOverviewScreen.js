@@ -9,8 +9,7 @@ const QuizzesOverviewScreen = ({ route }) => {
     const [quizzes, setQuizzes] = useState([]);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchQuizzes = async () => {
+    const fetchQuizzes = async () => {
         try {
             const response = await fetch('http://localhost:4000/quizzes/allQuizzes', {
             method: 'GET',
@@ -34,12 +33,33 @@ const QuizzesOverviewScreen = ({ route }) => {
         }
         }
 
+    const deleteQuiz = async (quizId) => {
+        // Filter out the quizzes with the specified ID to delete it
+        try {
+            const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            if (response.status === 200) {
+                console.log("Quiz deleted successfully");
+                const data = await response.json();
+                fetchQuizzes();
+            } else {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+                console.error("Error deleting quiz:", errorMessage);
+            }
+        } catch (error) {
+            setError("Network error");
+            console.error("Network error:", error);
+        }
+    };
+    useEffect(() => {
         fetchQuizzes();
     }, []);
-
-    const deleteQuiz = (quizId) => {
-        // Filter out the quizzes with the specified ID to delete it
-    };
 
     return (
         <ImageBackground
@@ -64,7 +84,7 @@ const QuizzesOverviewScreen = ({ route }) => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        // Delete the question
+                                        // Delete the quiz
                                         deleteQuiz(quiz._id);
                                     }}
                                     style={styles.deleteButton}
