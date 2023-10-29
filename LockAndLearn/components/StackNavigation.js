@@ -12,6 +12,7 @@ import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
 import SelectWorkPackageScreen from '../screens/QuizMaterial/SelectWorkPackageScreen';
 import QuestionsOverviewScreen from '../screens/QuizMaterial/QuestionsOverviewScreen';
+import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen';
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 
 const Stack = createNativeStackNavigator();
@@ -61,7 +62,12 @@ const StackNavigation = () => {
           name="SelectWorkPackageScreen"
           component={SelectWorkPackageScreen}
           options={{ title: 'SelectWorkPackageScreen' }}
-        />        
+        />   
+        <Stack.Screen
+          name="QuizzesOverviewScreen"
+          component={QuizzesOverviewScreen}
+          options={{ title: 'QuizzesOverviewScreen' }}
+        />     
         <Stack.Screen
           name="QuestionsOverviewScreen"
           component={QuestionsOverviewScreen}

@@ -54,7 +54,7 @@ const SelectWorkPackageScreen = () => {
                             createQuizForWorkPackage(workPackage.id);
 
                             // Navigate to QuestionsOverviewScreen (if needed)
-                            navigation.navigate('QuestionsOverviewScreen', {
+                            navigation.navigate('QuizzesOverviewScreen', {
                                 workPackageId: workPackage.id,
                             });
                         }}

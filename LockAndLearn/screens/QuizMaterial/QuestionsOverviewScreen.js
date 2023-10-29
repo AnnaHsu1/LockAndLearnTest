@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
@@ -15,6 +15,10 @@ const QuestionsOverviewScreen = ({ route }) => {
         { id: 7, name: 'Who wrote \'Romeo and Juliet\'?' },
     ]);
 
+    const [quizzes, setQuizzes] = useState([]);
+    const [error, setError] = useState(null);
+
+
     const deleteQuestion = (questionId) => {
         // Filter out the question with the specified ID to delete it
         const updatedQuestions = questions.filter((question) => question.id !== questionId);
@@ -28,7 +32,7 @@ const QuestionsOverviewScreen = ({ route }) => {
             style={styles.container}
         >
             <View style={styles.containerFile}>
-                <Text style={styles.selectFiles}>Create Your Questions</Text>
+                <Text style={styles.selectFiles}>Create your Questions</Text>
                 <View style={styles.questionList}>
                     {questions.map((question) => (
                         <View key={question.id} style={styles.questionItemContainer}>

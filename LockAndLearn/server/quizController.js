@@ -14,6 +14,17 @@ router.post('/create', async (req, res) => {
   }
 });
 
+// get all quizzes
+router.get('/allQuizzes', async (req, res) => {
+  try {
+    const quizzes = await Quiz.find();  // This retrieves all quizzes from the Quiz collection.
+    res.json(quizzes);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+
 // Get a specific quiz by ID
 router.get('/:quizId', async (req, res) => {
   try {
@@ -51,5 +62,6 @@ router.delete('/:quizId', async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
