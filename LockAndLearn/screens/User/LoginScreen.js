@@ -7,7 +7,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setItem } from '../../components/AsyncStorage';
 import { IPV4 } from '../../components/APIUrl';
 
 const LoginScreen = ({ navigation }) => {
@@ -59,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
 
       try {
         const response = await fetch('http://localhost:4000/users/login', {
-        // const response = await fetch('http://' + api_url + ':4000/users/login', {
+          // const response = await fetch('http://' + api_url + ':4000/users/login', {
           method: 'POST',
           credentials: 'include', // Ensure credentials are included
           headers: {
@@ -82,7 +82,8 @@ const LoginScreen = ({ navigation }) => {
               data.user.lastName +
               '!'
           );
-          await AsyncStorage.setItem('@token', JSON.stringify(data.user));
+          // Store the user data in AsyncStorage
+          await setItem('@token', JSON.stringify(data.user));
           navigation.navigate('UserLandingPage');
           if (data.user.isParent) {
             navigation.navigate('ParentAccount');

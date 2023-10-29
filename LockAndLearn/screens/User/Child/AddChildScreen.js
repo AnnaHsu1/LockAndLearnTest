@@ -8,43 +8,12 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem } from '../../../components/AsyncStorage';
 // import DeviceInfo from 'react-native-device-info';
 
 const AddChildScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
-
-  //   const [deviceId, setDeviceId] = useState('');
-  //   const storedDeviceId = localStorage.getItem('deviceId');
-
-  // useEffect(() => {
-  //     // Check if a unique identifier is already stored in local storage.
-  //     const storedDeviceId = localStorage.getItem('deviceId');
-
-  //     if (storedDeviceId) {
-  //         setDeviceId(storedDeviceId);
-  //     } else {
-  //         // If not found, generate and store a new identifier.
-  //         const newDeviceId = `web_device_${Math.random().toString(36).substr(2, 9)}`;
-  //         localStorage.setItem('deviceId', newDeviceId);
-  //         setDeviceId(newDeviceId);
-  //     }
-  // }, []);
-  //   console.log('Device ID:', deviceId);
-
-  //   ONLY WORKS FOR MOBILE DEVICES
-  //   const getDeviceId = async () => {
-  //     try {
-  //       const deviceId = await DeviceInfo.getDeviceId();
-  //       console.log('Device ID:', deviceId);
-  //       // You can now use 'deviceId' in your code
-  //     } catch (error) {
-  //       console.error('Error getting device ID:', error);
-  //     }
-  //   };
-  //   getDeviceId();
-
   const [text, setText] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
   const [childAdded, setChildAdded] = useState(false);
@@ -61,7 +30,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
   const [errors, setErrors] = useState('');
 
   const addChild = async () => {
-    const auth = await AsyncStorage.getItem('@token');
+    const auth = await getItem('@token');
 
     if (auth) {
       const user = JSON.parse(auth);

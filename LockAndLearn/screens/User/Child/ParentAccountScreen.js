@@ -7,7 +7,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem } from '../../../components/AsyncStorage';
 
 const ParentAccountScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
@@ -21,16 +21,14 @@ const ParentAccountScreen = ({ navigation, setToken }) => {
 
   const getChildren = async () => {
     try {
-      const token = await AsyncStorage.getItem('@token');
+      const token = await getItem('@token');
       if (token) {
         const user = JSON.parse(token);
-        console.log('User: ', user);
         const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
         });
         const data = await response.json();
-        console.log('Children: ', data);
         setChildren(data);
       } else {
         // Handle the case where user is undefined (not found in AsyncStorage)

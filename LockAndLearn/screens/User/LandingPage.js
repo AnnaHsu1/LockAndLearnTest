@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, TextInput, View, Button, navigation, Image } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
@@ -6,35 +6,34 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { IPV4 } from '../../components/APIUrl';
+import { getItem, removeItem } from '../../components/AsyncStorage';
 
 const LandingPage = ({ navigation }) => {
-  const styles = useStyles();
-  const deviceSize = useDeviceSize();
-  const api_url = IPV4; // TO MODIFY
-  const handleLogout = async () => {
+  const [user, setUser] = useState(null);
+
+  async function getUser() {
     try {
-      console.log('Attempting to log out...');
-
-      // Make a POST request to the logout endpoint using fetch
-      const response = await fetch('http://' + api_url + ':4000/users/logout', {
-        method: 'POST',
-        credentials: 'include', // Include credentials (cookies) in the request
-      });
-
-      //console.log('Post logout response done.');
-
-      if (response.status === 201) {
-        console.log('Response 201: Successfully logged out');
-        // After successful logout, navigate to the Home screen
-        navigation.navigate('Home');
-
+      const token = await getItem('@token');
+      if (token) {
+        const user = JSON.parse(token);
+        setUser(user);
       } else {
-        console.error('Error logging out:', response.status);
+        // Handle the case where user is undefined (not found in AsyncStorage)
+        console.log('User not found in AsyncStorage');
       }
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.log(error);
     }
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await removeItem('@token');
+    console.log('Logged out successfully');
+    navigation.navigate('Home');
   };
 
   return (
@@ -42,8 +41,13 @@ const LandingPage = ({ navigation }) => {
       <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
       <Button title="Uploading" onPress={() => navigation.navigate('Uploading')} />
       <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
-      <Button title="Parent Account" onPress={() => navigation.navigate('ParentAccount')} />
-      <Button title="Log out" onPress={handleLogout} />
+      {/* is user a parent? */}
+      {user?.isParent ? (
+        <Button title="Parent Account" onPress={() => navigation.navigate('ParentAccount')} />
+      ) : null}
+      {/* is user logged in? */}
+      {user ? <Button title="Log out" onPress={handleLogout} /> : null}
+
       <StatusBar style="auto" />
     </View>
   );

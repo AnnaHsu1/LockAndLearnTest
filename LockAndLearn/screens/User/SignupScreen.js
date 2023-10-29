@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, Text, TextInput, View, Image, navigation } from 'react-native';
 import { RadioButton, Button } from 'react-native-paper';
 import {
@@ -10,7 +9,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import { IPV4 } from '../../components/APIUrl';
+import { getItem, setItem, removeItem } from '../../components/AsyncStorage';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -25,7 +24,7 @@ const SignupScreen = ({ navigation }) => {
   });
   const [text, setText] = useState('');
   const [checked, setChecked] = React.useState('first');
-  const api_url = IPV4; // TO MODIFY
+  // const api_url = IPV4; // TO MODIFY
 
   const [fdata, setFdata] = useState({
     FirstName: '',
@@ -51,7 +50,7 @@ const SignupScreen = ({ navigation }) => {
   }, [response]);
 
   async function handleGoogleSignIn() {
-    const user = await AsyncStorage.getItem('@user');
+    const user = await getItem('@user');
     if (!user) {
       if (response.type === 'success') {
         await getUserInfo(response.authentication.accessToken);
@@ -64,9 +63,9 @@ const SignupScreen = ({ navigation }) => {
   }
 
   async function handleGoogleSignOut() {
-    const user = await AsyncStorage.getItem('@user');
+    const user = await getItem('@user');
     if (user) {
-      await AsyncStorage.removeItem('@user');
+      await removeItem('@user');
       setUserInfo(null);
     }
   }
@@ -79,7 +78,7 @@ const SignupScreen = ({ navigation }) => {
       });
 
       const user = await response.json();
-      await AsyncStorage.setItem('@user', JSON.stringify(user));
+      await setItem('@user', JSON.stringify(user));
       setUserInfo(user);
     } catch (e) {
       console.error(e);
