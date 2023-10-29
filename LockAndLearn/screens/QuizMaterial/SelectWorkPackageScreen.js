@@ -6,6 +6,7 @@ const workPackages = [
     { id: 1, name: 'Math-7' },
     { id: 2, name: 'Science-10' },
     { id: 3, name: 'History-12' },
+    { id: 4, name: 'History-12' },
     // will be dynamic with db
 ];
 
@@ -52,6 +53,7 @@ const SelectWorkPackageScreen = () => {
                         onPress={() => {
                             // Create a quiz when a work package is pressed
                             createQuizForWorkPackage(workPackage.id);
+                            console.log(workPackage.id);
 
                             // Navigate to QuestionsOverviewScreen (if needed)
                             navigation.navigate('QuizzesOverviewScreen', {

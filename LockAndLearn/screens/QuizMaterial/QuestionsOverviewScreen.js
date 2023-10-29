@@ -83,6 +83,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                           navigation.navigate('CreateQuestion', {
                               quizId: quizId, // pass id
                           });
+                          console.log(workPackageId);
                       }}
                   >
                       <Text style={styles.createQuestionButtonText}>Create Question</Text>
