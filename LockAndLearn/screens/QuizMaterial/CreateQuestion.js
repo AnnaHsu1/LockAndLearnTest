@@ -16,12 +16,63 @@ const CreateQuestion = ({ route }) => {
         C: { text: '', isCorrect: false },
         D: { text: '', isCorrect: false },
     });
+    const [questions, setQuestions] = useState([]);
 
     const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Fill In The Blanks", "Another Type"];
+    const handleCreateQuestion = async () => {
+        // Create a new question object based on the user's input
+        const newQuestion = {
+            questionText,
+            questionType,
+        };
 
-    const handleCreateQuestion = () => {
-        // Handle creating the question, including questionText, questionType, and answer or True/False value
-        // For multiple choice, handle the multipleChoiceAnswers object as needed.
+        if (questionType === "True or False") {
+            newQuestion.isTrueFalse = isTrue;
+        } else if (questionType === "Multiple Choice Question") {
+            newQuestion.multipleChoiceAnswers = Object.keys(multipleChoiceAnswers).map((key) => ({
+                text: multipleChoiceAnswers[key].text,
+                isCorrect: multipleChoiceAnswers[key].isCorrect,
+            }));
+        } else if (questionType === "Fill In The Blanks") {
+            newQuestion.fillInTheBlanks = inputs;
+        } else {
+            newQuestion.answer = answer;
+        }
+
+        // Make a POST request to your server to create the question
+        try {
+            const response = await fetch('http://localhost:4000/quizzes/addQuestion/:quizId', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newQuestion),
+            });
+
+            if (response.ok) {
+                // Question created successfully, you can handle the response here
+                const result = await response.json();
+                console.log('Question created:', result);
+
+                // Clear the form after adding the question
+                setQuestionText('');
+                setQuestionType('');
+                setAnswer('');
+                setIsTrue(false);
+                setMultipleChoiceAnswers({
+                    A: { text: '', isCorrect: false },
+                    B: { text: '', isCorrect: false },
+                    C: { text: '', isCorrect: false },
+                    D: { text: '', isCorrect: false },
+                });
+                setInputs(['']);
+            } else {
+                // Handle error response
+                console.error('Failed to create question:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error creating question:', error);
+        }
     };
 
     const handleSetCorrectAnswer = (key) => {
@@ -149,6 +200,7 @@ const CreateQuestion = ({ route }) => {
                 <TouchableOpacity
                     style={styles.createQuestionButton}
                     onPress={() => {
+                        handleCreateQuestion(); // Call the function to create the question
                         // Navigate to the QuestionsOverviewScreen and pass the workPackageId
                         navigation.navigate('QuestionsOverviewScreen', {
                         //    workPackageId: workPackage.id, // pass id
