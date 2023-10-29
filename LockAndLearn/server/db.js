@@ -1,6 +1,6 @@
 const MongoDBStore = require('connect-mongodb-session');
-const mongoose = require("mongoose");
-const express = require("express");
+const mongoose = require('mongoose');
+const express = require('express');
 const session = require('express-session');
 const router = express.Router();
 const cors = require('cors');
@@ -23,29 +23,30 @@ module.exports = mongoose;
 
 //Routing Logic for backend server
 
-const secretKey = process.env.SESSION_SECRET // Secret key for session stored in .env file
-const ip = 'http://' + process.env.API_URL + ':19006';
+const secretKey = process.env.SESSION_SECRET; // Secret key for session stored in .env file
+// const ip = 'http://' + process.env.API_URL + ':19006';
+// const ip = 'https://localhost:19006';
 const environment = process.env.NODE_ENV || 'development';
-
 
 const app = express();
 
 const mongoStore = MongoDBStore(session);
 
 const store = new mongoStore({
-  collection: "userSessions",
+  collection: 'userSessions',
   uri: process.env.DB_STRING,
   expires: 3600000,
 });
 
+app.set('trust proxy', 1);
 
-app.set("trust proxy", 1);
-
-app.use(cors({
-    origin: ip, 
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+app.use(
+  cors({
+    origin: 'https://localhost:19006',
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
     credentials: true, // Enable credentials (cookies, authorization headers, etc.)
-}));
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -73,7 +74,7 @@ app.set('port', port);
 const userRoutes = require('./controllers/userController');
 
 app.use('/users', userRoutes);
-app.use('/files', require("./controllers/filesController"))
-app.use('/child', require("./controllers/childController"))
+app.use('/files', require('./controllers/filesController'));
+app.use('/child', require('./controllers/childController'));
 
 app.listen(port, () => console.log('Backend server listening on port 4000.'));
