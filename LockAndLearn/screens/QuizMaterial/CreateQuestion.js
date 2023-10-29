@@ -108,6 +108,25 @@ const CreateQuestion = ({ route }) => {
         }));
         setOptions(updatedOptions);
       };
+
+    // Define a function to add a new input field
+    const addInput = () => {
+        setInputs([...inputs, '']);
+    };
+
+    // Define a function to remove an input field at a given index
+    const removeInput = (index) => {
+        const updatedInputs = [...inputs];
+        updatedInputs.splice(index, 1);
+        setInputs(updatedInputs);
+    };
+
+    // Define a function to handle text input changes for fill-in-the-blanks
+    const handleInputTextChange = (text, index) => {
+        const updatedInputs = [...inputs];
+        updatedInputs[index] = text;
+        setInputs(updatedInputs);
+    };      
          
 
 
@@ -191,11 +210,7 @@ const CreateQuestion = ({ route }) => {
                                 style={styles.answerInput}
                                 placeholder="Enter Word"
                                 value={input}
-                                onChangeText={(text) => {
-                                    const newInputs = [...inputs];
-                                    newInputs[index] = text;
-                                    setInputs(newInputs);
-                                }}
+                                onChangeText={(text) => handleInputTextChange(text, index)} // Call handleInputTextChange
                             />
                             <TouchableOpacity style={styles.removeButton} onPress={() => removeInput(index)}>
                                 <Text style={styles.buttonText}>-</Text>

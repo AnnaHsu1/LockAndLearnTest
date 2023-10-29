@@ -34,6 +34,10 @@ const quizSchema = new mongoose.Schema({
         type: [String], // An array of options for multiple-choice questions
         required: false,
       },
+      inputs:{
+        type: [String],
+        required: false,
+      }
       // Other question-specific fields
     },
   ],
