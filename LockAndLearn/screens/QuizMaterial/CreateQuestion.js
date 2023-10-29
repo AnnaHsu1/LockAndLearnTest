@@ -10,12 +10,12 @@ const CreateQuestion = ({ route }) => {
     const [inputs, setInputs] = useState(['']);
     const [answer, setAnswer] = useState('');
     const [isTrue, setIsTrue] = useState(false);
-    const [multipleChoiceAnswers, setMultipleChoiceAnswers] = useState({
-        A: { text: '', isCorrect: false },
-        B: { text: '', isCorrect: false },
-        C: { text: '', isCorrect: false },
-        D: { text: '', isCorrect: false },
-    });
+    const [options, setOptions] = useState([
+        { id: 'A', text: '', isCorrect: false },
+        { id: 'B', text: '', isCorrect: false },
+        { id: 'C', text: '', isCorrect: false },
+        { id: 'D', text: '', isCorrect: false },
+      ]);
     const [questions, setQuestions] = useState([]);
     console.log(quizId + "CreateQuestions1");
     const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Fill In The Blanks", "Another Type"];
@@ -24,18 +24,23 @@ const CreateQuestion = ({ route }) => {
         const newQuestion = {
             questionText,
             questionType,
-        };
+            options: options, // Send the entire options array as is
+            answer: options.find(option => option.isCorrect)?.text || '', // Find the text of the correct answer
+          };
 
-        if (questionType === "True or False") {
-            newQuestion.answer = answer;
-        } else if (questionType === "Multiple Choice Question") {
-            newQuestion.multipleChoiceAnswers = Object.keys(multipleChoiceAnswers).map((key) => ({
-                text: multipleChoiceAnswers[key].text,
-                isCorrect: multipleChoiceAnswers[key].isCorrect,
-            }));
+        // Assign properties to the question object based on the question type
+        if (questionType === "Multiple Choice Question") {
+            // For multiple choice, include options and the answer indicating the correct option
+            newQuestion.options = options.map(option => option.text);
+            newQuestion.answer = options.find(option => option.isCorrect)?.text || '';
+        } else if (questionType === "True or False") {
+            // For true or false, the answer is a boolean
+            newQuestion.answer = answer; // Assuming answer is either 'True' or 'False'
         } else if (questionType === "Fill In The Blanks") {
+            // For fill in the blanks, include the array of inputs
             newQuestion.fillInTheBlanks = inputs;
         } else {
+            // For any other type, include a single answer
             newQuestion.answer = answer;
         }
 
@@ -60,12 +65,12 @@ const CreateQuestion = ({ route }) => {
                 setQuestionType('');
                 setAnswer('');
                 setIsTrue(false);
-                setMultipleChoiceAnswers({
-                    A: { text: '', isCorrect: false },
-                    B: { text: '', isCorrect: false },
-                    C: { text: '', isCorrect: false },
-                    D: { text: '', isCorrect: false },
-                });
+                setOptions([
+                    { id: 'A', text: '', isCorrect: false },
+                    { id: 'B', text: '', isCorrect: false },
+                    { id: 'C', text: '', isCorrect: false },
+                    { id: 'D', text: '', isCorrect: false },
+                  ]);                                   
                 setInputs(['']);
             } else {
                 // Handle error response
@@ -81,21 +86,27 @@ const CreateQuestion = ({ route }) => {
         setAnswer(newValue ? "True" : "False");
     };
 
-    const handleSetCorrectAnswer = (key) => {
-        // Update the correct answer for the multiple choice question
-        const updatedAnswers = { ...multipleChoiceAnswers };
-        Object.keys(updatedAnswers).forEach((answerKey) => {
-            updatedAnswers[answerKey].isCorrect = false;
+    const handleOptionTextChange = (text, index) => {
+        const updatedOptions = options.map((option, i) => {
+          if (i === index) {
+            return { ...option, text: text };
+          }
+          return option;
         });
-        updatedAnswers[key].isCorrect = true;
-        setMultipleChoiceAnswers(updatedAnswers);
-    };
-    const addInput = () => {
-        setInputs(prevInputs => [...prevInputs, '']);
-    }
-    const removeInput = (index) => {
-        setInputs(prevInputs => prevInputs.filter((_, idx) => idx !== index));
-    }
+        setOptions(updatedOptions);
+      };
+      
+      
+      
+      const handleSetCorrectAnswer = (index) => {
+        const updatedOptions = options.map((option, i) => ({
+          ...option,
+          isCorrect: i === index,
+        }));
+        setOptions(updatedOptions);
+      };
+         
+
 
     return (
         <ImageBackground
@@ -109,15 +120,14 @@ const CreateQuestion = ({ route }) => {
                     selectedValue={questionType}
                     onValueChange={(itemValue) => {
                         setQuestionType(itemValue);
-                        console.log(itemValue + " iv-qt "+ questionType);
                         setAnswer('');
                         setIsTrue(false);
-                        setMultipleChoiceAnswers({
-                            A: { text: '', isCorrect: false },
-                            B: { text: '', isCorrect: false },
-                            C: { text: '', isCorrect: false },
-                            D: { text: '', isCorrect: false },
-                        });
+                        setOptions([ // Make sure this is an array
+                        { id: 'A', text: '', isCorrect: false },
+                        { id: 'B', text: '', isCorrect: false },
+                        { id: 'C', text: '', isCorrect: false },
+                        { id: 'D', text: '', isCorrect: false },
+                        ]);
                     }}
                     style={styles.questionTypePicker}
                 >
@@ -150,27 +160,25 @@ const CreateQuestion = ({ route }) => {
                     </View>
                 )}
                 {questionType === "Multiple Choice Question" && (
-                    <View style={styles.multipleChoiceContainer}>
-                        {Object.keys(multipleChoiceAnswers).map((key) => (
-                            <View key={key} style={styles.multipleChoiceRow}>
-                                <TextInput
-                                    style={styles.multipleChoiceInput}
-                                    placeholder={`Enter answer ${key}`}
-                                    value={multipleChoiceAnswers[key].text}
-                                    onChangeText={(text) => {
-                                        const updatedAnswers = { ...multipleChoiceAnswers };
-                                        updatedAnswers[key].text = text;
-                                        setMultipleChoiceAnswers(updatedAnswers);
-                                    }}
-                                />
-                                <CheckBox
-                                    value={multipleChoiceAnswers[key].isCorrect}
-                                    onValueChange={() => handleSetCorrectAnswer(key)}
-                                />
-                            </View>
-                        ))}
+                <View style={styles.multipleChoiceContainer}>
+                    {options.map((option, index) => (
+                    <View key={option.id} style={styles.multipleChoiceRow}>
+                        <TextInput
+                        style={styles.multipleChoiceInput}
+                        placeholder={`Option ${option.id}`}
+                        value={option.text}
+                        onChangeText={(text) => handleOptionTextChange(text, index)}
+                        />
+                        <CheckBox
+                        value={option.isCorrect}
+                        onValueChange={() => handleSetCorrectAnswer(index)}
+                        />
                     </View>
+                    ))}
+                </View>
                 )}
+
+
                 {questionType === "Fill In The Blanks" && (
                     <>
                     <Text>Enter words you want to be blank here:</Text>
