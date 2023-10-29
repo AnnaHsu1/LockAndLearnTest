@@ -62,7 +62,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                                     // Goes to a page/modal where you can edit the question
                                 }}
                             >
-                                <Text style={styles.questionItem}>{question.text}</Text>
+                                <Text style={styles.questionItem}>{question.questionText}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
