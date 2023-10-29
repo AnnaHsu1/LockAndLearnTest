@@ -45,7 +45,6 @@ const SignupScreen = ({ navigation }) => {
     DOB: '',
   });
 
-
   // Handle google sign in when user attempts to login
   useEffect(() => {
     handleGoogleSignIn();
@@ -99,7 +98,8 @@ const SignupScreen = ({ navigation }) => {
     console.log(fdata);
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://' + api_url + ':4000/users/signup', {
+      const response = await fetch('http://localhost:4000/users/signup', {
+        // const response = await fetch('http://' + api_url + ':4000/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -286,25 +286,25 @@ const SignupScreen = ({ navigation }) => {
         </Text>
 
         {/* <Text>{userInfo ? JSON.stringify(userInfo) : null}</Text> */}
-        { !userInfo ? 
-        <Button
-          mode="contained"
-          style={[styles.button, {marginTop: 10}]}
-          textColor="#fff"
-          onPress={() => promptAsync()}
-        >
-          Create an account with Google
-        </Button>
-        :
-        <Button
-          mode="contained"
-          style={[styles.button, {marginTop: 10}]}
-          textColor="#fff"
-          onPress={() => handleGoogleSignOut()}
-        >
-          Sign out
-        </Button>
-        }
+        {!userInfo ? (
+          <Button
+            mode="contained"
+            style={[styles.button, { marginTop: 10 }]}
+            textColor="#fff"
+            onPress={() => promptAsync()}
+          >
+            Create an account with Google
+          </Button>
+        ) : (
+          <Button
+            mode="contained"
+            style={[styles.button, { marginTop: 10 }]}
+            textColor="#fff"
+            onPress={() => handleGoogleSignOut()}
+          >
+            Sign out
+          </Button>
+        )}
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, TextInput, View, navigation, Image } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
@@ -7,20 +7,43 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ParentAccountScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
 
-  const [children, setChildren] = useState([
-    { name: 'Andrew' },
-    { name: 'Vanessa' },
-    { name: 'John' },
-  ]);
+  const [children, setChildren] = useState([]);
 
   const selectChild = (child) => {
     console.log("Child's name: ", child);
   };
+
+  const getChildren = async () => {
+    try {
+      const token = await AsyncStorage.getItem('@token');
+      if (token) {
+        const user = JSON.parse(token);
+        console.log('User: ', user);
+        const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        });
+        const data = await response.json();
+        console.log('Children: ', data);
+        setChildren(data);
+      } else {
+        // Handle the case where user is undefined (not found in AsyncStorage)
+        console.log('User not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getChildren();
+  }, []);
 
   return (
     <View style={styles.page}>
@@ -29,16 +52,16 @@ const ParentAccountScreen = ({ navigation, setToken }) => {
         <Text style={styles.text}>Select a child </Text>
         {children.map((child) => (
           <Button
+            key={child._id}
             testID="login-button"
             mode="contained"
             onPress={() => {
               selectChild(child.name);
             }}
             style={[styles.button, styles.full_width]}
-            key={child.name}
           >
             <Icon source="account-circle" color="#fff" size={20} />
-            <Text style={styles.child}>{child.name}</Text>
+            <Text style={styles.child}>{child.firstName}</Text>
           </Button>
         ))}
         <StatusBar style="auto" />

@@ -32,7 +32,8 @@ const HomeScreen = ({ navigation }) => {
   //Checks for any cookies stored in the browser
   useEffect(() => {
     // Make an API request to check authentication status
-    fetch('http://' + api_url + ':4000/users/authCheck', {
+    fetch('http://localhost:4000/users/authCheck', {
+    // fetch('http://' + api_url + ':4000/users/authCheck', {
       method: 'GET',
       credentials: 'include', // Include cookies in the request
     })
