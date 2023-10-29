@@ -212,7 +212,7 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 48,
       fontStyle: 'normal',
       fontWeight: '600',
-      lineHeight: 'normal',
+      lineHeight: hp('10%'),
       marginBottom: 50,
     },
     button: {
