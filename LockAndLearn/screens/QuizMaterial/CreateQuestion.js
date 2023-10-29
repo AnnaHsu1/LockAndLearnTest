@@ -24,8 +24,11 @@ const CreateQuestion = ({ route }) => {
         const newQuestion = {
             questionText,
             questionType,
-            options: options, // Send the entire options array as is
-            answer: options.find(option => option.isCorrect)?.text || '', // Find the text of the correct answer
+            answer: questionType === "True or False" ? answer : '', // Set answer or an empty string
+            isTrue: questionType === "True or False" ? isTrue : false, // Set isTrue or false
+            //multipleChoiceAnswers: questionType === "Multiple Choice Question" ? multipleChoiceAnswers : [], // Set multipleChoiceAnswers or an empty array
+            inputs: questionType === "Fill In The Blanks" ? inputs : [], // Set inputs or an empty array
+            options: questionType === "Multiple Choice Question" ? options.map(option => option.text) : [], // Set options for multiple-choice questions or an empty array
           };
 
         // Assign properties to the question object based on the question type

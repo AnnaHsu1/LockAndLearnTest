@@ -39,6 +39,7 @@ router.post('/addQuestion/:quizId', async (req, res) => {
       multipleChoiceAnswers,
       inputs,
       options,
+
     };
 
     // Find the quiz by ID
