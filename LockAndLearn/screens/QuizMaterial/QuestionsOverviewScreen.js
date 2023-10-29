@@ -72,7 +72,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                                 }}
                                 style={styles.deleteButton}
                             >
-                                <Text style={styles.deleteButtonText}>-</Text>
+                                <Text style={styles.deleteButtonText}>X</Text>
                             </TouchableOpacity>
                         </View>
                     ))}
@@ -138,18 +138,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         borderRadius: 5,
+        marginRight: 10,
     },
     deleteButton: {
         backgroundColor: 'red',
         width: 30,
-        height: 30,
-        borderRadius: 15,
+        height: 20,
+        borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
     },
     deleteButtonText: {
         color: 'white',
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: 'bold',
     },
     createQuestionButtonContainer: {
