@@ -26,7 +26,7 @@ router.get('/allQuizzes', async (req, res) => {
 
 
 // Get a specific quiz by ID
-router.get('/:quizId', async (req, res) => {
+router.get('/quiz/:quizId', async (req, res) => {
   try {
     const quizId = req.params.quizId;
     const quiz = await Quiz.findById(quizId);

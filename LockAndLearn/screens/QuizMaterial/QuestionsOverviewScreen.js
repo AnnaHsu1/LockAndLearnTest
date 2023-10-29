@@ -4,19 +4,39 @@ import { useNavigation } from "@react-navigation/native";
 
 const QuestionsOverviewScreen = ({ route }) => {
     const navigation = useNavigation();
-    const { workPackageId } = route.params;
-    const [questions, setQuestions] = useState([
-        { id: 1, name: 'True or False: The Earth is flat.' },
-        { id: 2, name: 'True or False: Water boils at 100 degrees Celsius at sea level.' },
-        { id: 3, name: 'True or False: The moon is made of cheese.' },
-        { id: 4, name: 'True or False: The capital of Japan is Tokyo.' },
-        { id: 5, name: 'What is the capital of France?' },
-        { id: 6, name: 'Explain Newton\'s second law of motion.' },
-        { id: 7, name: 'Who wrote \'Romeo and Juliet\'?' },
-    ]);
+    const quizId = route.params.quizId;
 
-    const [quizzes, setQuizzes] = useState([]);
+    const [questions, setQuestions] = useState([]);
     const [error, setError] = useState(null);
+    
+
+    useEffect(() => {
+        const fetchQuiz = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+            });
+            console.log("XXXXXXXX",response);
+            if (response.status === 200) {
+            const data = await response.json();
+            console.log("WWWWWWWWW",data.questions);
+            setQuestions(data.questions);
+            } else {
+            const errorMessage = await response.text();
+            setError(errorMessage);
+            console.error("Error fetching quizzes:", errorMessage);
+            }
+        } catch (error) {
+            setError("Network error");
+            console.error("Network error:", error);
+        }
+        }
+
+        fetchQuiz();
+    }, []);
 
 
     const deleteQuestion = (questionId) => {
@@ -34,14 +54,14 @@ const QuestionsOverviewScreen = ({ route }) => {
             <View style={styles.containerFile}>
                 <Text style={styles.selectFiles}>Create your Questions</Text>
                 <View style={styles.questionList}>
-                    {questions.map((question) => (
-                        <View key={question.id} style={styles.questionItemContainer}>
+                    {questions && questions.map((question, index) => (
+                        <View key={index} style={styles.questionItemContainer}>
                             <TouchableOpacity
                                 onPress={() => {
                                     // Goes to a page/modal where you can edit the question
                                 }}
                             >
-                                <Text style={styles.questionItem}>{question.name}</Text>
+                                <Text style={styles.questionItem}>{question.text}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
