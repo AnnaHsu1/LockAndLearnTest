@@ -6,7 +6,6 @@ const QuestionsOverviewScreen = ({ route }) => {
     const navigation = useNavigation();
     const quizId = route.params.quizId;
     const [questions, setQuestions] = useState([]);
-    const [error, setError] = useState(null);
     
 
     useEffect(() => {
@@ -18,19 +17,13 @@ const QuestionsOverviewScreen = ({ route }) => {
                 'Content-Type': 'application/json',
             }
             });
-            console.log("XXXXXXXX",response);
-            console.log(quizId,response);
             if (response.status === 200) {
             const data = await response.json();
-            console.log("WWWWWWWWW",data.questions);
             setQuestions(data.questions);
             } else {
-            const errorMessage = await response.text();
-            setError(errorMessage);
-            console.error("Error fetching quizzes:", errorMessage);
+            console.error("Error fetching quizzes");
             }
         } catch (error) {
-            setError("Network error");
             console.error("Network error:", error);
         }
         }
@@ -55,12 +48,9 @@ const QuestionsOverviewScreen = ({ route }) => {
                 console.log("Updated quiz after deletion:", data);
                 setQuestions(data.questions);  // Update local state with the updated questions array
             } else {
-                const errorMessage = await response.text();
-                setError(errorMessage);
-                console.error("Error deleting question:", errorMessage);
+                console.error("Error deleting question");
             }
         } catch (error) {
-            setError("Network error");
             console.error("Network error:", error);
         }
     };
@@ -105,7 +95,6 @@ const QuestionsOverviewScreen = ({ route }) => {
                           navigation.navigate('CreateQuestion', {
                               quizId: quizId, // pass id
                           });
-                          console.log(quizId);
                       }}
                   >
                       <Text style={styles.createQuestionButtonText}>Create Question</Text>
