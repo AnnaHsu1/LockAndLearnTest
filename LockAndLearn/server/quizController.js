@@ -61,6 +61,42 @@ router.post('/addQuestion/:quizId', async (req, res) => {
   }
 });
 
+// delete question based on quizid and question index
+router.delete('/deleteQuestion/:quizId/:questionIndex', async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const questionIndex = req.params.questionIndex;
+
+    // Ensure the questionIndex is a valid number
+    if (isNaN(questionIndex) || questionIndex < 0) {
+      return res.status(400).json({ error: "Invalid question index provided." });
+    }
+
+    // Find the quiz by ID
+    const quiz = await Quiz.findById(quizId);
+    
+    if (!quiz) {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+
+    // Ensure the question exists at the specified index
+    if (quiz.questions.length <= questionIndex) {
+      return res.status(404).json({ error: "Question not found at the specified index." });
+    }
+
+    // Remove the question from the quiz's questions array
+    quiz.questions.splice(questionIndex, 1);
+
+    // Save the updated quiz without the deleted question
+    const savedQuiz = await quiz.save();
+
+    res.json(savedQuiz);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+
 // Get a specific quiz by ID
 router.get('/quiz/:quizId', async (req, res) => {
   try {

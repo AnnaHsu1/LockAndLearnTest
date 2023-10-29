@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 const QuestionsOverviewScreen = ({ route }) => {
     const navigation = useNavigation();
     const quizId = route.params.quizId;
-
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState(null);
     
@@ -40,10 +39,30 @@ const QuestionsOverviewScreen = ({ route }) => {
     }, []);
 
 
-    const deleteQuestion = (questionId) => {
+    const deleteQuestion = async (questionIndex) => {
         // Filter out the question with the specified ID to delete it
-        const updatedQuestions = questions.filter((question) => question.id !== questionId);
-        setQuestions(updatedQuestions);
+        try {
+            const response = await fetch(`http://localhost:4000/quizzes/deleteQuestion/${quizId}/${questionIndex}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log("Response:", response);
+    
+            if (response.status === 200) {
+                const data = await response.json();
+                console.log("Updated quiz after deletion:", data);
+                setQuestions(data.questions);  // Update local state with the updated questions array
+            } else {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+                console.error("Error deleting question:", errorMessage);
+            }
+        } catch (error) {
+            setError("Network error");
+            console.error("Network error:", error);
+        }
     };
 
     return (
@@ -68,7 +87,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                             <TouchableOpacity
                                 onPress={() => {
                                     // Delete the question
-                                    deleteQuestion(question.id);
+                                    deleteQuestion(index);
                                 }}
                                 style={styles.deleteButton}
                             >

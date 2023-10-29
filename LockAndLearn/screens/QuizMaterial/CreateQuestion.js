@@ -222,7 +222,7 @@ const CreateQuestion = ({ route }) => {
                         console.log("ANSWER:" + answer);
                         // Navigate to the QuestionsOverviewScreen and pass the workPackageId
                         navigation.navigate('QuestionsOverviewScreen', {
-                        //    workPackageId: workPackage.id, // pass id
+                            quizId: quizId,
                         });
                     }}
                 >
