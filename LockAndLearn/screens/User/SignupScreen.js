@@ -24,7 +24,6 @@ const SignupScreen = ({ navigation }) => {
   });
   const [text, setText] = useState('');
   const [checked, setChecked] = React.useState('first');
-  // const api_url = IPV4; // TO MODIFY
 
   const [fdata, setFdata] = useState({
     FirstName: '',
@@ -52,10 +51,8 @@ const SignupScreen = ({ navigation }) => {
   async function handleGoogleSignIn() {
     const user = await getItem('@user');
     if (!user) {
-      if (response.type === 'success') {
+      if (response?.type === 'success') {
         await getUserInfo(response.authentication.accessToken);
-      } else {
-        console.log('Google sign in failed');
       }
     } else {
       setUserInfo(JSON.parse(user));
@@ -94,20 +91,18 @@ const SignupScreen = ({ navigation }) => {
   }, [checked]);
 
   const handleSubmit = async () => {
-    console.log(fdata);
+    // console.log(fdata);
     // Package the user data into a JSON format and ship it to the backend
     try {
       const response = await fetch('http://localhost:4000/users/signup', {
-        // const response = await fetch('http://' + api_url + ':4000/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(fdata), // Send user data as JSON
       });
-
       const data = await response.json();
-
+      // console.log(response.status);
       if (response.status === 201) {
         setErrors({
           Fields: '',
@@ -118,8 +113,13 @@ const SignupScreen = ({ navigation }) => {
         });
         // User created successfully
         console.log('User created successfully in database!', data);
+        await setItem('@token', JSON.stringify(data.user));
         //Add redirect
-        navigation.navigate('UserLandingPage');
+        {
+          data?.user.isParent
+            ? navigation.navigate('ParentAccount')
+            : navigation.navigate('UserLandingPage');
+        }
       } else {
         setErrors({
           Fields: '',

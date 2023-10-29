@@ -8,12 +8,10 @@ import {
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
 import { setItem } from '../../components/AsyncStorage';
-import { IPV4 } from '../../components/APIUrl';
 
 const LoginScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
-  const api_url = IPV4; // TO MODIFY
 
   const [text, setText] = useState('');
   const [fdata, setFdata] = useState({
@@ -52,14 +50,13 @@ const LoginScreen = ({ navigation }) => {
   };
   const handleSubmit = async () => {
     const isValid = validate();
-    console.log(emailError);
-    console.log(passwordError);
+    // console.log(emailError);
+    // console.log(passwordError);
     if (isValid) {
       console.log('Fields are appropriate', fdata);
 
       try {
         const response = await fetch('http://localhost:4000/users/login', {
-          // const response = await fetch('http://' + api_url + ':4000/users/login', {
           method: 'POST',
           credentials: 'include', // Ensure credentials are included
           headers: {

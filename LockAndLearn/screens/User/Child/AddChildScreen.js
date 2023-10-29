@@ -9,7 +9,6 @@ import {
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
-// import DeviceInfo from 'react-native-device-info';
 
 const AddChildScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
