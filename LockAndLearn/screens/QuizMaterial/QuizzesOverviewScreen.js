@@ -7,7 +7,6 @@ const QuizzesOverviewScreen = ({ route }) => {
     const { workPackageId } = route.params;
 
     const [quizzes, setQuizzes] = useState([]);
-    const [error, setError] = useState(null);
 
     const fetchQuizzes = async () => {
         try {
@@ -17,19 +16,14 @@ const QuizzesOverviewScreen = ({ route }) => {
                 'Content-Type': 'application/json',
             }
             });
-            // console.log("AAAAAAAA",response);
             if (response.status === 200) {
             const data = await response.json();
-            // console.log("BBBBBBBB",data);
             setQuizzes(data);
             } else {
-            const errorMessage = await response.text();
-            setError(errorMessage);
-            console.error("Error fetching quizzes:", errorMessage);
+            console.error("Error fetching quizzes");
             }
         } catch (error) {
-            setError("Network error");
-            console.error("Network error:", error);
+            console.error("Network error");
         }
         }
 
@@ -44,17 +38,13 @@ const QuizzesOverviewScreen = ({ route }) => {
             });
     
             if (response.status === 200) {
-                console.log("Quiz deleted successfully");
                 const data = await response.json();
                 fetchQuizzes();
             } else {
-                const errorMessage = await response.text();
-                setError(errorMessage);
-                console.error("Error deleting quiz:", errorMessage);
+                console.error("Error deleting quiz");
             }
         } catch (error) {
-            setError("Network error");
-            console.error("Network error:", error);
+            console.error("Network error", error);
         }
     };
     useEffect(() => {
@@ -89,7 +79,7 @@ const QuizzesOverviewScreen = ({ route }) => {
                                     }}
                                     style={styles.deleteButton}
                                 >
-                                    <Text style={styles.deleteButtonText}>X</Text>
+                                    <Text style={styles.deleteButtonText} testID="delete-button-x">X</Text>
                                 </TouchableOpacity>
                             </View>
                         ))}
