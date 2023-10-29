@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const CreateQuestion = ({ route }) => {
     const navigation = useNavigation();
-    const { workPackageId } = route.params;
+    const { quizId } = route.params.quizId;
     const [questionText, setQuestionText] = useState('');
     const [questionType, setQuestionType] = useState('');
     const [inputs, setInputs] = useState(['']);

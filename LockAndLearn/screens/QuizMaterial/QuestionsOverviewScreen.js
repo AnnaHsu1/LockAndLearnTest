@@ -81,7 +81,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                       onPress={() => {
                           // Navigate to the QuestionsOverviewScreen and pass the workPackageId
                           navigation.navigate('CreateQuestion', {
-                              workPackageId: workPackageId, // pass id
+                              quizId: quizId, // pass id
                           });
                       }}
                   >
