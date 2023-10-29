@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 const QuestionsOverviewScreen = ({ route }) => {
@@ -54,6 +54,7 @@ const QuestionsOverviewScreen = ({ route }) => {
         >
             <View style={styles.containerFile}>
                 <Text style={styles.selectFiles}>Create your Questions</Text>
+                <ScrollView style={styles.scrollContainer}>
                 <View style={styles.questionList}>
                     {questions && questions.map((question, index) => (
                         <View key={index} style={styles.questionItemContainer}>
@@ -76,6 +77,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                         </View>
                     ))}
                 </View>
+                </ScrollView>
                 <View style={styles.createQuestionButtonContainer}>
                   <TouchableOpacity
                       style={styles.createQuestionButton}
@@ -166,6 +168,10 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    scrollContainer: {
+        height: 300, 
+        width: 300,
     },
 });
 
