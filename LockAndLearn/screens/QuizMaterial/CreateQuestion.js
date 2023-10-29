@@ -6,7 +6,7 @@ const CreateQuestion = ({ route }) => {
     const navigation = useNavigation();
     const { quizId } = route.params;
     const [questionText, setQuestionText] = useState('');
-    const [questionType, setQuestionType] = useState('Short Answer');
+    const [questionType, setQuestionType] = useState('');
     const [inputs, setInputs] = useState(['']);
     const [answer, setAnswer] = useState('');
     const [isTrue, setIsTrue] = useState(false);
@@ -27,7 +27,7 @@ const CreateQuestion = ({ route }) => {
         };
 
         if (questionType === "True or False") {
-            newQuestion.isTrueFalse = isTrue;
+            newQuestion.answer = answer;
         } else if (questionType === "Multiple Choice Question") {
             newQuestion.multipleChoiceAnswers = Object.keys(multipleChoiceAnswers).map((key) => ({
                 text: multipleChoiceAnswers[key].text,
@@ -74,6 +74,11 @@ const CreateQuestion = ({ route }) => {
         } catch (error) {
             console.error('Error creating question:', error);
         }
+    };
+
+    const handleTrueFalseChange = (newValue) => {
+        setIsTrue(newValue);
+        setAnswer(newValue ? "True" : "False");
     };
 
     const handleSetCorrectAnswer = (key) => {
@@ -131,14 +136,14 @@ const CreateQuestion = ({ route }) => {
                         <View style={styles.checkboxRow}>
                             <CheckBox
                                 value={isTrue}
-                                onValueChange={() => setIsTrue(!isTrue)}
+                                onValueChange={() => handleTrueFalseChange(true)}
                             />
                             <Text>True</Text>
                         </View>
                         <View style={styles.checkboxRow}>
                             <CheckBox
                                 value={!isTrue}
-                                onValueChange={() => setIsTrue(!isTrue)}
+                                onValueChange={() => handleTrueFalseChange(false)}
                             />
                             <Text>False</Text>
                         </View>
@@ -203,6 +208,7 @@ const CreateQuestion = ({ route }) => {
                     style={styles.createQuestionButton}
                     onPress={() => {
                         handleCreateQuestion(); // Call the function to create the question
+                        console.log("ANSWER:" + answer);
                         // Navigate to the QuestionsOverviewScreen and pass the workPackageId
                         navigation.navigate('QuestionsOverviewScreen', {
                         //    workPackageId: workPackage.id, // pass id
