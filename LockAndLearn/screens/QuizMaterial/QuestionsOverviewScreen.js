@@ -20,6 +20,7 @@ const QuestionsOverviewScreen = ({ route }) => {
             }
             });
             console.log("XXXXXXXX",response);
+            console.log(quizId,response);
             if (response.status === 200) {
             const data = await response.json();
             console.log("WWWWWWWWW",data.questions);
@@ -83,7 +84,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                           navigation.navigate('CreateQuestion', {
                               quizId: quizId, // pass id
                           });
-                          console.log(workPackageId);
+                          console.log(quizId);
                       }}
                   >
                       <Text style={styles.createQuestionButtonText}>Create Question</Text>

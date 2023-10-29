@@ -4,9 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 
 const CreateQuestion = ({ route }) => {
     const navigation = useNavigation();
-    const { quizId } = route.params.quizId;
+    const { quizId } = route.params;
     const [questionText, setQuestionText] = useState('');
-    const [questionType, setQuestionType] = useState('');
+    const [questionType, setQuestionType] = useState('Short Answer');
     const [inputs, setInputs] = useState(['']);
     const [answer, setAnswer] = useState('');
     const [isTrue, setIsTrue] = useState(false);
@@ -17,7 +17,7 @@ const CreateQuestion = ({ route }) => {
         D: { text: '', isCorrect: false },
     });
     const [questions, setQuestions] = useState([]);
-
+    console.log(quizId + "CreateQuestions1");
     const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Fill In The Blanks", "Another Type"];
     const handleCreateQuestion = async () => {
         // Create a new question object based on the user's input
@@ -41,13 +41,14 @@ const CreateQuestion = ({ route }) => {
 
         // Make a POST request to your server to create the question
         try {
-            const response = await fetch('http://localhost:4000/quizzes/addQuestion/:quizId', {
+            const response = await fetch(`http://localhost:4000/quizzes/addQuestion/${quizId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(newQuestion),
             });
+            console.log(response);
 
             if (response.ok) {
                 // Question created successfully, you can handle the response here
@@ -103,6 +104,7 @@ const CreateQuestion = ({ route }) => {
                     selectedValue={questionType}
                     onValueChange={(itemValue) => {
                         setQuestionType(itemValue);
+                        console.log(itemValue + " iv-qt "+ questionType);
                         setAnswer('');
                         setIsTrue(false);
                         setMultipleChoiceAnswers({

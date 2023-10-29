@@ -5,11 +5,11 @@ const collectionName = 'Quizzes';
 const quizSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: false,
   },
   workPackageId: {
     type: String, // You may choose the appropriate data type (e.g., ObjectId) depending on your setup
-    required: true,
+    required: false,
   },
   questions: [
     {
@@ -21,11 +21,11 @@ const quizSchema = new mongoose.Schema({
       },
       questionType: {
         type: String, // Type of the question (e.g., MCQ, SA, FIB, TF)
-        required: true,
+        required: false,
       },
       questionText: {
         type: String, // The actual question text
-        required: true,
+        required: false,
       },
       answer: {
         type: String, // The answer to the question

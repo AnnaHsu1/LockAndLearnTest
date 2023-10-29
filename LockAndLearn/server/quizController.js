@@ -24,6 +24,40 @@ router.get('/allQuizzes', async (req, res) => {
   }
 });
 
+// Create a new question and associate it with a quiz by quiz ID
+router.post('/addQuestion/:quizId', async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs } = req.body;
+
+    // Construct the new question
+    const newQuestion = {
+      questionText,
+      questionType,
+      answer,
+      isTrue,
+      multipleChoiceAnswers,
+      inputs,
+    };
+
+    // Find the quiz by ID
+    const quiz = await Quiz.findById(quizId);
+    
+    if (!quiz) {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+
+    // Add the new question to the quiz's questions array
+    quiz.questions.push(newQuestion);
+
+    // Save the updated quiz with the new question
+    const savedQuiz = await quiz.save();
+
+    res.json(savedQuiz);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 // Get a specific quiz by ID
 router.get('/quiz/:quizId', async (req, res) => {
@@ -63,40 +97,6 @@ router.delete('/:quizId', async (req, res) => {
   }
 });
 
-// Create a new question and associate it with a quiz by quiz ID
-router.post('/addQuestion/:quizId', async (req, res) => {
-  try {
-    const quizId = req.params.quizId;
-    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs } = req.body;
-
-    // Construct the new question
-    const newQuestion = {
-      questionText,
-      questionType,
-      answer,
-      isTrue,
-      multipleChoiceAnswers,
-      inputs,
-    };
-
-    // Find the quiz by ID
-    const quiz = await Quiz.findById(quizId);
-    
-    if (!quiz) {
-      return res.status(404).json({ error: "Quiz not found" });
-    }
-
-    // Add the new question to the quiz's questions array
-    quiz.questions.push(newQuestion);
-
-    // Save the updated quiz with the new question
-    const savedQuiz = await quiz.save();
-
-    res.json(savedQuiz);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
 
 
 module.exports = router;
