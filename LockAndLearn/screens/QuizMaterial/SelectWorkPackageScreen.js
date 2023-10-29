@@ -3,10 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 const workPackages = [
-    { id: 1, name: 'Math-7' },
-    { id: 2, name: 'Science-10' },
-    { id: 3, name: 'History-12' },
-    { id: 4, name: 'History-12' },
+    { id: 1, name: 'Math - Grade 7' },
+    { id: 2, name: 'Science - Grade 4' },
+    { id: 3, name: 'History - Grade 5' },
+    { id: 4, name: 'History - Grade 10' },
+    { id: 4, name: 'French - Grade 12' },
     // will be dynamic with db
 ];
 
@@ -14,34 +15,43 @@ const SelectWorkPackageScreen = () => {
     const [fileName, setFileName] = useState([]);
     const navigation = useNavigation();
 
-    // Function to create a quiz when a work package is pressed
     const createQuizForWorkPackage = async (workPackageId) => {
-        // Prepare the quiz object
-        const newQuiz = {
-            name: `Quiz for ${workPackageId}`, // You can customize the name
-            workPackageId,
-            questions: [], // Initially, the questions array is empty
-        };
-
-        try {
-            // Send a POST request to create the quiz
-            const response = await fetch('http://localhost:4000/quizzes/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newQuiz),
-            });
-
-            if (response.status === 200) {
-                // Quiz created successfully, you can handle the response if needed
-            } else {
-                // Handle errors or display a message
+        // Find the selected work package based on workPackageId
+        const selectedWorkPackage = workPackages.find((workPackage) => workPackage.id === workPackageId);
+    
+        if (selectedWorkPackage) {
+            const nameOfPackage = selectedWorkPackage.name;
+    
+            // Prepare the quiz object with the updated name
+            const newQuiz = {
+                name: `Quiz for ${nameOfPackage}`,
+                workPackageId,
+                questions: [], // Initially, the questions array is empty
+            };
+    
+            try {
+                // Send a POST request to create the quiz
+                const response = await fetch('http://localhost:4000/quizzes/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newQuiz),
+                });
+    
+                if (response.status === 200) {
+                    // Quiz created successfully, you can handle the response if needed
+                } else {
+                    // Handle errors or display a message
+                }
+            } catch (error) {
+                // Handle network errors or server issues
             }
-        } catch (error) {
-            // Handle network errors or server issues
+        } else {
+            console.error(`Work package with ID ${workPackageId} not found.`);
         }
     };
+    
 
     return (
         <View style={styles.container}>
