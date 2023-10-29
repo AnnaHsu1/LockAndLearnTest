@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         height: 300, 
-        width: 300,
+        width: 600,
     },
 });
 
