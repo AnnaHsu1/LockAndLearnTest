@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/User/LoginScreen';
 import UploadScreen from '../screens/StudyMaterial/UploadScreen';
-import EditUploadScreen from '../screens/StudyMaterial/EditUploadScreen';
 import SignupScreen from '../screens/User/SignupScreen';
 import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsScreen';
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
@@ -12,6 +11,7 @@ import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
+import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,11 +30,6 @@ const StackNavigation = () => {
           name="Upload"
           component={UploadScreen}
           options={{ title: 'Upload Study Material' }}
-        />
-        <Stack.Screen
-          name="Uploading"
-          component={EditUploadScreen}
-          options={{ title: 'Uploading files' }}
         />
         <Stack.Screen
           name="Locking"
@@ -65,6 +60,11 @@ const StackNavigation = () => {
           name="AddChild"
           component={AddChild}
           options={{ title: 'Add Child Account' }}
+        />
+        <Stack.Screen
+          name="ViewUploads"
+          component={ViewUploadedFilesScreen}
+          options={{ title: 'View my Uploaded Files' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
