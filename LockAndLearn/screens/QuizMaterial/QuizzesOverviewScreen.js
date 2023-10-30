@@ -10,7 +10,7 @@ const QuizzesOverviewScreen = ({ route }) => {
 
     const fetchQuizzes = async () => {
         try {
-            const response = await fetch('http://localhost:4000/quizzes/allQuizzes', {
+            const response = await fetch('https://localhost:4000/quizzes/allQuizzes', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ const QuizzesOverviewScreen = ({ route }) => {
     const deleteQuiz = async (quizId) => {
         // Filter out the quizzes with the specified ID to delete it
         try {
-            const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
+            const response = await fetch(`https://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

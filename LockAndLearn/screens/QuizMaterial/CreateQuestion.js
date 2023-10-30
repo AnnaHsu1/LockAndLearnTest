@@ -50,7 +50,7 @@ const CreateQuestion = ({ route }) => {
 
         // Make a POST request to your server to create the question
         try {
-            const response = await fetch(`http://localhost:4000/quizzes/addQuestion/${quizId}`, {
+            const response = await fetch(`https://localhost:4000/quizzes/addQuestion/${quizId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
