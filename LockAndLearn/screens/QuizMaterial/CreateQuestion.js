@@ -1,4 +1,4 @@
-import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, Picker, CheckBox } from 'react-native';
+import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from '@react-native-picker/picker';
