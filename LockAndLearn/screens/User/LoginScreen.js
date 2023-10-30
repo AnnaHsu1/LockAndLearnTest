@@ -7,8 +7,9 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
+import { setItem } from '../../components/AsyncStorage';
 
-const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
+const LoginScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
 
@@ -49,14 +50,15 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
   };
   const handleSubmit = async () => {
     const isValid = validate();
-    console.log(emailError);
-    console.log(passwordError);
+    // console.log(emailError);
+    // console.log(passwordError);
     if (isValid) {
       console.log('Fields are appropriate', fdata);
 
       try {
         const response = await fetch('http://localhost:4000/users/login', {
           method: 'POST',
+          credentials: 'include', // Ensure credentials are included
           headers: {
             'Content-Type': 'application/json',
           },
@@ -77,7 +79,14 @@ const LoginScreen = ({ navigation, setToken, setUserInfo }) => {
               data.user.lastName +
               '!'
           );
+          // Store the user data in AsyncStorage
+          await setItem('@token', JSON.stringify(data.user));
           navigation.navigate('UserLandingPage');
+          if (data.user.isParent) {
+            navigation.navigate('ParentAccount');
+          } else {
+            navigation.navigate('UserLandingPage');
+          }
         } else {
           // Store the error message in state
           console.log(data.msg);

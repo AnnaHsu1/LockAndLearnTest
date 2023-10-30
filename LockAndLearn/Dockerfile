@@ -10,7 +10,7 @@ COPY . .
 
 EXPOSE 19006
 
-CMD ["npm", "run", "web"]
+CMD ["npx", "expo", "start", "--web", "--https"]
 #CMD ["npm", "run", "android"] *todo on Android*
 #CMD ["npm", "run", "ios"] *todo on iOS*
 

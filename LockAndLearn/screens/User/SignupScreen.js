@@ -1,5 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
 import { StyleSheet, Text, TextInput, View, Image, navigation } from 'react-native';
 import { RadioButton, Button } from 'react-native-paper';
 import {
@@ -7,15 +9,26 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { getItem, setItem, removeItem } from '../../components/AsyncStorage';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const SignupScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const [userInfo, setUserInfo] = useState(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
+    iosClientId: '113548474045-a3e9t8mijs7s0c9v9ht3ilvlgsjm64oj.apps.googleusercontent.com',
+    webClientId: '113548474045-vuk7am9h5b8ug7c1tudd36pcsagv4l6b.apps.googleusercontent.com',
+  });
+  const [text, setText] = useState('');
+  const [checked, setChecked] = React.useState('first');
 
   const [fdata, setFdata] = useState({
     FirstName: '',
     LastName: '',
-    Account: '',
+    isParent: null,
     Email: '',
     Password: '',
     CPassword: '',
@@ -30,12 +43,55 @@ const SignupScreen = ({ navigation }) => {
     DOB: '',
   });
 
-  const [text, setText] = useState('');
-  const [checked, setChecked] = React.useState('first');
+  // Handle google sign in when user attempts to login
+  useEffect(() => {
+    handleGoogleSignIn();
+  }, [response]);
+
+  async function handleGoogleSignIn() {
+    const user = await getItem('@user');
+    if (!user) {
+      if (response?.type === 'success') {
+        await getUserInfo(response.authentication.accessToken);
+      }
+    } else {
+      setUserInfo(JSON.parse(user));
+    }
+  }
+
+  async function handleGoogleSignOut() {
+    const user = await getItem('@user');
+    if (user) {
+      await removeItem('@user');
+      setUserInfo(null);
+    }
+  }
+
+  const getUserInfo = async (token) => {
+    if (!token) return;
+    try {
+      const response = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const user = await response.json();
+      await setItem('@user', JSON.stringify(user));
+      setUserInfo(user);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // useEffect to watch for changes in checked state and update fdata.Account
+  useEffect(() => {
+    setFdata((prevFdata) => ({
+      ...prevFdata,
+      isParent: checked,
+    }));
+  }, [checked]);
 
   const handleSubmit = async () => {
-    console.log(fdata);
-
+    // console.log(fdata);
     // Package the user data into a JSON format and ship it to the backend
     try {
       const response = await fetch('http://localhost:4000/users/signup', {
@@ -45,9 +101,8 @@ const SignupScreen = ({ navigation }) => {
         },
         body: JSON.stringify(fdata), // Send user data as JSON
       });
-
       const data = await response.json();
-
+      // console.log(response.status);
       if (response.status === 201) {
         setErrors({
           Fields: '',
@@ -58,7 +113,13 @@ const SignupScreen = ({ navigation }) => {
         });
         // User created successfully
         console.log('User created successfully in database!', data);
+        await setItem('@token', JSON.stringify(data.user));
         //Add redirect
+        {
+          data?.user.isParent
+            ? navigation.navigate('ParentAccount')
+            : navigation.navigate('UserLandingPage');
+        }
       } else {
         setErrors({
           Fields: '',
@@ -150,22 +211,22 @@ const SignupScreen = ({ navigation }) => {
           <View style={[styles.radio, styles.row]}>
             <View style={[styles.radio_item, styles.row]}>
               <RadioButton
-                value="parent"
-                status={checked === 'parent' ? 'checked' : 'unchecked'}
-                onPress={() => setChecked('parent')}
+                value="true"
+                status={checked === 'true' ? 'checked' : 'unchecked'}
+                onPress={() => setChecked('true')}
                 color="#4F85FF"
               />
-              <Text style={checked === 'parent' ? styles.checked : styles.field}>Parent</Text>
+              <Text style={checked === 'true' ? styles.checked : styles.field}>Parent</Text>
             </View>
 
             <View style={[styles.radio_item, styles.row]}>
               <RadioButton
-                value="teacher"
-                status={checked === 'teacher' ? 'checked' : 'unchecked'}
-                onPress={() => setChecked('teacher')}
+                value="false"
+                status={checked === 'false' ? 'checked' : 'unchecked'}
+                onPress={() => setChecked('false')}
                 color="#4F85FF"
               />
-              <Text style={checked === 'teacher' ? styles.checked : styles.field}>Teacher</Text>
+              <Text style={checked === 'false' ? styles.checked : styles.field}>Teacher</Text>
             </View>
           </View>
         </View>
@@ -222,6 +283,27 @@ const SignupScreen = ({ navigation }) => {
         <Text testID="login-link" style={styles.link} onPress={() => navigation.navigate('Login')}>
           Already have an account? Sign in
         </Text>
+
+        {/* <Text>{userInfo ? JSON.stringify(userInfo) : null}</Text> */}
+        {!userInfo ? (
+          <Button
+            mode="contained"
+            style={[styles.button, { marginTop: 10 }]}
+            textColor="#fff"
+            onPress={() => promptAsync()}
+          >
+            Create an account with Google
+          </Button>
+        ) : (
+          <Button
+            mode="contained"
+            style={[styles.button, { marginTop: 10 }]}
+            textColor="#fff"
+            onPress={() => handleGoogleSignOut()}
+          >
+            Sign out
+          </Button>
+        )}
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
@@ -322,7 +404,7 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       half_width: {
-        width: 240,
+        width: 225,
       },
       bottomCloud: {
         width: wp('100%'),

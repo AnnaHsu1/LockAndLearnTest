@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/User/LoginScreen';
 import UploadScreen from '../screens/StudyMaterial/UploadScreen';
-import EditUploadScreen from '../screens/StudyMaterial/EditUploadScreen';
 import SignupScreen from '../screens/User/SignupScreen';
 import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsScreen';
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
@@ -14,6 +13,9 @@ import SelectWorkPackageScreen from '../screens/QuizMaterial/SelectWorkPackageSc
 import QuestionsOverviewScreen from '../screens/QuizMaterial/QuestionsOverviewScreen';
 import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen';
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
+import ParentAccount from '../screens/User/Child/ParentAccountScreen';
+import AddChild from '../screens/User/Child/AddChildScreen';
+import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,11 +36,6 @@ const StackNavigation = () => {
           options={{ title: 'Upload Study Material' }}
         />
         <Stack.Screen
-          name="Uploading"
-          component={EditUploadScreen}
-          options={{ title: 'Uploading files' }}
-        />
-        <Stack.Screen
           name="Locking"
           component={LockingSessionBeginsScreen}
           options={{ title: 'Locking' }}
@@ -56,7 +53,22 @@ const StackNavigation = () => {
         <Stack.Screen
           name="UserLandingPage"
           component={LandingPage}
-          options={{ title: 'LandingPage' }}
+          options={{ title: 'Landing Page' }}
+        />
+        <Stack.Screen
+          name="ParentAccount"
+          component={ParentAccount}
+          options={{ title: 'Manage children' }}
+        />
+        <Stack.Screen
+          name="AddChild"
+          component={AddChild}
+          options={{ title: 'Add Child Account' }}
+        />
+        <Stack.Screen
+          name="ViewUploads"
+          component={ViewUploadedFilesScreen}
+          options={{ title: 'View my Uploaded Files' }}
         />
         <Stack.Screen
           name="SelectWorkPackageScreen"

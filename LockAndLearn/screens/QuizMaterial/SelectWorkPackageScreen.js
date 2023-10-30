@@ -7,7 +7,7 @@ const workPackages = [
     { id: 2, name: 'Science - Grade 4' },
     { id: 3, name: 'History - Grade 5' },
     { id: 4, name: 'History - Grade 10' },
-    { id: 4, name: 'French - Grade 12' },
+    { id: 5, name: 'French - Grade 12' },
     // will be dynamic with db
 ];
 
