@@ -56,7 +56,7 @@ const ViewUploadedFilesScreen = () => {
         dataFile.push(file);
       }
     }
-  }
+  };
 
   // function to toggle the pop up modal for filter section
   const toggleModalFilter = () => {
@@ -129,7 +129,9 @@ const ViewUploadedFilesScreen = () => {
       {/* display container */}
       <View style={styles.containerFile}>
         {/* display title */}
-        <Text style={styles.selectFiles}>Select files</Text>
+        <Text testID="selectFileText" style={styles.selectFiles}>
+          Select files
+        </Text>
         <TouchableOpacity
           style={{
             paddingRight: '15%',
@@ -141,7 +143,9 @@ const ViewUploadedFilesScreen = () => {
           }}
           onPress={toggleModalFilter}
         >
-          <Text style={{ fontSize: 20, color: '#696969', fontWeight: '500' }}>Filter</Text>
+          <Text testID="filterPress" style={{ fontSize: 20, color: '#696969', fontWeight: '500' }}>
+            Filter
+          </Text>
           <Icon source="filter-outline" size={30} color={'#696969'} borderWidth={1} />
         </TouchableOpacity>
         {/* display each row (which is a file) */}
