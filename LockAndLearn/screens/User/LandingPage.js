@@ -39,7 +39,7 @@ const LandingPage = ({ navigation }) => {
   return (
     <View>
       <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
-      <Button title="Uploading" onPress={() => navigation.navigate('Uploading')} />
+      <Button title="View my Uploaded Files" onPress={() => navigation.navigate('ViewUploads')} />
       <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
       {/* is user a parent? */}
       {user?.isParent ? (
