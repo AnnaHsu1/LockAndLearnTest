@@ -3,6 +3,19 @@ import { describe, expect } from '@jest/globals';
 import { render, fireEvent } from '@testing-library/react-native';
 jest.useFakeTimers();
 
+beforeAll(() => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve({ uploadedFiles: [] }),
+    })
+  );
+});
+
+afterAll(() => {
+  global.fetch.mockClear();
+  delete global.fetch;
+});
+
 describe('download file tests', () => {
   it('select file is present on screen', () => {
     const { getByText } = render(<ViewUploadedFilesScreen />);
