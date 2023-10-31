@@ -9,6 +9,10 @@ import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsS
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
+import SelectWorkPackageScreen from '../screens/QuizMaterial/SelectWorkPackageScreen';
+import QuestionsOverviewScreen from '../screens/QuizMaterial/QuestionsOverviewScreen';
+import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen';
+import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
@@ -65,6 +69,26 @@ const StackNavigation = () => {
           name="ViewUploads"
           component={ViewUploadedFilesScreen}
           options={{ title: 'View my Uploaded Files' }}
+        />
+        <Stack.Screen
+          name="SelectWorkPackageScreen"
+          component={SelectWorkPackageScreen}
+          options={{ title: 'SelectWorkPackageScreen' }}
+        />   
+        <Stack.Screen
+          name="QuizzesOverviewScreen"
+          component={QuizzesOverviewScreen}
+          options={{ title: 'QuizzesOverviewScreen' }}
+        />     
+        <Stack.Screen
+          name="QuestionsOverviewScreen"
+          component={QuestionsOverviewScreen}
+          options={{ title: 'QuestionsOverviewScreen' }}
+        />
+        <Stack.Screen
+          name="CreateQuestion"
+          component={CreateQuestion}
+          options={{ title: 'CreateQuestion' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
