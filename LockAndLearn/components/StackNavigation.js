@@ -28,10 +28,19 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Lock & Learn', headerShown: false }}
+          options={{ title: 'Lock & Learn', 
+          headerShown: false }}
         />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-        <Stack.Screen name="Signup" component={SignupScreen} options={{ title: 'Sign up' }} />
+        <Stack.Screen
+          name="Login" 
+          component={LoginScreen} 
+          options={{ title: 'Login' }} 
+          />
+        <Stack.Screen 
+          name="Signup" 
+          component={SignupScreen} 
+          options={{ title: 'Sign up' }} 
+          />
         <Stack.Screen
           name="Upload"
           component={UploadScreen}
@@ -71,7 +80,18 @@ const StackNavigation = () => {
         <Stack.Screen
           name="ParentAccount"
           component={ParentAccount}
-          options={{ title: 'Manage children' }}
+          options={({ navigation }) => ({
+            title: 'Manage Children',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('UserLandingPage');
+                }}
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+            ),
+          })}
         />
         <Stack.Screen
           name="AddChild"
