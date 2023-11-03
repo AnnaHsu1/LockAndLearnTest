@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/User/LoginScreen';
 import UploadScreen from '../screens/StudyMaterial/UploadScreen';
@@ -53,7 +55,18 @@ const StackNavigation = () => {
         <Stack.Screen
           name="UserLandingPage"
           component={LandingPage}
-          options={{ title: 'Landing Page' }}
+          options={({ navigation }) => ({
+            title: 'Landing Page',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Home');
+                }}
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+            ),
+          })}
         />
         <Stack.Screen
           name="ParentAccount"
@@ -94,5 +107,13 @@ const StackNavigation = () => {
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  headerLink: {
+    color: 'blue', // Customize the link color as needed
+    textDecorationLine: 'underline', // Underline to indicate it's a link
+    marginLeft: 16, // Add some spacing from the back button
+  },
+});
 
 export default StackNavigation;
