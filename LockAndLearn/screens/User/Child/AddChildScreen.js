@@ -16,6 +16,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
   const [text, setText] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
   const [childAdded, setChildAdded] = useState(false);
+  const [updatedChildrenData, setUpdatedChildrenData] = useState([]);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -60,6 +61,9 @@ const AddChildScreen = ({ navigation, setToken }) => {
         setModalVisible(true);
         // User created successfully
         console.log('child added successfully in database!', data);
+
+        // Update the updatedChildrenData with the new child data
+        setUpdatedChildrenData([...updatedChildrenData, data]);
 
         //Add redirect
       } else {
@@ -141,7 +145,9 @@ const AddChildScreen = ({ navigation, setToken }) => {
               title="Hide modal"
               onPress={() => {
                 toggleModal();
-                navigation.navigate('ParentAccount');
+                navigation.navigate('ParentAccount', {
+                  updatedChildren: updatedChildrenData, // Pass the updated children as a parameter
+                });
               }}
             >
               <Text style={styles.close}>Close</Text>
