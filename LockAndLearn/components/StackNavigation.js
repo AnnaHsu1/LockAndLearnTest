@@ -70,7 +70,8 @@ const StackNavigation = () => {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('Home');
-                }}
+                    }}
+                style={{ marginLeft: 15 }}
               >
                 <Ionicons name="arrow-back" size={24} color="black" />
               </TouchableOpacity>
@@ -86,7 +87,8 @@ const StackNavigation = () => {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('UserLandingPage');
-                }}
+                    }}
+                style={{ marginLeft: 15 }}
               >
                 <Ionicons name="arrow-back" size={24} color="black" />
               </TouchableOpacity>
