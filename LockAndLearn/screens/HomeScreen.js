@@ -7,6 +7,7 @@ import {
   navigation,
   ImageBackground,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import {
   CreateResponsiveStyle,
@@ -19,7 +20,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { Button } from 'react-native-paper';
 import { getItem } from '../components/AsyncStorage';
 
 const HomeScreen = ({ navigation }) => {
@@ -61,9 +61,8 @@ const HomeScreen = ({ navigation }) => {
         >
           <View style={styles.web}>
             <View>
-              <Text style={styles.title}>
-                Welcome to <br></br> Lock & Learn!
-              </Text>
+              <Text style={styles.title}>Welcome to</Text>
+              <Text style={styles.title}>Lock & Learn!</Text>
               {isAuthenticated ? (
                 // Render content for authenticated users
                 <>
@@ -75,14 +74,12 @@ const HomeScreen = ({ navigation }) => {
               ) : (
                 // Render content for unauthenticated users
                 <>
-                  <Button
-                    mode="contained"
-                    style={styles.button}
-                    textColor="#3E5CAA"
+                  <TouchableOpacity
+                    style={[styles.button, { backgroundColor: '#C6D8FF' }]}
                     onPress={() => navigation.navigate('Signup')}
                   >
-                    <Text>Sign up</Text>
-                  </Button>
+                    <Text style={[styles.buttonText, { marginVertical: 10 }]}>Sign up</Text>
+                  </TouchableOpacity>
                   <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                     Already have an account? Sign in
                   </Text>
@@ -108,9 +105,8 @@ const HomeScreen = ({ navigation }) => {
             />
             <View style={styles.main_container}>
               <View style={styles.content}>
-                <Text style={styles.title}>
-                  Welcome to <br></br> Lock & Learn
-                </Text>
+                <Text style={styles.title}>Welcome to</Text>
+                <Text style={styles.title}>Lock & Learn</Text>
                 {isAuthenticated ? (
                   // Render content for authenticated users
                   <>
@@ -121,14 +117,12 @@ const HomeScreen = ({ navigation }) => {
                   </>
                 ) : (
                   <>
-                    <Button
-                      mode="contained"
-                      style={styles.button}
-                      textColor="#3E5CAA"
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: '#C6D8FF' }]}
                       onPress={() => navigation.navigate('Signup')}
                     >
-                      <Text>Sign up</Text>
-                    </Button>
+                      <Text style={[styles.buttonText, { marginVertical: 8 }]}>Sign up</Text>
+                    </TouchableOpacity>
                     <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                       Already have an account? Sign in
                     </Text>
@@ -179,12 +173,13 @@ const useStyles = CreateResponsiveStyle(
       flex: 1,
     },
     main_container: {
+      minHeight: hp('40%'),
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
     },
     content: {
-      paddingVertical: 30,
+      paddingVertical: 10,
     },
     title: {
       color: '#3E5CAA',
@@ -193,17 +188,20 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 48,
       fontStyle: 'normal',
       fontWeight: '600',
-      lineHeight: hp('10%'),
-      marginBottom: 50,
+      marginBottom: 25,
     },
     button: {
       borderRadius: 20,
-      backgroundColor: '#C6D8FF',
-      color: '#3E5CAA',
       fontSize: 20,
       fontStyle: 'normal',
       fontWeight: 600,
-      marginVertical: 25,
+    },
+    buttonText: {
+      color: '#3E5CAA',
+      fontSize: 14,
+      fontStyle: 'normal',
+      fontWeight: 600,
+      textAlign: 'center',
     },
     link: {
       color: '#3E5CAA',

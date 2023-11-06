@@ -13,7 +13,7 @@ import { React, useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { TouchableOpacity } from 'react-native';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import 'react-toastify/dist/ReactToastify.css'; causes issue with android
 import { Icon } from 'react-native-paper';
 
 const UploadScreen = () => {
@@ -178,7 +178,7 @@ const UploadScreen = () => {
           />
 
           {/* display button to confirm: uploading files */}
-          <View style={{ alignItems: 'center'}}>
+          <View style={{ alignItems: 'center' }}>
             <TouchableOpacity
               onPress={uploadFilesHandler}
               style={[styles.buttonUpload, { marginTop: '2%' }, { marginBottom: '3%' }]}
