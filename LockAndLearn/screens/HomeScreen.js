@@ -21,10 +21,12 @@ import {
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
 import { getItem } from '../components/AsyncStorage';
+import { useRoute } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const route = useRoute();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
 
@@ -39,9 +41,18 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     checkAuthenticated();
   }, [isAuthenticated]);
+ */
+
+  useEffect(() => {
+    if (route.params && typeof route.params.isAuthenticated !== 'undefined') {
+      setIsAuthenticated(route.params.isAuthenticated);
+    } else {
+      checkAuthenticated();
+    }
+  }, [route.params]);
 
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));

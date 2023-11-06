@@ -33,7 +33,9 @@ const LandingPage = ({ navigation }) => {
   const handleLogout = async () => {
     await removeItem('@token');
     console.log('Logged out successfully');
-    navigation.navigate('Home');
+    navigation.navigate('Home', {
+      isAuthenticated: false,
+    });
   };
 
   return (

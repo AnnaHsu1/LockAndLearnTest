@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/User/LoginScreen';
 import UploadScreen from '../screens/StudyMaterial/UploadScreen';
@@ -26,10 +28,19 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Lock & Learn', headerShown: false }}
+          options={{ title: 'Lock & Learn', 
+          headerShown: false }}
         />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-        <Stack.Screen name="Signup" component={SignupScreen} options={{ title: 'Sign up' }} />
+        <Stack.Screen
+          name="Login" 
+          component={LoginScreen} 
+          options={{ title: 'Login' }} 
+          />
+        <Stack.Screen 
+          name="Signup" 
+          component={SignupScreen} 
+          options={{ title: 'Sign up' }} 
+          />
         <Stack.Screen
           name="Upload"
           component={UploadScreen}
@@ -53,12 +64,36 @@ const StackNavigation = () => {
         <Stack.Screen
           name="UserLandingPage"
           component={LandingPage}
-          options={{ title: 'Landing Page' }}
+          options={({ navigation }) => ({
+            title: 'Landing Page',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Home');
+                    }}
+                style={{ marginLeft: 15 }}
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+            ),
+          })}
         />
         <Stack.Screen
           name="ParentAccount"
           component={ParentAccount}
-          options={{ title: 'Manage children' }}
+          options={({ navigation }) => ({
+            title: 'Manage Children',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('UserLandingPage');
+                    }}
+                style={{ marginLeft: 15 }}
+              >
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+            ),
+          })}
         />
         <Stack.Screen
           name="AddChild"
@@ -94,5 +129,13 @@ const StackNavigation = () => {
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  headerLink: {
+    color: 'blue', // Customize the link color as needed
+    textDecorationLine: 'underline', // Underline to indicate it's a link
+    marginLeft: 16, // Add some spacing from the back button
+  },
+});
 
 export default StackNavigation;
