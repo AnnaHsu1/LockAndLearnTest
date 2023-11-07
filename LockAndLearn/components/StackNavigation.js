@@ -18,6 +18,7 @@ import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
+import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -108,22 +109,27 @@ const StackNavigation = () => {
         <Stack.Screen
           name="SelectWorkPackageScreen"
           component={SelectWorkPackageScreen}
-          options={{ title: 'SelectWorkPackageScreen' }}
-        />   
+          options={{ title: 'Select WorkPackage' }}
+        />
         <Stack.Screen
           name="QuizzesOverviewScreen"
           component={QuizzesOverviewScreen}
-          options={{ title: 'QuizzesOverviewScreen' }}
-        />     
+          options={{ title: 'Quizzes Overview' }}
+        />
         <Stack.Screen
           name="QuestionsOverviewScreen"
           component={QuestionsOverviewScreen}
-          options={{ title: 'QuestionsOverviewScreen' }}
+          options={{ title: 'Questions Overview' }}
         />
         <Stack.Screen
           name="CreateQuestion"
           component={CreateQuestion}
-          options={{ title: 'CreateQuestion' }}
+          options={{ title: 'Create Question' }}
+        />
+        <Stack.Screen
+          name="GoogleSignUp"
+          component={GoogleSignUpScreen}
+          options={{ title: 'Google Sign Up' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -20,7 +20,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
-import { getItem } from '../components/AsyncStorage';
+import { getItem, removeItem } from '../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }) => {
@@ -53,6 +53,22 @@ const HomeScreen = ({ navigation }) => {
       checkAuthenticated();
     }
   }, [route.params]);
+
+  const isUserStillAuthenticated = async () => {
+    const token = JSON.parse(await getItem('@token'));
+    if (token) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (token?.tokenExpiration < currentTime) {
+        console.log('Token expired', currentTime, token?.tokenExpiration);
+        await removeItem('@token');
+      } else {
+        console.log(token);
+        console.log('Token valid', currentTime, token?.tokenExpiration);
+        // If token is not expired, update the token expiration time
+        await setUserTokenWithExpiry('@token', data.user);
+      }
+    }
+  };
 
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));
