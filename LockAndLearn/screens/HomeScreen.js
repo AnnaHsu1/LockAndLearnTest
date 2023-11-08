@@ -20,11 +20,14 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { getItem } from '../components/AsyncStorage';
+import { Button } from 'react-native-paper';
+import { getItem, removeItem } from '../components/AsyncStorage';
+import { useRoute } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const route = useRoute();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
 
@@ -39,9 +42,34 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     checkAuthenticated();
   }, [isAuthenticated]);
+ */
+
+  useEffect(() => {
+    if (route.params && typeof route.params.isAuthenticated !== 'undefined') {
+      setIsAuthenticated(route.params.isAuthenticated);
+    } else {
+      checkAuthenticated();
+    }
+  }, [route.params]);
+
+  const isUserStillAuthenticated = async () => {
+    const token = JSON.parse(await getItem('@token'));
+    if (token) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (token?.tokenExpiration < currentTime) {
+        console.log('Token expired', currentTime, token?.tokenExpiration);
+        await removeItem('@token');
+      } else {
+        console.log(token);
+        console.log('Token valid', currentTime, token?.tokenExpiration);
+        // If token is not expired, update the token expiration time
+        await setUserTokenWithExpiry('@token', data.user);
+      }
+    }
+  };
 
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));

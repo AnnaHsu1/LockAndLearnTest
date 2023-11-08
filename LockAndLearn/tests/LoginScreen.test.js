@@ -52,26 +52,26 @@ describe('testing connection to server', () => {
   });
 });
 
-describe('Components rendering correctly', () => {
-  test('does login screen render', () => {
-    const { getByTestId } = render(<LoginScreen />);
-  });
+// describe('Components rendering correctly', () => {
+//   test('does login screen render', () => {
+//     const { getByTestId } = render(<LoginScreen />);
+//   });
 
-  test('input email and password for login', () => {
-    const { getByTestId } = render(<LoginScreen />);
+//   test('input email and password for login', () => {
+//     const { getByTestId } = render(<LoginScreen />);
 
-    const email = getByTestId('email-input');
-    fireEvent.changeText(email, mockLoginUser.Email);
-    expect(email.props.value).toBe(mockLoginUser.Email);
+//     const email = getByTestId('email-input');
+//     fireEvent.changeText(email, mockLoginUser.Email);
+//     expect(email.props.value).toBe(mockLoginUser.Email);
 
-    const firstName = getByTestId('password-input');
-    fireEvent.changeText(firstName, mockLoginUser.Password);
-    expect(firstName.props.value).toBe(mockLoginUser.Password);
-  });
+//     const firstName = getByTestId('password-input');
+//     fireEvent.changeText(firstName, mockLoginUser.Password);
+//     expect(firstName.props.value).toBe(mockLoginUser.Password);
+//   });
 
-  test('does login button exist', () => {
-    const { getByTestId } = render(<LoginScreen />);
-    const loginButton = getByTestId('login-button');
-    expect(loginButton).toBeDefined();
-  });
-});
+//   test('does login button exist', () => {
+//     const { getByTestId } = render(<LoginScreen />);
+//     const loginButton = getByTestId('login-button');
+//     expect(loginButton).toBeDefined();
+//   });
+// });

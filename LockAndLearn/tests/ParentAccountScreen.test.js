@@ -4,6 +4,17 @@ import ParentAccountScreen from '../screens/User/Child/ParentAccountScreen';
 const fetchMock = require('jest-fetch-mock');
 fetchMock.enableMocks();
 
+// Mock the useRoute hook
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useRoute: () => ({
+    // Mock the route object properties here
+    params: {
+      // Define any expected route params
+    },
+  }),
+}));
+
 describe('ParentAccountScreen component', () => {
   test('renders correctly', () => {
     const { getByText, getByTestId } = render(

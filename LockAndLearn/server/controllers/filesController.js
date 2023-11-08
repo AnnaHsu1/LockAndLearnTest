@@ -1,60 +1,83 @@
 var express = require("express");
 var router = express.Router();
-var path = require("path");
-var fs = require("fs");
 var multer = require("multer");
+const Grid = require('gridfs-stream');
+const { GridFsStorage } = require('multer-gridfs-storage');
+const methodOverride = require('method-override');
 const { 
   createUploadedFiles, 
   getUploadedFiles, 
   deleteUploadedFiles 
 } = require("../uploadedFilesManager");
+const mongoose = require('../db');
+const bodyParser = require('body-parser');
+const app = express();
+const { GridFSBucket } = require('mongodb');
+const conn = mongoose.createConnection(process.env.DB_STRING);
 
-//Configure multer storage and file name
-const storage = multer.diskStorage({
-  destination: "uploads/",
-  // destination: (req, file, cb) => {
-  //       cb(null, 'uploads/');
-  //     },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+app.use(bodyParser.json());
+app.use(methodOverride('_method'));
+app.set('view engine', 'ejs');
+
+let gfs;
+
+conn.once('open', () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('UploadFiles'); //collection name in db  
+});
+
+var storage = new GridFsStorage({
+  url: process.env.DB_STRING,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+        const fileInfo = {
+          filename: file.originalname,
+          bucketName: 'UploadFiles', //collection name in db
+          metadata: {
+            userId: req.body.userId, 
+          },
+            id: new mongoose.Types.ObjectId(),
+        };
+        resolve(fileInfo);
+    });
   }
 });
 
-const upload = multer({ storage: storage });
+const uploadFiles = multer({ storage })
 
-router.post("/uploadFiles", upload.array("files"), async (req, res) => {
-  const uploadedFiles = await createUploadedFiles(req.files);
-  res.status(201).json({ message: "Successfully uploaded files" });
+router.post('/uploadFiles', uploadFiles.array('files', 'userId'), async (req, res) => {
+    res.status(200).json({ message: "Successfully uploaded files" });
 });
 
 router.get("/uploadFiles", async (req, res) => {
-  const uploadedFiles = await getUploadedFiles();
-  // console.log("2"+uploadedFiles);
-  
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  const uploadedFiles = await bucket.find().toArray();
   res.status(201).json({ uploadedFiles });
 });
 
-router.post("/uploadFiles/:id", async (req, res) => {
-  // console.log(req.params.id)
-  const uploadedFiles = await deleteUploadedFiles(req.params.id);
-  // console.log("2"+uploadedFiles);
-  
-  res.status(201).json({ uploadedFiles });
+router.post('/deleteUploadFiles/:id', (req, res) => {
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  bucket.delete(new mongoose.Types.ObjectId(req.params.id), (err, data) => {
+      if (err) return res.status(404).json({ err: err.message });
+    });
+  res.json({ success: true });
 });
 
 router.get('/uploadFiles/:filename', async (req, res) => {
   const requestFileName = req.params.filename;
-  const uploadedFiles = await getUploadedFiles();
-  
-  uploadedFiles.forEach((file) => {
-      if(file.file.originalname === requestFileName) {
-        // console.log("find file: ",file.file.originalname)
-        const filePath = path.join(__dirname, '../uploads/', file.file.filename); //find file from uploads folder (to be changed to find file from db)
-        res.sendFile(filePath);
-        // res.status(201).json({ message: 'Successfully downloaded file' });
-      }
-    
-  })
-})
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  const downloadStream = bucket.openDownloadStreamByName(requestFileName);
+  downloadStream.pipe(res);
+});
+
+router.get('/specificUploadFiles/:userId', async (req, res) => {
+  const requestUserId = req.params.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  const uploadedFiles = await bucket.find({ "metadata.userId": requestUserId }).toArray();
+  res.status(201).json({ uploadedFiles });
+});
 
 module.exports = router;

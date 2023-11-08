@@ -8,10 +8,12 @@ import {
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
+import { useRoute } from '@react-navigation/native';
 
 const ParentAccountScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
+  const route = useRoute();
 
   const [children, setChildren] = useState([]);
 
@@ -39,9 +41,19 @@ const ParentAccountScreen = ({ navigation, setToken }) => {
     }
   };
 
+  /* useEffect(() => {
+    getChildren();
+  }, []); */
+
   useEffect(() => {
     getChildren();
-  }, []);
+
+    // Check if there are updated children passed as a parameter via route.params.
+    if (route.params && route.params.updatedChildren) {
+      // Update the state with the updated children.
+      setChildren(route.params.updatedChildren);
+    }
+  }, [route.params]);
 
   return (
     <View style={styles.page}>

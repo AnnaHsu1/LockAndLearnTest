@@ -9,16 +9,39 @@ import {
   ImageBackground,
   FlatList,
 } from 'react-native';
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { TouchableOpacity } from 'react-native';
 import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css'; causes issue with android
 import { Icon } from 'react-native-paper';
+import { getItem } from '../../components/AsyncStorage';
 
 const UploadScreen = () => {
   const [fileName, setFileName] = useState([]);
   const [files, setFiles] = useState([]);
+
+  // function to get user id from AsyncStorage
+  const getUser = async () => {
+    try {
+      const token = await getItem('@token');
+      if (token) {
+        const user = JSON.parse(token);
+        files.push(user._id);
+        return user._id;
+      } else {
+        // Handle the case where user is undefined (not found in AsyncStorage)
+        console.log('User not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // function called when screen is loaded
+  useEffect(() => {
+    getUser();
+  }, []);
 
   // function handling with file uploaded by user and its names
   const fileSelectedHandler = async () => {
@@ -72,23 +95,46 @@ const UploadScreen = () => {
     }
 
     const fileData = new FormData();
-    // console.log(files);
-    Array.from(files).map((file) => {
-      // console.log(file);
-      fileData.append('files', file);
+    files.forEach((file) => {
+      // append userId if find userId from AsyncStorage, else append files
+      if(file.length === 24) {
+        fileData.append("userId", file);
+      }
+      else{
+        fileData.append("files", file);
+      }
     });
 
     for (var key of fileData.entries()) {
-      // console.log(key[0] + ', ' + key[1].name);
+      console.log(key[0] + ', ' + key[1]);
     }
 
-    await fetch('http://localhost:4000/files/uploadFiles', {
+    const headers = {
+      'Content-Type': 'multipart/form-data',
+    };
+
+  try {
+    const response = await fetch('http://localhost:4000/files/uploadFiles', {
       method: 'POST',
-      body: fileData,
-    })
-      .then((res) => console.log(res))
-      .catch((err) => ('Error occured', err));
+      body: fileData, 
+    });
+    if (response.ok) {
+      console.log('Request successful');
+      // reset all stored files
+      toast.success('Files uploaded successfully!');
+      // todo: redirect to view uploaded files screen (for now, just refresh the page)
+      // navigation.navigate('ViewUploadedFilesScreen',  {sendFiles: files} );
+      setFileName([]);
+      setFiles([]);
+    } else {
+      console.error('Request failed:', response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error('An error occurred:', error);
+  }
+  
   };
+
 
   // function to render each row (which is uploaded file)
   const renderFile = (item, index) => {
@@ -109,6 +155,7 @@ const UploadScreen = () => {
               style={styles.errorTextbox}
               onChangeText={(newText) => setFileName(newText)}
               value={item}
+              editable={false}
             />
             <TouchableOpacity
               testID="deleteButton"
@@ -116,9 +163,9 @@ const UploadScreen = () => {
               onPress={() => deleteFile(index)}
             >
               {fileType == 'pdf' || fileType == 'doc' || fileType == 'docx' || fileType == 'txt' ? (
-                <Icon source="close-circle" size={20} color={'#F24E1E'} />
-              ) : (
                 <Icon source="trash-can-outline" size={22} color={'#F24E1E'} />
+                ) : (
+                <Icon source="close-circle" size={20} color={'#F24E1E'} />
               )}
             </TouchableOpacity>
           </View>
@@ -268,6 +315,7 @@ const styles = StyleSheet.create({
   errorTextbox: {
     flex: 0.9,
     padding: 10,
+    outlineStyle: 'none'
   },
   buttonDelete: {
     flex: 0.1,

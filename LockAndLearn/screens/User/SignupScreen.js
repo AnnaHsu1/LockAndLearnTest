@@ -9,14 +9,19 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import { getItem, setItem, removeItem } from '../../components/AsyncStorage';
+import {
+  getItem,
+  setItem,
+  removeItem,
+  setUserTokenWithExpiry,
+} from '../../components/AsyncStorage';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const SignupScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
-  const [userInfo, setUserInfo] = useState(null);
+  const [googleUserInfo, setGoogleUserInfo] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
     iosClientId: '113548474045-a3e9t8mijs7s0c9v9ht3ilvlgsjm64oj.apps.googleusercontent.com',
@@ -43,27 +48,16 @@ const SignupScreen = ({ navigation }) => {
     DOB: '',
   });
 
+  const storageExpirationTimeInMinutes = 30;
+
   // Handle google sign in when user attempts to login
   useEffect(() => {
-    handleGoogleSignIn();
+    handleGoogleSignUp();
   }, [response]);
 
-  async function handleGoogleSignIn() {
-    const user = await getItem('@user');
-    if (!user) {
-      if (response?.type === 'success') {
-        await getUserInfo(response.authentication.accessToken);
-      }
-    } else {
-      setUserInfo(JSON.parse(user));
-    }
-  }
-
-  async function handleGoogleSignOut() {
-    const user = await getItem('@user');
-    if (user) {
-      await removeItem('@user');
-      setUserInfo(null);
+  async function handleGoogleSignUp() {
+    if (response?.type === 'success') {
+      await getUserInfo(response.authentication.accessToken);
     }
   }
 
@@ -74,9 +68,9 @@ const SignupScreen = ({ navigation }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const user = await response.json();
-      await setItem('@user', JSON.stringify(user));
-      setUserInfo(user);
+      const googleUser = await response.json();
+      setGoogleUserInfo(googleUser);
+      navigation.navigate('GoogleSignUp', { userInfo: googleUser });
     } catch (e) {
       console.error(e);
     }
@@ -104,16 +98,9 @@ const SignupScreen = ({ navigation }) => {
       const data = await response.json();
       // console.log(response.status);
       if (response.status === 201) {
-        setErrors({
-          Fields: '',
-          Email: '',
-          Password: '',
-          CPassword: '',
-          DOB: '',
-        });
         // User created successfully
         console.log('User created successfully in database!', data);
-        await setItem('@token', JSON.stringify(data.user));
+        await setUserTokenWithExpiry('@token', data.user);
         //Add redirect
         {
           data?.user.isParent
@@ -277,7 +264,7 @@ const SignupScreen = ({ navigation }) => {
           }}
           style={[styles.button, styles.full_width]}
         >
-          SIGN UP
+          Sign up
         </Button>
 
         <Text testID="login-link" style={styles.link} onPress={() => navigation.navigate('Login')}>
