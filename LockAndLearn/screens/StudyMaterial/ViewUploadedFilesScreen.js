@@ -14,9 +14,10 @@ import {
 } from 'react-native';
 import { Button, Icon } from 'react-native-paper';
 import { Checkbox } from 'react-native-paper';
+import { getItem } from '../../components/AsyncStorage';
 
 const ViewUploadedFilesScreen = () => {
-  const [user, setUser] = useState('6539daeb8a162cdc7490796f'); //hardcoded userId, to be changed to user id from login
+  let [userId, setUserId] = useState('');
   const [dataFile, setDataFile] = useState([]);
   const [deleteDataFile, setDeleteDataFile] = useState([]);
   // const [fetchedFiles, setFetchedFiles] = useState([]);
@@ -31,31 +32,47 @@ const ViewUploadedFilesScreen = () => {
     { id: 6, label: 'English' },
   ]);
 
+  // function to get user id from AsyncStorage
+  const getUser = async () => {
+    try {
+      const token = await getItem('@token');
+      if (token) {
+        const user = JSON.parse(token);
+        setUserId(user._id);
+        return user._id;
+      } else {
+        // Handle the case where user is undefined (not found in AsyncStorage)
+        console.log('User not found in AsyncStorage');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // function called when screen is loaded
   useEffect(() => {
-    fetchData();
+    fetchFiles();
   }, [deleteDataFile]);
-
-  // function to fetch data from server
-  const fetchData = async () => {
-    const response = await fetch('http://localhost:4000/files/uploadFiles', {
-      method: 'GET',
-    });
-    const files = await response.json();
-    deleteDataFile.push(files.uploadedFiles);
-    // console.log(deleteDataFile);
-    // console.log(user);
-    // console.log(files.uploadedFiles);
-    let idFileCounter = 1;
-    // search for user id in files.uploadedFiles
-    for (let i = 0; i < files.uploadedFiles.length; i++) {
-      if (files.uploadedFiles[i].userId == user) {
-        const nameFile = files.uploadedFiles[i].file.originalname;
+  
+  // function to fetch data from server for specific user
+  const fetchFiles = async () => {
+    userId = getUser();
+    userId.then(async (user) => {
+      userId = user;
+      const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
+        method: 'GET',
+      });
+      const files = await response.json();
+      deleteDataFile.push(files.uploadedFiles);
+      let idFileCounter = 1;
+      for (let i = 0; i < files.uploadedFiles.length; i++) {
+        const nameFile = files.uploadedFiles[i].filename;
         const idFile = idFileCounter++;
         const file = { id: idFile, originalname: nameFile };
         dataFile.push(file);
       }
-    }
+    });
+
   };
 
   // function to toggle the pop up modal for filter section
@@ -72,14 +89,26 @@ const ViewUploadedFilesScreen = () => {
     }));
   };
 
-  // function to delete files
   const handleDelete = async (itemId) => {
-    console.log(itemId);
-    await fetch(`http://localhost:4000/files/uploadFiles/${deleteDataFile[0][itemId - 1]._id}`, {
-      method: 'POST',
-    });
-    const newData = dataFile.filter((item) => item.id !== itemId);
-    setDataFile(newData);
+    try {
+      console.log("itemId: ", itemId);
+      console.log(deleteDataFile[0][itemId - 1]._id)
+      const response = await fetch(`http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[0][itemId - 1]._id}`, {
+        method: 'POST',
+      });
+      if (response.ok) {
+        console.log('File deleted successfully');
+        const newData = dataFile.filter((item) => item.id !== itemId);
+        // console.log("newData: ", newData)
+        setDataFile(newData);
+        // setDeleteDataFile(newData);
+        // update the state to remove the deleted file from the UI
+      } else {
+        console.log('Failed to delete file');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // function to download files
@@ -88,7 +117,7 @@ const ViewUploadedFilesScreen = () => {
     const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
       method: 'GET',
     });
-
+    
     if (response.ok) {
       const test = await response.blob();
       const url = URL.createObjectURL(test);
@@ -117,6 +146,7 @@ const ViewUploadedFilesScreen = () => {
         </View>
       </TouchableOpacity>
     </View>
+
   );
 
   return (
@@ -148,14 +178,20 @@ const ViewUploadedFilesScreen = () => {
           </Text>
           <Icon source="filter-outline" size={30} color={'#696969'} borderWidth={1} />
         </TouchableOpacity>
-        {/* display each row (which is a file) */}
-        <FlatList
-          data={dataFile}
-          renderItem={({ item, index }) => renderFile(item, index, dataFile.length)}
-          keyExtractor={(item) => item.id}
-          style={{ width: '100%' }}
-          contentContainerStyle={{ paddingHorizontal: '5%' }}
-        />
+        {/* display each row (which is a file) */}        
+          <FlatList
+            data={dataFile}
+            renderItem={({ item, index }) => renderFile(item, index, dataFile.length)}
+            keyExtractor={(item) => item.id}
+            style={{ width: '100%' }}
+            contentContainerStyle={{ paddingHorizontal: '5%' }}
+            ListEmptyComponent={() => (
+              // Display when no files are uploaded
+              <View style={{ alignItems: 'center', marginTop: 20 }}>
+                <Text>No uploaded files</Text>
+              </View>
+            )}
+          />       
       </View>
       {/* display pop up modal for filter section */}
       <Modal
