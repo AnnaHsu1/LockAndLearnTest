@@ -23,13 +23,34 @@ import {
 import { Button } from 'react-native-paper';
 import { getItem, removeItem } from '../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
+import { APP_SERVICE_API_ID, APP_SERVICE_ENDPOINT_BASE_URL } from '../config';
+import axios from 'axios';
+import { useApp } from '@realm/react';
 
 const HomeScreen = ({ navigation }) => {
+  const app = useApp();
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const route = useRoute();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
+  const [isRegisterd, setIsRegistered] = useState(false); // State to track registration
+
+  const [username, setUsername] = useState('doesThisWork');
+
+  const handleSubmitRealm = async () => {
+    try {
+      if (!isRegisterd) {
+        await axios.post(
+          `${APP_SERVICE_ENDPOINT_BASE_URL}/app/${APP_SERVICE_API_ID}/endpoint/registerUser`,
+          { username }
+        );
+
+        const credentials = Realm.Credentials.function({ username });
+        await app.logIn(credentials);
+      }
+    } catch (error) {}
+  };
 
   const checkAuthenticated = async () => {
     try {
@@ -150,6 +171,12 @@ const HomeScreen = ({ navigation }) => {
                       onPress={() => navigation.navigate('Signup')}
                     >
                       <Text style={[styles.buttonText, { marginVertical: 8 }]}>Sign up</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: '#C6D8FF' }]}
+                      onPress={() => handleSubmitRealm()}
+                    >
+                      <Text style={[styles.buttonText, { marginVertical: 8 }]}>Test realm</Text>
                     </TouchableOpacity>
                     <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
                       Already have an account? Sign in

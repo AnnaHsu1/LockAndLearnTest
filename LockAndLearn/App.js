@@ -1,16 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import StackNavigation from './components/StackNavigation';
+import { AppProvider, UserProvider, createRealmContext } from '@realm/react';
+import { APP_SERVICE_API_ID } from './config';
 
 const App = () => {
   return (
-    <>
+    <AppProvider id={APP_SERVICE_API_ID}>
       <StackNavigation />
-      {/* <View style={styles.container}>
-        <Text>This is the beginning of Lock & Learn!</Text>
-        <StatusBar style="auto" />
-      </View> */}
-    </>
+    </AppProvider>
   );
 };
 
