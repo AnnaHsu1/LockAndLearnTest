@@ -12,17 +12,24 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
+import Modal2 from 'react-native-modal';
 import { Button, Icon } from 'react-native-paper';
 import { Checkbox } from 'react-native-paper';
 import { getItem } from '../../components/AsyncStorage';
+import { ToastContainer, toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
 
 const ViewUploadedFilesScreen = () => {
+  // const [modalVisible, setModalVisible] = useState(false);
   let [userId, setUserId] = useState('');
   const [dataFile, setDataFile] = useState([]);
+  const [fileId, setFileId] = useState('');
+  const [fileName, setFileName] = useState('');
   const [deleteDataFile, setDeleteDataFile] = useState([]);
   // const [fetchedFiles, setFetchedFiles] = useState([]);
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
   const [checkedboxItems, setCheckedboxItems] = useState({});
+  const [isModalVisible, setModalVisible] = useState(false);
   const [dataFilter, setDataFilter] = useState([
     { id: 1, label: 'French' },
     { id: 2, label: 'Mathematics' },
@@ -47,6 +54,10 @@ const ViewUploadedFilesScreen = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
   };
 
   // function called when screen is loaded
@@ -90,17 +101,20 @@ const ViewUploadedFilesScreen = () => {
   };
 
   const handleDelete = async (itemId) => {
+
+    
     try {
       console.log("itemId: ", itemId);
       console.log(deleteDataFile[0][itemId - 1]._id)
       const response = await fetch(`http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[0][itemId - 1]._id}`, {
-        method: 'POST',
-      });
-      if (response.ok) {
+          method: 'DELETE',
+        });
+        if (response.ok) {
         console.log('File deleted successfully');
         const newData = dataFile.filter((item) => item.id !== itemId);
         // console.log("newData: ", newData)
         setDataFile(newData);
+        toast.success('File deleted successfully!');
         // setDeleteDataFile(newData);
         // update the state to remove the deleted file from the UI
       } else {
@@ -128,6 +142,13 @@ const ViewUploadedFilesScreen = () => {
     }
   };
 
+  const itemDeleteId = "";
+  const getFileId = (itemId) => {
+    itemDeleteId = itemId;
+    // return itemId;
+  };
+  
+
   // function to render each row (which is a file)
   const renderFile = (file, index, totalItems) => (
     // display a row with a file name and a delete button & have a grey border at the bottom of each row (except the last row)
@@ -140,7 +161,17 @@ const ViewUploadedFilesScreen = () => {
       <TouchableOpacity key={index.toString} onPress={() => downloadFile(file.originalname)}>
         <Text style={styles.originalname}>{file.originalname}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonDelete} onPress={() => handleDelete(file.id)}>
+      <TouchableOpacity style={styles.buttonDelete} 
+        // onPress={() => {
+        //   // handleDelete(file.id);
+        //   setModalVisible(true);
+        // }}
+        onPress={() => {
+          toggleModal();
+          setFileId(file.id)
+          setFileName(file.originalname)
+        }}
+      >
         <View style={styles.deleteButtonBackground}>
           <Icon source="delete-outline" size={20} color={'#F24E1E'} />
         </View>
@@ -158,6 +189,13 @@ const ViewUploadedFilesScreen = () => {
     >
       {/* display container */}
       <View style={styles.containerFile}>
+        <ToastContainer
+          position="top-center"
+          hideProgressBar
+          closeOnClick
+          theme="dark"
+          style={{ marginTop: '70px' }}
+        />
         {/* display title */}
         <Text testID="selectFileText" style={styles.selectFiles}>
           Select files
@@ -191,7 +229,45 @@ const ViewUploadedFilesScreen = () => {
                 <Text>No uploaded files</Text>
               </View>
             )}
-          />       
+          /> 
+          {/* Pop-up: Confirmation to delete file */}
+          <Modal2
+            isVisible={isModalVisible}
+            onRequestClose={toggleModal}
+            transparent={true}
+            style={styles.modalComponent}
+          >
+            <View
+              style={styles.modalView1}
+            >
+              <Text style={styles.text}>
+                Are you sure you want to delete {fileName}?
+              </Text>
+              <View style={styles.modalView}>
+                <Button
+                  style={styles.modalNoButton}
+                  title="Hide modal"
+                  mode="contained"
+                  onPress={() => {
+                    toggleModal();
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>No</Text>
+                </Button>
+                <Button
+                  style={styles.modalYesButton}
+                  title="Delete child"
+                  mode="contained"
+                  onPress={() => {
+                    toggleModal();
+                    handleDelete(fileId);
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>Yes</Text>
+                </Button>
+              </View>
+            </View>
+          </Modal2>
       </View>
       {/* display pop up modal for filter section */}
       <Modal
@@ -203,6 +279,8 @@ const ViewUploadedFilesScreen = () => {
         <View
           style={{
             flex: 1,
+            width: '100%',
+            height: '100%',
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -339,6 +417,61 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 5,
   },
+  modalView: {
+    flexDirection: 'row', 
+    justifyContent: 'space-around', 
+  },
+  modalNoButton: {
+    borderRadius: 20, 
+    padding: 10, 
+    elevation: 2, 
+    width: '40%', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: 'grey',
+  },
+  text: {
+    color: 'black',
+    fontSize: 20,
+    marginBottom: 15, 
+    textAlign: 'center',
+  },
+  modalButtons: {
+    borderRadius: 10,
+    marginVertical: 10,
+    height: 50,
+    justifyContent: 'center',
+    minWidth: 100,
+  },
+  modalButtonText: {
+    color: 'white', 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    fontSize: 20
+  },
+  modalYesButton: {
+    borderRadius: 20, 
+    padding: 10, 
+    elevation: 2, 
+    width: '40%', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#FF4136'
+  },
+  modalView1: {
+    margin: 20, 
+    backgroundColor: 'white', 
+    borderRadius: 20, 
+    padding: 35, 
+    alignItems: 'center', 
+    shadowOpacity: 0.25, 
+    shadowRadius: 4, 
+    elevation: 5, 
+  },
+  modalComponent: { 
+    justifyContent: 'center', 
+    alignItems: 'center',
+   },
 });
 
 export default ViewUploadedFilesScreen;
