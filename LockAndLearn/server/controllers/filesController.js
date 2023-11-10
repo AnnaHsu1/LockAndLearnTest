@@ -56,7 +56,7 @@ router.get("/uploadFiles", async (req, res) => {
   res.status(201).json({ uploadedFiles });
 });
 
-router.post('/deleteUploadFiles/:id', (req, res) => {
+router.delete('/deleteUploadFiles/:id', (req, res) => {
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
   bucket.delete(new mongoose.Types.ObjectId(req.params.id), (err, data) => {
       if (err) return res.status(404).json({ err: err.message });
