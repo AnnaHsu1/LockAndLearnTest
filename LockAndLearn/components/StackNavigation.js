@@ -19,6 +19,8 @@ import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
+import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
+import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 
 const Stack = createNativeStackNavigator();
@@ -131,6 +133,16 @@ const StackNavigation = () => {
           name="GoogleSignUp"
           component={GoogleSignUpScreen}
           options={{ title: 'Google Sign Up' }}
+        />
+        <Stack.Screen
+          name="ChildProfile"
+          component={ChildProfileScreen}
+          options={{ title: 'Child Profile' }}
+        />
+        <Stack.Screen
+          name="EditChild"
+          component={EditChildScreen}
+          options={{ title: 'Edit Child' }}
         />
         <Stack.Screen
           name="EditQuestion"

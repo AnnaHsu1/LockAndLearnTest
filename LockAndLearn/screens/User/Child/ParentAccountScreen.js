@@ -10,7 +10,7 @@ import { Button, Icon } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
 
-const ParentAccountScreen = ({ navigation, setToken }) => {
+const ParentAccountScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const route = useRoute();
@@ -18,7 +18,9 @@ const ParentAccountScreen = ({ navigation, setToken }) => {
   const [children, setChildren] = useState([]);
 
   const selectChild = (child) => {
-    console.log("Child's name: ", child);
+    if (child) {
+      navigation.navigate('ChildProfile', { child: child });
+    }
   };
 
   const getChildren = async () => {
@@ -63,10 +65,15 @@ const ParentAccountScreen = ({ navigation, setToken }) => {
         {children.map((child) => (
           <Button
             key={child._id}
-            testID="login-button"
+            testID={`child-${child._id}`}
             mode="contained"
+            contentStyle={{
+              minWidth: wp('90%'),
+              minHeight: 78,
+              justifyContent: 'flex-start',
+            }}
             onPress={() => {
-              selectChild(child.name);
+              selectChild(child);
             }}
             style={[styles.button, styles.full_width]}
           >
@@ -114,8 +121,6 @@ const useStyles = CreateResponsiveStyle(
       borderRadius: 10,
       marginTop: 10,
       height: 78,
-      justifyContent: 'center',
-      alignItems: 'flex-start',
     },
     full_width: {
       minWidth: '100%',
