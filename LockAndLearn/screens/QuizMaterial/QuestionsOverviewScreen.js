@@ -5,11 +5,10 @@ import { useNavigation } from "@react-navigation/native";
 const QuestionsOverviewScreen = ({ route }) => {
     const navigation = useNavigation();
     const quizId = route.params.quizId;
+    const newQuestion = route.params.newQuestion;
     const [questions, setQuestions] = useState([]);
-    
 
-    useEffect(() => {
-        const fetchQuiz = async () => {
+    const fetchQuiz = async () => {
         try {
             const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
             method: 'GET',
@@ -28,8 +27,9 @@ const QuestionsOverviewScreen = ({ route }) => {
         }
         }
 
+    useEffect(() => {
         fetchQuiz();
-    }, []);
+    }, [newQuestion]);
 
 
     const deleteQuestion = async (questionIndex) => {
@@ -73,6 +73,18 @@ const QuestionsOverviewScreen = ({ route }) => {
                                 }}
                             >
                                 <Text style={styles.questionItem}>{question.questionText}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigation.navigate('EditQuestion', {
+                                        quizId: quizId,
+                                        questionIndex: index,
+                                    });
+                                    
+                                }}
+                                style={styles.editButton}
+                            >
+                                <Text style={styles.deleteButtonText}>E</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
@@ -155,12 +167,23 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
+        marginHorizontal: 5,
     },
     deleteButtonText: {
         color: 'white',
         fontSize: 15,
         fontWeight: 'bold',
     },
+    editButton: {
+        backgroundColor: 'green',
+        width: 30,
+        height: 20,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 5,
+    },
+
     createQuestionButtonContainer: {
         marginTop: 20,
         alignItems: 'center',

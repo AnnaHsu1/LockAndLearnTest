@@ -7,7 +7,7 @@ const CreateQuestion = ({ route }) => {
     const navigation = useNavigation();
     const { quizId } = route.params;
     const [questionText, setQuestionText] = useState('');
-    const [questionType, setQuestionType] = useState('');
+    const [questionType, setQuestionType] = useState('Short Answer');
     const [inputs, setInputs] = useState(['']);
     const [answer, setAnswer] = useState('');
     const [isTrue, setIsTrue] = useState(false);
@@ -80,6 +80,10 @@ const CreateQuestion = ({ route }) => {
                 // Handle error response
                 console.error('Failed to create question:', response.statusText);
             }
+            navigation.navigate('QuestionsOverviewScreen', {
+                quizId: quizId,
+                newQuestion: newQuestion,
+            });
         } catch (error) {
             console.error('Error creating question:', error);
         }
@@ -141,6 +145,7 @@ const CreateQuestion = ({ route }) => {
                 <Text style={styles.selectFiles}>Question</Text>
                 <Picker
                     selectedValue={questionType}
+                    testID="questionTypePicker"
                     onValueChange={(itemValue) => {
                         setQuestionType(itemValue);
                         setAnswer('');
@@ -188,6 +193,7 @@ const CreateQuestion = ({ route }) => {
                     <View key={option.id} style={styles.multipleChoiceRow}>
                         <TextInput
                         style={styles.multipleChoiceInput}
+                        testID={`option-input-${option.id}`}
                         placeholder={`Option ${option.id}`}
                         value={option.text}
                         onChangeText={(text) => handleOptionTextChange(text, index)}
@@ -213,12 +219,12 @@ const CreateQuestion = ({ route }) => {
                                 value={input}
                                 onChangeText={(text) => handleInputTextChange(text, index)} // Call handleInputTextChange
                             />
-                            <TouchableOpacity style={styles.removeButton} onPress={() => removeInput(index)}>
+                            <TouchableOpacity style={styles.removeButton} testID="remove-blank-input" onPress={() => removeInput(index)}>
                                 <Text style={styles.buttonText}>-</Text>
                             </TouchableOpacity>
                         </View>
                     ))}
-                    <TouchableOpacity style={styles.addButton} onPress={addInput}>
+                    <TouchableOpacity style={styles.addButton} testID="add-blank-input" onPress={addInput}>
                         <Text style={styles.buttonText}>+</Text>
                     </TouchableOpacity>
                     </>
@@ -242,7 +248,7 @@ const CreateQuestion = ({ route }) => {
                         });
                     }}
                 >
-                    <Text style={styles.createQuestionButtonText}>Create Question</Text>
+                    <Text style={styles.createQuestionButtonText} testID="create-question">Create Question</Text>
                 </TouchableOpacity>
             </View>
         </ImageBackground>

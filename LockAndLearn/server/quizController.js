@@ -61,6 +61,60 @@ router.post('/addQuestion/:quizId', async (req, res) => {
   }
 });
 
+// Update a specific question in a quiz by quiz ID and question index
+router.put('/updateQuestion/:quizId/:questionIndex', async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const questionIndex = parseInt(req.params.questionIndex, 10);
+    const {
+      questionText,
+      questionType,
+      answer,
+      isTrue,
+      multipleChoiceAnswers,
+      inputs,
+      options,
+    } = req.body;
+
+    // Ensure the questionIndex is a valid number
+    if (isNaN(questionIndex) || questionIndex < 0) {
+      return res.status(400).json({ error: "Invalid question index provided." });
+    }
+
+    // Find the quiz by ID
+    const quiz = await Quiz.findById(quizId);
+
+    if (!quiz) {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+
+    // Ensure the question exists at the specified index
+    if (questionIndex >= quiz.questions.length) {
+      return res.status(404).json({ error: "Question not found at the specified index." });
+    }
+
+    // Update the question based on the received data
+    const updatedQuestion = {
+      questionText,
+      questionType,
+      answer,
+      isTrue,
+      multipleChoiceAnswers,
+      inputs,
+      options,
+    };
+
+    quiz.questions[questionIndex] = updatedQuestion;
+
+    // Save the updated quiz with the modified question
+    const savedQuiz = await quiz.save();
+
+    res.json(savedQuiz);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // delete question based on quizid and question index
 router.delete('/deleteQuestion/:quizId/:questionIndex', async (req, res) => {
   try {
@@ -93,6 +147,39 @@ router.delete('/deleteQuestion/:quizId/:questionIndex', async (req, res) => {
     res.json(savedQuiz);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// Get a specific question based on quizId and questionIndex
+router.get('/getQuestion/:quizId/:questionIndex', async (req, res) => {
+  try {
+    const quizId = req.params.quizId;
+    const questionIndex = parseInt(req.params.questionIndex, 10);
+
+    // Ensure the questionIndex is a valid number
+    if (isNaN(questionIndex) || questionIndex < 0) {
+      return res.status(400).json({ error: "Invalid question index provided." });
+    }
+
+    // Find the quiz by ID
+    const quiz = await Quiz.findById(quizId);
+    
+    if (!quiz) {
+      return res.status(404).json({ error: "Quiz not found" });
+    }
+
+    // Ensure the question exists at the specified index
+    if (questionIndex >= quiz.questions.length) {
+      return res.status(404).json({ error: "Question not found at the specified index." });
+    }
+
+    // Retrieve the question from the quiz's questions array
+    const question = quiz.questions[questionIndex];
+
+    // Return the question
+    res.json(question);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

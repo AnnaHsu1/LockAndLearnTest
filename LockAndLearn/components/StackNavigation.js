@@ -15,6 +15,7 @@ import SelectWorkPackageScreen from '../screens/QuizMaterial/SelectWorkPackageSc
 import QuestionsOverviewScreen from '../screens/QuizMaterial/QuestionsOverviewScreen';
 import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen';
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
+import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
@@ -130,6 +131,11 @@ const StackNavigation = () => {
           name="GoogleSignUp"
           component={GoogleSignUpScreen}
           options={{ title: 'Google Sign Up' }}
+        />
+        <Stack.Screen
+          name="EditQuestion"
+          component={EditQuestion}
+          options={{ title: 'EditQuestion' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
