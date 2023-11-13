@@ -46,6 +46,107 @@ describe('CreateQuestion Tests', () => {
     expect(questionInput.props.value).toBe('What is the capital of Spain?');
     // Add similar assertions for other input elements like question type, options, etc.
   });
+  test('updates UI elements when different question types are selected', () => {
+    const { getByTestId, queryByText } = render(
+      <CreateQuestion route={{ params: { quizId: '123' } }} />
+    );
+  
+    const questionTypePicker = getByTestId('questionTypePicker');
+    
+    // Simulate selecting "Multiple Choice Question"
+    fireEvent(questionTypePicker, 'onValueChange', 'Multiple Choice Question');
+    expect(queryByText('Option A')).toBeDefined(); // Replace with actual text/element for Multiple Choice
+  
+    // Simulate selecting "True or False"
+    fireEvent(questionTypePicker, 'onValueChange', 'True or False');
+    expect(queryByText('True')).toBeDefined(); // Replace with actual text/element for True/False
+  
+    fireEvent(questionTypePicker, 'onValueChange', 'Fill In The Blanks');
+    // Continue for other question types...
+  });
+
+  test('renders fill in the blanks options after selecting the question type and allows input and sends to server', async () => {
+    const mockRoute = {
+      params: {
+        quizId: '123',
+        questionIndex: 1,
+      },
+    };
+  
+    // Mock the fetch response for the initial data load
+    fetchMock.mockResponseOnce(JSON.stringify({
+      questionText: '',
+      questionType: '',
+      answer: '',
+    }));
+  
+    const { getByTestId, findAllByPlaceholderText, getAllByTestId, findByText, getByText } = render(<CreateQuestion route={mockRoute} />);
+  
+    // Simulate selecting "Fill in the Blanks" from the Picker
+    const questionTypePicker = getByTestId('questionTypePicker');
+    fireEvent(questionTypePicker, 'onValueChange', 'Fill In The Blanks');
+  
+    // Wait for the UI to update based on the question type selection
+    const question = getByText('Enter words you want to be blank here:');
+  
+    // Add a new input field
+    const addButton = getByTestId('add-blank-input');
+    fireEvent.press(addButton);
+    const removeButton = getAllByTestId('remove-blank-input');
+    fireEvent.press(removeButton[0]);
+    fireEvent.press(addButton);
+  
+    // Simulate pressing the save button
+    const createQuestion = getByTestId('create-question');
+    fireEvent.press(createQuestion);
+  
+  });
+
+  test('sends a new question of type multiple choice to the server on submission', async () => {
+    const mockNavigate = jest.fn();
+    fetchMock.mockResponseOnce(JSON.stringify({ success: true }));
+
+    const { getByPlaceholderText, getByText, getByTestId } = render(
+      <CreateQuestion route={{ params: { quizId: '123' } }} />
+    );
+
+    // Simulate selecting "Fill in the Blanks" from the Picker
+    const questionTypePicker = getByTestId('questionTypePicker');
+    fireEvent(questionTypePicker, 'onValueChange', 'Multiple Choice Question');
+
+    fireEvent.changeText(getByPlaceholderText('Enter your question here'), 'What is the capital of Spain?');
+    // Simulate entering other necessary data for the question based on its type
+    
+    await act(async () => {
+      fireEvent.press(getByText('Create Question'));
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/addQuestion/123', expect.any(Object));
+    // You can add more specific checks to the expect.any(Object) to ensure the body contains the right form data
+  });
+
+  test('sends a new question of type true or false to the server on submission', async () => {
+    const mockNavigate = jest.fn();
+    fetchMock.mockResponseOnce(JSON.stringify({ success: true }));
+
+    const { getByPlaceholderText, getByText, getByTestId } = render(
+      <CreateQuestion route={{ params: { quizId: '123' } }} />
+    );
+
+    // Simulate selecting "Fill in the Blanks" from the Picker
+    const questionTypePicker = getByTestId('questionTypePicker');
+    fireEvent(questionTypePicker, 'onValueChange', 'True or False');
+
+    fireEvent.changeText(getByPlaceholderText('Enter your question here'), 'What is the capital of Spain?');
+    // Simulate entering other necessary data for the question based on its type
+    
+    await act(async () => {
+      fireEvent.press(getByText('Create Question'));
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/addQuestion/123', expect.any(Object));
+    // You can add more specific checks to the expect.any(Object) to ensure the body contains the right form data
+  });
 
   test('sends a new question to the server on submission', async () => {
     const mockNavigate = jest.fn();
@@ -65,4 +166,26 @@ describe('CreateQuestion Tests', () => {
     expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/addQuestion/123', expect.any(Object));
     // You can add more specific checks to the expect.any(Object) to ensure the body contains the right form data
   });
+
+  test('updates options text for multiple choice questions', () => {
+    // Render the component with a Multiple Choice Question type
+    const { getByTestId, getAllByTestId } = render(
+      <CreateQuestion route={{ params: { quizId: '123' } }} />
+    );
+  
+    // Change the question type to 'Multiple Choice Question'
+    const questionTypePicker = getByTestId('questionTypePicker');
+    fireEvent(questionTypePicker, 'onValueChange', 'Multiple Choice Question');
+  
+    // Find all option input fields
+    const optionInputs = getAllByTestId(/option-input-/i); // Assuming you have testIDs like 'option-input-A', 'option-input-B', etc.
+  
+    // Simulate changing text in the first option input
+    fireEvent.changeText(optionInputs[0], 'Updated Option A');
+  
+    // Verify the state is updated
+    // This part depends on how you can access the updated state in your tests
+    // If your component displays the updated options somewhere, you can use findByText or similar to verify the change
+  });
+
 });

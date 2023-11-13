@@ -2,7 +2,7 @@ const express = require('express');
 const { parseISO, isBefore } = require('date-fns');
 const bcrypt = require('bcrypt');
 const User = require('../schema/childSchema.js');
-const { createUser, getUserByEmail } = require('../userManager.js');
+const { createUser, getUserByEmail } = require('../manager/userManager.js');
 const router = express.Router();
 
 //Handle user sign in

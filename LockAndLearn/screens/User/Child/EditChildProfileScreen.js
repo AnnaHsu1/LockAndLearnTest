@@ -8,78 +8,53 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
-import { getItem } from '../../../components/AsyncStorage';
 
-const AddChildScreen = ({ navigation, setToken }) => {
+const EditChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const [text, setText] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
-  const [childAdded, setChildAdded] = useState(false);
   const [updatedChildrenData, setUpdatedChildrenData] = useState([]);
+  const childInfo = route.params.child;
+  const [fdata, setFdata] = useState({
+    FirstName: childInfo.firstName,
+    LastName: childInfo.lastName,
+    Grade: childInfo.grade,
+    ParentId: childInfo.parentId,
+  });
+  const [errors, setErrors] = useState('');
+
+  // Toggle modal
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-  const [fdata, setFdata] = useState({
-    FirstName: '',
-    LastName: '',
-    Grade: '',
-    ParentId: '',
-  });
 
-  const [errors, setErrors] = useState('');
+  // API request to update child
+  const editChild = async () => {
+    const response = await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(fdata),
+    });
+    const data = await response.json();
 
-  const addChild = async () => {
-    const auth = await getItem('@token');
-
-    if (auth) {
-      const user = JSON.parse(auth);
-      console.log(user);
-
-      fdata.ParentId = user._id;
+    if (response.status === 200) {
+      toggleModal();
+      setUpdatedChildrenData([...updatedChildrenData, data]);
     } else {
-      // Handle the case where user is undefined (not found in AsyncStorage)
-      console.log('User not found in AsyncStorage');
-    }
-
-    console.log(fdata);
-
-    // Package the user data into a JSON format and ship it to the backend
-    try {
-      const response = await fetch('http://localhost:4000/child/addchild', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fdata), // Send user data as JSON
-      });
-
-      const data = await response.json();
-
-      if (response.status === 201) {
-        setErrors('');
-        setModalVisible(true);
-        // User created successfully
-        console.log('child added successfully in database!', data);
-
-        // Update the updatedChildrenData with the new child data
-        setUpdatedChildrenData([...updatedChildrenData, data]);
-
-        //Add redirect
-      } else {
-        setErrors(data.msg);
-      }
-    } catch (error) {
-      console.error('Submitting error when adding child:', error);
+      setErrors(data.msg);
     }
   };
 
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Text style={styles.title}>Add child</Text>
+        <Text style={styles.title}>Edit child</Text>
         {errors ? <Text style={styles.box}>{errors}</Text> : null}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          {/* Edit first name */}
           <View style={styles.half_width}>
             <Text style={styles.field}>First Name</Text>
             <TextInput
@@ -90,6 +65,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
             />
           </View>
 
+          {/* Edit last name */}
           <View style={styles.half_width}>
             <Text style={styles.field}>Last Name</Text>
             <TextInput
@@ -101,6 +77,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
           </View>
         </View>
 
+        {/* Edit grade */}
         <View style={styles.input}>
           <Text style={styles.field}>Grade</Text>
           <TextInput
@@ -111,17 +88,21 @@ const AddChildScreen = ({ navigation, setToken }) => {
           />
         </View>
 
+        {/* On click the child will be updated in the DB */}
         <Button
-          testID="signup-button"
+          testID="edit-child-button"
           mode="contained"
           onPress={() => {
-            addChild();
+            editChild();
           }}
           style={[styles.button, styles.full_width]}
         >
-          <Text style={styles.child}>Add Child</Text>
+          <Text style={styles.child}>Done</Text>
         </Button>
+
+        {/* Simple modal to acknowledge the change */}
         <Modal
+          testID="modal-success"
           isVisible={isModalVisible}
           onRequestClose={toggleModal}
           transparent={true}
@@ -132,18 +113,22 @@ const AddChildScreen = ({ navigation, setToken }) => {
               backgroundColor: 'white',
               borderRadius: 20,
               padding: 20,
+              minHeight: hp('20%'),
             }}
           >
-            <Text style={styles.title}>
-              {fdata.FirstName} {fdata.LastName} has been added successfully!
+            <Text style={styles.title} testID="modal-success-message">
+              {fdata.FirstName} {fdata.LastName} has been changed successfully!
             </Text>
+
+            {/* Parent will acknowledge and navigate to parent account screen */}
             <Button
               style={styles.button}
               title="Hide modal"
+              testID="close-modal-button"
               onPress={() => {
                 toggleModal();
                 navigation.navigate('ParentAccount', {
-                  updatedChildren: updatedChildrenData, // Pass the updated children as a parameter
+                  updatedChildren: updatedChildrenData,
                 });
               }}
             >
@@ -243,4 +228,4 @@ const useStyles = CreateResponsiveStyle(
   }
 );
 
-export default AddChildScreen;
+export default EditChildProfileScreen;

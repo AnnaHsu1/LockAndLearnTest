@@ -11,3 +11,15 @@ jest.mock('expo-auth-session/providers/google', () => ({
     promptAsync: jest.fn(),
   })),
 }));
+jest.mock('react-native/Libraries/Settings/Settings', () => ({
+  get: jest.fn(),
+  set: jest.fn(),
+}));
+
+jest.mock('react-native', () => {
+  const RealReactNative = jest.requireActual('react-native');
+  return {
+    ...RealReactNative,
+    CheckBox: () => 'MockedCheckBox', // Mock implementation
+  };
+});
