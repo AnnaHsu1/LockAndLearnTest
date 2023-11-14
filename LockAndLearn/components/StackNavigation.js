@@ -11,7 +11,7 @@ import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsS
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
-import SelectWorkPackageScreen from '../screens/QuizMaterial/SelectWorkPackageScreen';
+import CreateQuiz from '../screens/QuizMaterial/CreateQuiz';
 import QuestionsOverviewScreen from '../screens/QuizMaterial/QuestionsOverviewScreen';
 import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen';
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
@@ -19,6 +19,11 @@ import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
+import WorkPackageOverview from '../screens/WorkPackage/WorkPackageOverview';
+import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
+import DisplayWorkPackageContent from '../screens/WorkPackage/DisplayWorkPackageContent';
+import SelectQuizToAdd from '../screens/WorkPackage/Quiz/SelectQuizToAdd';
+import SelectStudyMaterialToAdd from '../screens/WorkPackage/StudyMaterial/SelectStudyMaterialToAdd';
 import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
@@ -32,19 +37,10 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Lock & Learn', 
-          headerShown: false }}
+          options={{ title: 'Lock & Learn', headerShown: false }}
         />
-        <Stack.Screen
-          name="Login" 
-          component={LoginScreen} 
-          options={{ title: 'Login' }} 
-          />
-        <Stack.Screen 
-          name="Signup" 
-          component={SignupScreen} 
-          options={{ title: 'Sign up' }} 
-          />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+        <Stack.Screen name="Signup" component={SignupScreen} options={{ title: 'Sign up' }} />
         <Stack.Screen
           name="Upload"
           component={UploadScreen}
@@ -74,7 +70,7 @@ const StackNavigation = () => {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('Home');
-                    }}
+                }}
                 style={{ marginLeft: 15 }}
               >
                 <Ionicons name="arrow-back" size={24} color="black" />
@@ -91,7 +87,7 @@ const StackNavigation = () => {
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate('UserLandingPage');
-                    }}
+                }}
                 style={{ marginLeft: 15 }}
               >
                 <Ionicons name="arrow-back" size={24} color="black" />
@@ -110,9 +106,9 @@ const StackNavigation = () => {
           options={{ title: 'View my Uploaded Files' }}
         />
         <Stack.Screen
-          name="SelectWorkPackageScreen"
-          component={SelectWorkPackageScreen}
-          options={{ title: 'Select WorkPackage' }}
+          name="CreateQuiz"
+          component={CreateQuiz}
+          options={{ title: 'CreateQuiz' }}
         />
         <Stack.Screen
           name="QuizzesOverviewScreen"
@@ -133,6 +129,31 @@ const StackNavigation = () => {
           name="GoogleSignUp"
           component={GoogleSignUpScreen}
           options={{ title: 'Google Sign Up' }}
+        />
+        <Stack.Screen
+          name="WorkPackageOverview"
+          component={WorkPackageOverview}
+          options={{ title: 'WorkPackageOverview' }}
+        />
+        <Stack.Screen
+          name="CreateWorkPackage"
+          component={CreateWorkPackage}
+          options={{ title: 'CreateWorkPackage' }}
+        />
+        <Stack.Screen
+          name="DisplayWorkPackageContent"
+          component={DisplayWorkPackageContent}
+          options={{ title: 'DisplayWorkPackageContent' }}
+        />
+        <Stack.Screen
+          name="SelectQuizToAdd"
+          component={SelectQuizToAdd}
+          options={{ title: 'SelectQuizToAdd' }}
+        />
+        <Stack.Screen
+          name="SelectStudyMaterialToAdd"
+          component={SelectStudyMaterialToAdd}
+          options={{ title: 'SelectStudyMaterialToAdd' }}
         />
         <Stack.Screen
           name="ChildProfile"

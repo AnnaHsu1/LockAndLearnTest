@@ -5,8 +5,8 @@ const Quiz = require('../server/quizSchema.js');
 // Create a new quiz
 router.post('/create', async (req, res) => {
   try {
-    const { name, workPackageId, questions } = req.body;
-    const newQuiz = new Quiz({ name, workPackageId, questions });
+    const { name, workPackageId, questions, userId } = req.body;
+    const newQuiz = new Quiz({ name, workPackageId, questions, userId });
     const savedQuiz = await newQuiz.save();
     res.json(savedQuiz);
   } catch (err) {

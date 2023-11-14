@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsScreen';
+import LockingSessionBeginsScreen from '../../screens/Locking/LockingSessionBeginsScreen';
 
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),

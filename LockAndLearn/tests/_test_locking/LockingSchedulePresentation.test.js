@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react-native';
-import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
+import LockingSchedulePresentation from '../../screens/Locking/LockingSchedulePresentation';
 
 jest.mock('@react-navigation/native', () => ({
   ...jest.requireActual('@react-navigation/native'),

@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeAll } from '@jest/globals';
 import { render, fireEvent, act, waitfor } from '@testing-library/react-native';
-import ParentAccountScreen from '../screens/User/Child/ParentAccountScreen';
+import ParentAccountScreen from '../../../screens/User/Child/ParentAccountScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const fetchMock = require('jest-fetch-mock');
@@ -38,21 +38,21 @@ describe('ParentAccountScreen component', () => {
   test('renders children data correctly', async () => {
     // Mock AsyncStorage to return a token
     jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(JSON.stringify({ token: 'mockToken' }));
-  
+
     // Mock children data
     const mockChildren = [
       { _id: 'child1', firstName: 'Child One' },
       { _id: 'child2', firstName: 'Child Two' },
     ];
-  
+
     // Mock fetch call
     fetchMock.mockResponseOnce(JSON.stringify(mockChildren));
-  
+
     const { findByTestId } = render(<ParentAccountScreen navigation={{ navigate: jest.fn() }} />);
-  
+
     // Wait for children buttons to render
     const firstChildButton = await findByTestId('child-child1');
-  
+
     // Assertions to check if children are rendered
     expect(firstChildButton).toBeTruthy();
   });

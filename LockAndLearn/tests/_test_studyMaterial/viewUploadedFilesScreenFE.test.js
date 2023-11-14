@@ -1,9 +1,8 @@
-import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
+import ViewUploadedFilesScreen from '../../screens/StudyMaterial/ViewUploadedFilesScreen';
 import { describe, expect } from '@jest/globals';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { FlatList } from 'react-native';
 import '@testing-library/jest-dom';
-import { renderFile } from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 
 const fetchMock = require('jest-fetch-mock');
 fetchMock.enableMocks();
@@ -56,7 +55,7 @@ describe('view uploaded files tests', () => {
   });
 
   it('filter feature is present on screen and clickable', () => {
-    const { getByTestId } = render(<ViewUploadedFilesScreen/>);
+    const { getByTestId } = render(<ViewUploadedFilesScreen />);
     const filterButton = getByTestId('filterPress');
     fireEvent.press(filterButton);
     expect(filterButton).toBeDefined();

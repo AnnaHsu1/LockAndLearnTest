@@ -11,6 +11,10 @@ const quizSchema = new mongoose.Schema({
     type: String, // You may choose the appropriate data type (e.g., ObjectId) depending on your setup
     required: false,
   },
+  userId: {
+    type: String, // You may choose the appropriate data type (e.g., ObjectId) for the user ID
+    required: false,
+  },
   questions: [
     {
       _id: {

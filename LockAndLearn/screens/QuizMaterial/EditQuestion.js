@@ -36,7 +36,7 @@ const EditQuestion = ({ route }) => {
         });
         setOptions(updatedOptions);
     };
-    
+
 
     const handleSetCorrectAnswer = (index) => {
         const updatedOptions = options.map((option, i) => ({
@@ -145,7 +145,7 @@ const EditQuestion = ({ route }) => {
                 } if (question.questionType === "Short Answer") {
                     setAnswer(question.answer || ''); // Assuming 'answer' contains the short answer text
                 }
-             else if (question.questionType === "Fill In The Blanks") {
+                else if (question.questionType === "Fill In The Blanks") {
                     setInputs(question.inputs || ['']); // Make sure you receive an array of strings for blanks
                 }
             } else {
@@ -202,7 +202,7 @@ const EditQuestion = ({ route }) => {
                         <View style={styles.checkboxRow}>
                             <CheckBox
                                 value={isTrue}
-                                testID = "option-True"
+                                testID="option-True"
                                 onValueChange={() => handleTrueFalseChange(true)}
                             />
                             <Text>True</Text>
@@ -210,7 +210,7 @@ const EditQuestion = ({ route }) => {
                         <View style={styles.checkboxRow}>
                             <CheckBox
                                 value={!isTrue}
-                                testID = "option-False"
+                                testID="option-False"
                                 onValueChange={() => handleTrueFalseChange(false)}
                             />
                             <Text>False</Text>

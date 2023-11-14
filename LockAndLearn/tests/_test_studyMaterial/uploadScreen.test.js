@@ -17,7 +17,7 @@ jest.mock('react-native-paper', () => {
   };
 });
 
-import UploadScreen from '../screens/StudyMaterial/UploadScreen';
+import UploadScreen from '../../screens/StudyMaterial/UploadScreen';
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import * as DocumentPicker from 'expo-document-picker';

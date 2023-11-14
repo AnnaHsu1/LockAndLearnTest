@@ -43,7 +43,8 @@ const LandingPage = ({ navigation }) => {
       <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
       <Button title="View my Uploaded Files" onPress={() => navigation.navigate('ViewUploads')} />
       <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
-      <Button title="Quiz Material" onPress={() => navigation.navigate('SelectWorkPackageScreen')} />
+      <Button title="Quiz Material" onPress={() => navigation.navigate('CreateQuiz')} />
+      <Button title="View my Work Packages" onPress={() => navigation.navigate('WorkPackageOverview')} />
       {/* is user a parent? */}
       {user?.isParent ? (
         <Button title="Parent Account" onPress={() => navigation.navigate('ParentAccount')} />

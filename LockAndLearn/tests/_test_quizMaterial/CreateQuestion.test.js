@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import React from 'react';
 import { render, fireEvent, act, cleanup } from '@testing-library/react-native';
-import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
+import CreateQuestion from '../../screens/QuizMaterial/CreateQuestion';
 import { Picker } from '@react-native-picker/picker';
 
 const fetchMock = require('jest-fetch-mock');

@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
 import React from 'react';
 import { render, fireEvent, waitFor, act, cleanup } from '@testing-library/react-native';
-import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen';
+import QuizzesOverviewScreen from '../../screens/QuizMaterial/QuizzesOverviewScreen';
 import { useNavigation } from '@react-navigation/native';
 
 

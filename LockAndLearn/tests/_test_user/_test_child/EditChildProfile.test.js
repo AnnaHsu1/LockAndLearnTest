@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import EditChildProfileScreen from '../screens/User/Child/EditChildProfileScreen';
-import AsyncStorage from '../components/AsyncStorage';
+import EditChildProfileScreen from '../../../screens/User/Child/EditChildProfileScreen';
+import AsyncStorage from '../../../components/AsyncStorage';
 
 const mockChild = {
   _id: 'child123',
@@ -24,7 +24,7 @@ const mockRoute = {
   },
 };
 
-jest.mock('../components/AsyncStorage', () => ({
+jest.mock('../../../components/AsyncStorage', () => ({
   getItem: jest.fn(() => Promise.resolve(JSON.stringify({ _id: 'parent123' }))),
 }));
 

@@ -77,3 +77,14 @@ exports.deleteUploadedFiles = async function deleteUploadedFiles(fileid) {
       throw error;
   }
 };
+
+// Function to get a file by id
+exports.getUploadedFilesById = async function getUploadedFilesById(fileId) {
+  try {
+    const file = await UploadFiles.findById(fileId);
+    return file;
+  } catch (error) {
+    console.error("Error finding file:", error);
+    throw error;
+  }
+};

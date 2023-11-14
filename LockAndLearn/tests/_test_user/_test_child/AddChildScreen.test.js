@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeAll } from '@jest/globals';
 import { render, fireEvent, act } from '@testing-library/react-native';
-import AddChildScreen from '../screens/User/Child/AddChildScreen';
+import AddChildScreen from '../../../screens/User/Child/AddChildScreen';
 const fetchMock = require('jest-fetch-mock');
 fetchMock.enableMocks();
 
