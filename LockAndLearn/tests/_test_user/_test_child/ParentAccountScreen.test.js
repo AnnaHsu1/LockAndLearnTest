@@ -38,7 +38,6 @@ describe('ParentAccountScreen component', () => {
   test('renders children data correctly', async () => {
     // Mock AsyncStorage to return a token
     jest.spyOn(AsyncStorage, 'getItem').mockResolvedValue(JSON.stringify({ token: 'mockToken' }));
-
     // Mock children data
     const mockChildren = [
       { _id: 'child1', firstName: 'Child One' },

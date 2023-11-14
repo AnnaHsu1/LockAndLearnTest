@@ -1,77 +1,149 @@
-import { describe, expect, test, beforeAll } from '@jest/globals';
-import { render, fireEvent, act } from '@testing-library/react-native';
+import { describe, expect, test, beforeEach } from '@jest/globals';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import LoginScreen from '../../screens/User/LoginScreen';
-const fetchMock = require('jest-fetch-mock');
+import fetchMock from 'jest-fetch-mock';
+
+// Mock Google.useAuthRequest
+jest.mock('expo-auth-session/providers/google', () => ({
+  useAuthRequest: jest.fn(() => [null, { type: 'success', authentication: { accessToken: 'mockAccessToken' } }, jest.fn()]),
+}));
+
+// Mock AsyncStorage
+jest.mock('../../components/AsyncStorage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  setUserTokenWithExpiry: jest.fn(),
+}));
+
+jest.mock('expo-status-bar', () => ({
+  StatusBar: () => 'StatusBar',
+}));
+
+
+// Import the mocked AsyncStorage module
+import * as AsyncStorage from '../../components/AsyncStorage';
+
+// Mock Navigation
+const mockNavigate = jest.fn();
+const mockNavigation = {
+  navigate: mockNavigate,
+};
+
+// Enable mock for fetch
 fetchMock.enableMocks();
 
-const mockLoginUser = {
-  Email: 'email@test.com',
-  Password: 'test123@',
-};
+describe('LoginScreen Component', () => {
+  
 
-// Mock fetch function
-const signupHandler = async (loginData) => {
-  await fetch('http://localhost:4000/users/login', {
-    method: 'POST',
-    body: JSON.stringify(loginData),
-    headers: {
-      'Content-Type': 'application/json',
-    },
+  beforeEach(() => {
+    // Reset mocks before each test
+    fetchMock.resetMocks();
+    AsyncStorage.getItem.mockClear();
+    AsyncStorage.setItem.mockClear();
+    AsyncStorage.removeItem.mockClear();
+    AsyncStorage.setUserTokenWithExpiry.mockClear();
+
+    // Set a default mock return value for getItem
+    AsyncStorage.getItem.mockResolvedValue(null);
   });
-};
 
-describe('testing connection to server', () => {
-  test('make POST request and test connection to server', async () => {
-    // Mock response
+  const mockLoginUser = {
+    Email: 'email@test.com',
+    Password: 'test123@',
+  };
+
+  test('sends a POST request to the server with correct data', async () => {
+    // Mock the response with the correct content type
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'User successfully logged in' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-
-    // Check fetch is called with its expected URL, method and body
-    await signupHandler(mockLoginUser);
-    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/users/login', {
-      method: 'POST',
-      body: JSON.stringify(mockLoginUser),
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    // Check response message afect sending to server
+  
+    // Perform the action you want to test
     const response = await fetch('http://localhost:4000/users/login', {
       method: 'POST',
       body: JSON.stringify(mockLoginUser),
       headers: { 'Content-Type': 'application/json' },
     });
-    if (response.status) {
-      expect(response.status).toBe(200);
-      if (response.headers.get('content-type')?.includes('application/json')) {
-        const data = await response.json();
-        expect(data.message).toBe('User successfully logged in');
-      }
-    }
+  
+    // Check that fetch was called with the correct parameters
+    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/users/login', {
+      method: 'POST',
+      body: JSON.stringify(mockLoginUser),
+      headers: { 'Content-Type': 'application/json' },
+    });
+  
+    // Check the response status and content
+    expect(response.status).toBe(200);
+    const contentType = response.headers.get('content-type');
+    expect(contentType).toContain('application/json');
+    const data = await response.json();
+    expect(data.message).toBe('User successfully logged in');
   });
+  
+
+
+  test('shows an error message with invalid email', async () => {
+    const { getByTestId, findByText } = render(<LoginScreen />);
+  
+    // Simulate entering an invalid email and trigger the validation
+    fireEvent.changeText(getByTestId('email-input'), 'invalidemail');
+    fireEvent.press(getByTestId('login-button'));
+  
+    // Wait for the email error message to appear
+    await waitFor(() => {
+      expect(findByText('Please input a valid email.')).toBeTruthy();
+    });
+  });
+
+  test('shows an error message with empty password', async () => {
+    const { getByTestId, findByText } = render(<LoginScreen />);
+
+    // Simulate entering a valid email but no password
+    fireEvent.changeText(getByTestId('email-input'), 'email@test.com');
+    fireEvent.changeText(getByTestId('password-input'), '');
+    fireEvent.press(getByTestId('login-button'));
+
+    // Wait for the password error message to appear
+    await waitFor(() => {
+      expect(findByText('Please input a password.')).toBeTruthy();
+    });
+  });
+
+  test('does not show error messages with valid inputs', async () => {
+    // Mock getItem to return null for this test
+    AsyncStorage.getItem.mockResolvedValue(null);
+
+    const { getByTestId, queryByText } = render(<LoginScreen />);
+
+    // Simulate entering valid email and password
+    fireEvent.changeText(getByTestId('email-input'), 'email@test.com');
+    fireEvent.changeText(getByTestId('password-input'), 'password123');
+    fireEvent.press(getByTestId('login-button'));
+
+    // Ensure no error messages are displayed
+    expect(queryByText('Please input a valid email.')).toBeNull();
+    expect(queryByText('Please input a password.')).toBeNull();
+  });
+
 });
 
-// describe('Components rendering correctly', () => {
-//   test('does login screen render', () => {
-//     const { getByTestId } = render(<LoginScreen />);
-//   });
+describe('LoginScreen Google Authentication', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+    AsyncStorage.setUserTokenWithExpiry.mockClear();
+    mockNavigate.mockClear();
+  });
 
-//   test('input email and password for login', () => {
-//     const { getByTestId } = render(<LoginScreen />);
+  test('successful Google login and user info retrieval', async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({ email: 'test@example.com' }));
 
-//     const email = getByTestId('email-input');
-//     fireEvent.changeText(email, mockLoginUser.Email);
-//     expect(email.props.value).toBe(mockLoginUser.Email);
+    const { getByTestId } = render(<LoginScreen navigation={mockNavigation} />);
+    const googleLoginButton = getByTestId('google-login-button');
 
-//     const firstName = getByTestId('password-input');
-//     fireEvent.changeText(firstName, mockLoginUser.Password);
-//     expect(firstName.props.value).toBe(mockLoginUser.Password);
-//   });
+    // Simulate Google login success
+    fireEvent.press(googleLoginButton);
+  });
 
-//   test('does login button exist', () => {
-//     const { getByTestId } = render(<LoginScreen />);
-//     const loginButton = getByTestId('login-button');
-//     expect(loginButton).toBeDefined();
-//   });
-// });
+});

@@ -122,19 +122,7 @@ const LoginScreen = ({ navigation }) => {
     if (isValid) {
       console.log('Fields are appropriate', fdata);
       sendLoginData(fdata);
-      /*const res = await loginUser({
-                email: fdata.Email,
-                password: fdata.Password
-            });*/
-      /*if (response == null) {
-                setEmailError("Invalid combination of email and password");
-            }*/
-      /*else {
-                setToken(res.data.token);
-                setUserInfo(res.data);
-                navigate(-1);
-            }*/
-      // Package the user data into a JSON format and ship it to the backend
+      
     }
   };
 

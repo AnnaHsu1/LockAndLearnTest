@@ -43,10 +43,6 @@ const ParentAccountScreen = ({ navigation }) => {
     }
   };
 
-  /* useEffect(() => {
-    getChildren();
-  }, []); */
-
   useEffect(() => {
     getChildren();
 
