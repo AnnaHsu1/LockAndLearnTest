@@ -84,24 +84,21 @@ const UploadScreen = () => {
     const invalidFileType = fileName.filter((name) => {
       const splitName = name.split('.');
       const fileType = splitName[splitName.length - 1];
-      return !(fileType == 'pdf' || fileType == 'doc' || fileType == 'docx' || fileType == 'txt');
+      return !(fileType == 'pdf');
     });
 
     if (invalidFileType.length > 0) {
-      toast.error(
-        'You can only upload PDF, DOCX, and TXT files. Please delete your file and try again.'
-      );
+      toast.error('You can only upload PDF files. Please delete your file and try again.');
       return;
     }
 
     const fileData = new FormData();
     files.forEach((file) => {
       // append userId if find userId from AsyncStorage, else append files
-      if(file.length === 24) {
-        fileData.append("userId", file);
-      }
-      else{
-        fileData.append("files", file);
+      if (file.length === 24) {
+        fileData.append('userId', file);
+      } else {
+        fileData.append('files', file);
       }
     });
 
@@ -113,28 +110,26 @@ const UploadScreen = () => {
       'Content-Type': 'multipart/form-data',
     };
 
-  try {
-    const response = await fetch('http://localhost:4000/files/uploadFiles', {
-      method: 'POST',
-      body: fileData, 
-    });
-    if (response.ok) {
-      console.log('Request successful');
-      // reset all stored files
-      toast.success('Files uploaded successfully!');
-      // todo: redirect to view uploaded files screen (for now, just refresh the page)
-      // navigation.navigate('ViewUploadedFilesScreen',  {sendFiles: files} );
-      setFileName([]);
-      setFiles([]);
-    } else {
-      console.error('Request failed:', response.status, response.statusText);
+    try {
+      const response = await fetch('http://localhost:4000/files/uploadFiles', {
+        method: 'POST',
+        body: fileData,
+      });
+      if (response.ok) {
+        console.log('Request successful');
+        // reset all stored files
+        toast.success('Files uploaded successfully!');
+        // todo: redirect to view uploaded files screen (for now, just refresh the page)
+        // navigation.navigate('ViewUploadedFilesScreen',  {sendFiles: files} );
+        setFileName([]);
+        setFiles([]);
+      } else {
+        console.error('Request failed:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
-  
   };
-
 
   // function to render each row (which is uploaded file)
   const renderFile = (item, index) => {
@@ -144,11 +139,7 @@ const UploadScreen = () => {
       <View key={index}>
         <View
           key={index}
-          style={[
-            fileType == 'pdf' || fileType == 'doc' || fileType == 'docx' || fileType == 'txt'
-              ? styles.successRowUpload
-              : styles.errorRowUpload,
-          ]}
+          style={[fileType == 'pdf' ? styles.successRowUpload : styles.errorRowUpload]}
         >
           <View style={styles.rowUpload} key={index}>
             <TextInput
@@ -158,22 +149,19 @@ const UploadScreen = () => {
               editable={false}
             />
             <TouchableOpacity
-              testID="deleteButton"
+              testID={`deleteButton-${index}`}  // Unique testID for each button
               style={styles.buttonDelete}
               onPress={() => deleteFile(index)}
             >
-              {fileType == 'pdf' || fileType == 'doc' || fileType == 'docx' || fileType == 'txt' ? (
+              {fileType == 'pdf' ? (
                 <Icon source="trash-can-outline" size={22} color={'#F24E1E'} />
-                ) : (
+              ) : (
                 <Icon source="close-circle" size={20} color={'#F24E1E'} />
               )}
             </TouchableOpacity>
           </View>
         </View>
-        {fileType == 'pdf' ||
-        fileType == 'doc' ||
-        fileType == 'docx' ||
-        fileType == 'txt' ? null : (
+        {fileType == 'pdf' ? null : (
           <View style={styles.errorMsgRow}>
             <Text style={styles.errorText}>This format is not supported. Please try again.</Text>
           </View>
@@ -201,16 +189,12 @@ const UploadScreen = () => {
         <Text style={styles.selectFiles}>Select files</Text>
         <View style={{ alignItems: 'center', marginTop: '0.5%' }}>
           {/* display button to upload file */}
-          <TouchableOpacity
-            testID="selectButton"
-            onPress={fileSelectedHandler}
-            accept=".pdf, docx, .txt"
-          >
+          <TouchableOpacity testID="selectButton" onPress={fileSelectedHandler} accept=".pdf">
             <ImageBackground
               style={styles.imageUpload}
               source={require('../../assets/UploadDashedZoneH.png')}
             >
-              <Text style={styles.supportedFormats}>Supported formats:{'\n'}PDF, TXT, DOCX</Text>
+              <Text style={styles.supportedFormats}>Supported format:{'\n'}PDF</Text>
             </ImageBackground>
           </TouchableOpacity>
         </View>
@@ -225,7 +209,7 @@ const UploadScreen = () => {
           />
 
           {/* display button to confirm: uploading files */}
-          <View style={{ alignItems: 'center'}}>
+          <View style={{ alignItems: 'center' }}>
             <TouchableOpacity
               onPress={uploadFilesHandler}
               style={[styles.buttonUpload, { marginTop: '2%' }, { marginBottom: '3%' }]}
@@ -315,7 +299,7 @@ const styles = StyleSheet.create({
   errorTextbox: {
     flex: 0.9,
     padding: 10,
-    outlineStyle: 'none'
+    outlineStyle: 'none',
   },
   buttonDelete: {
     flex: 0.1,

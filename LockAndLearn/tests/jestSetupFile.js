@@ -11,6 +11,10 @@ jest.mock('expo-auth-session/providers/google', () => ({
     promptAsync: jest.fn(),
   })),
 }));
+// Mock implementation for setImmediate
+if (typeof setImmediate === 'undefined') {
+  global.setImmediate = (callback) => setTimeout(callback, 0);
+}
 jest.mock('react-native/Libraries/Settings/Settings', () => ({
   get: jest.fn(),
   set: jest.fn(),
