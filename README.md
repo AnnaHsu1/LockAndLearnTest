@@ -7,6 +7,7 @@ Dr. Ali Akgunduz
 # Members
 - Alice Chen (40176279)
 - Anna Hsu (40178711)
+- Costa Papadakos (26665691)
 - Fatema Akther (40177866)
 - Georgia Pitic (40175034)
 - Hao Yi Liu (40174210)
