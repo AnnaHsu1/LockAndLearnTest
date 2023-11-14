@@ -13,7 +13,7 @@ import { React, useState, useEffect } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { TouchableOpacity } from 'react-native';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import 'react-toastify/dist/ReactToastify.css'; causes issue with android
 import { Icon } from 'react-native-paper';
 import { getItem } from '../../components/AsyncStorage';
 

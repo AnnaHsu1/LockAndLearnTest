@@ -24,8 +24,6 @@ module.exports = mongoose;
 //Routing Logic for backend server
 
 const secretKey = process.env.SESSION_SECRET; // Secret key for session stored in .env file
-// const ip = 'http://' + process.env.API_URL + ':19006';
-// const ip = 'https://localhost:19006';
 const environment = process.env.NODE_ENV || 'development';
 
 const app = express();
@@ -74,7 +72,7 @@ app.set('port', port);
 const userRoutes = require('./controllers/userController');
 
 app.use('/users', userRoutes);
-app.use('/files', require("./controllers/filesController"))
+app.use('/files', require('./controllers/filesController'));
 app.use('/quizzes', require('./quizController'));
 app.use('/child', require('./controllers/childController'));
 

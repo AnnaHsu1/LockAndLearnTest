@@ -270,18 +270,14 @@ const SignupScreen = ({ navigation }) => {
         <Text testID="login-link" style={styles.link} onPress={() => navigation.navigate('Login')}>
           Already have an account? Sign in
         </Text>
-
-        {/* <Text>{userInfo ? JSON.stringify(userInfo) : null}</Text> */}
-        {!googleUserInfo ? (
-          <Button
-            mode="contained"
-            style={[styles.button, { marginTop: 10 }]}
-            textColor="#fff"
-            onPress={() => promptAsync()}
-          >
-            Create an account with Google
-          </Button>
-        ) : null}
+        <Button
+          mode="contained"
+          style={[styles.button, { marginTop: 10 }]}
+          textColor="#fff"
+          onPress={() => promptAsync()}
+        >
+          Create an account with Google
+        </Button>
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
