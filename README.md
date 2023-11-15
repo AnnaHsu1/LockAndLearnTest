@@ -15,3 +15,50 @@ Dr. Ali Akgunduz
 - Leon Zhang (40175616)
 - Ryan Kim (40175423)
 - William Chong (40176360)
+
+# Getting Started
+## Prerequisites
+**⚠️ Before proceeding, please ensure that you have the following:**
+- Installed Docker on your machine.
+- Installed NPM
+- Installed node.js
+- Gained access to the project MongoDB database
+
+
+## Installation
+
+1. Open Docker Desktop
+2. Clone the project 
+```shell
+git clone https://github.com/RIGNITE/LockAndLearn.git
+```
+2. Navigate to the project directory on the chosen IDE
+```shell
+cd LockAndLearn
+```
+3. Add .env file with appropriate values
+4. Add all dependencies
+```shell
+npm install
+```
+6. Run Docker
+```shell
+docker-compose build
+```
+```shell
+docker-compose up
+```
+5. Open web browser at localhost:19006
+
+## Testing
+unit test using Jest
+To run the unit tests
+```shell
+npm test
+```
+
+For test coverage
+```shell
+npx jest --coverage
+```
+
