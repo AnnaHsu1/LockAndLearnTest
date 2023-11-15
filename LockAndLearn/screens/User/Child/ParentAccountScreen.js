@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image } from 'react-native';
+import { Text, View, Image } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
   widthPercentageToDP as wp,
@@ -15,6 +15,7 @@ const ParentAccountScreen = ({ navigation }) => {
   const deviceSize = useDeviceSize();
   const route = useRoute();
 
+  const [user, setUser] = useState(); // State to track authentication
   const [children, setChildren] = useState([]);
 
   const selectChild = (child) => {
@@ -33,6 +34,8 @@ const ParentAccountScreen = ({ navigation }) => {
           credentials: 'include', // Include cookies in the request
         });
         const data = await response.json();
+
+        setUser(user);
         setChildren(data);
       } else {
         // Handle the case where user is undefined (not found in AsyncStorage)
@@ -56,15 +59,20 @@ const ParentAccountScreen = ({ navigation }) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Text style={styles.title}>Welcome back </Text>
-        <Text style={styles.text}>Select a child </Text>
+        {user ? (
+          <Text style={styles.title}>Welcome back {user.firstName}</Text>
+        ) : (
+          <Text style={styles.title}>Welcome back</Text>
+        )}
+        {children ? <Text style={styles.text}>Select a child </Text> : null}
         {children.map((child) => (
           <Button
             key={child._id}
             testID={`child-${child._id}`}
             mode="contained"
             contentStyle={{
-              minWidth: wp('90%'),
+                minWidth: '90%',
+                maxWidth: '90%',
               minHeight: 78,
               justifyContent: 'flex-start',
             }}
@@ -94,13 +102,13 @@ const useStyles = CreateResponsiveStyle(
   {
     page: {
       backgroundColor: '#ffffff',
-      maxWidth: wp('100%'),
+      maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
-      minWidth: wp('90%'),
-      minHeight: hp('65%'),
+      minWidth: '90%',
+      minHeight: '65%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -124,7 +132,7 @@ const useStyles = CreateResponsiveStyle(
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
-      width: wp('100%'),
+      width: '100%',
       height: 250,
       resizeMode: 'stretch',
     },
@@ -146,7 +154,7 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       bottomCloud: {
-        width: wp('100%'),
+        width: '100%',
         height: 300,
         resizeMode: 'stretch',
         flex: 1,

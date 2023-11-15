@@ -28,14 +28,4 @@ describe('StudyMaterial', () => {
     const { getByTestId } = render(<StudyMaterial />);
     expect(getByTestId('takeQuizButton')).toBeDefined();
   });
-  it('should render End Session components after clicking button', () => {
-    const { getByTestId } = render(<StudyMaterial />);
-
-    // simulate a click on the "End Session" button
-    fireEvent.press(getByTestId('endSessionButton'));
-
-    // after clicking on the button, checks some components from the Mdal are visible
-    expect(getByTestId('enterPasswordText')).toBeDefined();
-    expect(getByTestId('passwordInput')).toBeDefined();
-  });
 });

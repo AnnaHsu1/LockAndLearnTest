@@ -111,8 +111,8 @@ const ViewUploadedFilesScreen = () => {
 
   const handleDelete = async (itemId) => {
     try {
-      console.log('itemId: ', itemId);
-      console.log(deleteDataFile[0][itemId - 1]._id);
+      // console.log('itemId: ', itemId);
+      // console.log(deleteDataFile[0][itemId - 1]._id);
       const response = await fetch(
         `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[0][itemId - 1]._id}`,
         {

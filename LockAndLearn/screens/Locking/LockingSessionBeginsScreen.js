@@ -52,13 +52,13 @@ const LockingSessionBeginsScreen = () => {
           testID="sessionBeginsLogo"
         />
       </View>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.customButton}
         onPress={() => setModalVisible(true)}
         testID="endSessionButton"
       >
         <Text style={styles.customButtonText}>End Session</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Modal
         animationType="slide"
         transparent={true}

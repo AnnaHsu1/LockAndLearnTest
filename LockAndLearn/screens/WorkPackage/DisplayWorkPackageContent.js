@@ -403,6 +403,8 @@ const DisplayWorkPackageContent = () => {
                   style={styles.buttonDeleteModal}
                   onPress={() => {
                     toggleModalDelete();
+                    setFileDeleteId('');
+                    setFileDeleteName('');
                     fileDeleteId !== '' ? handleDeleteFile(fileDeleteId) : handleDeleteQuiz(quizDeleteId);
                   }}
                 >

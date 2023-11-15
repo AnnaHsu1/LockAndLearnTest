@@ -51,7 +51,7 @@ const GoogleSignUpScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setGoogleUser(userInfo);
-    console.log('Google User props', userInfo);
+    // console.log('Google User props', userInfo);
   }, [userInfo]);
 
   const configureFdata = () => {
@@ -60,7 +60,7 @@ const GoogleSignUpScreen = ({ route, navigation }) => {
     fdata.Email = googleUser.email;
     fdata.Password = googleUser.id;
     fdata.CPassword = googleUser.id;
-    console.log('fdata', fdata);
+    // console.log('fdata', fdata);
   };
 
   const handleSubmit = async () => {

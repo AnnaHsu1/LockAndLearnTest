@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image } from 'react-native';
+import { Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
@@ -8,11 +7,9 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
-import { getItem } from '../../../components/AsyncStorage';
 
 const ChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
-  const deviceSize = useDeviceSize();
   const [child, setChild] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const childSelected = route.params.child;
@@ -49,43 +46,38 @@ const ChildProfileScreen = ({ route, navigation }) => {
             {child.firstName} {child.lastName}
           </Text>
         </View>
-
-        <View style={styles.options}>
-          {/* Start session */}
-          <Button
-            testID="start-session"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('Locking');
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Start session</Text>
-          </Button>
-          {/* Edit profile */}
-          <Button
-            testID="edit-profile"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('EditChild', { child: child });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Edit profile</Text>
-          </Button>
-          <Button
-            testID="see-performance"
-            mode="contained"
-            onPress={() => {
-              console.log('See performance');
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>See performance</Text>
-          </Button>
-        </View>
-
-        {/* Delete child link */}
+        {/* Start session */}
+        <Button
+          testID="start-session"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('Locking');
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Start session</Text>
+        </Button>
+        {/* Edit profile */}
+        <Button
+          testID="edit-profile"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('EditChild', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Edit profile</Text>
+        </Button>
+        <Button
+          testID="see-performance"
+          mode="contained"
+          onPress={() => {
+            console.log('See performance');
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>See performance</Text>
+        </Button>
         <Text
           testID="delete-child-link"
           style={styles.link}
@@ -95,6 +87,8 @@ const ChildProfileScreen = ({ route, navigation }) => {
         >
           Delete {child.firstName}'s account
         </Text>
+
+        {/* Delete child link */}
       </View>
 
       {/* Modal to confirm the deletion of a child */}
@@ -154,13 +148,13 @@ const useStyles = CreateResponsiveStyle(
   {
     page: {
       backgroundColor: '#ffffff',
-      maxWidth: wp('100%'),
+      maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
-      minWidth: wp('90%'),
-      minHeight: hp('65%'),
+      minWidth: '90%',
+      minHeight: '65%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -171,6 +165,7 @@ const useStyles = CreateResponsiveStyle(
     header: {
       alignItems: 'center',
       justifyContent: 'center',
+      minHeight: '20%',
     },
     title: {
       color: '#ffffff',
@@ -206,7 +201,7 @@ const useStyles = CreateResponsiveStyle(
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
-      width: wp('100%'),
+      width: '100%',
       height: 250,
       resizeMode: 'stretch',
     },
@@ -233,7 +228,7 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       bottomCloud: {
-        width: wp('100%'),
+        width: '100%',
         height: 300,
         resizeMode: 'stretch',
         flex: 1,

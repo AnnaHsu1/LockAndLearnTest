@@ -11,142 +11,18 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
+import {
+  workPackageNames,
+  workPackageGrades,
+  subcategoryData,
+} from '../../components/WorkPackageConstants';
 
 const CreateWorkPackage = (route) => {
   const navigation = useNavigation();
   const [workPackageName, setWorkPackageName] = useState('Choose a Subject');
-  const workPackageNames = [
-    'Math',
-    'English',
-    'French',
-    'History',
-    'Science',
-    'Physics',
-    'Chemistry',
-    'Ethics',
-    'Geography',
-    'Computer Science',
-    'Art',
-    'Music',
-    'Physical Education (PE)',
-    'Biology',
-    'Social Studies',
-    'Literature',
-    'Economics',
-    'Spanish',
-    'German',
-    'Environmental Science',
-    'Psychology',
-    'Sociology',
-    'Health Education',
-    'Government',
-    'World History',
-    'Philosophy',
-    'Drama',
-    'Home Economics',
-  ];
   const [workPackageGrade, setWorkPackageGrade] = useState('Choose a Grade');
-  const workPackageGrades = [
-    '1st Grade',
-    '2nd Grade',
-    '3rd Grade',
-    '4th Grade',
-    '5th Grade',
-    '6th Grade',
-    '7th Grade',
-    '8th Grade',
-    '9th Grade',
-    '10th Grade',
-    '11th Grade',
-    '12th Grade',
-  ];
-
   const [workPackageSubcategories, setWorkPackageSubcategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState('Choose a Subcategory');
-
-  const subcategoryData = {
-    '1st Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-      Math: ['Numbers', 'Substraction', 'Sum'],
-    },
-    '2nd Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-      Math: ['Division', 'Multiplication'],
-    },
-    '3rd Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-    },
-    '4th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-      Math: ['Fraction'],
-    },
-    '5th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-    },
-    '6th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-    },
-    '7th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-      Science: ['Universe'],
-      Physics: ['Optic'],
-    },
-    '8th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-    },
-    '9th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-      Math: ['Probability', 'Geometry', 'Volume'],
-      Biology: ['Human'],
-    },
-    '10th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-    },
-    '11th Grade': {
-      French: ['Grammar', 'Verb', 'Vocabulary'],
-      English: ['Grammar', 'Verb', 'Vocabulary'],
-    },
-    '12th Grade': {
-      Math: ['Derivation', 'Algebra'],
-      French: ['Essay'],
-      History: ['Advanced History Topics', 'Historical Analysis'],
-      Science: ['Advanced Science Topics', 'Research Methods'],
-      Physics: ['Advanced Physics Topics', 'Advanced Optics'],
-      Chemistry: ['Advanced Chemistry Topics', 'Organic Chemistry'],
-      Ethics: ['Advanced Ethics Topics', 'Ethical Dilemmas'],
-      Geography: ['Advanced Geography Topics', 'Geopolitics'],
-      'Computer Science': ['Advanced Computer Science Topics', 'Artificial Intelligence'],
-      Art: ['Advanced Art Topics', 'Art Movements'],
-      Music: ['Advanced Music Topics', 'Composition'],
-      'Physical Education (PE)': ['Advanced PE Topics', 'Sports Medicine'],
-      Biology: ['Advanced Biology Topics', 'Genetics'],
-      'Social Studies': ['Advanced Social Studies Topics', 'Global Issues'],
-      Literature: ['Advanced Literature Topics', 'Literary Criticism'],
-      Economics: ['Advanced Economics Topics', 'Macroeconomics'],
-      Spanish: ['Advanced Spanish Topics', 'Literary Translation'],
-      German: ['Advanced German Topics', 'Cultural Studies'],
-      'Environmental Science': ['Advanced Environmental Science Topics', 'Sustainability'],
-      Psychology: ['Advanced Psychology Topics', 'Cognitive Neuroscience'],
-      Sociology: ['Advanced Sociology Topics', 'Social Movements'],
-      'Health Education': ['Advanced Health Education Topics', 'Public Health'],
-      Government: ['Advanced Government Topics', 'International Relations'],
-      'World History': ['Advanced World History Topics', 'Modern Era'],
-      Philosophy: ['Advanced Philosophy Topics', 'Metaphysics'],
-      Drama: ['Advanced Drama Topics', 'Playwriting'],
-      'Home Economics': ['Advanced Home Economics Topics', 'Nutrition Science'],
-    },
-    // Add more grades and subjects as needed
-  };
 
   // Function to diplay the subcategories or not, based on the selected grade and subject
   const handleGradeAndSubjectChange = (grade, subject) => {
@@ -269,7 +145,7 @@ const CreateWorkPackage = (route) => {
         </View>
         {/* Display button to create work package */}
         <TouchableOpacity
-        testID='createWorkPackageButton'
+          testID="createWorkPackageButton"
           style={[styles.createQuestionButton, isCreateButtonDisabled && styles.disabledButton]}
           onPress={handleCreateWorkPackage}
           disabled={isCreateButtonDisabled}
@@ -354,7 +230,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 50,
-    marginBottom: 20
+    marginBottom: 20,
   },
   createWorkPackageButtonText: {
     color: '#FFFFFF',

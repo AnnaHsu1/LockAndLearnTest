@@ -84,7 +84,7 @@ describe('QuestionsOverviewScreen Tests', () => {
     });
 
     const { findByText } = render(<QuestionsOverviewScreen route={{ params: { quizId: '123' } }} />);
-    const createQuestionButton = await findByText('Create Question');
+    const createQuestionButton = await findByText('Add Question');
 
     fireEvent.press(createQuestionButton);
 

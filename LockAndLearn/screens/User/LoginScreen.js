@@ -22,7 +22,7 @@ WebBrowser.maybeCompleteAuthSession();
 const LoginScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
-  const [ request, response, promptAsync ] = Google.useAuthRequest({
+  const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
     iosClientId: '113548474045-a3e9t8mijs7s0c9v9ht3ilvlgsjm64oj.apps.googleusercontent.com',
     webClientId: '113548474045-vuk7am9h5b8ug7c1tudd36pcsagv4l6b.apps.googleusercontent.com',
@@ -42,11 +42,11 @@ const LoginScreen = ({ navigation }) => {
     checkGoogleResponse();
   }, [response]);
 
-   const checkGoogleResponse = () => {
+  const checkGoogleResponse = () => {
     if (response?.type === 'success') {
       handleGoogleLogin();
     }
-  }
+  };
 
   const validate = () => {
     let emailError = '';
@@ -107,7 +107,7 @@ const LoginScreen = ({ navigation }) => {
         }
       } else {
         // Store the error message in state
-        console.log(data.msg);
+        // console.log(data.msg);
         setErrorMsg(data.msg);
       }
     } catch (error) {
@@ -120,13 +120,11 @@ const LoginScreen = ({ navigation }) => {
     // console.log(emailError);
     // console.log(passwordError);
     if (isValid) {
-      console.log('Fields are appropriate', fdata);
+      // console.log('Fields are appropriate', fdata);
       sendLoginData(fdata);
       
     }
   };
-
-
 
   const handleGoogleLogin = async () => {
     // if token does not exist get google user info
@@ -170,7 +168,7 @@ const LoginScreen = ({ navigation }) => {
 
     sendLoginData(googleLoginData);
   };
-  
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -217,14 +215,14 @@ const LoginScreen = ({ navigation }) => {
         <Text style={styles.link}>Forgot password?</Text>
         {!googleUser ? (
           <Button
-          testID="google-login-button"
-          mode="contained"
-          onPress={() => promptAsync()}
-          style={[styles.button, styles.full_width]}
-        >
-          Login with Google
-        </Button>) : null
-        }
+            testID="google-login-button"
+            mode="contained"
+            onPress={() => promptAsync()}
+            style={[styles.button, styles.full_width]}
+          >
+            Login with Google
+          </Button>
+        ) : null}
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />

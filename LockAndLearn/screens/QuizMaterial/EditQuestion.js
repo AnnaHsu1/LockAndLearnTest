@@ -19,7 +19,7 @@ const EditQuestion = ({ route }) => {
         { id: 'C', text: '', isCorrect: false },
         { id: 'D', text: '', isCorrect: false },
     ]);
-    console.log(quizId + "CreateQuestions1");
+    // console.log(quizId + "CreateQuestions1");
     const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Fill In The Blanks", "Another Type"];
 
     const handleTrueFalseChange = (newValue) => {

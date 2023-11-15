@@ -23,8 +23,9 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
-import { getItem, removeItem } from '../components/AsyncStorage';
+import { getItem, removeItem, setUserTokenWithExpiry } from '../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
+import { getUser, handleLogout } from '../components/AsyncStorage';
 
 const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
@@ -32,17 +33,6 @@ const HomeScreen = ({ navigation }) => {
   const route = useRoute();
   const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // State to track authentication
-
-  const checkAuthenticated = async () => {
-    try {
-      const token = await getItem('@token');
-      if (token) {
-        setIsAuthenticated(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   /* useEffect(() => {
     checkAuthenticated();
@@ -53,28 +43,42 @@ const HomeScreen = ({ navigation }) => {
     if (route.params && typeof route.params.isAuthenticated !== 'undefined') {
       setIsAuthenticated(route.params.isAuthenticated);
     } else {
-      checkAuthenticated();
+      isUserStillAuthenticated();
     }
   }, [route.params]);
 
   const isUserStillAuthenticated = async () => {
-    const token = JSON.parse(await getItem('@token'));
-    if (token) {
-      const currentTime = Math.floor(Date.now() / 1000);
-      if (token?.tokenExpiration < currentTime) {
-        console.log('Token expired', currentTime, token?.tokenExpiration);
-        await removeItem('@token');
-      } else {
-        console.log(token);
-        console.log('Token valid', currentTime, token?.tokenExpiration);
-        // If token is not expired, update the token expiration time
-        await setUserTokenWithExpiry('@token', data.user);
+    try {
+      const token = JSON.parse(await getItem('@token'));
+      if (token) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (token?.tokenExpiration < currentTime) {
+          console.log('Token expired', currentTime, token?.tokenExpiration);
+          await removeItem('@token');
+        } else {
+          // console.log(token);
+          // console.log('Token valid', currentTime, token?.tokenExpiration);
+          // If token is not expired, update the token expiration time
+          await setUserTokenWithExpiry('@token', token);
+        }
+        setIsAuthenticated(true);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const updateDimensions = () => {
     setWindowDimensions(Dimensions.get('window'));
+  };
+
+  const goToHomePage = async () => {
+    const userToken = await getUser();
+    if (userToken.isParent) {
+      navigation.navigate('ParentAccount');
+    } else {
+      navigation.navigate('UserLandingPage');
+    }
   };
 
   Dimensions.addEventListener('change', updateDimensions);
@@ -99,6 +103,23 @@ const HomeScreen = ({ navigation }) => {
                   <Text style={{ color: '#008000', textAlign: 'center' }}>
                     You are authenticated!
                   </Text>
+                  <TouchableOpacity
+                    style={[styles.button, { backgroundColor: '#C6D8FF', marginVertical: 5 }]}
+                    onPress={() => {
+                      goToHomePage();
+                    }}
+                  >
+                    <Text style={[styles.buttonText, { marginVertical: 8 }]}>Home</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, { backgroundColor: '#C6D8FF', marginVertical: 5 }]}
+                    onPress={() => {
+                      handleLogout();
+                      setIsAuthenticated(false);
+                    }}
+                  >
+                    <Text style={[styles.buttonText, { marginVertical: 8 }]}>Log out</Text>
+                  </TouchableOpacity>
                   {/* Additional authenticated content */}
                 </>
               ) : (
@@ -115,9 +136,9 @@ const HomeScreen = ({ navigation }) => {
                   </Text>
                 </>
               )}
-              <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
+              {/* <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
                 Go to Landing Page
-              </Text>
+              </Text> */}
             </View>
           </View>
         </ImageBackground>
@@ -143,6 +164,23 @@ const HomeScreen = ({ navigation }) => {
                     <Text style={{ color: '#008000', textAlign: 'center' }}>
                       You are authenticated!
                     </Text>
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: '#C6D8FF', marginVertical: 5 }]}
+                      onPress={() => {
+                        goToHomePage();
+                      }}
+                    >
+                      <Text style={[styles.buttonText, { marginVertical: 8 }]}>Home</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.button, { backgroundColor: '#C6D8FF', marginVertical: 5 }]}
+                      onPress={() => {
+                        handleLogout();
+                        setIsAuthenticated(false);
+                      }}
+                    >
+                      <Text style={[styles.buttonText, { marginVertical: 8 }]}>Log out</Text>
+                    </TouchableOpacity>
                     {/* Additional authenticated content */}
                   </>
                 ) : (
@@ -158,9 +196,9 @@ const HomeScreen = ({ navigation }) => {
                     </Text>
                   </>
                 )}
-                <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
+                {/* <Text style={styles.link} onPress={() => navigation.navigate('UserLandingPage')}>
                   Go to Landing Page
-                </Text>
+                </Text> */}
               </View>
             </View>
           </View>

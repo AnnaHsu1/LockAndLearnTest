@@ -1,68 +1,81 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, Button, navigation, Image } from 'react-native';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { StyleSheet, Text, View, TouchableOpacity, Button, Platform } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { getItem, removeItem } from '../../components/AsyncStorage';
+import { getUser } from '../../components/AsyncStorage';
 
 const LandingPage = ({ navigation }) => {
-  const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  async function getUser() {
-    try {
-      const token = await getItem('@token');
-      if (token) {
-        const user = JSON.parse(token);
-        setUser(user);
-      } else {
-        // Handle the case where user is undefined (not found in AsyncStorage)
-        console.log('User not found in AsyncStorage');
-      }
-    } catch (error) {
-      console.log(error);
+  const getUserToken = async () => {
+    const userToken = await getUser();
+    if (userToken) {
+      setUserId(userToken._id);
     }
-  }
-
-  useEffect(() => {
-    getUser();
-  }, []);
-
-  const handleLogout = async () => {
-    await removeItem('@token');
-    console.log('Logged out successfully');
-    navigation.navigate('Home', {
-      isAuthenticated: false,
-    });
   };
 
-  return (
-    <View>
-      <Button title="Upload" onPress={() => navigation.navigate('Upload')} />
-      <Button title="View my Uploaded Files" onPress={() => navigation.navigate('ViewUploads')} />
-      <Button title="Locking" onPress={() => navigation.navigate('Locking')} />
-      <Button title="Quiz Material" onPress={() => navigation.navigate('CreateQuiz')} />
-      <Button title="View my Work Packages" onPress={() => navigation.navigate('WorkPackageOverview')} />
-      {/* is user a parent? */}
-      {user?.isParent ? (
-        <Button title="Parent Account" onPress={() => navigation.navigate('ParentAccount')} />
-      ) : null}
-      {/* is user logged in? */}
-      {user ? <Button title="Log out" onPress={handleLogout} /> : null}
+  useEffect(() => {
+    getUserToken();
+  }, []);
 
-      <StatusBar style="auto" />
+  return (
+    <View style={styles.page}>
+      <View>
+        <TouchableOpacity
+          style={styles.content}
+          onPress={() => navigation.navigate('WorkPackageOverview')}
+        >
+          <Text style={styles.text}>My Work Packages</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.content} onPress={() => navigation.navigate('Upload')}>
+          <Text style={styles.text}>Upload Study Material</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.content}
+          onPress={() => navigation.navigate('QuizzesOverviewScreen', { userId: userId })}
+        >
+          <Text style={styles.text}>My quizzes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.content} onPress={() => navigation.navigate('ViewUploads')}>
+          <Text style={styles.text}>View my files</Text>
+        </TouchableOpacity>
+
+        {/* <TouchableOpacity
+          style={styles.content}
+          onPress={() => navigation.navigate('ParentAccount')}
+        >
+          <Text style={styles.text}>Parent Account</Text>
+        </TouchableOpacity> */}
+      </View>
     </View>
   );
 };
 
-const useStyles = CreateResponsiveStyle({
+const styles = StyleSheet.create({
   page: {
     backgroundColor: '#ffffff',
-    maxWidth: wp('100%'),
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {
+    backgroundColor: '#4F85FF',
+    borderRadius: 5,
+    marginVertical: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minWidth: wp(50),
+    minHeight: hp(10),
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
 

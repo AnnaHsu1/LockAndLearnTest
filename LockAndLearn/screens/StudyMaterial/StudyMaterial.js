@@ -1,31 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 const StudyMaterial = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordBorderColor, setPasswordBorderColor] = useState('#407BFF');
-
-  const closeSession = () => {
-    if (password === '1234') {
-      navigation.navigate('Home');
-    } else {
-      // Handle incorrect password
-      setPasswordBorderColor('red'); // Change border color to red
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText} testID="lessonTime">
           9:41
         </Text>
-        <TouchableOpacity style={styles.endSessionButton} onPress={() => setModalVisible(true)}>
-          <Text style={styles.endSessionText} testID="endSessionButton">
-            End Session
-          </Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.studyContent}>
@@ -41,36 +23,6 @@ const StudyMaterial = () => {
           </Text>
         </TouchableOpacity>
       </View>
-
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText} testID="enterPasswordText">
-              Enter Password:
-            </Text>
-            <TextInput
-              style={[styles.modalInput, { borderColor: passwordBorderColor }]}
-              testID="passwordInput"
-              secureTextEntry={true}
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setPasswordBorderColor('#407BFF'); // Reset border color when typing
-              }}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={closeSession}>
-                <Text style={styles.modalButtonText}>Enter</Text>
-              </TouchableOpacity>
-              {/* Make sure to add Spacer component if used */}
-              {/* <Spacer width={10} /> */}
-              <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };

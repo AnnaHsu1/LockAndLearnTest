@@ -1,28 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getItem } from '../../components/AsyncStorage';
+import { getItem, getUser } from '../../components/AsyncStorage';
 
 const CreateQuiz = () => {
   const [quizName, setQuizName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
-  const getUser = async () => {
-    try {
-      const token = await getItem('@token');
-      if (token) {
-        const user = JSON.parse(token);
-        console.log("USER ID: " + user._id);
-        return user._id;
-      } else {
-        // Handle the case where user is undefined (not found in AsyncStorage)
-        console.log('User not found in AsyncStorage');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const createQuiz = async () => {
     try {
@@ -60,10 +44,11 @@ const CreateQuiz = () => {
       if (response.status === 200 || 201) {
         // Quiz created successfully, you can handle the response if needed
 
-        // Navigate to the QuestionsOverviewScreen with a default workPackageId
+        // Navigate to the QuestionsOverviewScreen
         navigation.navigate('QuizzesOverviewScreen', {
-          workPackageId: '00000000', // Change this to your default value
+          userId: userId, // Change this to your default value
         });
+        setQuizName('');
       } else {
         // Handle errors or display a message
       }
@@ -82,7 +67,9 @@ const CreateQuiz = () => {
       style={styles.container}
     >
       <View style={styles.containerFile}>
-        <Text style={styles.enterQuizName} testID="quiz-name">Enter Quiz Name</Text>
+        <Text style={styles.enterQuizName} testID="quiz-name">
+          Enter Quiz Name
+        </Text>
         <TextInput
           style={styles.input}
           placeholder="Quiz Name"

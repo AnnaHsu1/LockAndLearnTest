@@ -27,20 +27,41 @@ import SelectStudyMaterialToAdd from '../screens/WorkPackage/StudyMaterial/Selec
 import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
+import LogoutButton from './LogoutButton';
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#4F85FF',
+            textAlign: 'center',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          headerRight: () => <LogoutButton />,
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={HomeScreen}
           options={{ title: 'Lock & Learn', headerShown: false }}
         />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
-        <Stack.Screen name="Signup" component={SignupScreen} options={{ title: 'Sign up' }} />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ title: 'Login', headerRight: () => null }}
+        />
+        <Stack.Screen
+          name="Signup"
+          component={SignupScreen}
+          options={{ title: 'Sign up', headerRight: () => null }}
+        />
         <Stack.Screen
           name="Upload"
           component={UploadScreen}
@@ -49,50 +70,42 @@ const StackNavigation = () => {
         <Stack.Screen
           name="Locking"
           component={LockingSessionBeginsScreen}
-          options={{ title: 'Locking' }}
+          options={{ title: 'Locking', headerShown: false }}
         />
         <Stack.Screen
           name="LockingSchedulePresentation"
           component={LockingSchedulePresentation}
-          options={{ title: 'LockingSchedulePresentation' }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="StudyMaterial"
           component={StudyMaterial}
-          options={{ title: 'StudyMaterial' }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="UserLandingPage"
           component={LandingPage}
           options={({ navigation }) => ({
-            title: 'Landing Page',
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Home');
-                }}
-                style={{ marginLeft: 15 }}
-              >
-                <Ionicons name="arrow-back" size={24} color="black" />
-              </TouchableOpacity>
-            ),
+            title: 'Lock And Learn',
+            headerLeft: () => null,
+            // headerLeft: () => (
+            //   <TouchableOpacity
+            //     onPress={() => {
+            //       navigation.navigate('Home');
+            //         }}
+            //     style={{ marginLeft: 15 }}
+            //   >
+            //     <Ionicons name="arrow-back" size={24} color="black" />
+            //   </TouchableOpacity>
+            // ),
           })}
         />
         <Stack.Screen
           name="ParentAccount"
           component={ParentAccount}
           options={({ navigation }) => ({
-            title: 'Manage Children',
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('UserLandingPage');
-                }}
-                style={{ marginLeft: 15 }}
-              >
-                <Ionicons name="arrow-back" size={24} color="black" />
-              </TouchableOpacity>
-            ),
+            title: 'Lock And Learn',
+            headerLeft: () => null,
           })}
         />
         <Stack.Screen
@@ -105,20 +118,16 @@ const StackNavigation = () => {
           component={ViewUploadedFilesScreen}
           options={{ title: 'View my Uploaded Files' }}
         />
-        <Stack.Screen
-          name="CreateQuiz"
-          component={CreateQuiz}
-          options={{ title: 'CreateQuiz' }}
-        />
+        <Stack.Screen name="CreateQuiz" component={CreateQuiz} options={{ title: 'CreateQuiz' }} />
         <Stack.Screen
           name="QuizzesOverviewScreen"
           component={QuizzesOverviewScreen}
-          options={{ title: 'Quizzes Overview' }}
+          options={{ title: 'Quizzes' }}
         />
         <Stack.Screen
           name="QuestionsOverviewScreen"
           component={QuestionsOverviewScreen}
-          options={{ title: 'Questions Overview' }}
+          options={{ title: 'Questions' }}
         />
         <Stack.Screen
           name="CreateQuestion"
@@ -133,27 +142,27 @@ const StackNavigation = () => {
         <Stack.Screen
           name="WorkPackageOverview"
           component={WorkPackageOverview}
-          options={{ title: 'WorkPackageOverview' }}
+          options={{ title: 'Work Package Overview' }}
         />
         <Stack.Screen
           name="CreateWorkPackage"
           component={CreateWorkPackage}
-          options={{ title: 'CreateWorkPackage' }}
+          options={{ title: 'Create Work Package' }}
         />
         <Stack.Screen
           name="DisplayWorkPackageContent"
           component={DisplayWorkPackageContent}
-          options={{ title: 'DisplayWorkPackageContent' }}
+          options={{ title: 'Display Work Package Content' }}
         />
         <Stack.Screen
           name="SelectQuizToAdd"
           component={SelectQuizToAdd}
-          options={{ title: 'SelectQuizToAdd' }}
+          options={{ title: 'Select Quiz To Add' }}
         />
         <Stack.Screen
           name="SelectStudyMaterialToAdd"
           component={SelectStudyMaterialToAdd}
-          options={{ title: 'SelectStudyMaterialToAdd' }}
+          options={{ title: 'Select Study Material To Add' }}
         />
         <Stack.Screen
           name="ChildProfile"
@@ -168,7 +177,7 @@ const StackNavigation = () => {
         <Stack.Screen
           name="EditQuestion"
           component={EditQuestion}
-          options={{ title: 'EditQuestion' }}
+          options={{ title: 'Edit Question' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

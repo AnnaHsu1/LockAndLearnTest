@@ -4,7 +4,6 @@ import { render, fireEvent, waitFor, act, cleanup } from '@testing-library/react
 import QuizzesOverviewScreen from '../../screens/QuizMaterial/QuizzesOverviewScreen';
 import { useNavigation } from '@react-navigation/native';
 
-
 const fetchMock = require('jest-fetch-mock');
 fetchMock.enableMocks();
 
@@ -14,6 +13,9 @@ jest.mock('@react-navigation/native', () => {
     useNavigation: jest.fn(),
   };
 });
+jest.mock('../../components/AsyncStorage', () => ({
+  getUser: jest.fn().mockResolvedValue({ _id: '123' }),
+}));
 
 describe('QuizzesOverviewScreen Tests', () => {
   beforeEach(() => {
@@ -23,32 +25,32 @@ describe('QuizzesOverviewScreen Tests', () => {
     cleanup();
   });
 
-  test('fetches quizzes and renders them', async () => {
+  it('renders quizzes correctly', async () => {
     const mockQuizzes = [
-      { _id: '1', name: 'Quiz 1' },
-      { _id: '2', name: 'Quiz 2' },
+      { _id: 'quiz1', name: 'Quiz 1' },
+      { _id: 'quiz2', name: 'Quiz 2' },
     ];
 
     fetchMock.mockResponseOnce(JSON.stringify(mockQuizzes));
 
-    const { getByText } = render(<QuizzesOverviewScreen route={{ params: { workPackageId: '123' } }} />);
+    const route = { params: { userId: '123' } };
+    const { findByText } = render(<QuizzesOverviewScreen route={route} />);
 
-    await waitFor(() => {
-      expect(getByText('Quiz 1')).toBeDefined();
-      expect(getByText('Quiz 2')).toBeDefined();
-    });
+    expect(await findByText('Quiz 1')).toBeDefined();
+    expect(await findByText('Quiz 2')).toBeDefined();
   });
 
   test('deletes a quiz when delete button is pressed', async () => {
-    const mockQuizzes = [
-      { _id: '1', name: 'Quiz 1' },
-    ];
+    const mockQuizzes = [{ _id: '1', name: 'Quiz 1' }];
 
     fetchMock.mockResponseOnce(JSON.stringify(mockQuizzes));
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'Quiz deleted' }));
 
-    const { findByText } = render(<QuizzesOverviewScreen route={{ params: { workPackageId: '123' } }} />);
-    const deleteButton = await findByText('X');
+    const { findByText, findByTestId } = render(
+      <QuizzesOverviewScreen route={{ params: { userId: '123' } }} />
+    );
+    // const deleteButton = await findByText('X');
+    const deleteButton = await findByTestId('delete-button-x');
 
     fireEvent.press(deleteButton);
 
@@ -61,5 +63,4 @@ describe('QuizzesOverviewScreen Tests', () => {
       });
     });
   });
-
 });

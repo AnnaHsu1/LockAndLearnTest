@@ -161,13 +161,13 @@ const useStyles = CreateResponsiveStyle(
   {
     page: {
       backgroundColor: '#ffffff',
-      maxWidth: wp('100%'),
+      maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
-      minWidth: wp('90%'),
-      minHeight: hp('65%'),
+      minWidth: '90%',
+      minHeight: '65%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -189,12 +189,7 @@ const useStyles = CreateResponsiveStyle(
     field: {
       color: '#ADADAD',
     },
-    full_width: {
-      minWidth: '100%',
-    },
-    half_width: {
-      width: wp('40%'),
-    },
+
     box: {
       borderWidth: 1,
       borderColor: 'red',
@@ -204,7 +199,7 @@ const useStyles = CreateResponsiveStyle(
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
-      width: wp('100%'),
+      width: '100%',
       height: 250,
       resizeMode: 'stretch',
     },
@@ -231,13 +226,10 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       bottomCloud: {
-        width: wp('100%'),
+        width: '100%',
         height: 300,
         resizeMode: 'stretch',
         flex: 1,
-      },
-      half_width: {
-        width: 225,
       },
     },
   }

@@ -80,14 +80,5 @@ describe('HomeScreen', () => {
     expect(mockNavigate).toHaveBeenCalledWith('Login');
   });
 
-  it('navigates to the UserLandingPage screen when the text is pressed', () => {
-    const { getByText } = render(<HomeScreen navigation={mockNavigation} />);
-
-    const landingPageText = getByText('Go to Landing Page');
-    fireEvent.press(landingPageText);
-
-    expect(mockNavigate).toHaveBeenCalledWith('UserLandingPage');
-  });
-
 
 });

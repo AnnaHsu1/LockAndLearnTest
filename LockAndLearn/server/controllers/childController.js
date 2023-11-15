@@ -66,11 +66,11 @@ router.put('/updatechild/:id', async (req, res) => {
       return res.status(400).json({ msg: 'All fields must be filled.' });
     }
 
-    if (Grade < 1 || Grade > 13 || !/^\d+$/.test(Grade)) {
+    if (Grade < 1 || Grade > 12 || !/^\d+$/.test(Grade)) {
       return res.status(400).json({ msg: 'Grade must be a digit between 1 and 12.' });
     }
 
-    if (!FirstName.match(/^[a-zA-Z]+$/) && !LastName.match(/^[a-zA-Z]+$/)) {
+    if (!FirstName.match(/^[a-zA-Z]+$/) || !LastName.match(/^[a-zA-Z]+$/)) {
       return res.status(400).json({ msg: 'First and last name must only contain letters.' });
     }
 

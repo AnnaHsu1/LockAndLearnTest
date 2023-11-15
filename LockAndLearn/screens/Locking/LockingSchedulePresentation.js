@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, TextInput } from 'react-native';
 
 // Import the navigation actions and hooks from React Navigation
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from '@react-navigation/native';
 
 const LockingSchedulePresentation = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState('');
@@ -14,7 +14,7 @@ const LockingSchedulePresentation = () => {
   const closeSession = () => {
     if (password === '1234') {
       // Navigate to the "Home" screen when the password is "1234"
-      navigation.navigate("Home");
+      navigation.navigate('Home');
     } else {
       setPasswordBorderColor('red');
     }
@@ -23,64 +23,48 @@ const LockingSchedulePresentation = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText} testID="header-time">9:41</Text>
-        <TouchableOpacity style={styles.endSessionButton} onPress={() => setModalVisible(true)} testID="end-session-button">
+        <Text style={styles.headerText} testID="header-time">
+          9:41
+        </Text>
+        {/* <TouchableOpacity style={styles.endSessionButton} onPress={() => setModalVisible(true)} testID="end-session-button">
           <Text style={styles.endSessionText}>End Session</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <View style={styles.lessonContent}>
-        <Text style={styles.lessonTitle} testID="lesson-title">Lesson Schedule</Text>
-        <Text style={styles.subject} testID="subject-text">Math</Text>
-        <Text style={styles.duration} testID="subject-time">⏱️ 1h40</Text>
-        <Text style={styles.details} testID="subject-title1">• Additions</Text>
-        <Text style={styles.details} testID="subject-title2">• Subtractions</Text>
-        <Text style={styles.details} testID="subject-quiz">• Quiz (30 questions)</Text>
+        <Text style={styles.lessonTitle} testID="lesson-title">
+          Lesson Schedule
+        </Text>
+        <Text style={styles.subject} testID="subject-text">
+          Math
+        </Text>
+        <Text style={styles.duration} testID="subject-time">
+          ⏱️ 1h40
+        </Text>
+        <Text style={styles.details} testID="subject-title1">
+          • Additions
+        </Text>
+        <Text style={styles.details} testID="subject-title2">
+          • Subtractions
+        </Text>
+        <Text style={styles.details} testID="subject-quiz">
+          • Quiz (30 questions)
+        </Text>
         <Text style={styles.passCriteria} testID="subject-passCriteria">
           The quiz must be passed with a grade of 75% or higher
         </Text>
         <TouchableOpacity
-            style={styles.startLearningButton}
-            onPress={() => navigation.navigate('StudyMaterial')}
-            testID="start-learning-button"
+          style={styles.startLearningButton}
+          onPress={() => navigation.navigate('StudyMaterial')}
+          testID="start-learning-button"
         >
-            <Text style={styles.startLearningText}>Start Learning</Text>
+          <Text style={styles.startLearningText}>Start Learning</Text>
         </TouchableOpacity>
         {/* <Image
           source={require('../assets/learning_illustration.png')}
           style={styles.learningIllustration}
         /> */}
       </View>
-
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle} testID="modal-title">End Session</Text>
-            <Text style={styles.modalText} testID="enterPasswordText">Enter Password:</Text>
-            <TextInput
-              style={[styles.modalInput, { borderColor: passwordBorderColor }]}
-              testID="passwordInput"
-              secureTextEntry={true}
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setPasswordBorderColor('#407BFF');
-              }}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalButton} onPress={closeSession}>
-                <Text style={styles.modalButtonText}>Enter</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };

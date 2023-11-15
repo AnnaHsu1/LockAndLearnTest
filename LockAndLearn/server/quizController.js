@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Quiz = require('../server/quizSchema.js'); 
+const Quiz = require('../server/quizSchema.js');
 
 // Create a new quiz
 router.post('/create', async (req, res) => {
   try {
-    const { name, workPackageId, questions, userId } = req.body;
-    const newQuiz = new Quiz({ name, workPackageId, questions, userId });
+    const { name, questions, userId } = req.body;
+    const newQuiz = new Quiz({ name, questions, userId });
     const savedQuiz = await newQuiz.save();
     res.json(savedQuiz);
   } catch (err) {
@@ -15,9 +15,10 @@ router.post('/create', async (req, res) => {
 });
 
 // get all quizzes
-router.get('/allQuizzes', async (req, res) => {
+router.get('/allQuizzes/:id', async (req, res) => {
   try {
-    const quizzes = await Quiz.find();  // This retrieves all quizzes from the Quiz collection.
+    const userId = req.params.id;
+    const quizzes = await Quiz.find({ userId: userId }); // This retrieves all quizzes from the Quiz collection.
     res.json(quizzes);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -28,7 +29,8 @@ router.get('/allQuizzes', async (req, res) => {
 router.post('/addQuestion/:quizId', async (req, res) => {
   try {
     const quizId = req.params.quizId;
-    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options } = req.body;
+    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options } =
+      req.body;
 
     // Construct the new question
     const newQuestion = {
@@ -39,14 +41,13 @@ router.post('/addQuestion/:quizId', async (req, res) => {
       multipleChoiceAnswers,
       inputs,
       options,
-
     };
 
     // Find the quiz by ID
     const quiz = await Quiz.findById(quizId);
-    
+
     if (!quiz) {
-      return res.status(404).json({ error: "Quiz not found" });
+      return res.status(404).json({ error: 'Quiz not found' });
     }
 
     // Add the new question to the quiz's questions array
@@ -66,31 +67,24 @@ router.put('/updateQuestion/:quizId/:questionIndex', async (req, res) => {
   try {
     const quizId = req.params.quizId;
     const questionIndex = parseInt(req.params.questionIndex, 10);
-    const {
-      questionText,
-      questionType,
-      answer,
-      isTrue,
-      multipleChoiceAnswers,
-      inputs,
-      options,
-    } = req.body;
+    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options } =
+      req.body;
 
     // Ensure the questionIndex is a valid number
     if (isNaN(questionIndex) || questionIndex < 0) {
-      return res.status(400).json({ error: "Invalid question index provided." });
+      return res.status(400).json({ error: 'Invalid question index provided.' });
     }
 
     // Find the quiz by ID
     const quiz = await Quiz.findById(quizId);
 
     if (!quiz) {
-      return res.status(404).json({ error: "Quiz not found" });
+      return res.status(404).json({ error: 'Quiz not found' });
     }
 
     // Ensure the question exists at the specified index
     if (questionIndex >= quiz.questions.length) {
-      return res.status(404).json({ error: "Question not found at the specified index." });
+      return res.status(404).json({ error: 'Question not found at the specified index.' });
     }
 
     // Update the question based on the received data
@@ -123,19 +117,19 @@ router.delete('/deleteQuestion/:quizId/:questionIndex', async (req, res) => {
 
     // Ensure the questionIndex is a valid number
     if (isNaN(questionIndex) || questionIndex < 0) {
-      return res.status(400).json({ error: "Invalid question index provided." });
+      return res.status(400).json({ error: 'Invalid question index provided.' });
     }
 
     // Find the quiz by ID
     const quiz = await Quiz.findById(quizId);
-    
+
     if (!quiz) {
-      return res.status(404).json({ error: "Quiz not found" });
+      return res.status(404).json({ error: 'Quiz not found' });
     }
 
     // Ensure the question exists at the specified index
     if (quiz.questions.length <= questionIndex) {
-      return res.status(404).json({ error: "Question not found at the specified index." });
+      return res.status(404).json({ error: 'Question not found at the specified index.' });
     }
 
     // Remove the question from the quiz's questions array
@@ -158,19 +152,19 @@ router.get('/getQuestion/:quizId/:questionIndex', async (req, res) => {
 
     // Ensure the questionIndex is a valid number
     if (isNaN(questionIndex) || questionIndex < 0) {
-      return res.status(400).json({ error: "Invalid question index provided." });
+      return res.status(400).json({ error: 'Invalid question index provided.' });
     }
 
     // Find the quiz by ID
     const quiz = await Quiz.findById(quizId);
-    
+
     if (!quiz) {
-      return res.status(404).json({ error: "Quiz not found" });
+      return res.status(404).json({ error: 'Quiz not found' });
     }
 
     // Ensure the question exists at the specified index
     if (questionIndex >= quiz.questions.length) {
-      return res.status(404).json({ error: "Question not found at the specified index." });
+      return res.status(404).json({ error: 'Question not found at the specified index.' });
     }
 
     // Retrieve the question from the quiz's questions array
@@ -193,7 +187,6 @@ router.delete('/deleteQuiz/:quizId', async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
-
 
 // Get a specific quiz by ID
 router.get('/quiz/:quizId', async (req, res) => {

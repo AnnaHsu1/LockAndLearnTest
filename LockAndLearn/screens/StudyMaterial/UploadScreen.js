@@ -102,9 +102,9 @@ const UploadScreen = () => {
       }
     });
 
-    for (var key of fileData.entries()) {
-      console.log(key[0] + ', ' + key[1]);
-    }
+    // for (var key of fileData.entries()) {
+    //   console.log(key[0] + ', ' + key[1]);
+    // }
 
     const headers = {
       'Content-Type': 'multipart/form-data',
@@ -116,7 +116,7 @@ const UploadScreen = () => {
         body: fileData,
       });
       if (response.ok) {
-        console.log('Request successful');
+        // console.log('Request successful');
         // reset all stored files
         toast.success('Files uploaded successfully!');
         // todo: redirect to view uploaded files screen (for now, just refresh the page)
@@ -149,7 +149,7 @@ const UploadScreen = () => {
               editable={false}
             />
             <TouchableOpacity
-              testID={`deleteButton-${index}`}  // Unique testID for each button
+              testID={`deleteButton-${index}`} // Unique testID for each button
               style={styles.buttonDelete}
               onPress={() => deleteFile(index)}
             >

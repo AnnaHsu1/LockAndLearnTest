@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Icon } from 'react-native-paper';
+import { getUser } from '../../../components/AsyncStorage';
 
 const SelectQuizToAdd = () => {
   const route = useRoute();
@@ -21,20 +22,37 @@ const SelectQuizToAdd = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuizzes, setSelectedQuizzes] = useState([]);
 
+  const getQuizzes = async () => {
+    const user = await getUser();
+    try {
+      const response = await fetch('http://localhost:4000/quizzes/allQuizzes/' + user._id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        setQuizzes(data);
+      } else {
+        console.error('Error fetching quizzes');
+      }
+    } catch (error) {
+      console.error('Network error');
+    }
+  };
+
   useEffect(() => {
     // Fetch all quizzes from your API
-    fetch('http://localhost:4000/quizzes/allQuizzes')
-      .then(response => response.json())
-      .then(data => setQuizzes(data))
-      .catch(error => console.error("Error fetching quizzes", error));
+    getQuizzes();
   }, []);
 
   // Function to toggle the selection of quiz by its id
   const toggleQuizSelection = (quizId) => {
     if (selectedQuizzes.includes(quizId)) {
-      setSelectedQuizzes(prevSelected => prevSelected.filter(id => id !== quizId));
+      setSelectedQuizzes((prevSelected) => prevSelected.filter((id) => id !== quizId));
     } else {
-      setSelectedQuizzes(prevSelected => [...prevSelected, quizId]);
+      setSelectedQuizzes((prevSelected) => [...prevSelected, quizId]);
     }
   };
 
@@ -45,13 +63,13 @@ const SelectQuizToAdd = () => {
         method: 'DELETE',
       });
       if (response.ok) {
-        console.log("Quiz deleted:", quizId);
-        setQuizzes(prevQuizzes => prevQuizzes.filter(quiz => quiz._id !== quizId));
+        console.log('Quiz deleted:', quizId);
+        setQuizzes((prevQuizzes) => prevQuizzes.filter((quiz) => quiz._id !== quizId));
       } else {
-        console.error("Failed to delete quiz:", response.status);
+        console.error('Failed to delete quiz:', response.status);
       }
     } catch (error) {
-      console.error("Error deleting quiz:", error);
+      console.error('Error deleting quiz:', error);
     }
   };
 
@@ -59,29 +77,32 @@ const SelectQuizToAdd = () => {
   const addQuizzesToWorkPackage = async () => {
     try {
       if (selectedQuizzes.length === 0) {
-        console.log("No quizzes selected to add to the work package.");
+        console.log('No quizzes selected to add to the work package.');
         return;
       }
-      const response = await fetch(`http://localhost:4000/workPackages/addQuizzes/${workPackageId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          quizzes: selectedQuizzes,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:4000/workPackages/addQuizzes/${workPackageId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            quizzes: selectedQuizzes,
+          }),
+        }
+      );
       if (response.ok) {
-        console.log("Quizzes added to the work package:", selectedQuizzes);
+        console.log('Quizzes added to the work package:', selectedQuizzes);
         navigation.navigate('DisplayWorkPackageContent', {
           workPackageId: workPackageId,
           selectedNewContent: selectedQuizzes,
         });
       } else {
-        console.error("Failed to add quizzes to the work package:", response.status);
+        console.error('Failed to add quizzes to the work package:', response.status);
       }
     } catch (error) {
-      console.error("Error adding quizzes to the work package:", error);
+      console.error('Error adding quizzes to the work package:', error);
     }
   };
 
@@ -101,28 +122,31 @@ const SelectQuizToAdd = () => {
       <View style={styles.containerFile}>
         <View
           style={{
-            borderBottomColor: 'lightgrey', borderBottomWidth: 1, textAlign: 'center', alignSelf: 'center', paddingBottom: 5, width: '100%',
+            borderBottomColor: 'lightgrey',
+            borderBottomWidth: 1,
+            textAlign: 'center',
+            alignSelf: 'center',
+            paddingBottom: 5,
+            width: '100%',
           }}
         >
           <Text style={styles.selectFiles}>Choose Quizzes To Add To Your Work Package:</Text>
           <Text style={styles.workPackageTitle}>
             {workPackageName} - {workPackageGrade}
           </Text>
-          {workPackageSubcategory !== "Choose a Subcategory" && (
+          {workPackageSubcategory !== 'Choose a Subcategory' && (
             <Text style={styles.workPackageInfo}>{workPackageSubcategory}</Text>
           )}
         </View>
         {/* Display button to navigate to screen to add new quiz */}
-        <View
-          style={styles.buttonNavigate}
-        >
+        <View style={styles.buttonNavigate}>
           <TouchableOpacity onPress={navigateToCreateQuiz} style={styles.buttonCreateNewQuiz}>
-              <Text style={{ color: "#407BFF", fontSize: 15 }}>+ Add New Quiz</Text>
+            <Text style={{ color: '#407BFF', fontSize: 15 }}>+ Add New Quiz</Text>
           </TouchableOpacity>
         </View>
         {/* Display all quizzes from user */}
         <ScrollView style={styles.scrollContainer}>
-          {quizzes.map(quiz => (
+          {quizzes.map((quiz) => (
             <View key={quiz._id} style={styles.quizContainer}>
               {/* checkbox to be changed -> used another lib, as from react native, it is removed */}
               <CheckBox
@@ -130,7 +154,7 @@ const SelectQuizToAdd = () => {
                 onValueChange={() => toggleQuizSelection(quiz._id)}
               />
               <TouchableOpacity
-               testID='quiz-selection-checkbox'
+                testID="quiz-selection-checkbox"
                 style={styles.quizItem}
                 onPress={() => toggleQuizSelection(quiz._id)}
               >
@@ -152,7 +176,7 @@ const SelectQuizToAdd = () => {
         {selectedQuizzes.length === 0 ? null : (
           <View style={{ alignItems: 'center' }}>
             <TouchableOpacity
-              testID='add-quizzes-button'
+              testID="add-quizzes-button"
               onPress={addQuizzesToWorkPackage}
               style={styles.buttonAddMaterial}
             >
@@ -166,11 +190,28 @@ const SelectQuizToAdd = () => {
 };
 
 const styles = StyleSheet.create({
+  buttonText: {
+    color: '#FFFFFF',
+    alignItems: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  buttonAddMaterial: {
+    backgroundColor: '#407BFF',
+    width: 190,
+    height: 35,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+    marginTop: '2%',
+    marginBottom: '3%'
+  },
   buttonNavigate: {
-    alignSelf: "flex-end",
-    marginRight: "5%",
+    alignSelf: 'flex-end',
+    marginRight: '5%',
     marginBottom: 5,
-    marginTop: 5
+    marginTop: 5,
   },
   container: {
     flex: 1,
@@ -203,7 +244,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '500',
     textAlign: 'center',
-    padding: "1%"
+    padding: '1%',
   },
   quizItem: {
     fontSize: 18,
@@ -214,7 +255,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-    width: "70%"
+    width: '70%',
   },
   deleteButton: {
     // backgroundColor: 'red',
@@ -232,7 +273,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     height: 300,
-    width: "100%",
+    width: '100%',
   },
   workPackageTitle: {
     color: '#696969',
@@ -254,4 +295,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectQuizToAdd
+export default SelectQuizToAdd;
