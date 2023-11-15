@@ -19,7 +19,7 @@ Dr. Ali Akgunduz
 # Getting Started
 ## Prerequisites
 **⚠️ Before proceeding, please ensure that you have the following:**
-- Installed Docker on your machine.
+- Installed Docker on your machine
 - Installed NPM
 - Installed node.js
 - Gained access to the project MongoDB database
@@ -41,17 +41,18 @@ cd LockAndLearn
 ```shell
 npm install
 ```
-6. Run Docker
+5. Run Docker
 ```shell
 docker-compose build
 ```
 ```shell
 docker-compose up
 ```
-5. Open web browser at localhost:19006
+6. Open web browser at localhost:19006
 
 ## Testing
-unit test using Jest
+Unit Tests using Jest  
+<br>
 To run the unit tests
 ```shell
 npm test
