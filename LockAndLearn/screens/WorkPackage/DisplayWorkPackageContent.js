@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { Icon } from 'react-native-paper';
@@ -19,6 +20,8 @@ const DisplayWorkPackageContent = () => {
   const workPackageId = route.params.workPackageId;
   const newContentAdded = route.params.selectedNewContent;
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+
   const [files, setFiles] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   let counterIndex = 0;
@@ -29,6 +32,9 @@ const DisplayWorkPackageContent = () => {
   const [quizDeleteName, setQuizDeleteName] = useState('');
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.6;
+  const [workPackageDescription, setWorkPackageDescription] = useState('');
+  const [workPackagePrice, setWorkPackagePrice] = useState('');
+  const [isValidPrice, setIsValidPrice] = useState(true);
 
   useEffect(() => {
     fetchWorkPackage();
@@ -37,6 +43,10 @@ const DisplayWorkPackageContent = () => {
   useEffect(() => {
     getQuizzes();
     getFiles();
+    if (workPackage) {
+      setWorkPackageDescription(workPackage.description);
+      setWorkPackagePrice(workPackage.price);
+    }
   }, [workPackage]);
 
   // Function to get data from the work package
@@ -117,7 +127,7 @@ const DisplayWorkPackageContent = () => {
         .catch((error) => {
           console.error('Error fetching quiz names', error);
         });
-    };
+    }
   };
 
   // Function to fetch the names of each file in the "files" array
@@ -134,21 +144,23 @@ const DisplayWorkPackageContent = () => {
         .catch((error) => {
           console.error('Error fetching file names', error);
         });
-    };
+    }
   };
 
   // Function to delete a file in work package
   const handleDeleteFile = async (id) => {
     try {
-      const response = await fetch(`http://localhost:4000/workPackages/deleteMaterial/${workPackageId}/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://localhost:4000/workPackages/deleteMaterial/${workPackageId}/${id}`,
+        {
+          method: 'DELETE',
+        }
+      );
       if (response.ok) {
-        console.log(response)
+        console.log(response);
         setFiles(files.filter((file) => file.originalId !== id));
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Network error');
     }
   };
@@ -160,9 +172,12 @@ const DisplayWorkPackageContent = () => {
       const deletedQuizName = updatedQuizzes.splice(id, 1)[0];
       setQuizzes(updatedQuizzes);
 
-      const response = await fetch(`http://localhost:4000/workPackages/deleteQuiz/${workPackageId}/${workPackage.quizzes[id]}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://localhost:4000/workPackages/deleteQuiz/${workPackageId}/${workPackage.quizzes[id]}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (!response.ok) {
         setQuizzes([...updatedQuizzes, deletedQuizName]);
@@ -183,6 +198,33 @@ const DisplayWorkPackageContent = () => {
     setModalDeleteVisible(!modalDeleteVisible);
   };
 
+  const saveChanges = async () => {
+    try{
+      console.log("HERE");
+      const response = await fetch(`http://localhost:4000/workPackages/editWorkPackage/${workPackageId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          description: workPackageDescription == '' ? workPackage.description : workPackageDescription,
+          price: workPackagePrice == '' ? workPackage.price : workPackagePrice
+        }),
+      })
+      if (response.status == 200) {
+        console.log(`Successfully edited work package ${workPackageId}`);
+        navigation.navigate('WorkPackageOverview');
+      } else {
+        console.error('Failed to add quizzes to the work package:', response.status);
+      }
+    } 
+    catch (error) {
+      console.error('Error editing work package', error);
+    }
+    
+  }
+
   // Function to download file
   const downloadFile = async (fileName) => {
     console.log(fileName);
@@ -199,6 +241,15 @@ const DisplayWorkPackageContent = () => {
     }
   };
 
+  const handlePriceChange = (input) => {
+    const priceValidation = /^[0-9]*(\.[0-9]{0,2})?$/.test(input);
+    setIsValidPrice(priceValidation);
+    if (isValidPrice) {
+      setWorkPackagePrice(input);
+      input != '' ? setShowButton(true) : setShowButton(false)
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -209,15 +260,21 @@ const DisplayWorkPackageContent = () => {
         {/* Display work package name */}
         <View
           style={{
-            borderBottomColor: 'lightgrey', borderBottomWidth: 1, textAlign: 'center', alignSelf: 'center', paddingBottom: 5, width: '100%',
-          }}>
+            borderBottomColor: 'lightgrey',
+            borderBottomWidth: 1,
+            textAlign: 'center',
+            alignSelf: 'center',
+            paddingBottom: 5,
+            width: '100%',
+          }}
+        >
           <Text style={styles.selectFiles}>Work Package:</Text>
           {workPackage && (
             <View>
               <Text style={styles.workPackageTitle}>
                 {workPackage.name} - {workPackage.grade}
               </Text>
-              {workPackage.subcategory !== "Choose a Subcategory" && (
+              {workPackage.subcategory !== 'Choose a Subcategory' && (
                 <Text style={styles.workPackageInfo}>{workPackage.subcategory}</Text>
               )}
             </View>
@@ -227,9 +284,7 @@ const DisplayWorkPackageContent = () => {
         <ScrollView style={styles.scrollContainer}>
           <Text style={styles.studyMaterialText}>Study Material</Text>
           {files.length === 0 ? (
-            <Text style={styles.noFilesText}>
-              No files added
-            </Text>
+            <Text style={styles.noFilesText}>No files added</Text>
           ) : (
             files.map((file) => (
               <View
@@ -243,7 +298,9 @@ const DisplayWorkPackageContent = () => {
                 key={file.id}
               >
                 <TouchableOpacity onPress={() => downloadFile(file.name)}>
-                  <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth }}>{file.name}</Text>
+                  <Text numberOfLines={1} ellipsizeMode="middle" style={{ maxWidth: maxTextWidth }}>
+                    {file.name}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonDelete}
@@ -279,7 +336,9 @@ const DisplayWorkPackageContent = () => {
                 <TouchableOpacity
                   onPress={() => {
                     // Navigate to QuestionsOverviewScreen and pass the quiz _id
-                    navigation.navigate('QuestionsOverviewScreen', { quizId: workPackage.quizzes[index] });
+                    navigation.navigate('QuestionsOverviewScreen', {
+                      quizId: workPackage.quizzes[index],
+                    });
                   }}
                 >
                   <Text>{quizName}</Text>
@@ -291,7 +350,7 @@ const DisplayWorkPackageContent = () => {
                     setQuizDeleteName(quizName);
                     toggleModalDelete();
                   }}
-                  testID='toggle-delete-modal-button'
+                  testID="toggle-delete-modal-button"
                 >
                   <View style={styles.deleteButtonBackground}>
                     <Icon source="delete-outline" size={20} color={'#F24E1E'} />
@@ -300,13 +359,50 @@ const DisplayWorkPackageContent = () => {
               </View>
             ))
           )}
+          <Text style={styles.descriptionText}>Description</Text>
+          <TextInput
+            style={styles.descriptionField}
+            value={workPackageDescription}
+            onChangeText={(input) => {
+              setWorkPackageDescription(input);
+              input != '' ? setShowButton(true) : setShowButton(false)
+            }}
+            multiline={true}
+            testID='description_input'
+          />
+          <Text style={styles.priceText}>Price $</Text>
+
+          <TextInput
+            style={styles.priceField}
+            value={workPackagePrice}
+            onChangeText={handlePriceChange}
+            testID='price_input'            
+          />
+          {!isValidPrice && (
+            <Text style={styles.invalidPriceMessage}>
+              {' '}
+              Please enter an accurate price in this format: 12.34
+            </Text>
+          )}
+          {showButton && 
+          <View style={{ alignItems: 'end' }}>
+            <TouchableOpacity
+              onPress={saveChanges}
+              style={styles.buttonAddMaterial}
+              testID={`saveChangesButton`}
+            >
+            <Text style={styles.buttonText}>Save Changes</Text>
+            </TouchableOpacity>
+          </View>
+          }
+          
         </ScrollView>
         {/* Display button to show modal to add files/quizzes */}
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
             onPress={toggleModalFilter}
             style={styles.buttonAddMaterial}
-            testID='addMaterialModal'
+            testID="addMaterialModal"
           >
             <Text style={styles.buttonText}>Add Material</Text>
           </TouchableOpacity>
@@ -319,14 +415,19 @@ const DisplayWorkPackageContent = () => {
           onRequestClose={toggleModalFilter}
         >
           <View style={styles.containerModal}>
-            <View style={[styles.containerMaterial, { flexDirection: "column", justifyContent: "space-around" }]}>
+            <View
+              style={[
+                styles.containerMaterial,
+                { flexDirection: 'column', justifyContent: 'space-around' },
+              ]}
+            >
               <View style={styles.titleModal}>
                 {workPackage && (
                   <View>
                     <Text style={styles.titleModalText}>
                       {workPackage.name} - {workPackage.grade}
                     </Text>
-                    {workPackage.subcategory !== "Choose a Subcategory" && (
+                    {workPackage.subcategory !== 'Choose a Subcategory' && (
                       <Text style={styles.titleModalText}>{workPackage.subcategory}</Text>
                     )}
                   </View>
@@ -383,34 +484,26 @@ const DisplayWorkPackageContent = () => {
           onRequestClose={toggleModalDelete}
           testID="modal-delete" // Add testID here
         >
-          <View
-            style={styles.containerDeleteModal}
-          >
-            <View
-              style={styles.containerDeleteMaterial}
-            >
-              <View
-                style={styles.titleDeleteModal}
-              >
+          <View style={styles.containerDeleteModal}>
+            <View style={styles.containerDeleteMaterial}>
+              <View style={styles.titleDeleteModal}>
                 <Text style={styles.textDeleteModal}>
                   Are you sure you want to delete {fileDeleteName || quizDeleteName}?
                 </Text>
               </View>
-              <View
-                style={styles.containerDeleteButtonsModal}
-              >
+              <View style={styles.containerDeleteButtonsModal}>
                 <TouchableOpacity
                   style={styles.buttonDeleteModal}
                   onPress={() => {
                     toggleModalDelete();
                     setFileDeleteId('');
                     setFileDeleteName('');
-                    fileDeleteId !== '' ? handleDeleteFile(fileDeleteId) : handleDeleteQuiz(quizDeleteId);
+                    fileDeleteId !== ''
+                      ? handleDeleteFile(fileDeleteId)
+                      : handleDeleteQuiz(quizDeleteId);
                   }}
                 >
-                  <Text style={styles.buttonTextDeleteModal}>
-                    Delete
-                  </Text>
+                  <Text style={styles.buttonTextDeleteModal}>Delete</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonCancelModal}
@@ -418,9 +511,7 @@ const DisplayWorkPackageContent = () => {
                     toggleModalDelete();
                   }}
                 >
-                  <Text style={styles.buttonTextCancelModal}>
-                    Cancel
-                  </Text>
+                  <Text style={styles.buttonTextCancelModal}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -434,24 +525,70 @@ const DisplayWorkPackageContent = () => {
 const styles = StyleSheet.create({
   noQuizzesText: {
     paddingLeft: '5%',
-    paddingTop: 10
+    paddingTop: 10,
+    paddingBottom: 5,
   },
   noFilesText: {
     paddingLeft: '5%',
     paddingTop: 10,
-    paddingBottom: 15
+    paddingBottom: 15,
   },
   studyMaterialText: {
     paddingLeft: 5,
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   quizzesText: {
     borderTopWidth: 1,
     borderTopColor: '#696969',
     paddingTop: 10,
     paddingLeft: 5,
-    marginRight: "3%",
+    marginRight: '3%',
     paddingBottom: 5,
+  },
+  descriptionText: {
+    borderTopWidth: 1,
+    borderTopColor: '#696969',
+    paddingTop: 15,
+    paddingLeft: 5,
+    marginRight: '3%',
+    paddingBottom: 5,
+  },
+  priceText: {
+    borderTopColor: '#696969',
+    paddingTop: 15,
+    paddingLeft: 5,
+    marginRight: '3%',
+    paddingBottom: 5,
+  },
+  descriptionField: {
+    height: 100,
+    textAlignVertical: 'top',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingTop: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 5,
+    marginRight: 45,
+  },
+  priceField: {
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 10,
+    width: 100,
+    paddingTop: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 5,
+  },
+  invalidPriceMessage: {
+    borderRadius: 10,
+    marginTop: 5,
+    color: 'red',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    backgroundColor: '#ffe6e6',
+    padding: 8,
   },
   containerDeleteModal: {
     flex: 1,
@@ -463,7 +600,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 25,
-    width: 262
+    width: 262,
   },
   titleDeleteModal: {
     alignItems: 'center',
@@ -473,37 +610,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#696969',
     fontWeight: '500',
-    textAlign: "center"
+    textAlign: 'center',
   },
   containerDeleteButtonsModal: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingTop: '10%'
+    paddingTop: '10%',
   },
   buttonDeleteModal: {
-    backgroundColor: "red",
+    backgroundColor: 'red',
     marginRight: 20,
     width: 100,
     borderRadius: 10,
-    padding: 5
+    padding: 5,
   },
   buttonTextDeleteModal: {
     color: 'white',
     fontSize: 15,
     fontWeight: 'bold',
-    textAlign: "center"
+    textAlign: 'center',
   },
   buttonCancelModal: {
-    backgroundColor: "grey",
+    backgroundColor: 'grey',
     width: 100,
     borderRadius: 10,
-    padding: 5
+    padding: 5,
   },
   buttonTextCancelModal: {
     color: 'white',
     fontSize: 15,
     fontWeight: 'bold',
-    textAlign: "center"
+    textAlign: 'center',
   },
   container: {
     flex: 1,
@@ -527,7 +664,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '500',
     textAlign: 'center',
-    padding: "1%"
+    padding: '1%',
   },
   workPackageTitle: {
     color: '#696969',
@@ -566,7 +703,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
     marginTop: '3%',
-    marginBottom: '3%'
+    marginBottom: '3%',
   },
   buttonText: {
     color: '#FFFFFF',

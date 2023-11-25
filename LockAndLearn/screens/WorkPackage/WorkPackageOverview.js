@@ -13,7 +13,7 @@ const WorkPackageOverview = () => {
 
   useEffect(() => {
     fetchWorkPackages();
-  }, []);
+  });
 
   // function to get all work packages from the user
   const fetchWorkPackages = async () => {
@@ -41,7 +41,7 @@ const WorkPackageOverview = () => {
         console.error('Network error:', error);
       }
     } else {
-      console.log('No work package found')
+      console.log('No work package found');
     }
   };
 
@@ -59,7 +59,7 @@ const WorkPackageOverview = () => {
   const renderWorkPackage = (workPackage) => {
     return (
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
-        {workPackage.subcategory === "Choose a Subcategory" ? (
+        {workPackage.subcategory === 'Choose a Subcategory' ? (
           <TouchableOpacity
             style={{ width: '80%' }}
             onPress={() => {
@@ -82,6 +82,16 @@ const WorkPackageOverview = () => {
             </Text>
           </TouchableOpacity>
         )}
+        <Text testID={`price-${workPackage._id}`}>{workPackage.price}$</Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('DisplayWorkPackageContent', { workPackageId: workPackage._id });
+          }}
+          testID={`editButton-${workPackage._id}`}
+        >
+          <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
+        </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => {
             deleteWorkPackage(workPackage._id);
@@ -171,7 +181,7 @@ const WorkPackageOverview = () => {
           </Text>
           <View style={styles.confirmationButtons}>
             <TouchableOpacity
-              testID='deleteConfirmationModal'
+              testID="deleteConfirmationModal"
               onPress={confirmDelete}
               style={[styles.confirmButton, { marginRight: 10 }]}
             >
@@ -280,7 +290,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
     marginTop: '5%',
-    marginBottom: '5%'
+    marginBottom: '5%',
   },
   buttonText: {
     color: '#FFFFFF',

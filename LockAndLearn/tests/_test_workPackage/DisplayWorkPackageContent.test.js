@@ -1,6 +1,9 @@
-import DisplayWorkPackageContent from "../../screens/WorkPackage/DisplayWorkPackageContent";
+import DisplayWorkPackageContent from '../../screens/WorkPackage/DisplayWorkPackageContent';
 import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import fetchMock from 'jest-fetch-mock';
+
+fetchMock.enableMocks();
 
 // Mock the useRoute and useNavigation hooks
 jest.mock('@react-navigation/native', () => ({
@@ -16,18 +19,19 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 // Mock the fetch function
-global.fetch = jest.fn();
+//global.fetch = jest.fn();
 
 describe('DisplayWorkPackageContent Component', () => {
   beforeEach(() => {
     fetch.mockClear();
-        // Clear the mock calls and reset any mock implementations
-        jest.clearAllMocks();
+    fetchMock.resetMocks();
+    // Clear the mock calls and reset any mock implementations
+    jest.clearAllMocks();
   });
 
   it('renders the component without crashing', () => {
     const { getByText } = render(<DisplayWorkPackageContent />);
-    
+
     // Ensure that a specific text element is rendered in the component
     expect(getByText('Work Package:')).toBeTruthy();
   });
@@ -95,9 +99,7 @@ describe('DisplayWorkPackageContent Component', () => {
     const { getByText } = render(<DisplayWorkPackageContent />);
 
     // Wait for the fetchWorkPackage function to complete
-    await act(async () => {
-    });
-
+    await act(async () => {});
   });
 
   it('toggles the delete modal visibility', () => {
@@ -120,8 +122,107 @@ describe('DisplayWorkPackageContent Component', () => {
     const { getByText } = render(<DisplayWorkPackageContent workPackage={workPackage} />);
 
     // Wait for any asynchronous operations to complete (e.g., API calls)
+    await waitFor(() => {});
+  });
+
+  it('displays the workpackage description and updates it correctly', async () => {
+    const { getByText, getByTestId } = render(<DisplayWorkPackageContent />);
+    const descriptionTitle = getByText('Description');
+    const descriptionInput = getByTestId('description_input');
+    fireEvent.changeText(descriptionInput, 'This is a test for workpackage description input.');
+    expect(descriptionTitle).toBeTruthy();
+    expect(descriptionInput).toBeTruthy();
+    expect(descriptionInput.props.value).toBe('This is a test for workpackage description input.');
+  });
+
+  it('displays the workpackage price field and updates it correctly', async () => {
+    const { getByText, getByTestId, queryByText } = render(<DisplayWorkPackageContent />);
+    const priceTitle = getByText('Price $');
+    const priceInput = getByTestId('price_input');
+    fireEvent.changeText(priceInput, 1);
+    expect(priceTitle).toBeTruthy();
+    expect(priceInput).toBeTruthy();
+    expect(priceInput.props.value).toBe(1);
     await waitFor(() => {
+          expect(queryByText('Please enter an accurate price in this format: 12.34')).toBeNull();
+        });
+  });
+
+  it('displays the price validation error when inputing an invalid price', async () => {
+    const { getByText, getByTestId } = render(<DisplayWorkPackageContent />);
+    const priceInput = getByTestId('price_input');
+    fireEvent.changeText(priceInput, 'T');
+    await waitFor(() => {
+      expect(getByText('Please enter an accurate price in this format: 12.34')).toBeTruthy();
     });
   });
-  
+
+  it("displays 'save changes' button when the description field is modified", async () => {
+    const { getByTestId } = render(<DisplayWorkPackageContent />);
+    const descriptionInput = getByTestId('description_input')
+    fireEvent.changeText(descriptionInput, "testing description field");
+    await waitFor(() => {
+      expect(getByTestId('saveChangesButton')).toBeTruthy();
+    });
+  });
+
+  it("displays 'save changes' button when the description or price fields are modified", async () => {
+    const { getByTestId } = render(<DisplayWorkPackageContent />);
+    const priceInput = getByTestId('price_input')
+    fireEvent.changeText(priceInput, 5);
+    await waitFor(() => {
+      expect(getByTestId('saveChangesButton')).toBeTruthy();
+    });
+  });
+
+  it("'save changes' button is not displayed when the description or price fields are not modified", async () => {
+    const { queryByTestId } = render(<DisplayWorkPackageContent />);
+    await waitFor(() => {
+      expect(queryByTestId('saveChangesButton')).toBeNull();
+    });
+  });
+
+  it('make POST request to edit work package', async () => {
+
+    const workPackageId = "test_wp_id"
+    const mockWorkPackage = {
+      description: "test description",
+      price: "test_price"
+    }
+
+    // Mock the response with the correct content type and message
+    fetchMock.mockResponseOnce(JSON.stringify({ message: `Successfully edited work package ${workPackageId}` }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    
+    // Call editWorkPackage/:workPackageId endpoint with mock
+    const response = await fetch(`http://localhost:4000/workPackages/editWorkPackage/${workPackageId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mockWorkPackage),
+    })
+
+    // Check that fetch was called with the correct parameters and body 
+    expect(fetchMock).toHaveBeenCalledWith(
+      `http://localhost:4000/workPackages/editWorkPackage/${workPackageId}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mockWorkPackage),
+      }
+    );
+
+    // Check the response status and content
+    expect(response.status).toBe(200);
+    const contentType = response.headers.get('content-type');
+    expect(contentType).toContain('application/json');
+    const data = await response.json();
+    expect(data.message).toBe(`Successfully edited work package ${workPackageId}`);
+  });
+
 });

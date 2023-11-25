@@ -1,4 +1,4 @@
-import WorkPackageOverview from "../../screens/WorkPackage/WorkPackageOverview";
+import WorkPackageOverview from '../../screens/WorkPackage/WorkPackageOverview';
 import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -20,7 +20,6 @@ global.fetch = jest.fn(() =>
 );
 
 describe('WorkPackageOverview', () => {
-  
   it('renders correctly', () => {
     const { getByText } = render(<WorkPackageOverview />);
     expect(getByText('Your Work Packages')).toBeTruthy();
@@ -29,7 +28,10 @@ describe('WorkPackageOverview', () => {
   it('fetches work packages on mount', async () => {
     render(<WorkPackageOverview />);
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('fetchWorkpackages'), expect.anything());
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('fetchWorkpackages'),
+        expect.anything()
+      );
     });
   });
 
@@ -48,6 +50,44 @@ describe('WorkPackageOverview', () => {
     fireEvent.press(getByTestId('uploadButton'));
     expect(navigate).toHaveBeenCalledWith('CreateWorkPackage', {
       workPackage: 'nameofworkpackage',
+    });
+  });
+
+  it('displays edit button for each workpackage', async () => {
+    const navigate = jest.fn();
+    useNavigation.mockImplementation(() => ({ navigate }));
+    const mockWorkPackages = [
+      { _id: 'wp1', name: 'Work Package 1', grade: 'A', subcategory: 'Sub 1' },
+    ];
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockWorkPackages),
+        status: 200,
+      })
+    );
+    const { getByTestId } = render(<WorkPackageOverview />);
+    await waitFor(() => {
+      expect(getByTestId('editButton-wp1')).toBeTruthy();
+    });
+    fireEvent.press(getByTestId('editButton-wp1'));
+    expect(navigate).toHaveBeenCalledWith('DisplayWorkPackageContent', {
+      workPackageId: 'wp1',
+    });
+  });
+
+  it('displays price for each workpackage', async () => {
+    const mockWorkPackages = [
+      { _id: 'wp1', name: 'Work Package 1', grade: 'A', subcategory: 'Sub 1', price: 1 },
+    ];
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        json: () => Promise.resolve(mockWorkPackages),
+        status: 200,
+      })
+    );
+    const { getByTestId } = render(<WorkPackageOverview />);
+    await waitFor(() => {
+      expect(getByTestId('price-wp1')).toBeTruthy();
     });
   });
 
@@ -81,6 +121,4 @@ describe('WorkPackageOverview', () => {
     const modal = getByTestId('deleteConfirmationModal');
     expect(modal).toBeTruthy();
   });
-
 });
-

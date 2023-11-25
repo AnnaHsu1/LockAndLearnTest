@@ -89,6 +89,27 @@ router.post('/addquiz/:workPackageId', async (req, res) => {
   }
 });
 
+router.post('/editWorkPackage/:workPackageId', async (req, res) => {
+  try{
+    const workPackageId = req.params.workPackageId;
+    const {description, price} = req.body;
+    const editedWorkPackage = await WorkPackage.findByIdAndUpdate(
+      workPackageId,
+      {
+        description: description,
+        price: price
+      }
+    );
+    if (!editedWorkPackage) {
+      return res.status(404).json({ error: 'Work package not found' });
+    }
+    res.status(200).json(editedWorkPackage);
+  } catch (error) {
+    console.error('Error editing work package:', error);
+    res.status(500).json({ error: 'An error occurred while editing the work package.' });
+  }
+})
+
 // Add quizzes to a specific work package by ID
 router.post('/addQuizzes/:workPackageId', async (req, res) => {
   try {

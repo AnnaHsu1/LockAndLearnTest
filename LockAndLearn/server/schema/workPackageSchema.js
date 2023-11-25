@@ -37,6 +37,14 @@ const workPackageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: false
+  },
+  price: {
+    type: Number,
+    required: false
+  }
 });
 
 const WorkPackage = mongoose.model('WorkPackage', workPackageSchema, collectionName);
