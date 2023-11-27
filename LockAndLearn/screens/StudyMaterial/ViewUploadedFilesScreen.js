@@ -4,15 +4,13 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TextInput,
-  Platform,
   ImageBackground,
   FlatList,
   TouchableOpacity,
   Modal,
+  Dimensions,
 } from 'react-native';
-import Modal2 from 'react-native-modal';
 import { Button, Icon } from 'react-native-paper';
 import { Checkbox } from 'react-native-paper';
 import { getItem } from '../../components/AsyncStorage';
@@ -21,18 +19,16 @@ import 'react-toastify/dist/ReactToastify.css';
 // import * as pdfjsLib from 'pdfjs-dist/webpack';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-
+import { useNavigation, useRoute } from '@react-navigation/native';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const ViewUploadedFilesScreen = () => {
-  // const [modalVisible, setModalVisible] = useState(false);
   let [userId, setUserId] = useState('');
   const [dataFile, setDataFile] = useState([]);
   const [fileId, setFileId] = useState('');
   const [fileName, setFileName] = useState('');
   const [deleteDataFile, setDeleteDataFile] = useState([]);
-  // const [fetchedFiles, setFetchedFiles] = useState([]);
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
   const [checkedboxItems, setCheckedboxItems] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
@@ -48,6 +44,13 @@ const ViewUploadedFilesScreen = () => {
   const newPlugin = defaultLayoutPlugin({
     innerContainer: styles.customInnerContainer,
   });
+  const { width } = Dimensions.get('window');
+  const maxDeleteTextWidth = width * 0.8;
+  const maxTextWidth = width * 0.7;
+  const navigation = useNavigation();
+  const route = useRoute();
+  let newContentAdded = route.params.newFilesAdded;
+  console.log('newContentAdded: ', newContentAdded);
 
   // function to get user id from AsyncStorage
   const getUser = async () => {
@@ -56,7 +59,6 @@ const ViewUploadedFilesScreen = () => {
       if (token) {
         const user = JSON.parse(token);
         setUserId(user._id);
-        return user._id;
       } else {
         // Handle the case where user is undefined (not found in AsyncStorage)
         console.log('User not found in AsyncStorage');
@@ -66,33 +68,45 @@ const ViewUploadedFilesScreen = () => {
     }
   };
 
+  // function to toggle the pop up delete modal
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   // function called when screen is loaded
   useEffect(() => {
-    fetchFiles();
-  }, [deleteDataFile]);
+    getUser();
+  }, []);
 
-  // function to fetch data from server for specific user
+  // function called when userId or newContentAdded is updated
+  useEffect(() => {
+    fetchFiles();
+  }, [userId, newContentAdded]);
+
+  // function to fetch files from server for specific user
   const fetchFiles = async () => {
-    userId = getUser();
-    userId.then(async (user) => {
-      userId = user;
-      const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
-        method: 'GET',
-      });
-      const files = await response.json();
-      deleteDataFile.push(files.uploadedFiles);
-      let idFileCounter = 1;
-      for (let i = 0; i < files.uploadedFiles.length; i++) {
-        const nameFile = files.uploadedFiles[i].filename;
-        const idFile = idFileCounter++;
-        const file = { id: idFile, originalname: nameFile };
-        dataFile.push(file);
+    // ensure no duplicate files are displayed
+    setDataFile([]);
+    setDeleteDataFile([]);
+    if (userId) {
+      try {
+        const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
+          method: 'GET',
+        });
+        const files = await response.json();
+        setDeleteDataFile(files.uploadedFiles);
+        setDataFile(prevDataFile => [
+          ...prevDataFile,
+          ...files.uploadedFiles.map((file, index) => ({
+              id: 1 + index,
+              originalname: file.filename
+          }))
+        ]);
       }
-    });
+      catch (error) {
+        console.log(error);
+      };
+    };
   };
 
   // function to toggle the pop up modal for filter section
@@ -109,12 +123,14 @@ const ViewUploadedFilesScreen = () => {
     }));
   };
 
+  // function to delete selected file
   const handleDelete = async (itemId) => {
     try {
-      // console.log('itemId: ', itemId);
-      // console.log(deleteDataFile[0][itemId - 1]._id);
+      console.log('itemId: ', itemId);
+      console.log('deleteDataFile: ', deleteDataFile);
+      console.log(deleteDataFile[itemId - 1]._id);
       const response = await fetch(
-        `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[0][itemId - 1]._id}`,
+        `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[itemId - 1]._id}`,
         {
           method: 'DELETE',
         }
@@ -125,7 +141,6 @@ const ViewUploadedFilesScreen = () => {
         setDataFile(newData);
         toast.success('File deleted successfully!');
         // setDeleteDataFile(newData);
-        // update the state to remove the deleted file from the UI
       } else {
         console.log('Failed to delete file');
       }
@@ -224,14 +239,10 @@ const ViewUploadedFilesScreen = () => {
         onPress={() => displayFile(file.originalname)}
         testID={`fileTouchableOpacity-${index}`}
       >
-        <Text style={styles.originalname}>{file.originalname}</Text>
+        <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth }}>{file.originalname}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonDelete}
-        // onPress={() => {
-        //   // handleDelete(file.id);
-        //   setModalVisible(true);
-        // }}
         testID={`deleteButton-${index}`}
         onPress={() => {
           toggleModal();
@@ -267,153 +278,132 @@ const ViewUploadedFilesScreen = () => {
           Select files
         </Text>
         <TouchableOpacity
-          style={{
-            paddingRight: '15%',
-            paddingBottom: '0.5%',
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-          }}
+          style={styles.buttonFilter}
           onPress={toggleModalFilter}
           testID="openingFilter"
         >
-          <Text testID="filterPress" style={{ fontSize: 20, color: '#696969', fontWeight: '500' }}>
+          <Text testID="filterPress" style={styles.filterText}>
             Filter
           </Text>
           <Icon source="filter-outline" size={30} color={'#696969'} borderWidth={1} />
         </TouchableOpacity>
         {/* display each row (which is a file) */}
-        <View style={{ width: '100%', marginBottom: '3%', maxHeight: '150px' }}>
-          <FlatList
-            data={dataFile}
-            renderItem={({ item, index }) => renderFile(item, index, dataFile.length)}
-            keyExtractor={(item) => item.id}
-            style={{ width: '100%' }}
-            contentContainerStyle={{ paddingHorizontal: '5%' }}
-            ListEmptyComponent={() => (
-              // Display when no files are uploaded
-              <View style={{ alignItems: 'center', marginTop: 20 }}>
-                <Text>No uploaded files</Text>
-              </View>
-            )}
-          />
-        </View>
-
-        <View style={styles.pdfContainer}>
-          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
-            {pdf && <Viewer fileUrl={pdf} plugins={[newPlugin]} defaultScale={1} />}
-          </Worker>
-        </View>
+        <FlatList
+          data={dataFile}
+          renderItem={({ item, index }) => renderFile(item, index, dataFile.length)}
+          keyExtractor={(item) => item.id}
+          style={{ width: '100%' }}
+          contentContainerStyle={{ paddingHorizontal: '5%' }}
+          ListEmptyComponent={() => (
+            // Display when no files are uploaded
+            <View style={{ alignItems: 'center', marginTop: 20 }}>
+              <Text>No uploaded files</Text>
+            </View>
+          )}
+        />
+        {/* display button to upload files */}
+          <TouchableOpacity
+            style={styles.buttonUploadFiles}
+            onPress={() => {
+              navigation.navigate('Upload');
+            }}
+          >
+            <Text style={styles.textUploadFiles}>Upload files</Text>
+          </TouchableOpacity>
+        {/* display the preview file */}
+        {pdf && (
+          <View
+            style={styles.pdfViewContainer}
+          >
+            <View style={styles.pdfContainer}>
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
+                <Viewer fileUrl={pdf} plugins={[newPlugin]} defaultScale={1} />
+              </Worker>
+            </View>
+            <Button
+              style={styles.modalButtons}
+              title="Hide modal"
+              mode="contained"
+              onPress={() => {
+                setPdf(null);
+              }}
+            >
+              <Text>Cancel</Text>
+            </Button>
+          </View>
+        )}
         {/* Pop-up: Confirmation to delete file */}
-        <Modal2
-          isVisible={isModalVisible}
-          onRequestClose={toggleModal}
+        <Modal
+          animationType="slide"
           transparent={true}
-          style={styles.modalComponent}
+          visible={isModalVisible}
+          onRequestClose={toggleModal}
         >
-          <View style={styles.modalView1}>
-            <Text style={styles.text}>Are you sure you want to delete {fileName}?</Text>
-            <View style={styles.modalView}>
-              <Button
-                style={styles.modalNoButton}
-                title="Hide modal"
-                mode="contained"
-                onPress={() => {
-                  toggleModal();
-                }}
-              >
-                <Text style={styles.modalButtonText}>No</Text>
-              </Button>
-              <Button
-                style={styles.modalYesButton}
-                title="Delete child"
-                mode="contained"
-                onPress={() => {
-                  toggleModal();
-                  handleDelete(fileId);
-                }}
-              >
-                <Text style={styles.modalButtonText}>Yes</Text>
-              </Button>
+          {/* display modal's background */}
+          <View style={styles.modalContainer}>
+            {/* display modal */}
+            <View style={styles.modalView1}>
+              <Text style={styles.text}>Are you sure you want to delete</Text>
+              <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.textName, { width: maxDeleteTextWidth }]}>{fileName} ?</Text>
+              <View style={styles.modalView}>
+                <Button
+                  style={styles.modalNoButton}
+                  title="Hide modal"
+                  mode="contained"
+                  onPress={() => {
+                    toggleModal();
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>No</Text>
+                </Button>
+                <Button
+                  style={styles.modalYesButton}
+                  title="Delete child"
+                  mode="contained"
+                  onPress={() => {
+                    toggleModal();
+                    handleDelete(fileId);
+                  }}
+                >
+                  <Text style={styles.modalButtonText}>Yes</Text>
+                </Button>
+              </View>
             </View>
           </View>
-        </Modal2>
-      </View>
+        </Modal>
+      </View >
       {/* display pop up modal for filter section */}
-      <Modal
+      < Modal
         animationType="slide"
         transparent={true}
         visible={modalFilterVisible}
         onRequestClose={toggleModalFilter}
       >
-        <View
-          style={{
-            flex: 1,
-            width: '100%',
-            height: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-          }}
-        >
+        <View style={styles.modalContainerFilter}>
           {/* display button to close modal */}
-          <View
-            style={{
-              position: 'absolute',
-              top: '26.5%',
-              right: '27%',
-              zIndex: 1,
-            }}
-          >
+          <View style={styles.containerButtonCloseModal}>
             <TouchableOpacity onPress={toggleModalFilter}>
               <Icon source="close" size={20} color={'#696969'} />
             </TouchableOpacity>
           </View>
           <View
-            style={{
-              width: '50%',
-              height: '50%',
-              backgroundColor: 'white',
-              borderRadius: 10,
-              paddingTop: '1%',
-              paddingBottom: '1.5%',
-            }}
+            style={styles.containerContentModalFilter}
           >
             {/* display title of modal */}
             <View
-              style={{
-                alignItems: 'center',
-                width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                paddingBottom: '1%',
-                borderBottomWidth: 1,
-                borderBottomColor: 'lightgray',
-              }}
+              style={styles.containerFilterTextTitle}
             >
-              <Text style={{ fontSize: 20, color: '#696969', fontWeight: '500' }}>Filter</Text>
+              <Text style={styles.filterTextTitle}>Filter</Text>
               <Icon source="filter-outline" size={30} color={'#696969'} borderWidth={1} />
             </View>
             <View
-              style={{
-                paddingHorizontal: '4%',
-                paddingTop: '3%',
-                paddingBottom: '2%',
-              }}
+              style={styles.containerSearchBar}
             >
               {/* display search bar */}
               {/* to be implemented function to filter search item entered by user */}
               <TextInput
                 placeholder="Search"
-                style={{
-                  borderWidth: 1,
-                  padding: '2%',
-                  marginBottom: '0.5%',
-                  backgroundColor: '#D9D9D9',
-                  borderRadius: 10,
-                  borderColor: '#D9D9D9',
-                }}
+                style={styles.textInputSearch}
               />
             </View>
             {/* display each row with checkbox and filter text */}
@@ -422,12 +412,7 @@ const ViewUploadedFilesScreen = () => {
               data={dataFilter}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
+                <View style={styles.checkedboxItemsContainer}>
                   <Checkbox
                     status={checkedboxItems[item.id] ? 'checked' : 'unchecked'}
                     onPress={() => toggleCheckbox(item.id)}
@@ -439,12 +424,94 @@ const ViewUploadedFilesScreen = () => {
             />
           </View>
         </View>
-      </Modal>
-    </ImageBackground>
+      </Modal >
+    </ImageBackground >
   );
 };
 
 const styles = StyleSheet.create({
+  checkedboxItemsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textInputSearch: {
+    borderWidth: 1,
+    padding: '2%',
+    marginBottom: '0.5%',
+    backgroundColor: '#D9D9D9',
+    borderRadius: 10,
+    borderColor: '#D9D9D9',
+  },
+  containerSearchBar: {
+    paddingHorizontal: '4%',
+    paddingTop: '3%',
+    paddingBottom: '2%',
+  },
+  filterTextTitle: {
+    fontSize: 20,
+    color: '#696969',
+    fontWeight: '500'
+  },
+  containerFilterTextTitle: {
+    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingBottom: '1%',
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
+  },
+  containerContentModalFilter: {
+    width: '50%',
+    height: '50%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingTop: '1%',
+    paddingBottom: '1.5%',
+  },
+  containerButtonCloseModal: {
+    position: 'absolute',
+    top: '26.5%',
+    right: '27%',
+    zIndex: 1,
+  },
+  modalContainerFilter: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  textUploadFiles: {
+    color: '#FFFFFF',
+    alignItems: 'center',
+    fontSize: 15,
+    fontWeight: '500'
+  },
+  buttonUploadFiles: {
+    width: 190,
+    height: 35,
+    backgroundColor: '#407BFF',
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '2%',
+    marginBottom: '2%'
+  },
+  filterText: {
+    fontSize: 20,
+    color: '#696969',
+    fontWeight: '500'
+  },
+  buttonFilter: {
+    paddingRight: '15%',
+    paddingBottom: '0.5%',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -493,20 +560,18 @@ const styles = StyleSheet.create({
   modalView: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-  },
-  modalNoButton: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    width: '40%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'grey',
+    marginTop: 10,
   },
   text: {
     color: 'black',
-    fontSize: 20,
-    marginBottom: 15,
+    fontSize: 18,
+    paddingBottom: 10,
+    textAlign: 'center',
+  },
+  textName: {
+    color: 'black',
+    fontSize: 16,
+    paddingBottom: 45,
     textAlign: 'center',
   },
   modalButtons: {
@@ -515,43 +580,76 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     minWidth: 100,
+    backgroundColor: '#407BFF',
   },
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 15,
   },
-  modalYesButton: {
-    borderRadius: 20,
+  modalNoButton: {
+    borderRadius: 10,
     padding: 10,
     elevation: 2,
-    width: '40%',
+    width: '20%',
+    height: '70%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'grey',
+  },
+  modalYesButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    width: '20%',
+    height: '70%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FF4136',
   },
+  modalContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
   modalView1: {
-    margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: 20,
     alignItems: 'center',
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    width: 250,
+    height: 200,
   },
   modalComponent: {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  pdfViewContainer: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#FAFAFA"
+  },
   pdfContainer: {
-    width: '70%',
-    height: '75%',
+    width: '75%',
     overflowY: 'auto',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
+    paddingTop: 20,
   },
 });
 

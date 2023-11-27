@@ -1,25 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
   Text,
   View,
-  Image,
-  TextInput,
   Platform,
   ImageBackground,
   FlatList,
+  Modal,
+  Dimensions,
 } from 'react-native';
-import { React, useState, useEffect } from 'react';
+import { React, useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { TouchableOpacity } from 'react-native';
 import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css'; causes issue with android
 import { Icon } from 'react-native-paper';
 import { getItem } from '../../components/AsyncStorage';
+import { useNavigation } from '@react-navigation/native';
 
 const UploadScreen = () => {
   const [fileName, setFileName] = useState([]);
   const [files, setFiles] = useState([]);
+  const navigation = useNavigation();
+  const [modalOverwriteFilesVisible, setModalOverwriteFilesVisible] = useState(false);
+  const [duplicateFiles, setDuplicateFiles] = useState([]);
+  const { width } = Dimensions.get('window');
+  const maxTextWidth = width * 0.9;
 
   // function to get user id from AsyncStorage
   const getUser = async () => {
@@ -27,7 +32,6 @@ const UploadScreen = () => {
       const token = await getItem('@token');
       if (token) {
         const user = JSON.parse(token);
-        files.push(user._id);
         return user._id;
       } else {
         // Handle the case where user is undefined (not found in AsyncStorage)
@@ -37,11 +41,6 @@ const UploadScreen = () => {
       console.log(error);
     }
   };
-
-  // function called when screen is loaded
-  useEffect(() => {
-    getUser();
-  }, []);
 
   // function handling with file uploaded by user and its names
   const fileSelectedHandler = async () => {
@@ -86,45 +85,76 @@ const UploadScreen = () => {
       const fileType = splitName[splitName.length - 1];
       return !(fileType == 'pdf');
     });
-
     if (invalidFileType.length > 0) {
       toast.error('You can only upload PDF files. Please delete your file and try again.');
       return;
     }
 
     const fileData = new FormData();
+    const user = await getUser();
+    fileData.append('userId', user);
     files.forEach((file) => {
-      // append userId if find userId from AsyncStorage, else append files
-      if (file.length === 24) {
-        fileData.append('userId', file);
-      } else {
-        fileData.append('files', file);
-      }
+      fileData.append('files', file);
     });
 
     // for (var key of fileData.entries()) {
     //   console.log(key[0] + ', ' + key[1]);
     // }
 
-    const headers = {
-      'Content-Type': 'multipart/form-data',
-    };
-
     try {
       const response = await fetch('http://localhost:4000/files/uploadFiles', {
         method: 'POST',
         body: fileData,
       });
-      if (response.ok) {
-        // console.log('Request successful');
-        // reset all stored files
-        toast.success('Files uploaded successfully!');
-        // todo: redirect to view uploaded files screen (for now, just refresh the page)
-        // navigation.navigate('ViewUploadedFilesScreen',  {sendFiles: files} );
-        setFileName([]);
-        setFiles([]);
-      } else {
-        console.error('Request failed:', response.status, response.statusText);
+      // detected duplicated files from server
+      if(response.status == 201) {
+        const data = await response.json();
+        if(data.duplicatedFiles) {
+          setDuplicateFiles(data.duplicatedFiles);
+          toggleModalOverwriteFiles();
+        }
+        // no duplicated files - save files to db
+        else if (data.message == "File(s) uploaded successfully") {
+          toast.success('Files uploaded successfully!');
+          navigation.navigate('ViewUploads', { newFilesAdded: fileName });
+          setFileName([]);
+          setFiles([]);
+        }
+        else {  
+          console.error('Request failed:', response.status, response.statusText);
+        }
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
+
+  // function to send all confirmed duplicated files to server -> will overwrite the old files
+  const overwriteFilesHandler = async () => {
+    if (duplicateFiles.length == 0) {
+      return;
+    }
+    const fileData = new FormData();
+    const user = await getUser();
+    fileData.append('userId', user);
+    files.forEach((file) => {
+      fileData.append('files', file);
+    });
+    try {
+      const response = await fetch('http://localhost:4000/files/overwriteFiles', {
+        method: 'PUT',
+        body: fileData,
+      });
+      if(response.status == 201) {
+        if (response.ok) {
+          toast.success('Files uploaded successfully!');
+          navigation.navigate('ViewUploads', { newFilesAdded: duplicateFiles });
+          setFileName([]);
+          setFiles([]);
+        }
+        else {  
+          console.error('Request failed:', response.status, response.statusText);
+        }
       }
     } catch (error) {
       console.error('An error occurred:', error);
@@ -142,12 +172,7 @@ const UploadScreen = () => {
           style={[fileType == 'pdf' ? styles.successRowUpload : styles.errorRowUpload]}
         >
           <View style={styles.rowUpload} key={index}>
-            <TextInput
-              style={styles.errorTextbox}
-              onChangeText={(newText) => setFileName(newText)}
-              value={item}
-              editable={false}
-            />
+            <Text numberOfLines={1} ellipsizeMode='middle' style={[ {maxWidth: maxTextWidth}, styles.errorTextbox ]} >{item}</Text>
             <TouchableOpacity
               testID={`deleteButton-${index}`} // Unique testID for each button
               style={styles.buttonDelete}
@@ -170,6 +195,28 @@ const UploadScreen = () => {
     );
   };
 
+  // function to render each row (which is uploaded file)
+  const renderDuplicateFiles = (item, index) => {
+    return (
+      <View key={index}>
+        <View
+          key={index}
+          style={styles.duplicateRow}
+        >
+          <View style={styles.rowUploadModal} key={index}>
+            <Icon source="file-alert" size={20} color={'#696969'} />
+            <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth, marginLeft: 5 }} >{item}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  // function to toggle the pop up modal for filter section
+  const toggleModalOverwriteFiles = () => {
+    setModalOverwriteFilesVisible(!modalOverwriteFilesVisible);
+  };
+
   return (
     // display the blue background on top of screen
     <ImageBackground
@@ -187,19 +234,20 @@ const UploadScreen = () => {
           style={{ marginTop: '70px' }}
         />
         <Text style={styles.selectFiles}>Select files</Text>
-        <View style={{ alignItems: 'center', marginTop: '0.5%' }}>
+        <View style={styles.buttonUploadFiles}>
           {/* display button to upload file */}
           <TouchableOpacity testID="selectButton" onPress={fileSelectedHandler} accept=".pdf">
             <ImageBackground
               style={styles.imageUpload}
               source={require('../../assets/UploadDashedZoneH.png')}
             >
-              <Text style={styles.supportedFormats}>Supported format:{'\n'}PDF</Text>
+              <Text style={[styles.supportedFormats, {marginTop: '40%', textAlign: 'center'}]}>Supported format:{'\n'}PDF</Text>
             </ImageBackground>
           </TouchableOpacity>
         </View>
         <View style={styles.containerUploaded}>
           <Text style={styles.uploadFiles}>Uploads - {fileName.length} files</Text>
+          <Text style={[styles.supportedFormats, {marginTop: 2, marginBottom: 10}]}>Uploading files that already existed in our system will be overwritten by the newest version.</Text>
           {/* display rows for each uploaded file */}
           <FlatList
             data={fileName}
@@ -207,12 +255,11 @@ const UploadScreen = () => {
             keyExtractor={(item, index) => index.toString()}
             style={{ width: '100%' }}
           />
-
           {/* display button to confirm: uploading files */}
           <View style={{ alignItems: 'center' }}>
             <TouchableOpacity
               onPress={uploadFilesHandler}
-              style={[styles.buttonUpload, { marginTop: '2%' }, { marginBottom: '3%' }]}
+              style={styles.buttonUpload}
               testID="uploadButton"
             >
               <Text style={styles.buttonText}>Upload</Text>
@@ -220,11 +267,119 @@ const UploadScreen = () => {
           </View>
         </View>
       </View>
+      {/* display pop up modal for overwritten files section */}
+      < Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalOverwriteFilesVisible}
+        onRequestClose={toggleModalOverwriteFiles}
+      >
+        <View style={styles.containerModalOverwriteFiles}>
+          <View style={styles.containerModalOverwriteFilesContent}>
+            {/* display title of modal */}
+            <View style={styles.containerTextModal}>
+              <Text style={[{ fontSize: 20 }, styles.textDuplicateFiles]}>Duplicated File(s)</Text>
+              <Text style={[{ fontSize: 12 }, styles.textDuplicateFiles]}>Are you sure you want to overwrite these following files?</Text>
+            </View>
+            {/* display each row with filename */}
+            <FlatList
+              data={duplicateFiles}
+              renderItem={({ item, index }) => renderDuplicateFiles(item, index)}
+              keyExtractor={(item, index) => index.toString()}
+              style={{ width: '100%'}}
+            />
+            {/* display buttons */}
+            <View 
+              style={styles.buttonOverwriteFiles}>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleModalOverwriteFiles();
+                }}
+                style={styles.buttonCancel}
+              >
+                <Text style={styles.buttonConfirmText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleModalOverwriteFiles();
+                  overwriteFilesHandler();
+                }}
+                style={styles.buttonConfirm}
+              >
+                <Text style={styles.buttonConfirmText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal >
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonOverwriteFiles: {
+    alignItems: 'center', 
+    paddingVertical: 10,   
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    borderTopWidth: 1,
+    borderTopColor: 'lightgray',
+  },
+  textDuplicateFiles: {
+    color: '#696969',
+    fontWeight: '500',
+    textAlign: "center"
+  },
+  containerTextModal: {
+    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgray',
+  },
+  containerModalOverwriteFilesContent: {
+    width: '67%',
+    height: '50%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingTop: 10,
+    paddingHorizontal: 10,
+  },
+  containerModalOverwriteFiles: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  buttonUploadFiles: {
+    alignItems: 'center',
+     marginTop: '0.5%'
+  },
+  duplicateRow: {
+    marginBottom: '1%',
+    marginTop: 10
+  },
+  close: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  containerModalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  button: {
+    color: '#ffffff',
+    backgroundColor: '#4F85FF',
+    borderRadius: 10,
+    width: 100,
+    alignSelf: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -258,8 +413,6 @@ const styles = StyleSheet.create({
     color: '#ADADAD',
     fontSize: 12,
     fontWeight: '600',
-    textAlign: 'center',
-    marginTop: '40%',
   },
   containerUploaded: {
     flex: 1,
@@ -276,12 +429,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     marginTop: '0.5%',
-    marginBottom: '1%',
+    marginBottom: 0.5,
   },
   rowUpload: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  rowUploadModal: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    fontWeight: '500',
+    fontSize: 15,
+    marginHorizontal: 10,
+    marginBottom: 5,
   },
   successRowUpload: {
     borderRadius: 10,
@@ -296,6 +458,11 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
   },
+  duplicatedFileTextbox: {
+    marginLeft: 5,
+    flex: 0.9,
+    outlineStyle: 'none',
+  },
   errorTextbox: {
     flex: 0.9,
     padding: 10,
@@ -303,6 +470,7 @@ const styles = StyleSheet.create({
   },
   buttonDelete: {
     flex: 0.1,
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -315,6 +483,23 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     // lineHeight: 19.37,
   },
+  buttonConfirm: {
+    backgroundColor: 'red',
+    width: 75,
+    height: 30,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonCancel: {
+    backgroundColor: 'lightgray',
+    width: 75,
+    height: 30,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10
+  },
   buttonUpload: {
     backgroundColor: '#407BFF',
     width: 190,
@@ -323,6 +508,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
+    marginTop: '2%',
+    marginBottom: '3%' 
+  },
+  buttonConfirmText: {
+    color: '#FFFFFF',
+    alignItems: 'center',
+    fontSize: 13,
+    fontWeight: '500',
   },
   buttonText: {
     color: '#FFFFFF',

@@ -21,28 +21,67 @@ conn.once('open', () => {
   gfs.collection('UploadFiles'); //collection name in db  
 });
 
-var storage = new GridFsStorage({
-  url: process.env.DB_STRING,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      const fileInfo = {
-        filename: file.originalname,
-        bucketName: 'UploadFiles', //collection name in db
-        metadata: {
-          userId: req.body.userId,
-        },
-        id: new mongoose.Types.ObjectId(),
-      };
-      resolve(fileInfo);
+const uploadFiles = multer(); 
+
+// overwrite file(s) with userId
+router.put('/overwriteFiles', uploadFiles.array('files', 'userId'), async (req, res) => {
+  const files = req.files;
+  const userId = req.body.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const existingFile = await bucket.find({ "metadata.userId": userId, "filename": file.originalname }).toArray();
+    if (existingFile.length > 0) {
+      bucket.delete(existingFile[0]._id, (err, data) => {
+        if (err) {
+          console.log('Error deleting file:', err);
+        }
+      });
+    }
+    const uploadStream = bucket.openUploadStream(file.originalname, { metadata: { userId } });
+    uploadStream.on('error', (error) => {
+      console.log('Error uploading file:', error);
     });
+    uploadStream.on('finish', () => {
+      if (i === files.length - 1) {
+        res.status(201).json({ message: "File(s) replaced successfully" });
+      }
+    });
+    uploadStream.end(file.buffer);
   }
 });
 
-const uploadFiles = multer({ storage })
-
 // store uploaded file(s) with userId
 router.post('/uploadFiles', uploadFiles.array('files', 'userId'), async (req, res) => {
-  res.status(200).json({ message: "Successfully uploaded files" });
+  const files = req.files;
+  const userId = req.body.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  const duplicatedFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const uploadedFiles = await bucket.find({ "metadata.userId": userId, "filename": file.originalname }).toArray();
+    if (uploadedFiles.length > 0) {
+      duplicatedFiles.push(file.originalname);
+    }
+  }
+  if (duplicatedFiles.length > 0) {
+    return res.status(201).json({ message: "File(s) already exists", duplicatedFiles });
+  }
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const uploadStream = bucket.openUploadStream(file.originalname, { metadata: { userId } });
+    uploadStream.on('error', (error) => {
+      console.log('Error uploading file:', error);
+    });
+    uploadStream.on('finish', () => {
+      if (i === files.length - 1) {
+        res.status(201).json({ message: "File(s) uploaded successfully" });
+      }
+    });
+    uploadStream.end(file.buffer);
+  }
 });
 
 // get all uploaded files

@@ -29,17 +29,14 @@ const LandingPage = ({ navigation }) => {
         >
           <Text style={styles.text}>My Work Packages</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.content} onPress={() => navigation.navigate('Upload')}>
-          <Text style={styles.text}>Upload Study Material</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={styles.content}
           onPress={() => navigation.navigate('QuizzesOverviewScreen', { userId: userId })}
         >
           <Text style={styles.text}>My quizzes</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.content} onPress={() => navigation.navigate('ViewUploads')}>
-          <Text style={styles.text}>View my files</Text>
+        <TouchableOpacity style={styles.content} onPress={() => navigation.navigate('ViewUploads', {newFilesAdded: undefined})}>
+          <Text style={styles.text}>My files</Text>
         </TouchableOpacity>
 
         {/* <TouchableOpacity

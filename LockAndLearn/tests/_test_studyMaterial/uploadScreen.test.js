@@ -41,6 +41,13 @@ global.fetch = jest.fn(() =>
   })
 );
 
+const mockNavigate = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: mockNavigate,
+  }),
+}));
+
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
   OS: 'web',
   select: jest.fn().mockImplementation((spec) => (spec.web ? spec.web : spec.default)),

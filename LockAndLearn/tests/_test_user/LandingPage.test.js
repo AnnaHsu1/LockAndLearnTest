@@ -37,9 +37,8 @@ describe('LandingPage', () => {
 
     // Check for buttons that are always present
     expect(queryByText('My Work Packages')).toBeTruthy();
-    expect(queryByText('Upload Study Material')).toBeTruthy();
     expect(queryByText('My quizzes')).toBeTruthy();
-    expect(queryByText('View my files')).toBeTruthy();
+    expect(queryByText('My files')).toBeTruthy();
   });
 
   it('navigates to different screens when buttons are pressed', () => {
@@ -48,15 +47,14 @@ describe('LandingPage', () => {
     fireEvent.press(getByText('My Work Packages'));
     expect(mockNavigate).toHaveBeenCalledWith('WorkPackageOverview');
 
-    fireEvent.press(getByText('Upload Study Material'));
-    expect(mockNavigate).toHaveBeenCalledWith('Upload');
-
     fireEvent.press(getByText('My quizzes'));
     expect(mockNavigate).toHaveBeenCalledWith('QuizzesOverviewScreen', {
       userId: null,
     });
 
-    fireEvent.press(getByText('View my files'));
-    expect(mockNavigate).toHaveBeenCalledWith('ViewUploads');
+    fireEvent.press(getByText('My files'));
+    expect(mockNavigate).toHaveBeenCalledWith('ViewUploads', {
+      newFilesAdded: undefined,
+    });
   });
 });
