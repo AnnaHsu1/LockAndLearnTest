@@ -147,6 +147,28 @@ const CreateQuestion = ({ route }) => {
     setInputs(updatedInputs);
   };
 
+  // Define a function to check if the form is valid
+  const isFormValid = () => {
+    if (questionType === 'Short Answer') {
+      return questionText.trim() !== '' && answer.trim() !== '';
+    } else if (questionType === 'Multiple Choice Question') {
+      const allOptionsFilled = options.every((option) => option.text.trim() !== '');
+      const isAnswerChosen = options.some((option) => option.isCorrect);
+
+      return questionText.trim() !== '' && allOptionsFilled && isAnswerChosen;
+    } else if (questionType === 'True or False') {
+      return questionText.trim() !== '' && (isTrue || !isTrue);
+    } else if (questionType === 'Fill In The Blanks') {
+      return (
+        questionText.trim() !== '' &&
+        inputs.every((input) => input.trim() !== '')
+      );
+    }
+
+    // For other types, consider them valid if questionText is not empty
+    return questionText.trim() !== '';
+  };
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -249,27 +271,71 @@ const CreateQuestion = ({ route }) => {
               onChangeText={(text) => setAnswer(text)}
             />
           )}
-        <TouchableOpacity
-          style={styles.createQuestionButton}
-          onPress={() => {
-            handleCreateQuestion(); // Call the function to create the question
-            // console.log("ANSWER:" + answer);
-            // Navigate to the QuestionsOverviewScreen and pass the workPackageId
-            navigation.navigate('QuestionsOverviewScreen', {
-              quizId: quizId,
-            });
-          }}
-        >
-          <Text style={styles.createQuestionButtonText} testID="create-question">
-            Create Question
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.cancelButton}
+        onPress={() => {
+          navigation.navigate('QuestionsOverviewScreen', {
+            quizId: quizId,
+          });
+        }}
+      >
+        <Text style={styles.cancelButtonText}>Cancel</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.createQuestionButton,
+          isFormValid()
+            ? styles.createQuestionButtonEnabled
+            : styles.createQuestionButtonDisabled,
+        ]}
+        onPress={() => {
+          handleCreateQuestion(); // Call the function to create the question
+          navigation.navigate('QuestionsOverviewScreen', {
+            quizId: quizId,
+          });
+        }}
+        disabled={!isFormValid()} // Disable the button if the form is not valid
+      >
+        <Text style={styles.createQuestionButtonText} testID="create-question">
+          Create Question
+        </Text>
+      </TouchableOpacity>
       </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  cancelButton: {
+    backgroundColor: 'gray',
+    width: 190,
+    height: 45,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginHorizontal: 10,
+  },
+  cancelButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  createQuestionButton: {
+    backgroundColor: '#407BFF',
+    width: 190,
+    height: 45,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  createQuestionButtonEnabled: {
+    backgroundColor: '#407BFF', // Keep the original color when enabled
+  },
+  createQuestionButtonDisabled: {
+    backgroundColor: '#D3D3D3', // Set a light grey color when disabled
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

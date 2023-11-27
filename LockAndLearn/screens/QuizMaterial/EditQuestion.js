@@ -75,10 +75,21 @@ const EditQuestion = ({ route }) => {
             answer: answer, // This line will include the answer for the "Short Answer" question type
             options: options.map(option => option.text),
         };
-
+        // const correctOption = options.find(option => option.isCorrect);
+        // updatedQuestion.answer = correctOption ? correctOption.text : '';
         if (questionType === 'Multiple Choice Question') {
-            const correctOption = options.find(option => option.isCorrect);
-            updatedQuestion.answer = correctOption ? correctOption.text : '';
+            const allOptionsFilled = options.every(option => option.text.trim() !== '');
+            const isAnswerChosen = options.some(option => option.isCorrect);
+    
+            if (!allOptionsFilled) {
+                alert('Please fill in all option texts.');
+                return;
+            }
+    
+            if (!isAnswerChosen) {
+                alert('Please select a correct answer.');
+                return;
+            }
         }
         else if (questionType === 'True or False') {
             updatedQuestion.answer = isTrue ? 'True' : 'False';
@@ -158,6 +169,28 @@ const EditQuestion = ({ route }) => {
             console.error("Network error:", error);
         }
     }
+
+    // Define a function to check if the form is valid
+    const isFormValid = () => {
+        if (questionType === 'Short Answer') {
+        return questionText.trim() !== '' && answer.trim() !== '';
+        } else if (questionType === 'Multiple Choice Question') {
+        const allOptionsFilled = options.every((option) => option.text.trim() !== '');
+        const isAnswerChosen = options.some((option) => option.isCorrect);
+
+        return questionText.trim() !== '' && allOptionsFilled && isAnswerChosen;
+        } else if (questionType === 'True or False') {
+        return questionText.trim() !== '' && (isTrue || !isTrue);
+        } else if (questionType === 'Fill In The Blanks') {
+        return (
+            questionText.trim() !== '' &&
+            inputs.every((input) => input.trim() !== '')
+        );
+        }
+
+        // For other types, consider them valid if questionText is not empty
+        return questionText.trim() !== '';
+    };
 
     useEffect(() => {
         fetchQuestion();
@@ -270,27 +303,33 @@ const EditQuestion = ({ route }) => {
                     />
                 )}
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        style={styles.cancelButton}
-                        onPress={() => {
-                            navigation.navigate('QuestionsOverviewScreen', {
-                                quizId: quizId,
-                            });
-                        }}
-                    >
-                        <Text style={styles.cancelButtonText}>Cancel</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.saveQuestionButton}
-                        onPress={() => {
-                            handleSaveQuestion(); // Call the function to save the question
-                            navigation.navigate('QuestionsOverviewScreen', {
-                                quizId: quizId,
-                            });
-                        }}
-                    >
-                        <Text style={styles.saveQuestionButtonText} testID='save-button'>Save</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => {
+                    navigation.navigate('QuestionsOverviewScreen', {
+                        quizId: quizId,
+                    });
+                    }}
+                >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[
+                    styles.saveQuestionButton,
+                    isFormValid()
+                        ? styles.saveQuestionButtonEnabled
+                        : styles.saveQuestionButtonDisabled,
+                    ]}
+                    onPress={() => {
+                    handleSaveQuestion(); // Call the function to save the question
+                    navigation.navigate('QuestionsOverviewScreen', {
+                        quizId: quizId,
+                    });
+                    }}
+                    disabled={!isFormValid()} // Disable the button if the form is not valid
+                >
+                    <Text style={styles.saveQuestionButtonText} testID='save-button'>Save</Text>
+                </TouchableOpacity>
                 </View>
             </View>
         </ImageBackground>
@@ -298,6 +337,28 @@ const EditQuestion = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+    saveQuestionButton: {
+        backgroundColor: '#407BFF',
+        width: 190,
+        height: 45,
+        borderRadius: 9,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        marginHorizontal: 10,
+      },
+      saveQuestionButtonEnabled: {
+        backgroundColor: '#407BFF', // Keep the original color when enabled
+      },
+      saveQuestionButtonDisabled: {
+        backgroundColor: '#D3D3D3', // Set a light grey color when disabled
+      },
+      saveQuestionButtonText: {
+        color: '#FFFFFF',
+        fontSize: 20,
+        fontWeight: 'bold',
+      },
     container: {
         flex: 1,
         backgroundColor: '#fff',

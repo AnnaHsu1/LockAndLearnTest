@@ -60,6 +60,14 @@ const CreateQuiz = () => {
     }
   };
 
+  const cancelCreateQuiz = () => {
+    const userId = getUser();
+    // Navigate to the QuizzesOverviewScreen and pass the userId
+    navigation.navigate('QuizzesOverviewScreen', {
+      userId: userId,
+    });
+  };
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -76,20 +84,46 @@ const CreateQuiz = () => {
           value={quizName}
           onChangeText={(text) => setQuizName(text)}
         />
-        <TouchableOpacity
-          style={styles.createQuizButton}
-          onPress={createQuiz}
-          disabled={loading}
-          testID="create-quiz-button"
-        >
-          <Text style={styles.createQuizButtonText}>Create Quiz</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.cancelButton}
+            onPress={cancelCreateQuiz}
+            testID="cancel-create-quiz-button"
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.createQuizButton}
+            onPress={createQuiz}
+            disabled={loading}
+            testID="create-quiz-button"
+          >
+            <Text style={styles.createQuizButtonText}>Create Quiz</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  cancelButton: {
+    backgroundColor: 'gray',
+    width: 120,
+    height: 45,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
