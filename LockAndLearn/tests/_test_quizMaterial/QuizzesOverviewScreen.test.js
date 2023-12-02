@@ -42,25 +42,39 @@ describe('QuizzesOverviewScreen Tests', () => {
 
   test('deletes a quiz when delete button is pressed', async () => {
     const mockQuizzes = [{ _id: '1', name: 'Quiz 1' }];
-
-    fetchMock.mockResponseOnce(JSON.stringify(mockQuizzes));
-    fetchMock.mockResponseOnce(JSON.stringify({ message: 'Quiz deleted' }));
-
-    const { findByText, findByTestId } = render(
+  
+    fetchMock.mockResponses(
+      [JSON.stringify(mockQuizzes), { status: 200 }], // Mock response for initial GET request
+      [JSON.stringify({ message: 'Quiz deleted' }), { status: 200 }] // Mock response for DELETE request
+    );
+  
+    const { findByTestId } = render(
       <QuizzesOverviewScreen route={{ params: { userId: '123' } }} />
     );
-    // const deleteButton = await findByText('X');
+  
+    // Wait for initial quizzes to be rendered
+    await waitFor(() => findByTestId('delete-button-x'));
+  
+    // Press the delete button
     const deleteButton = await findByTestId('delete-button-x');
-
     fireEvent.press(deleteButton);
-
+  
+    // If there's a confirmation step (like a modal), simulate that as well
+    const confirmButton = await findByTestId('deleteConfirmationModal');
+    fireEvent.press(confirmButton);
+  
+    // Assert the DELETE fetch call
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/deleteQuiz/1', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      expect(fetchMock).toHaveBeenCalledWith(
+        'http://localhost:4000/quizzes/deleteQuiz/1',
+        expect.objectContaining({
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      );
     });
   });
+  
 });

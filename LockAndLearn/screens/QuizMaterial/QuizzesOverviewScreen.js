@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Modal from 'react-native-modal';
 import { getUser } from '../../components/AsyncStorage';
 
 const QuizzesOverviewScreen = ({ route }) => {
@@ -15,6 +16,8 @@ const QuizzesOverviewScreen = ({ route }) => {
   const user = route.params.userId;
 
   const [quizzes, setQuizzes] = useState([]);
+  const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
 
   const fetchQuizzes = async () => {
     const user = await getUser();
@@ -36,24 +39,31 @@ const QuizzesOverviewScreen = ({ route }) => {
     }
   };
 
-  const deleteQuiz = async (quizId) => {
-    // Filter out the quizzes with the specified ID to delete it
-    try {
-      const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const deleteQuiz = (quizId) => {
+    setSelectedQuizId(quizId);
+    setDeleteConfirmationModalVisible(true);
+  };
 
-      if (response.status === 200) {
-        const data = await response.json();
-        fetchQuizzes();
-      } else {
-        console.error('Error deleting quiz');
+  const confirmDelete = async () => {
+    if (selectedQuizId) {
+      try {
+        const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${selectedQuizId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.status === 200) {
+          console.log('Quiz Deleted');
+          setDeleteConfirmationModalVisible(false);
+          fetchQuizzes();
+        } else {
+          console.error('Error deleting quiz');
+        }
+      } catch (error) {
+        console.error('Network error', error);
       }
-    } catch (error) {
-      console.error('Network error', error);
     }
   };
 
@@ -83,10 +93,7 @@ const QuizzesOverviewScreen = ({ route }) => {
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => {
-                    // Delete the quiz
-                    deleteQuiz(quiz._id);
-                  }}
+                  onPress={() => deleteQuiz(quiz._id)}
                   style={styles.deleteButton}
                 >
                   <Text style={styles.deleteButtonText} testID="delete-button-x">
@@ -101,7 +108,6 @@ const QuizzesOverviewScreen = ({ route }) => {
           <TouchableOpacity
             style={styles.createQuizButton}
             onPress={() => {
-              // Navigate to the QuestionsOverviewScreen and pass the workPackageId
               navigation.navigate('CreateQuiz');
             }}
           >
@@ -109,11 +115,77 @@ const QuizzesOverviewScreen = ({ route }) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        isVisible={deleteConfirmationModalVisible}
+        onBackdropPress={() => setDeleteConfirmationModalVisible(false)}
+        transparent={true}
+        style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
+      >
+        <View style={styles.deleteConfirmationModal}>
+          <Text style={styles.confirmationText}>
+            Are you sure you want to delete this quiz?
+          </Text>
+          <View style={styles.confirmationButtons}>
+            <TouchableOpacity
+              testID='deleteConfirmationModal'
+              onPress={() => {
+                confirmDelete();
+                setDeleteConfirmationModalVisible(false);
+              }}
+              style={[styles.confirmButton, { marginRight: 10 }]}
+            >
+              <Text style={styles.confirmButtonText}>Confirm</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setDeleteConfirmationModalVisible(false)}
+              style={styles.cancelButton}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  deleteConfirmationModal: {
+    width: '50%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmationText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  confirmationButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  confirmButton: {
+    backgroundColor: '#F24E1E',
+    padding: 10,
+    borderRadius: 10,
+  },
+  confirmButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    backgroundColor: '#407BFF',
+    padding: 10,
+    borderRadius: 10,
+  },
+  cancelButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

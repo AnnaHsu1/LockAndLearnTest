@@ -8,12 +8,16 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Modal from 'react-native-modal';
+import { getUser } from '../../components/AsyncStorage';
 
 const QuestionsOverviewScreen = ({ route }) => {
   const navigation = useNavigation();
   const quizId = route.params.quizId;
   const newQuestion = route.params.newQuestion;
   const [questions, setQuestions] = useState([]);
+  const userId = route.params.userId; // Add this line to extract userId
+
 
   const fetchQuiz = async () => {
     try {
@@ -50,7 +54,6 @@ const QuestionsOverviewScreen = ({ route }) => {
           },
         }
       );
-      // console.log("Response:", response);
 
       if (response.status === 200) {
         const data = await response.json();
@@ -108,18 +111,28 @@ const QuestionsOverviewScreen = ({ route }) => {
               ))}
           </View>
         </ScrollView>
-        <View style={styles.createQuestionButtonContainer}>
+        <View style={styles.header}>
           <TouchableOpacity
-            style={styles.createQuestionButton}
-            onPress={() => {
-              // Navigate to the QuestionsOverviewScreen and pass the workPackageId
-              navigation.navigate('CreateQuestion', {
-                quizId: quizId, // pass id
-              });
-            }}
+            onPress={() => navigation.navigate('QuizzesOverviewScreen', { userId })} // Pass userId
+            style={styles.backButton}
           >
-            <Text style={styles.createQuestionButtonText}>Add Question</Text>
+            <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
+        
+        
+          <View style={styles.createQuestionButtonContainer}>
+            <TouchableOpacity
+              style={styles.createQuestionButton}
+              onPress={() => {
+                // Navigate to the QuestionsOverviewScreen and pass the workPackageId
+                navigation.navigate('CreateQuestion', {
+                  quizId: quizId, // pass id
+                });
+              }}
+            >
+              <Text style={styles.createQuestionButtonText}>Add Question</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </ImageBackground>
@@ -127,6 +140,25 @@ const QuestionsOverviewScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  backButton: {
+    backgroundColor: 'gray', 
+    width: 190, 
+    height: 45, 
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10, 
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -194,7 +226,7 @@ const styles = StyleSheet.create({
   },
 
   createQuestionButtonContainer: {
-    marginTop: 20,
+
     alignItems: 'center',
   },
   createQuestionButton: {
