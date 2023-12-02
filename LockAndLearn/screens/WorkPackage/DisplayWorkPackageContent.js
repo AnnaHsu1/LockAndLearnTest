@@ -241,6 +241,10 @@ const DisplayWorkPackageContent = () => {
     }
   };
 
+  const handleBackButton = () => {
+    navigation.navigate('WorkPackageOverview'); // Navigate to the desired screen
+  } 
+  
   const handlePriceChange = (input) => {
     const priceValidation = /^[0-9]*(\.[0-9]{0,2})?$/.test(input);
     setIsValidPrice(priceValidation);
@@ -398,15 +402,20 @@ const DisplayWorkPackageContent = () => {
           
         </ScrollView>
         {/* Display button to show modal to add files/quizzes */}
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={toggleModalFilter}
-            style={styles.buttonAddMaterial}
-            testID="addMaterialModal"
-          >
-            <Text style={styles.buttonText}>Add Material</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={{ alignItems: 'center' }}>
+            <View style={styles.header}>
+            <TouchableOpacity onPress={handleBackButton} style={styles.backButton}>
+              <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={toggleModalFilter}
+              style={styles.buttonAddMaterial}
+              testID='addMaterialModal'
+            >
+              <Text style={styles.buttonText}>Add Material</Text>
+            </TouchableOpacity>
+            </View>
+          </View>
         {/* Display modal to add files/quizzes */}
         <Modal
           animationType="slide"
@@ -523,6 +532,46 @@ const DisplayWorkPackageContent = () => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%', // Adjusted width
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  backButton: {
+    backgroundColor: '#bbb', // Gray background color
+    width: 80, // Adjust the width as needed
+    height: 35,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  addMaterialButton: {
+    backgroundColor: '#407BFF',
+    width: 150,
+    height: 35,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addMaterialButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   noQuizzesText: {
     paddingLeft: '5%',
     paddingTop: 10,

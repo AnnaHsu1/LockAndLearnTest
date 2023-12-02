@@ -12,8 +12,15 @@ const WorkPackageOverview = () => {
   const [selectedWorkPackageId, setSelectedWorkPackageId] = useState(null);
 
   useEffect(() => {
-    fetchWorkPackages();
-  });
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Fetch work packages when the screen is focused
+      fetchWorkPackages();
+    });
+  
+    // Clean up function (optional)
+    return unsubscribe;
+  }, [navigation]);
+  
 
   // function to get all work packages from the user
   const fetchWorkPackages = async () => {

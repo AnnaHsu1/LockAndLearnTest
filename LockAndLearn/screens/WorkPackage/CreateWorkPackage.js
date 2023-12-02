@@ -38,6 +38,10 @@ const CreateWorkPackage = (route) => {
   const isCreateButtonDisabled =
     workPackageName === 'Choose a Subject' || workPackageGrade === 'Choose a Grade';
 
+  const handleBackButton = () => {
+    navigation.navigate('WorkPackageOverview');
+  };
+
   // Function to create a work package
   const handleCreateWorkPackage = async () => {
     if (isCreateButtonDisabled) {
@@ -143,21 +147,47 @@ const CreateWorkPackage = (route) => {
             </Picker>
           </View>
         </View>
-        {/* Display button to create work package */}
-        <TouchableOpacity
-          testID="createWorkPackageButton"
-          style={[styles.createQuestionButton, isCreateButtonDisabled && styles.disabledButton]}
-          onPress={handleCreateWorkPackage}
-          disabled={isCreateButtonDisabled}
-        >
-          <Text style={styles.createWorkPackageButtonText}>Create Work Package</Text>
-        </TouchableOpacity>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handleBackButton} style={styles.backButton}>
+              <Text style={styles.backButtonText}>Back</Text>
+            </TouchableOpacity>
+          {/* Display button to create work package */}
+          <TouchableOpacity
+            testID="createWorkPackageButton"
+            style={[styles.createQuestionButton, isCreateButtonDisabled && styles.disabledButton]}
+            onPress={handleCreateWorkPackage}
+            disabled={isCreateButtonDisabled}
+          >
+            <Text style={styles.createWorkPackageButtonText}>Create Work Package</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '35%',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  backButton: {
+    backgroundColor: '#bbb', 
+    width: 80,
+    height: 35,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
   disabledButton: {
     backgroundColor: '#ccc',
   },
@@ -229,7 +259,7 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: 20,
     marginBottom: 20,
   },
   createWorkPackageButtonText: {
