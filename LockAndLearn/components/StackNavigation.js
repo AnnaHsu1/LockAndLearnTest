@@ -28,6 +28,11 @@ import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 import LogoutButton from './LogoutButton';
+import TakeQuiz from '../screens/StudyMaterial/TakeQuiz';
+import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
+import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -178,6 +183,21 @@ const StackNavigation = () => {
           name="EditQuestion"
           component={EditQuestion}
           options={{ title: 'Edit Question' }}
+        />
+        <Stack.Screen
+          name="TakeQuiz"
+          component={TakeQuiz}
+          options={{ title: 'Take Quiz' }}
+        />
+        <Stack.Screen
+          name="DisplayQuizzScreen"
+          component={DisplayQuizzScreen}
+          options={{ title: 'Display Quiz Screen' }}
+        />
+        <Stack.Screen
+          name="QuizGradeScreen"
+          component={QuizGradeScreen}
+          options={{ title: 'Quiz Grade Screen' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

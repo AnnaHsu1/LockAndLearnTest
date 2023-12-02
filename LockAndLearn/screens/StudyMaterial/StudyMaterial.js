@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 const StudyMaterial = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -17,7 +20,7 @@ const StudyMaterial = () => {
         <Text style={styles.studyDetail} testID="lesonContent">
           1 + 1 = 2
         </Text>
-        <TouchableOpacity style={styles.takeQuizButton}>
+        <TouchableOpacity style={styles.takeQuizButton} onPress={() => navigation.navigate('TakeQuiz')}>
           <Text style={styles.takeQuizText} testID="takeQuizButton">
             Take Quiz
           </Text>

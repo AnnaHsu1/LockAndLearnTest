@@ -15,6 +15,16 @@ router.post('/create', async (req, res) => {
 });
 
 // get all quizzes
+router.get('/allQuizzes', async (req, res) => {
+  try {
+    const quizzes = await Quiz.find();  // This retrieves all quizzes from the Quiz collection.
+    res.json(quizzes);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// get all quizzes BASED ON USER IF
 router.get('/allQuizzes/:id', async (req, res) => {
   try {
     const userId = req.params.id;
