@@ -35,7 +35,21 @@ router.post('/create', async (req, res) => {
   }
 });
 
-// Fetch all work packages of specific instructor
+// Fetch all work packages
+router.get('/allWorkPackages', async (req, res) => {
+  try {
+    // Retrieve all work packages from the database
+    const allWorkPackages = await WorkPackage.find();
+    // Send a success response with the array of work packages
+    res.status(200).json(allWorkPackages);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error fetching all work packages:', error);
+    res.status(500).json({ error: 'An error occurred while fetching all work packages.' });
+  }
+});
+
+// Fetch all work packages
 router.get('/fetchWorkpackages/:id', async (req, res) => {
   const instructorID = req.params.id;
   try {
@@ -352,16 +366,13 @@ router.post('/addquiz/:workPackageId', async (req, res) => {
 });
 
 router.post('/editWorkPackage/:workPackageId', async (req, res) => {
-  try{
+  try {
     const workPackageId = req.params.workPackageId;
-    const {description, price} = req.body;
-    const editedWorkPackage = await WorkPackage.findByIdAndUpdate(
-      workPackageId,
-      {
-        description: description,
-        price: price
-      }
-    );
+    const { description, price } = req.body;
+    const editedWorkPackage = await WorkPackage.findByIdAndUpdate(workPackageId, {
+      description: description,
+      price: price,
+    });
     if (!editedWorkPackage) {
       return res.status(404).json({ error: 'Work package not found' });
     }
@@ -370,7 +381,7 @@ router.post('/editWorkPackage/:workPackageId', async (req, res) => {
     console.error('Error editing work package:', error);
     res.status(500).json({ error: 'An error occurred while editing the work package.' });
   }
-})
+});
 
 // Add quizzes to a specific work package by ID
 router.post('/addQuizzes/:workPackageId', async (req, res) => {
@@ -396,7 +407,6 @@ router.post('/addQuizzes/:workPackageId', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while adding quizzes to the work package.' });
   }
 });
-
 
 // Fetch a specific work package by ID
 router.get('/:workPackageId', async (req, res) => {
@@ -431,7 +441,9 @@ router.put('/addMaterials/:workPackageId', async (req, res) => {
     }
 
     // Remove files that are not selected by user (materials from req)
-    const removedMaterials = workPackage.materials.filter(material => !materials.includes(material));
+    const removedMaterials = workPackage.materials.filter(
+      (material) => !materials.includes(material)
+    );
     if (removedMaterials.length > 0) {
       await WorkPackage.findByIdAndUpdate(
         workPackageId,
@@ -441,7 +453,7 @@ router.put('/addMaterials/:workPackageId', async (req, res) => {
     }
 
     // Add files that do not already exists in the work package
-    const newMaterials = materials.filter(material => !workPackage.materials.includes(material));
+    const newMaterials = materials.filter((material) => !workPackage.materials.includes(material));
     if (newMaterials.length === 0) {
       return res.status(200).json(workPackage);
     }
@@ -485,9 +497,7 @@ router.delete('/deleteMaterial/:workPackageId/:fileId', async (req, res) => {
     res.status(200).json(updatedWorkPackage);
   } catch (error) {
     console.error('Error deleting material from work package:', error);
-    res
-      .status(500)
-      .json({ error: 'Error occurred while deleting material from work package' });
+    res.status(500).json({ error: 'Error occurred while deleting material from work package' });
   }
 });
 
@@ -512,11 +522,10 @@ router.delete('/deleteQuiz/:workPackageId/:quizId', async (req, res) => {
     res.status(200).json(updatedWorkPackage);
   } catch (error) {
     console.error('Error deleting quiz from work package:', error);
-    res.status(500).json({ error: 'An error occurred while deleting the quiz from the work package.' });
+    res
+      .status(500)
+      .json({ error: 'An error occurred while deleting the quiz from the work package.' });
   }
 });
-
-
-
 
 module.exports = router;

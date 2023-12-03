@@ -35,6 +35,16 @@ router.get('/allQuizzes/:id', async (req, res) => {
   }
 });
 
+// get all quizzes
+router.get('/allQuizzes', async (req, res) => {
+  try {
+    const quizzes = await Quiz.find(); // Retrieve all quizzes from the Quiz collection.
+    res.json(quizzes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Create a new question and associate it with a quiz by quiz ID
 router.post('/addQuestion/:quizId', async (req, res) => {
   try {

@@ -115,16 +115,45 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  const handleSubmit = async () => {
-    const isValid = validate();
-    // console.log(emailError);
-    // console.log(passwordError);
-    if (isValid) {
-      // console.log('Fields are appropriate', fdata);
-      sendLoginData(fdata);
-      
+  const sendLoginDataAdmin = async (loginData) => {
+    try {
+      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData),
+      });
+  
+      const data = await response.json();
+  
+      if (response.status === 201) {
+        setErrorMsg(null);
+        console.log('Admin successfully logged in!', data);
+        setDisplayMsg('Admin login successful.');
+        navigation.navigate('AdminMenu'); 
+      } else {
+        setErrorMsg(data.msg);
+      }
+    } catch (error) {
+      console.error('Error logging admin:', error);
     }
   };
+  
+  const handleSubmit = async () => {
+    const isValid = validate();
+  
+    if (isValid) {
+      if (fdata.email === 'admin@lockandlearn.ca') {
+        // Send login data for admin
+        sendLoginDataAdmin(fdata);
+      } else {
+        // For regular users, proceed with login
+        sendLoginData(fdata);
+      }
+    }
+  };
+  
 
   const handleGoogleLogin = async () => {
     // if token does not exist get google user info

@@ -131,4 +131,35 @@ router.get('/filesName/:id', async (req, res) => {
   res.status(201).json({ fileName });
 })
 
+// get all uploaded files
+router.get("/allFiles", async (req, res) => {
+  try {
+    const conn = mongoose.connection;
+    const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' });
+    const allFiles = await bucket.find().toArray();
+    res.status(200).json({ allFiles });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// get file by its ID
+router.get("/file/:id", async (req, res) => {
+  try {
+    const fileId = req.params.id;
+    const conn = mongoose.connection;
+    const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' });
+    const file = await bucket.find({ "_id": new mongoose.Types.ObjectId(fileId) }).toArray();
+
+    if (file.length === 0) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    const downloadStream = bucket.openDownloadStream(new mongoose.Types.ObjectId(fileId));
+    downloadStream.pipe(res);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

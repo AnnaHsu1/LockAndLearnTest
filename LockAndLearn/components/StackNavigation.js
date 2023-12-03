@@ -28,6 +28,13 @@ import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 import LogoutButton from './LogoutButton';
+import AdminMenu from '../screens/User/Admin/AdminMenu';
+import AdminAccount from '../screens/User/Admin/AdminAccounts';
+import AdminFinances from '../screens/User/Admin/AdminFinances';
+import AdminWorkPackages from '../screens/User/Admin/AdminWorkPackages';
+import AdminFiles from '../screens/User/Admin/AdminFiles';
+import AdminQuizzes from '../screens/User/Admin/AdminQuizzes';
+import AdminSubcategories from '../screens/User/Admin/AdminSubcategories';
 import AddChildMaterial from '../screens/User/Child/AssignChildMaterial';
 import PurchasedMaterial from '../screens/User/Child/ViewPurchasedMaterial';
 import WorkPackageBrowsing from '../screens/WorkPackage/WorkPackageBrowsing';
@@ -189,6 +196,41 @@ const StackNavigation = () => {
           options={{ title: 'Edit Question' }}
         />
         <Stack.Screen
+          name="AdminMenu"
+          component={AdminMenu}
+          options={{ title: 'AdminMenu' }}
+        />
+        <Stack.Screen
+          name="AdminAccount"
+          component={AdminAccount}
+          options={{ title: 'AdminAccount' }}
+        />
+        <Stack.Screen
+          name="AdminFinances"
+          component={AdminFinances}
+          options={{ title: 'AdminFinances' }}
+        />
+        <Stack.Screen
+          name="AdminWorkPackages"
+          component={AdminWorkPackages}
+          options={{ title: 'AdminWorkPackages' }}
+        />
+        <Stack.Screen
+          name="AdminFiles"
+          component={AdminFiles}
+          options={{ title: 'AdminFiles' }}
+        />
+        <Stack.Screen
+          name="AdminQuizzes"
+          component={AdminQuizzes}
+          options={{ title: 'AdminQuizzes' }}
+        />
+        <Stack.Screen
+          name="AdminSubcategories"
+          component={AdminSubcategories}
+          options={{ title: 'AdminSubcategories' }}
+        /> 
+        <Stack.Screen       
             name="AddChildMaterial"
             component={AddChildMaterial}
             options={{ title: 'Add Child Material' }}
