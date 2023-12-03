@@ -34,8 +34,15 @@ const User = mongoose.model('User', new mongoose.Schema({
         type: String,
         required: true,
     },
+    purchasedWorkPackages: {
+        type: [mongoose.Schema.Types.ObjectId], // Array of WorkPackage IDs
+        default: [] // Initialize as an empty array by default
+    },
+    CartWorkPackages: {
+        type: [mongoose.Schema.Types.ObjectId], // Array of WorkPackage IDs
+        default: [] // Initialize as an empty array by default
+    }
 }, baseOptions),);
-
 
 // Export the User model
 module.exports = User;

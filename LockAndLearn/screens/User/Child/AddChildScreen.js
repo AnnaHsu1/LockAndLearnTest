@@ -80,7 +80,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
         <Text style={styles.title}>Add child</Text>
         {errors ? <Text style={styles.box}>{errors}</Text> : null}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={styles.half_width}>
+        <View style={[styles.half_width, { flex: 1}]}>
             <Text style={styles.field}>First Name</Text>
             <TextInput
               testID="first-name-input"
@@ -90,7 +90,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
             />
           </View>
 
-          <View style={styles.half_width}>
+          <View style={[styles.half_width, { flex: 1 }]}>
             <Text style={styles.field}>Last Name</Text>
             <TextInput
               testID="last-name-input"

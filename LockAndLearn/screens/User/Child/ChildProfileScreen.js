@@ -56,15 +56,37 @@ const ChildProfileScreen = ({ route, navigation }) => {
           style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>Start session</Text>
+         </Button>
+        {/* Add Material */}
+        <Button
+            testID="add-child-material"
+            mode="contained"
+            onPress={() => {
+                navigation.navigate('AddChildMaterial');
+            }}
+            style={[styles.button, styles.full_width]}
+        >
+            <Text style={styles.text}>Add material</Text>
         </Button>
         {/* Edit profile */}
-        <Button
-          testID="edit-profile"
+        {/* <Button
+          testID="purchased-material"
           mode="contained"
           onPress={() => {
-            navigation.navigate('EditChild', { child: child });
+             navigation.navigate('PurchasedMaterial', { child: child });
           }}
           style={[styles.button, styles.full_width]}
+        >
+            <Text style={styles.text}>View purchased material</Text>
+        </Button> */}
+        {/* Edit profile */}
+        <Button
+            testID="edit-profile"
+            mode="contained"
+            onPress={() => {
+                navigation.navigate('EditChild', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>Edit profile</Text>
         </Button>
@@ -154,7 +176,7 @@ const useStyles = CreateResponsiveStyle(
     },
     container: {
       minWidth: '90%',
-      minHeight: '65%',
+      minHeight: '90%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,

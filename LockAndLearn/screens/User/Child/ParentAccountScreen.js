@@ -92,6 +92,30 @@ const ParentAccountScreen = ({ navigation }) => {
         >
           + Add Child
         </Text>
+        <Button
+          style={[styles.button, styles.full_width]}
+          contentStyle={{
+            minWidth: '90%',
+            maxWidth: '90%',
+          minHeight: 78,
+          justifyContent: 'flex-start',
+          }}
+          onPress={() => navigation.navigate('WorkPackageBrowsing')}
+        >
+          <Text style={[styles.child, {color: '#ffffff' }]}>Browse for Work Packages</Text>
+        </Button>
+        <Button
+          style={[styles.button, styles.full_width]}
+          contentStyle={{
+            minWidth: '90%',
+            maxWidth: '90%',
+          minHeight: 78,
+          justifyContent: 'flex-start',
+          }}
+          onPress={() => navigation.navigate('PurchasedMaterial')}
+        >
+          <Text style={[styles.child, {color: '#ffffff'}]}>View Purchased Material</Text>
+        </Button>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>

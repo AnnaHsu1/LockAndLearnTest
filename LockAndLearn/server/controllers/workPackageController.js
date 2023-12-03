@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const WorkPackage = require('../schema/workPackageSchema.js');
+const User = require('../schema/userSchema.js');
 
 // Create a new work package
 router.post('/create', async (req, res) => {
@@ -34,7 +35,7 @@ router.post('/create', async (req, res) => {
   }
 });
 
-// Fetch all work packages
+// Fetch all work packages of specific instructor
 router.get('/fetchWorkpackages/:id', async (req, res) => {
   const instructorID = req.params.id;
   try {
@@ -47,6 +48,267 @@ router.get('/fetchWorkpackages/:id', async (req, res) => {
     console.error('Error fetching all work packages:', error);
     res.status(500).json({ error: 'An error occurred while fetching all work packages.' });
   }
+});
+
+// Fetch work packages of a specific parent user (owned or unowned)
+router.get('/fetchWorkpackagesParent/:id', async (req, res) => {
+  const parentId = req.params.id;
+  console.log('query type:' + req.query.displayOwned);
+  const displayOwned = req.query.displayOwned === 'true';
+
+  try {
+    // Retrieve the parent user by ID
+    const parentUser = await User.findById(parentId);
+    //console.log('Parent ID received: ' + parentId);
+
+    if (!parentUser) {
+      //console.log('Parent user not found');
+      return res.status(404).json({ error: 'Parent user not found' });
+    }
+
+    console.log('Parent found' + parentUser);
+
+    // Handle empty or undefined purchasedWorkPackages
+    const purchasedWorkPackages = parentUser.purchasedWorkPackages || [];
+
+    let workPackagesQuery = {};
+    if (displayOwned) {
+      // Fetch owned work packages if query param indicates to display owned
+      workPackagesQuery = { _id: { $in: purchasedWorkPackages } };
+    } else {
+      // Fetch unowned work packages if query param indicates to display unowned
+      workPackagesQuery = { _id: { $nin: purchasedWorkPackages } };
+    }
+
+    // Retrieve work packages based on the constructed query
+    const filteredWorkPackages = await WorkPackage.find(workPackagesQuery);
+    
+    const anonymousInstructor = {
+      firstName: 'Anonymous',
+      lastName: '',
+    };
+
+    const deletedInstructor = {
+      firstName: 'Deleted',
+      lastName: 'User',
+    };
+
+    const processedWorkPackages = await Promise.all(
+      filteredWorkPackages.map(async (workPackage) => {
+        try {
+          // Check if instructorID exists in the WorkPackage object (legacy data)
+          if (!workPackage.instructorID) {
+            const updatedWorkPackage = { ...workPackage.toObject(), instructorDetails: anonymousInstructor };
+    
+            return updatedWorkPackage;
+          }
+    
+          // If th field exists, fetch the firstName and lastName based on instructorID
+          const instructorDetails = await User.findById(workPackage.instructorID, 'firstName lastName');
+    
+          //If user doesn't exist in the database, set instructorDetails to Deleted Account
+          if (!instructorDetails) {
+            const updatedWorkPackage = { ...workPackage.toObject(), instructorDetails: deletedInstructor };
+    
+            return updatedWorkPackage;
+          }
+    
+          // Construct a new object with the queried data
+          const instructorData = {
+            firstName: instructorDetails.firstName,
+            lastName: instructorDetails.lastName,
+          };
+    
+          // Merge the instructor details into the workPackage object
+          const updatedWorkPackage = { ...workPackage.toObject(), instructorDetails: instructorData };
+    
+          return updatedWorkPackage;
+        } catch (error) {
+          console.error('Error while processing work package:', error);
+          throw error;
+        }
+      })
+    );
+    
+
+    // Send a success response with the array of unowned work packages
+    res.status(200).json(processedWorkPackages);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error fetching unowned work packages:', error);
+    res.status(500).json({ error: 'An error occurred while fetching unowned work packages.' });
+  }
+});
+
+// Fetch all packages in the cart of a specific parent user
+router.get('/fetchWorkpackagesCart/:id', async (req, res) => {
+    const parentId = req.params.id;
+    try {
+        // Retrieve the parent user by ID
+        const parentUser = await User.findById(parentId);
+        //console.log('Parent ID received: ' + parentId);
+
+        if (!parentUser) {
+            //console.log('Parent user not found');
+            return res.status(404).json({ error: 'Parent user not found' });
+        }
+
+        console.log('Parent found' + parentUser);
+
+        // Handle empty or undefined cartWorkPackages
+        const cartWorkPackages = parentUser.CartWorkPackages || [];
+
+        const anonymousInstructor = {
+            firstName: 'Anonymous',
+            lastName: '',
+        };
+
+        const deletedInstructor = {
+            firstName: 'Deleted',
+            lastName: 'User',
+        };
+
+        // Retrieve all work packages that are in the cart of the parent user
+        const WorkPackagesInCart = await WorkPackage.find({
+            _id: { $in: cartWorkPackages },
+        });
+
+        const processedWorkPackages = await Promise.all(
+            WorkPackagesInCart.map(async (workPackage) => {
+                try {
+                    // Check if instructorID exists in the WorkPackage object (legacy data)
+                    if (!workPackage.instructorID) {
+                        const updatedWorkPackage = { ...workPackage.toObject(), instructorDetails: anonymousInstructor };
+
+                        return updatedWorkPackage;
+                    }
+                    // If th field exists, fetch the firstName and lastName based on instructorID
+                    const instructorDetails = await User.findById(workPackage.instructorID, 'firstName lastName');
+                    //If user doesn't exist in the database, set instructorDetails to Deleted Account
+                    if (!instructorDetails) {
+                        const updatedWorkPackage = { ...workPackage.toObject(), instructorDetails: deletedInstructor };
+
+                        return updatedWorkPackage;
+                    }
+
+                    // Construct a new object with the queried data
+                    const instructorData = {
+                        firstName: instructorDetails.firstName,
+                        lastName: instructorDetails.lastName,
+                    };
+
+                    // Merge the instructor details into the workPackage object
+                    const updatedWorkPackage = { ...workPackage.toObject(), instructorDetails: instructorData };
+
+                    return updatedWorkPackage;
+                   
+                } catch (error) {
+                    console.error('Error while processing work package:', error);
+                    throw error;
+                }
+            })
+        );
+
+
+        // Send a success response with the array of unowned work packages
+        res.status(200).json(processedWorkPackages);
+    } catch (error) {
+        // Handle errors and send an error response
+        console.error('Error fetching unowned work packages:', error);
+        res.status(500).json({ error: 'An error occurred while fetching unowned work packages.' });
+    }
+});
+
+
+
+// Add to user cart a specific work package 
+router.put('/addToCart/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const workPackageId = req.body.CartWorkPackages;
+        
+
+        console.log(workPackageId);
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+     
+        // Check if the work package is already in the user's cart
+        const isAlreadyInCart = user.CartWorkPackages.includes(workPackageId);
+        if (isAlreadyInCart) {
+            return res.status(400).json({ error: 'This work package is already in the cart' });
+        }
+    
+        const updatedWorkPackage = await WorkPackage.findByIdAndUpdate(
+            workPackageId,
+            { $push: { CartWorkPackages: workPackageId } }, // Add the workPackageId to CartWorkPackages array
+            { new: true } // Return the updated work package
+        );
+
+        if (!updatedWorkPackage) {
+            return res.status(404).json({ error: 'Work package not found' });
+        }
+      
+        // Add the work package ID to the user's CartWorkPackage array
+        user.CartWorkPackages.push(workPackageId);
+
+        // Save the updated user
+        await user.save();
+
+        // Send a success response
+        res.status(200).json({ message: 'Work package added to cart successfully' });
+    } catch (error) {
+        console.error('Error adding work package to user:', error);
+        res.status(500).json({ error: 'An error occurred while adding work package to the user.' });
+    }
+});
+
+// Delete a work package from the cart of a specific user by ID
+router.delete('/deleteFromCart/:userId/:selectedWorkPackage', async (req, res) => {
+    try {
+        
+        const workPackageId = req.params.selectedWorkPackage;
+        const userId = req.params.userId;
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log("part1");
+        // Find the file by its Id and delete it in the materials array
+        const updatedWorkPackage = await User.findByIdAndUpdate(
+            userId,
+            { $pull: { CartWorkPackages: workPackageId } },
+            { new: true }
+        );
+        console.log("part2");
+        if (!updatedWorkPackage) {
+            return res.status(404).json({ error: 'Work package not found' });
+        }
+
+        // Send a success response with the updated work package data
+        res.status(200).json({ message: 'Work package removed from cart successfully' });
+    } catch (error) {
+        console.error('Error deleting work package from cart:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the work package from the cart.' });
+    }
+});
+
+// Fetch all work packages
+router.get('/fetchWorkpackages', async (req, res) => {
+    try {
+        // Retrieve all work packages from the database without filtering by instructorID
+        const allWorkPackages = await WorkPackage.find();
+        // Send a success response with the array of work packages
+        res.status(200).json(allWorkPackages);
+    } catch (error) {
+        // Handle errors and send an error response
+        console.error('Error fetching all work packages:', error);
+        res.status(500).json({ error: 'An error occurred while fetching all work packages.' });
+    }
 });
 
 // Delete a specific work package by ID
@@ -253,6 +515,8 @@ router.delete('/deleteQuiz/:workPackageId/:quizId', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while deleting the quiz from the work package.' });
   }
 });
+
+
 
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
@@ -28,6 +28,10 @@ import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 import LogoutButton from './LogoutButton';
+import AddChildMaterial from '../screens/User/Child/AssignChildMaterial';
+import PurchasedMaterial from '../screens/User/Child/ViewPurchasedMaterial';
+import WorkPackageBrowsing from '../screens/WorkPackage/WorkPackageBrowsing';
+import WorkPackageCart from '../screens/WorkPackage/WorkPackageCart';
 import TakeQuiz from '../screens/StudyMaterial/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
@@ -183,6 +187,42 @@ const StackNavigation = () => {
           name="EditQuestion"
           component={EditQuestion}
           options={{ title: 'Edit Question' }}
+        />
+        <Stack.Screen
+            name="AddChildMaterial"
+            component={AddChildMaterial}
+            options={{ title: 'Add Child Material' }}
+        />
+        <Stack.Screen
+            name="PurchasedMaterial"
+            component={PurchasedMaterial}
+            options={{ title: 'View Purchased Material' }}
+        />
+        <Stack.Screen
+          name="WorkPackageBrowsing"
+          component={WorkPackageBrowsing}
+          options={{ title: 'Work Package Browsing' }}
+        />
+        <Stack.Screen
+            name="WorkPackageCart"
+            component={WorkPackageCart}
+            options={({ navigation, route }) => ({
+              title: 'Work Package Cart',
+               headerLeft: () => (
+                 <TouchableOpacity
+                 onPress={() => {
+                  const removedWP = route.params || [];
+                  //console.log('stack navigator', removedWP);
+                  navigation.navigate('WorkPackageBrowsing', {
+                    removedWP: removedWP, // Pass accumulated removed work packages as a parameter
+          });
+                }}
+                   style={{ marginLeft: 15 }}
+                 >
+                   <Ionicons name="arrow-back" size={24} color="white" />
+                 </TouchableOpacity>
+               ),
+            })}
         />
         <Stack.Screen
           name="TakeQuiz"
