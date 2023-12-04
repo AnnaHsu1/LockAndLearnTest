@@ -34,7 +34,7 @@ global.fetch = jest.fn(() =>
 describe('WorkPackageOverview', () => {
   it('renders correctly', () => {
     const { getByText } = render(<WorkPackageOverview />);
-    expect(getByText('Your Work Packages')).toBeTruthy();
+    expect(getByText('My Work Packages')).toBeTruthy();
   });
 
   it('fetches work packages on mount', async () => {

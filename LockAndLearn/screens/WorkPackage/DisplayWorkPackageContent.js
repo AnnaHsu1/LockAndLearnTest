@@ -36,6 +36,8 @@ const DisplayWorkPackageContent = () => {
   const [workPackagePrice, setWorkPackagePrice] = useState('');
   const [isValidPrice, setIsValidPrice] = useState(true);
 
+  
+
   useEffect(() => {
     fetchWorkPackage();
   }, [newContentAdded]);
@@ -369,12 +371,12 @@ const DisplayWorkPackageContent = () => {
             value={workPackageDescription}
             onChangeText={(input) => {
               setWorkPackageDescription(input);
-              input != '' ? setShowButton(true) : setShowButton(false)
             }}
             multiline={true}
             testID='description_input'
           />
-          <Text style={styles.priceText}>Price $</Text>
+          {/* to be added: if need to add price to package (in the future) */}
+          {/* <Text style={styles.priceText}>Price $</Text>
 
           <TextInput
             style={styles.priceField}
@@ -387,18 +389,7 @@ const DisplayWorkPackageContent = () => {
               {' '}
               Please enter an accurate price in this format: 12.34
             </Text>
-          )}
-          {showButton && 
-          <View style={{ alignItems: 'end' }}>
-            <TouchableOpacity
-              onPress={saveChanges}
-              style={styles.buttonAddMaterial}
-              testID={`saveChangesButton`}
-            >
-            <Text style={styles.buttonText}>Save Changes</Text>
-            </TouchableOpacity>
-          </View>
-          }
+          )} */}
           
         </ScrollView>
         {/* Display button to show modal to add files/quizzes */}

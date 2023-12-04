@@ -7,6 +7,7 @@ import {
   FlatList,
   Modal,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { React, useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
@@ -14,7 +15,7 @@ import { TouchableOpacity } from 'react-native';
 import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css'; causes issue with android
 import { Icon } from 'react-native-paper';
-import { getItem } from '../../components/AsyncStorage';
+import { getUser } from '../../components/AsyncStorage';
 import { useNavigation } from '@react-navigation/native';
 
 const UploadScreen = () => {
@@ -25,21 +26,14 @@ const UploadScreen = () => {
   const [duplicateFiles, setDuplicateFiles] = useState([]);
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.9;
+  const [dictionary, setDictionary] = useState([]); // [{key, value}]
+  const dict = [];
+  const [fileDescription, setFileDescription] = useState([]);
 
-  // function to get user id from AsyncStorage
-  const getUser = async () => {
-    try {
-      const token = await getItem('@token');
-      if (token) {
-        const user = JSON.parse(token);
-        return user._id;
-      } else {
-        // Handle the case where user is undefined (not found in AsyncStorage)
-        console.log('User not found in AsyncStorage');
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  // function to get userID from async storage
+  const getUserId = async () => {
+    const user = await getUser();
+    return user._id;
   };
 
   // function handling with file uploaded by user and its names
@@ -53,6 +47,11 @@ const UploadScreen = () => {
         return !files.some((f) => f.name == file.name); // using names to compare for duplicates
       });
       setFiles([...files, ...noDuplicateFile]);
+      // create dictionary for each file: for description
+      noDuplicateFileName.forEach((name) => {
+        dict.push({ key: name, value: '' });
+      });
+      setDictionary([...dictionary, ...dict]);
     } else if (Platform.OS === 'android') {
       setFiles([result.assets]);
       const selectedFileNames = result.assets.map((file) => file.name);
@@ -73,6 +72,13 @@ const UploadScreen = () => {
       filesAfterDeletionName.includes(file.name)
     );
     setFiles(filteredFiles);
+    const filteredDictionary = dictionary.filter((dict) => filesAfterDeletionName.includes(dict.key));
+    setDictionary(filteredDictionary);
+  };
+
+  // function to find description of each file
+  const findDescription = (fileName) => {
+    return dictionary.find((dict) => dict.key == fileName)?.value || '';
   };
 
   // function to send uploaded files to server
@@ -85,18 +91,27 @@ const UploadScreen = () => {
       const fileType = splitName[splitName.length - 1];
       return !(fileType == 'pdf');
     });
+
     if (invalidFileType.length > 0) {
       toast.error('You can only upload PDF files. Please delete your file and try again.');
       return;
     }
 
+    const noDescription = dictionary.filter((dict) => dict.value == '');
+    if (noDescription.length > 0) {
+      toast.error('Please add description for all files.');
+      return false;
+    }  
+
     const fileData = new FormData();
-    const user = await getUser();
+    const user = await getUserId();
     fileData.append('userId', user);
     files.forEach((file) => {
       fileData.append('files', file);
+      fileData.append('description', findDescription(file.name));
     });
 
+    // keep: for testing purposes
     // for (var key of fileData.entries()) {
     //   console.log(key[0] + ', ' + key[1]);
     // }
@@ -135,10 +150,11 @@ const UploadScreen = () => {
       return;
     }
     const fileData = new FormData();
-    const user = await getUser();
+    const user = await getUserId();
     fileData.append('userId', user);
     files.forEach((file) => {
       fileData.append('files', file);
+      fileData.append('description', findDescription(file.name));
     });
     try {
       const response = await fetch('http://localhost:4000/files/overwriteFiles', {
@@ -165,6 +181,7 @@ const UploadScreen = () => {
   const renderFile = (item, index) => {
     const splitName = item.split('.');
     const fileType = splitName[splitName.length - 1];
+    const fileDescription = dictionary.find((dict) => dict.key == item)?.value || '';
     return (
       <View key={index}>
         <View
@@ -172,7 +189,7 @@ const UploadScreen = () => {
           style={[fileType == 'pdf' ? styles.successRowUpload : styles.errorRowUpload]}
         >
           <View style={styles.rowUpload} key={index}>
-            <Text numberOfLines={1} ellipsizeMode='middle' style={[ {maxWidth: maxTextWidth}, styles.errorTextbox ]} >{item}</Text>
+            <Text numberOfLines={1} ellipsizeMode='middle' style={[ {maxWidth: maxTextWidth, paddingLeft: 10}, styles.errorTextbox ]} >{item}</Text>
             <TouchableOpacity
               testID={`deleteButton-${index}`} // Unique testID for each button
               style={styles.buttonDelete}
@@ -185,6 +202,28 @@ const UploadScreen = () => {
               )}
             </TouchableOpacity>
           </View>
+          {/* add a description field and display in lightgrey */}
+          {fileType == 'pdf' ? (
+            <View style={styles.rowDescription}>
+              <TextInput
+                style={styles.fileDescriptionInput}
+                onChangeText={(newText) => {
+                  setFileDescription(newText),
+                    setDictionary(
+                      dictionary.map((dict) => {
+                        if (dict.key == item) {
+                          return { ...dict, value: newText };
+                        } else {
+                          return dict;
+                        }
+                      })
+                    );
+                }}
+                value={fileDescription}
+                placeholder="Add File's Description"
+              />
+            </View>
+          ) : null}
         </View>
         {fileType == 'pdf' ? null : (
           <View style={styles.errorMsgRow}>
@@ -317,6 +356,163 @@ const UploadScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  containerFile: {
+    flex: 1,
+    backgroundColor: '#FAFAFA',
+    alignItems: 'center',
+    width: '100%',
+    // minHeight: '100%',
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    marginTop: '5%',
+  },
+  selectFiles: {
+    color: '#696969',
+    fontSize: 36,
+    fontWeight: '500',
+    marginTop: '1%',
+  },
+  imageUpload: {
+    resizeMode: 'contain',
+    width: 221,
+    height: 130,
+  },
+  supportedFormats: {
+    color: '#ADADAD',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  containerUploaded: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'left',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#FAFAFA',
+    paddingLeft: '5%',
+    paddingRight: '5%',
+  },
+  uploadFiles: {
+    color: '#696969',
+    fontSize: 20,
+    fontWeight: '500',
+    marginTop: '0.5%',
+    marginBottom: 0.5,
+  },
+  rowUpload: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // padding: 10,
+  },
+  rowUploadModal: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    fontWeight: '500',
+    fontSize: 15,
+    marginHorizontal: 10,
+    marginBottom: 5,
+  },
+  rowDescription: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  successRowUpload: {
+    borderRadius: 10,
+    borderColor: '#61A750',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    marginBottom: 15,
+    height: 90,
+  },
+  errorRowUpload: {
+    borderRadius: 10,
+    borderColor: '#F24E1E',
+    borderStyle: 'solid',
+    borderWidth: 1,
+  },
+  duplicatedFileTextbox: {
+    marginLeft: 5,
+    flex: 0.9,
+    outlineStyle: 'none',
+  },
+  errorTextbox: {
+    flex: 0.9,
+    outlineStyle: 'none',
+  },
+  fileDescriptionInput: {
+    flex: 0.9,
+    outlineStyle: 'none',
+    backgroundColor: '#EBEBEB',
+    borderRadius: 10,
+    padding: 10,    
+  },
+  buttonDelete: {
+    flex: 0.1,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorMsgRow: {
+    marginBottom: '1%',
+  },
+  errorText: {
+    color: '#F24E1E',
+    fontSize: 10.76,
+    fontWeight: '500',
+    // lineHeight: 19.37,
+  },
+  buttonConfirm: {
+    backgroundColor: 'red',
+    width: 75,
+    height: 30,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonCancel: {
+    backgroundColor: 'lightgray',
+    width: 75,
+    height: 30,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10
+  },
+  buttonUpload: {
+    backgroundColor: '#407BFF',
+    width: 190,
+    height: 35,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+    marginTop: '2%',
+    marginBottom: '3%' 
+  },
+  buttonConfirmText: {
+    color: '#FFFFFF',
+    alignItems: 'center',
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    alignItems: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+  },
   buttonOverwriteFiles: {
     alignItems: 'center', 
     paddingVertical: 10,   
@@ -379,149 +575,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 100,
     alignSelf: 'center',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-  },
-  containerFile: {
-    flex: 1,
-    backgroundColor: '#FAFAFA',
-    alignItems: 'center',
-    width: '100%',
-    // minHeight: '100%',
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    marginTop: '5%',
-  },
-  selectFiles: {
-    color: '#696969',
-    fontSize: 36,
-    fontWeight: '500',
-    marginTop: '1%',
-  },
-  imageUpload: {
-    resizeMode: 'contain',
-    width: 221,
-    height: 130,
-  },
-  supportedFormats: {
-    color: '#ADADAD',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  containerUploaded: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'left',
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#FAFAFA',
-    paddingLeft: '5%',
-    paddingRight: '5%',
-  },
-  uploadFiles: {
-    color: '#696969',
-    fontSize: 20,
-    fontWeight: '500',
-    marginTop: '0.5%',
-    marginBottom: 0.5,
-  },
-  rowUpload: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  rowUploadModal: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    fontWeight: '500',
-    fontSize: 15,
-    marginHorizontal: 10,
-    marginBottom: 5,
-  },
-  successRowUpload: {
-    borderRadius: 10,
-    borderColor: '#61A750',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    marginBottom: '1%',
-  },
-  errorRowUpload: {
-    borderRadius: 10,
-    borderColor: '#F24E1E',
-    borderStyle: 'solid',
-    borderWidth: 1,
-  },
-  duplicatedFileTextbox: {
-    marginLeft: 5,
-    flex: 0.9,
-    outlineStyle: 'none',
-  },
-  errorTextbox: {
-    flex: 0.9,
-    padding: 10,
-    outlineStyle: 'none',
-  },
-  buttonDelete: {
-    flex: 0.1,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorMsgRow: {
-    marginBottom: '1%',
-  },
-  errorText: {
-    color: '#F24E1E',
-    fontSize: 10.76,
-    fontWeight: '500',
-    // lineHeight: 19.37,
-  },
-  buttonConfirm: {
-    backgroundColor: 'red',
-    width: 75,
-    height: 30,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonCancel: {
-    backgroundColor: 'lightgray',
-    width: 75,
-    height: 30,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10
-  },
-  buttonUpload: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: '2%',
-    marginBottom: '3%' 
-  },
-  buttonConfirmText: {
-    color: '#FFFFFF',
-    alignItems: 'center',
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    alignItems: 'center',
-    fontSize: 15,
-    fontWeight: '500',
   },
 });
 

@@ -27,10 +27,12 @@ const uploadFiles = multer();
 router.put('/overwriteFiles', uploadFiles.array('files', 'userId'), async (req, res) => {
   const files = req.files;
   const userId = req.body.userId;
+  const descriptions = req.body.description;
   const conn = mongoose.connection;
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
+    const description = descriptions[i];
     const existingFile = await bucket.find({ "metadata.userId": userId, "filename": file.originalname }).toArray();
     if (existingFile.length > 0) {
       bucket.delete(existingFile[0]._id, (err, data) => {
@@ -39,7 +41,7 @@ router.put('/overwriteFiles', uploadFiles.array('files', 'userId'), async (req, 
         }
       });
     }
-    const uploadStream = bucket.openUploadStream(file.originalname, { metadata: { userId } });
+    const uploadStream = bucket.openUploadStream(file.originalname, { metadata: { userId, description } });
     uploadStream.on('error', (error) => {
       console.log('Error uploading file:', error);
     });
@@ -56,6 +58,7 @@ router.put('/overwriteFiles', uploadFiles.array('files', 'userId'), async (req, 
 router.post('/uploadFiles', uploadFiles.array('files', 'userId'), async (req, res) => {
   const files = req.files;
   const userId = req.body.userId;
+  const descriptions = req.body.description;
   const conn = mongoose.connection;
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
   const duplicatedFiles = [];
@@ -71,7 +74,8 @@ router.post('/uploadFiles', uploadFiles.array('files', 'userId'), async (req, re
   }
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    const uploadStream = bucket.openUploadStream(file.originalname, { metadata: { userId } });
+    const description = descriptions[i];
+    const uploadStream = bucket.openUploadStream(file.originalname, { metadata: { userId, description } });
     uploadStream.on('error', (error) => {
       console.log('Error uploading file:', error);
     });
@@ -128,7 +132,8 @@ router.get('/filesName/:id', async (req, res) => {
     return res.status(201).json({ message: "File not found" });
   }
   const fileName = file[0].filename;
-  res.status(201).json({ fileName });
+  const fileDescription = file[0].metadata.description;
+  res.status(201).json({ fileName, fileDescription });
 })
 
 // get all uploaded files

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,7 @@ import {
   Modal,
   TextInput,
   ImageBackground,
+  ScrollView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +24,9 @@ const CreateWorkPackage = (route) => {
   const [workPackageGrade, setWorkPackageGrade] = useState('Choose a Grade');
   const [workPackageSubcategories, setWorkPackageSubcategories] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState('Choose a Subcategory');
+  const [workPackageDescription, setWorkPackageDescription] = useState('');
+  const [workPackagePrice, setWorkPackagePrice] = useState('');
+  const [isValidPrice, setIsValidPrice] = useState(true);
 
   // Function to diplay the subcategories or not, based on the selected grade and subject
   const handleGradeAndSubjectChange = (grade, subject) => {
@@ -36,7 +40,11 @@ const CreateWorkPackage = (route) => {
 
   // Disable the create button if the user has not selected a subject and a grade
   const isCreateButtonDisabled =
-    workPackageName === 'Choose a Subject' || workPackageGrade === 'Choose a Grade';
+    workPackageName === 'Choose a Subject' ||
+    workPackageGrade === 'Choose a Grade' ||
+    workPackageDescription === '' ||
+    workPackagePrice === '' ||
+    !isValidPrice;
 
   const handleBackButton = () => {
     navigation.navigate('WorkPackageOverview');
@@ -53,7 +61,8 @@ const CreateWorkPackage = (route) => {
       const user = JSON.parse(token);
       const userId = user._id;
       if (userId) {
-        const response = await fetch('http://localhost:4000/workPackages/create', {
+        // const response = await fetch('http://localhost:4000/workPackages/create', {
+        const response = await fetch('http://localhost:4000/workPackages/createWorkPackage', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -61,23 +70,23 @@ const CreateWorkPackage = (route) => {
           body: JSON.stringify({
             name: workPackageName,
             grade: workPackageGrade,
-            subcategory: selectedSubcategory,
+            // subcategory: selectedSubcategory,
             instructorID: userId,
+            description: workPackageDescription,
+            price: workPackagePrice,
+            packageCount: 0,
           }),
         });
         if (response.status === 200 || 201) {
           const data = await response.json();
-          console.log('Created work package:', data);
           setWorkPackageName('');
           setWorkPackageGrade('');
           // Extract the ID from the response
           const workPackageId = data._id;
           // Navigate to "DisplayWorkPackageContent" and pass the workPackageId
-          navigation.navigate('DisplayWorkPackageContent', { workPackageId });
-          console.log('workpackage: ' + workPackageId);
+          navigation.navigate('WorkPackage', { refresh: workPackageId });
         } else {
           console.error('Error creating work package');
-          console.log(response);
         }
       } else {
         console.log('Must be logged in to create a work package');
@@ -87,6 +96,12 @@ const CreateWorkPackage = (route) => {
     }
   };
 
+  const handlePriceChange = (input) => {
+    const priceValidation = /^[0-9]*(\.[0-9]{0,2})?$/.test(input);
+    setIsValidPrice(priceValidation);
+    setWorkPackagePrice(input);
+  };
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -94,73 +109,85 @@ const CreateWorkPackage = (route) => {
       style={styles.container}
     >
       <View style={styles.containerFile}>
-        <Text style={styles.selectFiles}>Create Work Package</Text>
-        {/* Display picker for subject */}
-        <View style={styles.containerInput}>
-          <View style={styles.containerPicker}>
-            <Text style={{ color: '#ADADAD' }}>Subject</Text>
-            <Picker
-              testID="subject-picker"
-              selectedValue={workPackageName}
-              onValueChange={(itemValue) => {
-                setWorkPackageName(itemValue);
-                handleGradeAndSubjectChange(workPackageGrade, itemValue); // Call the function with selected grade and subject
-              }}
-              style={styles.workPackageTypePicker}
-            >
-              <Picker.Item label="Choose a Subject" value="Choose a Subject" />
-              {workPackageNames.map((name, index) => (
-                <Picker.Item key={index} label={name} value={name} />
-              ))}
-            </Picker>
+        <Text style={styles.selectFiles}>Create New Work Package</Text>
+        <ScrollView style={{ width: '100%' }}>
+          {/* Display picker for subject */}
+          <View style={styles.containerInput}>
+            <View style={styles.containerPicker}>
+              <Text style={{ color: '#ADADAD' }}>Subject</Text>
+              <Picker
+                testID="subject-picker"
+                selectedValue={workPackageName}
+                onValueChange={(itemValue) => {
+                  setWorkPackageName(itemValue);
+                  handleGradeAndSubjectChange(workPackageGrade, itemValue); // Call the function with selected grade and subject
+                }}
+                style={styles.workPackageTypePicker}
+              >
+                <Picker.Item label="Choose a Subject" value="Choose a Subject" />
+                {workPackageNames.map((name, index) => (
+                  <Picker.Item key={index} label={name} value={name} />
+                ))}
+              </Picker>
+            </View>
+            {/* Display picker for grade */}
+            <View style={[styles.containerPicker, { marginTop: 10 }]}>
+              <Text style={{ color: '#ADADAD' }}>School Grade</Text>
+              <Picker
+                testID="grade-picker"
+                selectedValue={workPackageGrade}
+                onValueChange={(itemValue) => {
+                  setWorkPackageGrade(itemValue);
+                  handleGradeAndSubjectChange(itemValue, workPackageName); // Call the function with selected grade and subject
+                }}
+                style={styles.workPackageTypePicker}
+              >
+                <Picker.Item label="Choose a Grade" value="Choose a Grade" />
+                {workPackageGrades.map((type, index) => (
+                  <Picker.Item key={index} label={type} value={type} />
+                ))}
+              </Picker>
+            </View>
+            {/* Display description */}
+            <View style={[styles.containerPicker, { marginTop: 10 }]}>
+              <Text style={{ color: '#ADADAD' }}>Description</Text>
+              <TextInput
+                testID="description-input"
+                multiline={true}
+                // numberOfLines={4}
+                value={workPackageDescription}
+                onChangeText={setWorkPackageDescription}
+                style={styles.workPackageInputText}
+                // placeholder="Enter your description"
+              />
+            </View>
+            <View style={[styles.containerPicker, { marginTop: 10 }]}>
+              <Text style={{ color: '#ADADAD' }}>Price $</Text>
+              <TextInput
+                testID="price-input"
+                style={styles.workPackageInputTextPrice}
+                value={workPackagePrice}
+                onChangeText={handlePriceChange}
+              />
+              {!isValidPrice && (
+                <Text style={styles.invalidPriceMessage}>
+                  Please enter an accurate price in this format: 12.34
+                </Text>
+              )}
+            </View>
           </View>
-          {/* Display picker for grade */}
-          <View style={styles.containerPicker}>
-            <Text style={{ color: '#ADADAD' }}>School Grade</Text>
-            <Picker
-              testID="grade-picker"
-              selectedValue={workPackageGrade}
-              onValueChange={(itemValue) => {
-                setWorkPackageGrade(itemValue);
-                handleGradeAndSubjectChange(itemValue, workPackageName); // Call the function with selected grade and subject
-              }}
-              style={styles.workPackageTypePicker}
-            >
-              <Picker.Item label="Choose a Grade" value="Choose a Grade" />
-              {workPackageGrades.map((type, index) => (
-                <Picker.Item key={index} label={type} value={type} />
-              ))}
-            </Picker>
-          </View>
-          {/* Display picker for subcategory */}
-          <View style={styles.containerPicker}>
-            <Text style={{ color: '#ADADAD' }}>Subcategory</Text>
-            <Picker
-              testID="subcategory-picker"
-              selectedValue={selectedSubcategory}
-              onValueChange={(itemValue) => setSelectedSubcategory(itemValue)}
-              style={styles.workPackageTypePicker}
-            >
-              {workPackageSubcategories.map((subcategory, index) => (
-                <Picker.Item key={index} label={subcategory} value={subcategory} />
-              ))}
-            </Picker>
-          </View>
-        </View>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleBackButton} style={styles.backButton}>
-              <Text style={styles.backButtonText}>Back</Text>
-            </TouchableOpacity>
           {/* Display button to create work package */}
-          <TouchableOpacity
-            testID="createWorkPackageButton"
-            style={[styles.createQuestionButton, isCreateButtonDisabled && styles.disabledButton]}
-            onPress={handleCreateWorkPackage}
-            disabled={isCreateButtonDisabled}
-          >
-            <Text style={styles.createWorkPackageButtonText}>Create Work Package</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity
+              testID="createWorkPackageButton"
+              style={[styles.createQuestionButton, isCreateButtonDisabled && styles.disabledButton]}
+              onPress={handleCreateWorkPackage}
+              disabled={isCreateButtonDisabled}
+            >
+              <Text style={styles.createWorkPackageButtonText}>Create work package</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     </ImageBackground>
   );
@@ -198,6 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     height: '100%',
+    backgroundColor: 'red',
   },
   containerFile: {
     flex: 1,
@@ -207,54 +235,61 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginTop: '5%',
+    padding: '1%',
   },
   selectFiles: {
     color: '#696969',
-    fontSize: 36,
+    fontSize: 35,
     fontWeight: '500',
-    marginTop: '2%',
+    marginTop: '1%',
     textAlign: 'center',
   },
   containerInput: {
     width: '100%',
     flexDirection: 'column',
-    alignItems: 'center',
-  },
-  containerName: {
-    flexDirection: 'column',
-    alignItems: 'baseline',
-    width: '100%',
-    marginLeft: '20%',
-    marginTop: '2%',
+    alignContent: 'center',
+    marginTop: '1%',
   },
   containerPicker: {
-    flexDirection: 'column',
-    alignItems: 'baseline',
-    width: '100%',
-    marginLeft: '20%',
-    marginTop: 20,
+    width: '80%',
+    alignSelf: 'center',
   },
   workPackageTypePicker: {
-    width: '80%',
-    height: 45,
+    height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    marginTop: 10,
+    marginTop: 5,
   },
-  workPackageInput: {
-    width: '80%',
-    height: 45,
+  workPackageInputText: {
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    marginTop: 10,
+    marginTop: 5,
+    height: 200,
+  },
+  workPackageInputTextPrice: {
+    height: 35,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 5,
+  },
+  invalidPriceMessage: {
+    marginTop: 5,
+    color: 'red',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    fontSize: 10,
+    backgroundColor: '#ffe6e6',
+    padding: 5,
   },
   createQuestionButton: {
     backgroundColor: '#407BFF',
-    width: 250,
+    width: 190,
     height: 35,
     borderRadius: 9,
     alignItems: 'center',

@@ -47,10 +47,10 @@ const ViewUploadedFilesScreen = () => {
   const { width } = Dimensions.get('window');
   const maxDeleteTextWidth = width * 0.8;
   const maxTextWidth = width * 0.7;
+  const maxDescriptionTextWidth = width * 0.7;
   const navigation = useNavigation();
   const route = useRoute();
   let newContentAdded = route.params.newFilesAdded;
-  console.log('newContentAdded: ', newContentAdded);
 
   // function to get user id from AsyncStorage
   const getUser = async () => {
@@ -99,7 +99,8 @@ const ViewUploadedFilesScreen = () => {
           ...prevDataFile,
           ...files.uploadedFiles.map((file, index) => ({
               id: 1 + index,
-              originalname: file.filename
+              originalname: file.filename,
+              description: file.metadata.description,
           }))
         ]);
       }
@@ -126,9 +127,6 @@ const ViewUploadedFilesScreen = () => {
   // function to delete selected file
   const handleDelete = async (itemId) => {
     try {
-      console.log('itemId: ', itemId);
-      console.log('deleteDataFile: ', deleteDataFile);
-      console.log(deleteDataFile[itemId - 1]._id);
       const response = await fetch(
         `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[itemId - 1]._id}`,
         {
@@ -239,7 +237,8 @@ const ViewUploadedFilesScreen = () => {
         onPress={() => displayFile(file.originalname)}
         testID={`fileTouchableOpacity-${index}`}
       >
-        <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth }}>{file.originalname}</Text>
+        <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth, marginTop: 5 }}>{file.originalname}</Text>
+        <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.fileDescriptionText, {maxWidth: maxDescriptionTextWidth}]}>{file.description}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonDelete}
@@ -650,6 +649,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     paddingTop: 20,
+  },
+  fileDescriptionText: {
+    color: '#696969',
+     marginBottom: 5
   },
 });
 

@@ -14,21 +14,32 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { getItem } from '../../../components/AsyncStorage';
 import Modal from 'react-native-modal';
 
-const SelectStudyMaterialToAdd = () => {
+const SelectPackagesToAdd = () => {
   const route = useRoute();
-  const params = route.params;
-  const {wp_id, name, grade} = params?.workPackage;
-  const {p_id, p_quizzes, p_materials, subcategory, description} = params?.package;
+  const workPackageId = '';
+  const workPackageName = '';
+  const workPackageGrade = '';
+  const workPackageSubcategory = '';
   const navigation = useNavigation();
   const [dataFile, setDataFile] = useState([]);
+  const [deleteDataFile, setDeleteDataFile] = useState([]);
   const [checkedboxItems, setCheckedboxItems] = useState({});
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [fileDeleteId, setFileDeleteId] = useState('');
+  const [fileDeleteName, setFileDeleteName] = useState('');
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.6;
+  const maxTextButtonWidth = width * 0.8;
+
+  // function to toggle delete modal
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   // function called when screen is loaded
   useEffect(() => {
     fetchFiles();
-  }, []);
+  }, [deleteDataFile]);
 
   // function to fetch all files from user
   const fetchFiles = async () => {
@@ -39,24 +50,30 @@ const SelectStudyMaterialToAdd = () => {
       method: 'GET',
     });
     const files = await response.json();
+    deleteDataFile.push(files.uploadedFiles);
 
     // store files to display in renderFile fct
     const formattedFiles = files.uploadedFiles.map((file, index) => ({
       id: index + 1,
       originalname: file.filename,
       originalId: file._id,
-      description: file.metadata.description,
     }));
     setDataFile(formattedFiles);
 
-    // set checked (true) to checkboxes that are already selected in the package 
-    const materialsInDb = await fetch(`http://localhost:4000/packages/fetchMaterials/${p_id}`, {
+    // set checked (true) to checkboxes that are already selected in the work package
+    const responseWp = await fetch(`http://localhost:4000/workPackages/${workPackageId}`, {
       method: 'GET',
     });
-    const selectedFiles = await materialsInDb.json();
+    const selectedFiles = await responseWp.json();
     const checkedboxItems = {};
-
-    selectedFiles.forEach((material) => {
+    for (var i = 0; i < selectedFiles.materials.length; i++) {
+      for (var j = 0; j < formattedFiles.length; j++) {
+        if (selectedFiles.materials[i] === formattedFiles[j].originalId) {
+          checkedboxItems[formattedFiles[j].id] = true;
+        }
+      }
+    }
+    selectedFiles.materials.forEach((material) => {
       const index = formattedFiles.findIndex((file) => file.originalId === material);
       if (index !== -1) {
         checkedboxItems[formattedFiles[index].id] = true;
@@ -89,49 +106,47 @@ const SelectStudyMaterialToAdd = () => {
       }
     }
     return true;
-  }
+  };
 
   // function to store the checked files in an array and send to database
   const handleAddFilesInWP = async () => {
+    const selectedFiles = Object.entries(checkedboxItems)
+      .filter(([key, value]) => value)
+      .map(([key, value]) => dataFile.find((file) => file.id === parseInt(key)).originalId);
 
-    try {
-      const selectedFiles = Object.entries(checkedboxItems)
-        .filter(([key, value]) => value)
-        .map(([key, value]) => dataFile.find(file => file.id === parseInt(key)).originalId);
-      const response = await fetch(
-        `http://localhost:4000/packages/addContent/${p_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contentType: 'material',
-            materials: selectedFiles,
-          }),
-        }
-      );
-      if (response.status === 200) {
-        const files = await response.json();
-        navigation.navigate('EditPackage', { 
-          package: {
-            p_id: p_id,
-            p_quizzes: p_quizzes,
-            p_materials: selectedFiles,
-            subcategory: subcategory,
-            description: description,
-          },
-          workPackage: {
-            name: name,
-            grade: grade,
-            wp_id: wp_id,
-          }
-       });
-      } else {
-        console.error('Failed to add files to the work package:', response.status);
+    const response = await fetch(
+      `http://localhost:4000/workPackages/addMaterials/${workPackageId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          materials: selectedFiles,
+        }),
       }
-    } catch (error) {
-      console.error('Error adding files to the work package:', error);
+    );
+    const files = await response.json();
+    navigation.navigate('DisplayWorkPackageContent', {
+      workPackageId: workPackageId,
+      selectedNewContent: selectedFiles,
+    });
+  };
+
+  // function to delete files
+  const handleDelete = async (itemId) => {
+    await fetch(
+      `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[0][itemId - 1]._id}`,
+      {
+        method: 'DELETE',
+      }
+    );
+    const newData = dataFile.filter((item) => item.id !== itemId);
+    setDataFile(newData);
+    for (var key in checkedboxItems) {
+      if (key == itemId) {
+        delete checkedboxItems[key];
+      }
     }
   };
 
@@ -145,7 +160,7 @@ const SelectStudyMaterialToAdd = () => {
 
   // function to render each row (which is a file)
   const renderFile = (file, index, totalItems) => (
-    // display a row with a file name & have a grey border at the bottom of each row (except the last row)
+    // display a row with a file name and a delete button & have a grey border at the bottom of each row (except the last row)
     <View
       style={[
         styles.row,
@@ -155,11 +170,24 @@ const SelectStudyMaterialToAdd = () => {
       <Checkbox
         status={checkedboxItems[file.id] ? 'checked' : 'unchecked'}
         onPress={() => toggleCheckbox(file)}
-        color='#407BFF'
+        color="#407BFF"
       />
       <TouchableOpacity key={index.toString} onPress={() => downloadFile(file.originalname)}>
-        <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth, marginTop: 5 }}>{file.originalname}</Text>
-        <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth, color: 'gray', marginBottom: 5 }}>{file.description}</Text>
+        <Text numberOfLines={1} ellipsizeMode="middle" style={{ maxWidth: maxTextWidth }}>
+          {file.originalname}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.buttonDelete}
+        onPress={() => {
+          setFileDeleteId(file.id);
+          setFileDeleteName(file.originalname);
+          setModalVisible(true);
+        }}
+      >
+        <View style={styles.deleteButtonBackground}>
+          <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -172,22 +200,19 @@ const SelectStudyMaterialToAdd = () => {
     >
       <View style={styles.containerFile}>
         <View style={styles.containerTitle}>
-          <Text style={styles.selectFiles}>Choose files to add to your Package:</Text>
+          <Text style={styles.selectFiles}>Subject - Grade</Text>
+          <Text style={styles.selectFiles}>Choose packages to add to your Work Package:</Text>
           <Text style={styles.workPackageTitle}>
-            {name} - {grade}
+            {workPackageName} - {workPackageGrade}
           </Text>
-          {subcategory !== "Choose a Subcategory" && (
-            <Text style={styles.workPackageInfo}>{subcategory}</Text>
+          {workPackageSubcategory !== 'Choose a Subcategory' && (
+            <Text style={styles.workPackageInfo}>{workPackageSubcategory}</Text>
           )}
         </View>
         {/* display button to navigate to screen to upload files */}
-        <View
-          style={styles.buttonAddStudyMaterial}
-        >
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Upload')}
-          >
-            <Text style={{ color: "#407BFF", fontSize: 15 }}>+ Study Material</Text>
+        <View style={styles.buttonAddStudyMaterial}>
+          <TouchableOpacity onPress={() => navigation.navigate('Upload')}>
+            <Text style={{ color: '#407BFF', fontSize: 15 }}>+ Add Study Material</Text>
           </TouchableOpacity>
         </View>
         {/* display each row (which is a file) */}
@@ -204,16 +229,58 @@ const SelectStudyMaterialToAdd = () => {
             </View>
           )}
         />
+        {/* display delete modal */}
+        <Modal
+          isVisible={isModalVisible}
+          onRequestClose={toggleModal}
+          transparent={true}
+          style={{ justifyContent: 'center', alignItems: 'center' }}
+        >
+          <View style={styles.containerModal}>
+            <Text style={styles.title}>Are you sure you want to delete?</Text>
+            <Text
+              numberOfLines={2}
+              ellipsizeMode="middle"
+              style={[styles.fileName, { maxWidth: maxTextButtonWidth }]}
+            >
+              {fileDeleteName}
+            </Text>
+
+            <View style={styles.containerModalButtons}>
+              <Button
+                style={[styles.button, { backgroundColor: 'red', marginRight: 20 }]}
+                title="Hide modal"
+                onPress={() => {
+                  toggleModal();
+                  handleDelete(fileDeleteId);
+                }}
+              >
+                <Text style={styles.close}>Delete</Text>
+              </Button>
+              <Button
+                style={[styles.button, { backgroundColor: 'grey' }]}
+                title="Hide modal"
+                onPress={() => {
+                  toggleModal();
+                }}
+              >
+                <Text style={styles.close}>Cancel</Text>
+              </Button>
+            </View>
+          </View>
+        </Modal>
         {/* display button to add selected files to add to work package */}
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={() => handleAddFilesInWP()}
-            style={[styles.buttonAddMaterial, isAddButtonDisabled() && styles.disabledButton]}
-            disabled={isAddButtonDisabled()}
-          >
-            <Text style={styles.buttonText}>Add to Work Package</Text>
-          </TouchableOpacity>
-        </View>
+        {dataFile.length === 0 ? null : (
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => handleAddFilesInWP()}
+              style={[styles.buttonAddMaterial, isAddButtonDisabled() && styles.disabledButton]}
+              disabled={isAddButtonDisabled()}
+            >
+              <Text style={styles.buttonText}>Add to Work Package</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </ImageBackground>
   );
@@ -221,10 +288,10 @@ const SelectStudyMaterialToAdd = () => {
 
 const styles = StyleSheet.create({
   buttonAddStudyMaterial: {
-    alignSelf: "flex-end",
-    marginRight: "5%",
+    alignSelf: 'flex-end',
+    marginRight: '5%',
     marginBottom: 5,
-    marginTop: 5
+    marginTop: 5,
   },
   containerTitle: {
     borderBottomColor: 'lightgrey',
@@ -232,8 +299,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center',
     paddingBottom: 5,
-    width: '100%'
-  },  
+    width: '100%',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -256,7 +323,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '500',
     textAlign: 'center',
-    padding: "1%"
+    padding: '1%',
   },
   workPackageTitle: {
     color: '#696969',
@@ -267,8 +334,16 @@ const styles = StyleSheet.create({
   row: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  buttonDelete: {
+    padding: 8,
+  },
+  deleteButtonBackground: {
+    backgroundColor: 'rgba(242, 78, 30, 0.13)',
+    borderRadius: 100,
+    padding: 5,
   },
   buttonAddMaterial: {
     backgroundColor: '#407BFF',
@@ -279,7 +354,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
     marginTop: '2%',
-    marginBottom: '3%'
+    marginBottom: '3%',
   },
   buttonText: {
     color: '#FFFFFF',
@@ -295,7 +370,7 @@ const styles = StyleSheet.create({
   containerModalButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     color: 'black',
@@ -330,4 +405,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectStudyMaterialToAdd;
+export default SelectPackagesToAdd;

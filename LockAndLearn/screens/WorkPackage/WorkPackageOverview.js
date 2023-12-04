@@ -145,7 +145,7 @@ const WorkPackageOverview = () => {
       style={styles.container}
     >
       <View style={styles.containerFile}>
-        <Text style={styles.selectFiles}>Your Work Packages</Text>
+        <Text style={styles.selectFiles}>My Work Packages</Text>
         {/* Display all work packages from the user */}
         <FlatList
           data={workPackages}

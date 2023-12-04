@@ -45,7 +45,7 @@ describe('LandingPage', () => {
     const { getByText } = render(<LandingPage navigation={mockNavigation} />);
 
     fireEvent.press(getByText('My Work Packages'));
-    expect(mockNavigate).toHaveBeenCalledWith('WorkPackageOverview');
+    expect(mockNavigate).toHaveBeenCalledWith('WorkPackage');
 
     fireEvent.press(getByText('My quizzes'));
     expect(mockNavigate).toHaveBeenCalledWith('QuizzesOverviewScreen', {

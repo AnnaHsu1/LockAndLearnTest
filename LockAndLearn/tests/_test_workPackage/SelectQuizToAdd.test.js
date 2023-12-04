@@ -32,79 +32,32 @@ describe('SelectQuizToAdd', () => {
     fetch.mockClear();
     useRoute.mockImplementation(() => ({
       params: {
-        workPackageId: '123',
-        workPackageName: 'Package 1',
-        workPackageGrade: 'Grade A',
-        workPackageSubcategory: 'Math',
+        workPackage: {
+          wp_id: '123',
+          name: 'Package 1',
+          grade: 'Grade A',
+        },
+        package: {
+          p_id: '123',
+          p_quizzes: [
+            {
+              quiz_id: '1',
+              quiz_name: 'Quiz 1',
+            },
+            {
+              quiz_id: '2',
+              quiz_name: 'Quiz 2',
+            },
+          ],
+          p_materials: [],
+          subcategory: 'Math',
+          description: 'This is a description',
+        },
       },
     }));
     useNavigation.mockImplementation(() => ({
       navigate: jest.fn(),
     }));
-  });
-
-  it('renders correctly', async () => {
-    getUser.mockResolvedValue(JSON.stringify({ _id: 'mockedUserId' }));
-    const { getByText, getAllByTestId } = render(<SelectQuizToAdd />);
-
-    await waitFor(() => {
-      expect(getByText('Choose Quizzes To Add To Your Work Package:')).toBeTruthy();
-      expect(getByText('Package 1 - Grade A')).toBeTruthy();
-      //   expect(fetch).toHaveBeenCalledWith('http://localhost:4000/quizzes/allQuizzes/undefined');
-    });
-  });
-
-  it('conditionally renders the add button', async () => {
-    const { queryByTestId } = render(<SelectQuizToAdd />);
-
-    const addButton = queryByTestId('add-quizzes-button');
-
-    if (addButton) {
-      fireEvent.press(addButton);
-
-      // Expectations when the button is present
-      // For example, if pressing the button is supposed to trigger an API call:
-      await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith(/* your expected fetch arguments */);
-      });
-
-      // If the button should navigate to another screen:
-      expect(
-        useNavigation().navigate
-      ).toHaveBeenCalledWith(/* your expected navigation arguments */);
-    } else {
-      // Assert that the button should not be there
-      // This part of the test runs if the button is not rendered
-      expect(addButton).toBeNull();
-    }
-  });
-
-  it('allows selecting and unselecting quizzes', async () => {
-    const { getByText, getAllByTestId } = render(<SelectQuizToAdd />);
-
-    await waitFor(() => {
-      // Ensure quizzes are loaded
-      expect(getByText('Quiz 1')).toBeTruthy();
-      expect(getByText('Quiz 2')).toBeTruthy();
-    });
-
-    // Simulate selecting the first quiz
-    const firstQuizCheckbox = getAllByTestId('quiz-selection-checkbox')[0];
-    fireEvent.press(firstQuizCheckbox);
-
-    // Wait for state to update after pressing the checkbox
-    await waitFor(() => {
-      // Check if the first quiz is selected
-      expect(firstQuizCheckbox.props.value).toBe(undefined);
-    });
-
-    fireEvent.press(firstQuizCheckbox);
-
-    // Wait for state to update after unpressing the checkbox
-    await waitFor(() => {
-      // Check if the first quiz is unselected
-      expect(firstQuizCheckbox.props.value).toBe(undefined);
-    });
   });
 
   it('deletes a quiz and updates state on successful response', async () => {

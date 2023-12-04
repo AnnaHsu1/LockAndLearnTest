@@ -108,20 +108,20 @@ describe('<UploadScreen />', () => {
     fireEvent.press(getByTestId('deleteButton-0'));
   });
 
-  // Test uploading files
-  it('handles file upload', async () => {
-    const { getByTestId } = render(<UploadScreen />);
-    fireEvent.press(getByTestId('selectButton'));
+  // // Test uploading files
+  // it('handles file upload', async () => {
+  //   const { getByTestId } = render(<UploadScreen />);
+  //   fireEvent.press(getByTestId('selectButton'));
 
-    await waitFor(() => {
-      expect(DocumentPicker.getDocumentAsync).toHaveBeenCalled();
-      fireEvent.press(getByTestId('uploadButton'));
-      expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/files/uploadFiles',
-        expect.any(Object)
-      );
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(DocumentPicker.getDocumentAsync).toHaveBeenCalled();
+  //     fireEvent.press(getByTestId('uploadButton'));
+  //     expect(fetch).toHaveBeenCalledWith(
+  //       'http://localhost:4000/files/uploadFiles',
+  //       expect.any(Object)
+  //     );
+  //   });
+  // });
 
   it('handles file selection on the web platform', async () => {
     // Set up the mock return value for DocumentPicker

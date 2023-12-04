@@ -3,23 +3,103 @@ const router = express.Router();
 const WorkPackage = require('../schema/workPackageSchema.js');
 const User = require('../schema/userSchema.js');
 
+const WorkPackage2 = require('../schema/workPackage.js');
+
+// Create a new work package
+router.post('/createWorkPackage', async (req, res) => {
+  const { name, grade, description, price, packageCount, instructorID } = req.body;
+  try {
+    const newWorkPackage = new WorkPackage2({
+      name,
+      grade,
+      description,
+      price,
+      packageCount,
+      instructorID,
+    });
+    const savedWorkPackage = await newWorkPackage.save();
+    res.status(201).json(savedWorkPackage);
+  } catch (error) {
+    console.error('Error creating work package:', error);
+    res.status(500).json({ error: 'An error occurred while creating the work package.' });
+  }
+});
+
+// Fetch all work packages for that instructor
+router.get('/getWorkPackages/:instructorId', async (req, res) => {
+  try {
+    const instructorID = req.params.instructorId;
+    const allWorkPackages = await WorkPackage2.find({ instructorID: instructorID });
+    res.status(200).json(allWorkPackages);
+  } catch (error) {
+    console.error('Error fetching all work packages:', error);
+    res.status(500).json({ error: 'An error occurred while fetching all work packages.' });
+  }
+});
+
+// Fetch and delete a specific work package by ID
+router.delete('/deleteWorkPackage/:workpackageID', async (req, res) => {
+  try {
+    const workPackageId = req.params.workpackageID;
+    const deletedWorkPackage = await WorkPackage2.findByIdAndDelete(workPackageId);
+    if (!deletedWorkPackage) {
+      return res.status(404).json({ error: 'Work package not found' });
+    }
+    res.status(200).json(deletedWorkPackage);
+  } catch (error) {
+    console.error('Error deleting work package:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the work package.' });
+  }
+});
+
+router.put('/updateWorkPackage/:workpackageID', async (req, res) => {
+  try {
+    const workPackageId = req.params.workpackageID;
+    const { name, grade, description, price } = req.body;
+    const existingWorkPackage = await WorkPackage2.findById(workPackageId);
+    if (!existingWorkPackage) {
+      throw new Error('Work package not found with the specified _id');
+    } else {
+      existingWorkPackage.name = name;
+      existingWorkPackage.grade = grade;
+      existingWorkPackage.description = description;
+      existingWorkPackage.price = price;
+    }
+    const editedWorkpackage = await existingWorkPackage.save();
+    res.status(200).json(editedWorkpackage);
+  } catch (error) {
+    console.error('Error editing work package:', error);
+    res.status(500).json({ error: 'An error occurred while editing the work package.' });
+  }
+});
+
 // Create a new work package
 router.post('/create', async (req, res) => {
   try {
     // Get the data for the new work package from the request body
-    const { name, workPackageId, materials, quizzes, tags, grade, subcategory, instructorID } =
-      req.body;
-
+    // use the commented out code below if want to add subcategories/tags to the work package
+    // const { name, workPackageId, materials, quizzes, tags, grade, subcategory, instructorID } =
+    //   req.body;
+    const { name, workPackageId, grade, instructorID, description, price } = req.body;
     // Create a new work package document using the WorkPackage model
+    // use the commented out code below if want to add subcategories/tags to the work package
+    // const newWorkPackage = new WorkPackage({
+    //   name,
+    //   workPackageId,
+    //   materials,
+    //   quizzes,
+    //   tags,
+    //   grade,
+    //   subcategory,
+    //   instructorID,
+    // });
     const newWorkPackage = new WorkPackage({
       name,
       workPackageId,
-      materials,
-      quizzes,
-      tags,
       grade,
-      subcategory,
       instructorID,
+      description,
+      price,
     });
 
     // Save the new work package to the database

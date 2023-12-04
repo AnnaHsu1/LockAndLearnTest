@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Text, TouchableOpacity, StyleSheet, } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
@@ -28,6 +28,12 @@ import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 import LogoutButton from './LogoutButton';
+import CreatePackage from '../screens/WorkPackage/Package/CreatePackage';
+import PackageOverview from '../screens/WorkPackage/Package/PackageOverview';
+import SelectPackagesToAdd from '../screens/WorkPackage/Package/SelectPackagesToAdd';
+import EditPackage from '../screens/WorkPackage/Package/EditPackage';
+import WorkPackage from '../screens/WorkPackage/WorkPackage';
+import EditWorkPackage from '../screens/WorkPackage/EditWorkPackage';
 import AdminMenu from '../screens/User/Admin/AdminMenu';
 import AdminAccount from '../screens/User/Admin/AdminAccounts';
 import AdminFinances from '../screens/User/Admin/AdminFinances';
@@ -42,8 +48,6 @@ import WorkPackageCart from '../screens/WorkPackage/WorkPackageCart';
 import TakeQuiz from '../screens/StudyMaterial/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
-
-
 
 const Stack = createNativeStackNavigator();
 
@@ -181,6 +185,38 @@ const StackNavigation = () => {
           options={{ title: 'Select Study Material To Add' }}
         />
         <Stack.Screen
+          name="CreatePackage"
+          component={CreatePackage}
+          options={{ title: 'Create Package' }}
+        />
+        <Stack.Screen
+          name="PackageOverview"
+          component={PackageOverview}
+          options={({ navigation }) => ({
+            title: 'Package Overview',
+            headerLeft: () => (
+              <TouchableOpacity
+                style={{ marginHorizontal: 11, marginVertical: 3 }}
+                onPress={() => {
+                  navigation.navigate('WorkPackage', { edited: Date.now() }); // refreshes the work package screen
+                }}
+              >
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="SelectPackagesToAdd"
+          component={SelectPackagesToAdd}
+          options={{ title: 'Select Packages To Add' }}
+        />
+        <Stack.Screen
+          name="EditPackage"
+          component={EditPackage}
+          options={{ title: 'Edit Package' }}
+        />
+        <Stack.Screen
           name="ChildProfile"
           component={ChildProfileScreen}
           options={{ title: 'Child Profile' }}
@@ -196,10 +232,11 @@ const StackNavigation = () => {
           options={{ title: 'Edit Question' }}
         />
         <Stack.Screen
-          name="AdminMenu"
-          component={AdminMenu}
-          options={{ title: 'AdminMenu' }}
+          name="WorkPackage"
+          component={WorkPackage}
+          options={{ title: 'My work packages' }}
         />
+        <Stack.Screen name="AdminMenu" component={AdminMenu} options={{ title: 'AdminMenu' }} />
         <Stack.Screen
           name="AdminAccount"
           component={AdminAccount}
@@ -215,11 +252,7 @@ const StackNavigation = () => {
           component={AdminWorkPackages}
           options={{ title: 'AdminWorkPackages' }}
         />
-        <Stack.Screen
-          name="AdminFiles"
-          component={AdminFiles}
-          options={{ title: 'AdminFiles' }}
-        />
+        <Stack.Screen name="AdminFiles" component={AdminFiles} options={{ title: 'AdminFiles' }} />
         <Stack.Screen
           name="AdminQuizzes"
           component={AdminQuizzes}
@@ -229,16 +262,16 @@ const StackNavigation = () => {
           name="AdminSubcategories"
           component={AdminSubcategories}
           options={{ title: 'AdminSubcategories' }}
-        /> 
-        <Stack.Screen       
-            name="AddChildMaterial"
-            component={AddChildMaterial}
-            options={{ title: 'Add Child Material' }}
         />
         <Stack.Screen
-            name="PurchasedMaterial"
-            component={PurchasedMaterial}
-            options={{ title: 'View Purchased Material' }}
+          name="AddChildMaterial"
+          component={AddChildMaterial}
+          options={{ title: 'Add Child Material' }}
+        />
+        <Stack.Screen
+          name="PurchasedMaterial"
+          component={PurchasedMaterial}
+          options={{ title: 'View Purchased Material' }}
         />
         <Stack.Screen
           name="WorkPackageBrowsing"
@@ -246,31 +279,32 @@ const StackNavigation = () => {
           options={{ title: 'Work Package Browsing' }}
         />
         <Stack.Screen
-            name="WorkPackageCart"
-            component={WorkPackageCart}
-            options={({ navigation, route }) => ({
-              title: 'Work Package Cart',
-               headerLeft: () => (
-                 <TouchableOpacity
-                 onPress={() => {
+          name="WorkPackageCart"
+          component={WorkPackageCart}
+          options={({ navigation, route }) => ({
+            title: 'Work Package Cart',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => {
                   const removedWP = route.params || [];
                   //console.log('stack navigator', removedWP);
                   navigation.navigate('WorkPackageBrowsing', {
                     removedWP: removedWP, // Pass accumulated removed work packages as a parameter
-          });
+                  });
                 }}
-                   style={{ marginLeft: 15 }}
-                 >
-                   <Ionicons name="arrow-back" size={24} color="white" />
-                 </TouchableOpacity>
-               ),
-            })}
+                style={{ marginLeft: 15 }}
+              >
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+          })}
         />
         <Stack.Screen
-          name="TakeQuiz"
-          component={TakeQuiz}
-          options={{ title: 'Take Quiz' }}
+          name="EditWorkPackage"
+          component={EditWorkPackage}
+          options={{ title: 'Edit work package' }}
         />
+        <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
         <Stack.Screen
           name="DisplayQuizzScreen"
           component={DisplayQuizzScreen}

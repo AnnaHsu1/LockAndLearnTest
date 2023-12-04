@@ -6,19 +6,18 @@ import {
   TouchableOpacity,
   ImageBackground,
   ScrollView,
-  CheckBox,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Icon } from 'react-native-paper';
+import { Icon, Checkbox } from 'react-native-paper';
 import { getUser } from '../../../components/AsyncStorage';
 
 const SelectQuizToAdd = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const workPackageId = route.params.workPackageId;
-  const workPackageName = route.params.workPackageName;
-  const workPackageGrade = route.params.workPackageGrade;
-  const workPackageSubcategory = route.params.workPackageSubcategory;
+  const params = route.params;
+  const { wp_id, name, grade } = params?.workPackage;
+  const { p_id, p_quizzes, p_materials, subcategory, description } = params?.package;
+  const workPackage = route.params.workPackage;
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuizzes, setSelectedQuizzes] = useState([]);
 
@@ -34,6 +33,12 @@ const SelectQuizToAdd = () => {
       if (response.status === 200) {
         const data = await response.json();
         setQuizzes(data);
+        // set checked (true) to checkboxes that are already selected in the package 
+        const quizzesInDb = await fetch(`http://localhost:4000/packages/fetchQuizzes/${p_id}`, {
+          method: 'GET',
+        });
+        const selectedQuizzesDb = await quizzesInDb.json();
+        setSelectedQuizzes(selectedQuizzesDb)
       } else {
         console.error('Error fetching quizzes');
       }
@@ -56,48 +61,37 @@ const SelectQuizToAdd = () => {
     }
   };
 
-  // Function to delete a quiz by its id
-  const handleDeleteQuiz = async (quizId) => {
-    try {
-      const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        console.log('Quiz deleted:', quizId);
-        setQuizzes((prevQuizzes) => prevQuizzes.filter((quiz) => quiz._id !== quizId));
-      } else {
-        console.error('Failed to delete quiz:', response.status);
-      }
-    } catch (error) {
-      console.error('Error deleting quiz:', error);
-    }
-  };
-
   // Function to add selected quizzes to the work package
   const addQuizzesToWorkPackage = async () => {
     try {
-      if (selectedQuizzes.length === 0) {
-        console.log('No quizzes selected to add to the work package.');
-        return;
-      }
       const response = await fetch(
-        `http://localhost:4000/workPackages/addQuizzes/${workPackageId}`,
+        `http://localhost:4000/packages/addContent/${p_id}`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            contentType: 'quiz',
             quizzes: selectedQuizzes,
           }),
         }
       );
       if (response.ok) {
-        console.log('Quizzes added to the work package:', selectedQuizzes);
-        navigation.navigate('DisplayWorkPackageContent', {
-          workPackageId: workPackageId,
-          selectedNewContent: selectedQuizzes,
-        });
+        navigation.navigate('EditPackage', { 
+          package: {
+            p_id: p_id,
+            p_quizzes: selectedQuizzes,
+            p_materials: p_materials,
+            subcategory: subcategory,
+            description: description,
+          },
+          workPackage: {
+            name: name,
+            grade: grade,
+            wp_id: wp_id,
+          }
+       });
       } else {
         console.error('Failed to add quizzes to the work package:', response.status);
       }
@@ -109,7 +103,7 @@ const SelectQuizToAdd = () => {
   // Function to navigate to create quiz screen
   const navigateToCreateQuiz = () => {
     navigation.navigate('CreateQuiz', {
-      workPackageId: workPackageId,
+      workPackageId: wp_id,
     });
   };
 
@@ -130,18 +124,18 @@ const SelectQuizToAdd = () => {
             width: '100%',
           }}
         >
-          <Text style={styles.selectFiles}>Choose Quizzes To Add To Your Work Package:</Text>
+          <Text style={styles.selectFiles}>Choose Quizzes To Add To Your Package:</Text>
           <Text style={styles.workPackageTitle}>
-            {workPackageName} - {workPackageGrade}
+            {name} - {grade}
           </Text>
-          {workPackageSubcategory !== 'Choose a Subcategory' && (
-            <Text style={styles.workPackageInfo}>{workPackageSubcategory}</Text>
+          {subcategory !== 'Choose a Subcategory' && (
+            <Text style={styles.workPackageInfo}>{subcategory}</Text>
           )}
         </View>
         {/* Display button to navigate to screen to add new quiz */}
         <View style={styles.buttonNavigate}>
           <TouchableOpacity onPress={navigateToCreateQuiz} style={styles.buttonCreateNewQuiz}>
-            <Text style={{ color: '#407BFF', fontSize: 15 }}>+ Add New Quiz</Text>
+            <Text style={{ color: '#407BFF', fontSize: 15 }}>+ New Quiz</Text>
           </TouchableOpacity>
         </View>
         {/* Display all quizzes from user */}
@@ -149,9 +143,10 @@ const SelectQuizToAdd = () => {
           {quizzes.map((quiz) => (
             <View key={quiz._id} style={styles.quizContainer}>
               {/* checkbox to be changed -> used another lib, as from react native, it is removed */}
-              <CheckBox
-                value={selectedQuizzes.includes(quiz._id)}
-                onValueChange={() => toggleQuizSelection(quiz._id)}
+              <Checkbox
+                status={selectedQuizzes.includes(quiz._id) ? 'checked' : 'unchecked'}
+                onPress={() => toggleQuizSelection(quiz._id)}
+                color='#407BFF'
               />
               <TouchableOpacity
                 testID="quiz-selection-checkbox"
@@ -160,30 +155,19 @@ const SelectQuizToAdd = () => {
               >
                 <Text>{quiz.name}</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.deleteButton}
-                testID={'delete-quiz-1'}
-                onPress={() => handleDeleteQuiz(quiz._id)}
-              >
-                <View style={styles.deleteButtonBackground}>
-                  <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                </View>
-              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>
         {/* Display button to add quizzes to work package */}
-        {selectedQuizzes.length === 0 ? null : (
-          <View style={{ alignItems: 'center' }}>
-            <TouchableOpacity
-              testID="add-quizzes-button"
-              onPress={addQuizzesToWorkPackage}
-              style={styles.buttonAddMaterial}
-            >
-              <Text style={styles.buttonText}>Add to Work Package</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={{ alignItems: 'center' }}>
+          <TouchableOpacity
+            testID="add-quizzes-button"
+            onPress={addQuizzesToWorkPackage}
+            style={styles.buttonAddMaterial}
+          >
+            <Text style={styles.buttonText}>Add to Work Package</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ImageBackground>
   );
@@ -257,20 +241,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: '70%',
   },
-  deleteButton: {
-    // backgroundColor: 'red',
-    // width: 30,
-    // height: 20,
-    // borderRadius: 5,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // padding: 8
-  },
-  deleteButtonText: {
-    color: 'white',
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
   scrollContainer: {
     height: 300,
     width: '100%',
@@ -287,11 +257,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
     alignSelf: 'center',
-  },
-  deleteButtonBackground: {
-    backgroundColor: 'rgba(242, 78, 30, 0.13)',
-    borderRadius: 100,
-    padding: 5,
   },
 });
 
