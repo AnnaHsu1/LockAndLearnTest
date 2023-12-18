@@ -55,6 +55,7 @@ const CreateQuestion = ({ route }) => {
     //   newQuestion.answer = options.find((option) => option.isCorrect)?.text || '';
     // } 
     if (questionType === 'Multiple Choice Question') {
+      // Ensure all options are filled and one is marked as correct
       const allOptionsFilled = options.every(option => option.text.trim() !== '');
       const isAnswerChosen = options.some(option => option.isCorrect);
   
@@ -67,6 +68,9 @@ const CreateQuestion = ({ route }) => {
         alert('Please select a correct answer.');
         return;
       }
+  
+      // Set the answer to the text of the selected correct option
+      newQuestion.answer = options.find(option => option.isCorrect).text;
     } else if (questionType === 'True or False') {
       // For true or false, the answer is a boolean
       newQuestion.answer = answer; // Assuming answer is either 'True' or 'False'
