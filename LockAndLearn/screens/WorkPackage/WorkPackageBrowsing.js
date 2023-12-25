@@ -322,6 +322,26 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
 };
 
+    const clearFilter = () => {
+    
+        setCheckedGrade1(false);
+        setCheckedGrade2(false);
+        setCheckedGrade3(false);
+        setCheckedGrade4(false);
+        setCheckedGrade5(false);
+        setCheckedGrade6(false);
+        setCheckedGrade7(false);
+        setCheckedGrade8(false);
+        setCheckedGrade9(false);
+        setCheckedGrade10(false);
+        setCheckedGrade11(false);
+        setCheckedGrade12(false);
+
+        document.getElementById("Search").value = "";
+
+        fetchWorkPackages();
+    };
+
     const Checkbox = ({ label, checked, onChange }) => {
         return (
             
@@ -378,7 +398,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         <TouchableOpacity
                         style={styles.buttonClearFilter}
                         onPress={() => {
-                            fetchWorkPackages();
+                            clearFilter();
                         }}
                     >
                             <Text style={styles.viewCartText}>Clear Filter</Text>
