@@ -47,7 +47,7 @@ const CreateWorkPackage = (route) => {
     !isValidPrice;
 
   const handleBackButton = () => {
-    navigation.navigate('WorkPackageOverview');
+    navigation.navigate('WorkPackage');
   };
 
   // Function to create a work package
@@ -83,7 +83,6 @@ const CreateWorkPackage = (route) => {
           setWorkPackageGrade('');
           // Extract the ID from the response
           const workPackageId = data._id;
-          // Navigate to "DisplayWorkPackageContent" and pass the workPackageId
           navigation.navigate('WorkPackage', { refresh: workPackageId });
         } else {
           console.error('Error creating work package');

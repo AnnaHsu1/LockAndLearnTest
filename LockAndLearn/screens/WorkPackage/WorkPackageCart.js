@@ -130,12 +130,7 @@ const WorkPackageCart = () => {
                         <View key={workPackage._id} style={styles.workPackageBox}>
                             <View style={styles.workPackageText}>
                                 <Text style={styles.workPackageNameText}>
-                                    {`${workPackage.subcategory === undefined ||
-                                            workPackage.subcategory === 'Choose a Subcategory' ||
-                                            workPackage.subcategory === null
-                                            ? `${workPackage.name} - ${workPackage.grade} \n`
-                                            : `${workPackage.name} - ${workPackage.grade} - ${workPackage.subcategory} \n`
-                                        }\n`}
+                                    {`${workPackage.name} - ${workPackage.grade} \n\n`}
                                 </Text>
                                 <Text>
                                     {`${workPackage.description === undefined ? `` : `${workPackage.description} \n`

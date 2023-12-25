@@ -38,12 +38,6 @@ const LandingPage = ({ navigation }) => {
         <TouchableOpacity style={styles.content} onPress={() => navigation.navigate('ViewUploads', {newFilesAdded: undefined})}>
           <Text style={styles.text}>My files</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.content}
-          onPress={() => navigation.navigate('WorkPackage')}
-        >
-          <Text style={styles.text}>Work packages</Text>
-        </TouchableOpacity>
         {/* <TouchableOpacity
           style={styles.content}
           onPress={() => navigation.navigate('ParentAccount')}

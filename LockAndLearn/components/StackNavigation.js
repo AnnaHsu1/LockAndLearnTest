@@ -19,9 +19,7 @@ import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
-import WorkPackageOverview from '../screens/WorkPackage/WorkPackageOverview';
 import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
-import DisplayWorkPackageContent from '../screens/WorkPackage/DisplayWorkPackageContent';
 import SelectQuizToAdd from '../screens/WorkPackage/Quiz/SelectQuizToAdd';
 import SelectStudyMaterialToAdd from '../screens/WorkPackage/StudyMaterial/SelectStudyMaterialToAdd';
 import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
@@ -30,7 +28,6 @@ import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
 import LogoutButton from './LogoutButton';
 import CreatePackage from '../screens/WorkPackage/Package/CreatePackage';
 import PackageOverview from '../screens/WorkPackage/Package/PackageOverview';
-import SelectPackagesToAdd from '../screens/WorkPackage/Package/SelectPackagesToAdd';
 import EditPackage from '../screens/WorkPackage/Package/EditPackage';
 import WorkPackage from '../screens/WorkPackage/WorkPackage';
 import EditWorkPackage from '../screens/WorkPackage/EditWorkPackage';
@@ -48,6 +45,7 @@ import WorkPackageCart from '../screens/WorkPackage/WorkPackageCart';
 import TakeQuiz from '../screens/StudyMaterial/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
+import AdminPackages from '../screens/User/Admin/AdminPackages';
 
 const Stack = createNativeStackNavigator();
 
@@ -160,19 +158,9 @@ const StackNavigation = () => {
           options={{ title: 'Google Sign Up' }}
         />
         <Stack.Screen
-          name="WorkPackageOverview"
-          component={WorkPackageOverview}
-          options={{ title: 'Work Package Overview' }}
-        />
-        <Stack.Screen
           name="CreateWorkPackage"
           component={CreateWorkPackage}
           options={{ title: 'Create Work Package' }}
-        />
-        <Stack.Screen
-          name="DisplayWorkPackageContent"
-          component={DisplayWorkPackageContent}
-          options={{ title: 'Display Work Package Content' }}
         />
         <Stack.Screen
           name="SelectQuizToAdd"
@@ -205,11 +193,6 @@ const StackNavigation = () => {
               </TouchableOpacity>
             ),
           })}
-        />
-        <Stack.Screen
-          name="SelectPackagesToAdd"
-          component={SelectPackagesToAdd}
-          options={{ title: 'Select Packages To Add' }}
         />
         <Stack.Screen
           name="EditPackage"
@@ -262,6 +245,11 @@ const StackNavigation = () => {
           name="AdminSubcategories"
           component={AdminSubcategories}
           options={{ title: 'AdminSubcategories' }}
+        />
+        <Stack.Screen
+          name="AdminPackages"
+          component={AdminPackages}
+          options={{ title: 'AdminPackages' }}
         />
         <Stack.Screen
           name="AddChildMaterial"

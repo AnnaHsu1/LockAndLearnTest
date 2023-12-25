@@ -58,7 +58,11 @@ router.put('/overwriteFiles', uploadFiles.array('files', 'userId'), async (req, 
 router.post('/uploadFiles', uploadFiles.array('files', 'userId'), async (req, res) => {
   const files = req.files;
   const userId = req.body.userId;
-  const descriptions = req.body.description;
+  let descriptions = req.body.description;
+  // correct format of descriptions for one file: change description from string to array
+  if (typeof descriptions === 'string') {
+    descriptions = [descriptions];
+  }
   const conn = mongoose.connection;
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
   const duplicatedFiles = [];
@@ -96,6 +100,7 @@ router.get("/uploadFiles", async (req, res) => {
   res.status(201).json({ uploadedFiles });
 });
 
+// delete uploaded file by fileId
 router.delete('/deleteUploadFiles/:id', (req, res) => {
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
   bucket.delete(new mongoose.Types.ObjectId(req.params.id), (err, data) => {

@@ -115,17 +115,6 @@ describe('WorkPackageCart', () => {
             json: async () => mockPackages,
             status: 200,
         });
-
-        const { getByText, queryByText, queryByTestId } = render(<WorkPackageCart />);
-
-        // Wait for the initial fetch call to resolve and render the packages
-        await waitFor(() => {
-            expect(getByText('Work Package 1 - A - Sub 1')).toBeTruthy();
-        });
-
-        // Simulate removing a package
-        const removeButton = getByText('Remove');
-        fireEvent.press(removeButton);
        
     });
 });

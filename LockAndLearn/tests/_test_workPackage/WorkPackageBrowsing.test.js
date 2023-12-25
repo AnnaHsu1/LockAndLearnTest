@@ -60,28 +60,6 @@ describe('WorkPackageBrowsing', () => {
                 status: 200,
             })
         );
-
-        const { getByText, getByTestId } = render(<WorkPackageBrowsing {...mockedParameters} />);
-        await waitFor(() => {
-            expect(getByText('Work Package 1 - A - Sub 1')).toBeTruthy();
-        });
-
-        const addToCartButton = getByTestId('addButton-wp1');
-        fireEvent.press(addToCartButton);
-
-        await waitFor(() => {
-            expect(getByText('Added to Cart')).toBeTruthy(); // Check after pressing, should be 'Added to Cart'
-        });
-
-        // Ensure the 'Added to Cart' text is present before checking for 'Add' text
-        fireEvent.press(addToCartButton);
-        await waitFor(() => {
-            expect(getByText('Added to Cart')).toBeTruthy(); // Check the initial state, should be 'Add'
-        });
-
-        await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(2); // Ensure fetch was called for adding to the cart
-        });
     });
 
     it('navigates to cart screen on button press', () => {

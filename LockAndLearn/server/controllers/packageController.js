@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Package = require('../schema/packageSchema.js');
 const Workpackage = require('../schema/workPackage.js');
+const { default: mongoose } = require('mongoose');
+const { GridFSBucket } = require('mongodb');
+const Quiz = require('../quizSchema.js');
 
 // Create a new package
 router.post('/create', async (req, res) => {
@@ -44,6 +47,78 @@ router.get('/fetchPackages/:workPackageID', async (req, res) => {
 
     // Send a success response with the packages
     res.status(200).json(packages);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error getting packages:', error);
+    res.status(500).json({ error: 'An error occurred while getting the packages.' });
+  }
+});
+
+// Get all packages info (quizzes & materials name, id and subcategory) for a given workPackageID
+router.get('/fetchPackagesInfo/:workPackageID', async (req, res) => {
+  try {
+    // Get the workPackageID from the request parameters
+    const { workPackageID } = req.params;
+
+    // Find all packages for the given workPackageID
+    const packages = await Package.find({ workPackageID });
+  
+    // Get materials name given material IDs
+    const getMaterialsName = async (materialIDs) => {
+      const conn = mongoose.connection;
+      const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' });
+      const materialsName = [];
+  
+      for (const materialID of materialIDs) {
+        const file = await bucket.find({ _id: new mongoose.Types.ObjectId(materialID) }).toArray();
+        if (file.length != 0) {
+          const fileName = file[0].filename;
+          materialsName.push(fileName);
+        }
+        else {
+          console.log("file not found");
+          // return res.status(201).json({ message: "File not found" });
+        }
+      }
+      return materialsName;
+    };
+  
+    // Get quizzes name given quiz IDs
+    const getQuizzesName = async (quizIDs) => {
+        const quizzesName = [];
+  
+        for (const quizID of quizIDs) {
+          const quiz = await Quiz.findById(quizID);
+          if (quiz != null) {
+            const quizName = quiz.name;
+            quizzesName.push(quizName);
+          }
+          else {
+              console.log("quiz not found");
+              // return res.status(201).json({ message: "Quiz not found" });
+          }
+        }
+        return quizzesName;
+    };
+
+    // Get packages info
+    const packagePromises = packages.map(async (package) => {
+        const packageID = package._id;
+        const subcategory = package.subcategory;
+        const materials = package.materials;
+        const quizzes = package.quizzes;
+    
+        const materialsName = await getMaterialsName(materials);
+        const quizzesName = await getQuizzesName(quizzes);
+    
+        return { packageID, subcategory, materialsName, quizzesName };
+    });
+  
+    const packagesInfo = await Promise.all(packagePromises);
+  
+    // Send a success response with the packages
+    res.status(200).json(packagesInfo);
+
   } catch (error) {
     // Handle errors and send an error response
     console.error('Error getting packages:', error);

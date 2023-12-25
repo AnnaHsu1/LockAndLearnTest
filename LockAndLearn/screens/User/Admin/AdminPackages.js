@@ -2,27 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 
-const AdminWorkPackages = ({ route, navigation }) => {
+const AdminPackages = ({ route, navigation }) => {
   const styles = useStyles();
-  const [workPackages, setWorkPackages] = useState([]);
+  const [packages, setPackages] = useState([]);
   const [instructors, setInstructors] = useState({});
   const [quizzes, setQuizzes] = useState({});
   const [selectedWorkPackage, setSelectedWorkPackage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const wpID = route.params?.workPackageId;
 
   useEffect(() => {
     // Fetch work packages when the component mounts
-    fetchWorkPackages();
+    fetchPackages();
   }, []);
 
-  const fetchWorkPackages = async () => {
+  const fetchPackages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/workPackages/allWorkPackages');
+      const response = await fetch(`http://localhost:4000/packages/fetchPackagesInfo/${wpID}`);
       if (response.ok) {
         const data = await response.json();
-        setWorkPackages(data);
+        setPackages(data);
       } else {
         console.error('Failed to fetch work packages:', response.status);
       }
@@ -31,6 +32,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
     }
   };
 
+  // to be deleted if not used
   const fetchQuizById = async (quizId) => {
     try {
       const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
@@ -57,8 +59,8 @@ const AdminWorkPackages = ({ route, navigation }) => {
 
       if (response.ok) {
         // Work package deleted successfully, update the workPackages state
-        const updatedWorkPackages = workPackages.filter((wp) => wp._id !== workPackageId);
-        setWorkPackages(updatedWorkPackages);
+        const updatedWorkPackages = packages.filter((wp) => wp._id !== workPackageId);
+        setPackages(updatedWorkPackages);
         closeModal();
       } else {
         console.error('Failed to delete work package:', response.status);
@@ -110,49 +112,39 @@ const AdminWorkPackages = ({ route, navigation }) => {
     <View style={styles.page}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Work Packages</Text>
+          <Text style={styles.title}>Packages</Text>
+          {/* todo: get quizzes to show, and nothing showing if no quizzes/materials */}
         </View>
         {/* Displaying the list of work packages */}
         <ScrollView style={styles.scrollView}>
-          {workPackages.length > 0 ? (
-            workPackages.map((workPackage, index) => (
+          {packages.length > 0 ? (
+            packages.map((packageInfo, index) => (
               <View key={index} style={styles.workPackageContainer}>
-                <TouchableOpacity 
-                  key={index.toString()}
-                  onPress={() => navigation.navigate('AdminPackages', { workPackageId: workPackage._id })}
-                >
-                  <Text style={styles.workPackageTitle}>
-                    {workPackage.name} - {workPackage.grade}
-                  </Text>
-                </TouchableOpacity>
+
+                <Text style={styles.workPackageTitle}>
+                  {packageInfo.subcategory}
+                </Text>
 
                 <View style={styles.instructorInfoContainer}>
-                  <Text style={styles.greyText}>
-                    {workPackage.instructorName}
-                  </Text>
-                  <Text style={styles.greyText}>
-                    {workPackage.instructorEmail}
-                  </Text>
-
                   <View style={styles.divider}></View>
 
                   {/* Display quizzes from the quizzes array */}
-                  {workPackage.quizzes && workPackage.quizzes.length > 0 && (
+                  {packageInfo.quizzesName && packageInfo.quizzesName.length > 0 && (
                     <View style={styles.quizContainer}>
                       <Text style={styles.quizTitle}>Quizzes:</Text>
-                      {workPackage.quizzes.map((quizId, quizIndex) => (
+                      {packageInfo.quizzesName.map((quizId, quizIndex) => (
                         <Text key={quizIndex} style={styles.quizText}>
-                          {quizzes[quizId]?.name}
+                          {quizId}
                         </Text>
                       ))}
                     </View>
                   )}
 
                   {/* Display materials from the materials array */}
-                  {workPackage.materials && workPackage.materials.length > 0 && (
+                  {packageInfo.materialsName && packageInfo.materialsName.length > 0 && (
                     <View style={styles.materialContainer}>
                       <Text style={styles.materialTitle}>Materials:</Text>
-                      {workPackage.materials.map((material, materialIndex) => (
+                      {packageInfo.materialsName.map((material, materialIndex) => (
                         <Text key={materialIndex} style={styles.materialText}>
                           {material}
                         </Text>
@@ -160,7 +152,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
                     </View>
                   )}
                 </View>
-                <TouchableOpacity onPress={() => openModal(workPackage._id)}>
+                <TouchableOpacity onPress={() => openModal(packageInfo._id)}>
                   <Text style={styles.deleteButton}>Delete</Text>
                 </TouchableOpacity>
               </View>
@@ -397,4 +389,4 @@ const useStyles = CreateResponsiveStyle(
   }
 );
 
-export default AdminWorkPackages;
+export default AdminPackages;

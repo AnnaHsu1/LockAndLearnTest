@@ -47,23 +47,13 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const renderWorkPackage = (workPackage) => {
         return (
             <View key={workPackage._id} style={styles.workPackageItemContainer}>
-                {workPackage.subcategory === "Choose a Subcategory" ? (
-                    <TouchableOpacity
-                        style={{ width: '80%' }}
-                    >
-                        <Text style={styles.workPackageItem}>
-                            {workPackage.name} - {workPackage.grade}
-                        </Text>
-                    </TouchableOpacity>
-                ) : (
-                    <TouchableOpacity
-                        style={{ width: '80%' }}
-                    >
-                        <Text style={styles.workPackageItem}>
-                            {workPackage.name} - {workPackage.grade} - {workPackage.subcategory}
-                        </Text>
-                    </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                    style={{ width: '80%' }}
+                >
+                    <Text style={styles.workPackageItem}>
+                        {workPackage.name} - {workPackage.grade}
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
     };

@@ -16,7 +16,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
         const userId = user._id;
         if (userId) {
             try {
-                const response = await fetch(
+                const response = await fetch( 
                     `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
                     {
                         method: 'GET',
@@ -43,23 +43,13 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     const renderWorkPackage = (workPackage) => {
         return (
             <View key={workPackage._id} style={styles.workPackageItemContainer}>
-                {workPackage.subcategory === "Choose a Subcategory" ? (
-                    <TouchableOpacity
-                        style={{ width: '80%' }}
-                    >
-                        <Text style={styles.workPackageItem}>
-                            {workPackage.name} - {workPackage.grade} - {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
-                        </Text>
-                    </TouchableOpacity>
-                ) : (
-                    <TouchableOpacity
-                        style={{ width: '80%' }}
-                    >
-                        <Text style={styles.workPackageItem}>
-                            {workPackage.name} - {workPackage.grade} - {workPackage.subcategory} - {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
-                        </Text>
-                    </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                    style={{ width: '80%' }}
+                >
+                    <Text style={styles.workPackageItem}>
+                        {workPackage.name} - {workPackage.grade} - {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
     };
