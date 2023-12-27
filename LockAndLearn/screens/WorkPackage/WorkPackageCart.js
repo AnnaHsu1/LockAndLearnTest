@@ -96,7 +96,13 @@ const WorkPackageCart = () => {
 
     // Function to calculate the total price based on the work packages
     const calculateTotalPrice = () => {
-        const totalPrice = workPackages.reduce((total, workPackage) => total + (workPackage.price || 0), 0);
+
+        const totalPrice = workPackages.reduce((total, workPackage) => {
+            // Convert the price to a number before adding it to the total
+            const price = parseFloat(workPackage.price) || 0;
+            return total + price;
+        }, 0);
+        
         return totalPrice.toFixed(2);
 
     };
