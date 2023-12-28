@@ -89,6 +89,49 @@ const WorkPackageCart = () => {
         }
     };
 
+    const handlePayment = async () => {
+      try {
+        const token = await getItem('@token');
+        const user = JSON.parse(token);
+        const userId = user._id;
+
+        if (userId) {
+          const response = await fetch('http://localhost:4000/payment/orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              totalPrice: calculateTotalPrice(),
+            }),
+          });
+
+          if (response.ok) {
+            const responseData = await response.json();
+            console.log('Order created:', responseData);
+
+            // Perform any necessary actions after order creation, e.g., redirect to a payment gateway
+            // ...
+
+            // Update UI or perform other actions based on successful order creation
+            // ...
+          } else {
+            console.error('Failed to create order');
+            // Handle the scenario where creating the order failed
+            // ...
+          }
+        } else {
+          console.log('Must be logged in to purchase work packages');
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+        // Handle network errors or other exceptions
+        // ...
+      }
+    };
+      
+
+
     // Function to toggle the pop up modal for add to cart
     const toggleModalAdd = () => {
         setModalAddVisible(!modalAddVisible);
@@ -224,7 +267,7 @@ const WorkPackageCart = () => {
                     <Text style={styles.totalPriceText}>Total Price: ${calculateTotalPrice()}</Text>
                 </View>
 
-                <TouchableOpacity style={styles.viewCartButton} onPress={() => { }}>
+                <TouchableOpacity style={styles.viewCartButton} onPress={handlePayment}>
                     <Text style={styles.viewCartText}>Pay Now</Text>
                 </TouchableOpacity>
             </View>
