@@ -122,6 +122,21 @@ const WorkPackageCart = () => {
                 const findUrl = orderData.links.find(data => data?.rel == "approve")
                 console.log('find URL: ', findUrl.href)
                 setPaypalUrl(findUrl.href)
+
+                
+                //May need to change for android
+                // Conditionally redirect based on platform
+                if (Platform.OS === 'web') {
+                    window.location.href = findUrl.href;
+                } else {
+                    Linking.openURL(findUrl.href)
+                        .then(() => {
+                            // Optionally, perform any actions after the URL is opened
+                        })
+                        .catch((err) => {
+                            console.error('Error opening PayPal URL:', err);
+                        });
+                }
             }
 
           } else {
@@ -187,7 +202,7 @@ const WorkPackageCart = () => {
                   title="PayPal Checkout"
                   src={paypalUrl}
                   width="100%"
-                  height="1000px" // Adjust the height as needed
+                  height="500px" // Adjust the height as needed
                   frameBorder="0"
                 />
               </div>
@@ -352,7 +367,7 @@ const WorkPackageCart = () => {
           <Text style={styles.viewCartText}>Pay Now</Text>
         </TouchableOpacity>
 
-        {renderPaypalComponent()}
+        {/*{renderPaypalComponent()}*/}
 
       </View>
     </ImageBackground>

@@ -74,9 +74,10 @@ const createOrder = async (totalPrice) => {
         },
       },
     ],
-    application_context: {
-      return_url: "https://example.com/return",
-      cancel_url: "https://example.com/cancel"
+      application_context: {
+        // TODO: UPDATE THE URL ONCE DEPLOYED
+        return_url: "https://localhost:19006/Home",
+        cancel_url: "https://localhost:19006/Home"
     }
   };
 
