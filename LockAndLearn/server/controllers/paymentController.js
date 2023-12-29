@@ -8,9 +8,10 @@ const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 
 
-router.post("/orders", async (req, res) => {
+
+// Creates an order and returns the order ID
+router.post("/initOrder", async (req, res) => {
     try {
-      // use the cart information passed from the front-end to calculate the order amount detals
       const { totalPrice } = req.body;
       const { jsonResponse, httpStatusCode } = await createOrder(totalPrice);
       res.status(httpStatusCode).json(jsonResponse);
@@ -19,8 +20,9 @@ router.post("/orders", async (req, res) => {
       res.status(500).json({ error: "Failed to create order." });
     }
   });
-    
-router.post("/orders/:orderID/capture", async (req, res) => {
+
+// Completes the transaction and captures the funds
+router.post("/:orderID/capture", async (req, res) => {
   try {
     const { orderID } = req.params;
     const { jsonResponse, httpStatusCode } = await captureOrder(orderID);
@@ -31,6 +33,7 @@ router.post("/orders/:orderID/capture", async (req, res) => {
   }
 });
 
+// Generates an access token from the PayPal API using credentials from the .env file
 const generateAccessToken = async () => {
   try {
     if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
@@ -54,6 +57,7 @@ const generateAccessToken = async () => {
   }
 };
 
+// Creates an order using the PayPal API endpoint
 const createOrder = async (totalPrice) => {
   // use the cart information passed from the front-end to calculate the purchase unit details
   console.log('Now in createOrder with price of: ', totalPrice);
@@ -65,11 +69,15 @@ const createOrder = async (totalPrice) => {
     purchase_units: [
       {
         amount: {
-          currency_code: 'CAD', //To modify
-          value: totalPrice.toString(), //To modify
+          currency_code: 'CAD', 
+          value: totalPrice.toString(), 
         },
       },
     ],
+    application_context: {
+      return_url: "https://example.com/return",
+      cancel_url: "https://example.com/cancel"
+    }
   };
 
   const response = await fetch(url, {
@@ -89,6 +97,7 @@ const createOrder = async (totalPrice) => {
     return handleResponse(response);
   };
 
+// Captures the order funds using the PayPal API endpoint
 const captureOrder = async (orderID) => {
   const accessToken = await generateAccessToken();
   const url = `${base}/v2/checkout/orders/${orderID}/capture`;
@@ -109,12 +118,18 @@ const captureOrder = async (orderID) => {
   return handleResponse(response);
 };
 
+// Handles the response from the PayPal API endpoints
 async function handleResponse(response) {
   try {
     const jsonResponse = await response.json();
+    const status = response.status;
+
+    console.log('Response JSON:', jsonResponse);
+    console.log('HTTP Status Code:', status);
+
     return {
       jsonResponse,
-      httpStatusCode: response.status,
+      httpStatusCode: status
      };
   } catch (err) {
     const errorMessage = await response.text();
