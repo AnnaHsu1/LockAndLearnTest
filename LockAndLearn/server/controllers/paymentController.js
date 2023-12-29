@@ -106,7 +106,7 @@ const captureOrder = async (orderID) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer access_token${accessToken}`,
       // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
       // https://developer.paypal.com/tools/sandbox/negative-testing/request-headers/
       // "PayPal-Mock-Response": '{"mock_application_codes": "INSTRUMENT_DECLINED"}'

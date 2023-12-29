@@ -144,6 +144,7 @@ const WorkPackageCart = () => {
     }
   };
 
+  // Function to capture the payment after the user has approved the payment
   const completeOrder = async (orderId) => {
     try {
         const token = await getItem('@token');
