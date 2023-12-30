@@ -24,6 +24,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
     FirstName: '',
     LastName: '',
     Grade: '',
+    PassingGrade: '',
     ParentId: '',
   });
 
@@ -108,6 +109,16 @@ const AddChildScreen = ({ navigation, setToken }) => {
             style={[styles.textbox, styles.full_width]}
             value={fdata.Grade}
             onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}
+          />
+        </View>
+        {/* Parent can set passing grade here */}
+        <View style={styles.input}>
+          <Text style={styles.field}>Passing Grade</Text>
+          <TextInput
+            testID="passing-grade-input"
+            style={[styles.textbox, styles.full_width]}
+            value={fdata.PassingGrade}
+            onChangeText={(newText) => setFdata({ ...fdata, PassingGrade: newText })}
           />
         </View>
 

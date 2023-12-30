@@ -12,8 +12,8 @@ router.post('/addchild', async (req, res) => {
   try {
     // Extract user data from the request body
     // console.log(req.body);
-    const { FirstName, LastName, Grade, ParentId } = req.body;
-    console.log(FirstName, LastName, Grade, ParentId);
+    const { FirstName, LastName, Grade, PassingGrade, ParentId } = req.body;
+    console.log(FirstName, LastName, Grade, PassingGrade, ParentId);
 
     // Input validations
     if (!FirstName || !LastName || !Grade || !ParentId) {
@@ -33,6 +33,7 @@ router.post('/addchild', async (req, res) => {
       FirstName,
       LastName,
       Grade,
+      PassingGrade,
       ParentId,
     });
 
@@ -60,7 +61,7 @@ router.get('/getchildren/:id', async (req, res) => {
 router.put('/updatechild/:id', async (req, res) => {
   try {
     const childId = req.params.id;
-    const { FirstName, LastName, Grade, ParentId } = req.body;
+    const { FirstName, LastName, Grade, PassingGrade, ParentId } = req.body;
 
     if (!FirstName || !LastName || !Grade || !ParentId) {
       return res.status(400).json({ msg: 'All fields must be filled.' });
@@ -78,6 +79,7 @@ router.put('/updatechild/:id', async (req, res) => {
       FirstName,
       LastName,
       Grade,
+      PassingGrade,
       ParentId,
       _id: childId,
     });

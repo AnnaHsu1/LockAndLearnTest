@@ -4,13 +4,14 @@ const Child = require('../schema/childSchema.js'); // Import the User model from
 exports.createChild = async function createChild(fdata) {
   try {
     // Extract the relevant data from fdata
-    const { FirstName, LastName, Grade, ParentId } = fdata;
+    const { FirstName, LastName, Grade, PassingGrade, ParentId } = fdata;
 
     // Create a new User instance with the extracted user data
     const newChild = new Child({
       firstName: FirstName,
       lastName: LastName,
       grade: Grade,
+      passingGrade: PassingGrade,
       parentId: ParentId,
     });
 
@@ -45,6 +46,7 @@ exports.updateChild = async function updateChild(fdata) {
       existingChild.firstName = fdata.FirstName;
       existingChild.lastName = fdata.LastName;
       existingChild.grade = fdata.Grade;
+      existingChild.passingGrade= fdata.PassingGrade;
     }
 
     // Update the existing document with the new data
