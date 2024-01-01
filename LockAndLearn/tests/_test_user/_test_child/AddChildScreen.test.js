@@ -25,24 +25,27 @@ describe('AddChildScreen', () => {
     jest.clearAllMocks();
   });
 
-  it('allows the user to enter first name, last name, and grade', () => {
+  it('allows the user to enter first name, last name, grade, and passing grade', () => {
     const { getByTestId } = render(<AddChildScreen navigation={mockNavigation} setToken={() => {}} />);
 
     fireEvent.changeText(getByTestId('first-name-input'), 'John');
     fireEvent.changeText(getByTestId('last-name-input'), 'Doe');
     fireEvent.changeText(getByTestId('grade-input'), '3');
+    fireEvent.changeText(getByTestId('passing-grade-input'), '60');
 
     expect(getByTestId('first-name-input').props.value).toEqual('John');
     expect(getByTestId('last-name-input').props.value).toEqual('Doe');
     expect(getByTestId('grade-input').props.value).toEqual('3');
+    expect(getByTestId('passing-grade-input').props.value).toEqual('60');
   });
 
-  it('submits the child data when the add child button is pressed', async () => {
+  it('submits the child data with passing grade when the add child button is pressed', async () => {
     const { getByTestId } = render(<AddChildScreen navigation={mockNavigation} setToken={() => {}} />);
 
     fireEvent.changeText(getByTestId('first-name-input'), 'John');
     fireEvent.changeText(getByTestId('last-name-input'), 'Doe');
     fireEvent.changeText(getByTestId('grade-input'), '3');
+    fireEvent.changeText(getByTestId('passing-grade-input'), '60');
     fireEvent.press(getByTestId('signup-button'));
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith(
@@ -56,11 +59,11 @@ describe('AddChildScreen', () => {
           FirstName: 'John',
           LastName: 'Doe',
           Grade: '3',
+          PassingGrade: '60',
           ParentId: 'parent123',
         }),
       }
     ));
   });
 
-  // More tests can be added here as needed
 });

@@ -20,6 +20,7 @@ const EditChildProfileScreen = ({ route, navigation }) => {
     FirstName: childInfo.firstName,
     LastName: childInfo.lastName,
     Grade: childInfo.grade,
+    PassingGrade: childInfo.passingGrade,
     ParentId: childInfo.parentId,
   });
   const [errors, setErrors] = useState('');
@@ -85,6 +86,16 @@ const EditChildProfileScreen = ({ route, navigation }) => {
             style={[styles.textbox, styles.full_width]}
             value={fdata.Grade}
             onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}
+          />
+        </View>
+        {/* Parent can edit passing grade here */}
+        <View style={styles.input}>
+          <Text style={styles.field}>Passing Grade</Text>
+          <TextInput
+            testID="passing-grade-input"
+            style={[styles.textbox, styles.full_width]}
+            value={fdata.PassingGrade}
+            onChangeText={(newText) => setFdata({ ...fdata, PassingGrade: newText })}
           />
         </View>
 
