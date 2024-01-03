@@ -95,7 +95,7 @@ const AdminMenu = ({ route, navigation }) => {
           }}
           style={[styles.button, styles.full_width]}
         >
-          <Text style={styles.text}>Subcategories</Text>
+          <Text style={styles.text}>Subjects</Text>
         </Button>
 
       </View>
