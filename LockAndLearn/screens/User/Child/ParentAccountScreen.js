@@ -71,8 +71,8 @@ const ParentAccountScreen = ({ navigation }) => {
             testID={`child-${child._id}`}
             mode="contained"
             contentStyle={{
-                minWidth: '90%',
-                maxWidth: '90%',
+              minWidth: '90%',
+              maxWidth: '90%',
               minHeight: 78,
               justifyContent: 'flex-start',
             }}
@@ -97,24 +97,24 @@ const ParentAccountScreen = ({ navigation }) => {
           contentStyle={{
             minWidth: '90%',
             maxWidth: '90%',
-          minHeight: 78,
-          justifyContent: 'flex-start',
+            minHeight: 78,
+            justifyContent: 'flex-start',
           }}
           onPress={() => navigation.navigate('WorkPackageBrowsing')}
         >
-          <Text style={[styles.child, {color: '#ffffff' }]}>Browse for Work Packages</Text>
+          <Text style={[styles.child, { color: '#ffffff' }]}>Browse for Work Packages</Text>
         </Button>
         <Button
           style={[styles.button, styles.full_width]}
           contentStyle={{
             minWidth: '90%',
             maxWidth: '90%',
-          minHeight: 78,
-          justifyContent: 'flex-start',
+            minHeight: 78,
+            justifyContent: 'flex-start',
           }}
           onPress={() => navigation.navigate('PurchasedMaterial')}
         >
-          <Text style={[styles.child, {color: '#ffffff'}]}>View Purchased Material</Text>
+          <Text style={[styles.child, { color: '#ffffff' }]}>View Purchased Material</Text>
         </Button>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />

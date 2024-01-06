@@ -46,6 +46,7 @@ import TakeQuiz from '../screens/StudyMaterial/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
+import StudyMaterialPreferences from '../screens/User/Child/StudyMaterialPreferences';
 
 const Stack = createNativeStackNavigator();
 
@@ -302,6 +303,11 @@ const StackNavigation = () => {
           name="QuizGradeScreen"
           component={QuizGradeScreen}
           options={{ title: 'Quiz Grade Screen' }}
+        />
+        <Stack.Screen
+          name="StudyMaterialPreferences"
+          component={StudyMaterialPreferences}
+          options={{ title: 'Study Material Preferences' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

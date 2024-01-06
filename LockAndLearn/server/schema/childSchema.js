@@ -23,6 +23,10 @@ const childSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  preferences: {
+    type: Array,
+    default: [],
+  },
 });
 
 const Child = mongoose.model('Child', childSchema, collectionName); // Where the item will be stored in the database

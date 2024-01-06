@@ -21,22 +21,68 @@ global.fetch = jest.fn(() =>
     })
 );
 
-describe('WorkPackageBrowsing', () => {
+
+const mockedParameters = {
+    route: {
+        params: {
+            removedWP: 'WPid-to-be-removed',
+        },
+    },
+};
+
+const mockWorkPackages = [
+    {
+        _id: '1',
+        name: 'Work Package 1',
+        grade: 'A',
+        subcategory: 'Math',
+        instructorID: 'instructor1',
+        quizzes: ['quiz1', 'quiz2'],
+        materials: ['material1', 'material2']
+    }
+];
+const mockChild = [
+    {
+    _id: {
+      $oid: "6568a7ed60ca2c3aeef149cd"
+    },
+    firstName: "Blah",
+    lastName: "Blah",
+    grade: "6",
+    parentId: "6568a7ac60ca2c3aeef149ca",
+    __v: 3,
+    preferences: [
+      "French",
+      "Science",
+      "History",
+      "Biology",
+      "English"
+    ]
+  }
+];
+
+
+describe('WorkPackageBrowsing Tests', () => {
     
     beforeEach(() => {
-        useNavigation.mockReturnValue({
-          navigate: jest.fn(),
-        });
-    
-      });
-
-    const mockedParameters = {
-        route: {
-            params: {
-                removedWP: 'WPid-to-be-removed',
-            },
-        },
-    };
+        global.fetch = jest.fn();
+        global.fetch.mockReturnValueOnce(
+            Promise.resolve({
+                json: () => Promise.resolve(mockWorkPackages),
+                status: 200,
+            })
+        ).mockReturnValueOnce(
+            Promise.resolve({
+                json: () => Promise.resolve(mockWorkPackages),
+                status: 200,
+            })
+        ).mockReturnValueOnce(
+            Promise.resolve({
+                json: () => Promise.resolve(mockChild),
+                status: 200,
+            })
+        );
+    });
 
     it('renders correctly', () => {
         const { getByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
@@ -46,20 +92,19 @@ describe('WorkPackageBrowsing', () => {
     it('fetches work packages and cart on mount', async () => {
         render(<WorkPackageBrowsing {...mockedParameters}/>);
         await waitFor(() => {
-            expect(fetch).toHaveBeenCalledTimes(2);
+            expect(fetch).toHaveBeenCalledTimes(3);
         });
     });
 
     it('displays work packages properly and adds to cart', async () => {
-        const mockWorkPackages = [
-            { _id: 'wp1', name: 'Work Package 1', grade: 'A', subcategory: 'Sub 1' },
-        ];
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
-                json: () => Promise.resolve(mockWorkPackages),
-                status: 200,
-            })
-        );
+
+        const { getByTestId, findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
+        await waitFor(() => {
+            expect(findByText('Work Package 1')).toBeTruthy();
+        });
+        fireEvent.press(getByTestId('addButton-wp1'));
+        //fireEvent.press(getByTestId('addButtonConfirm'));
+
     });
 
     it('navigates to cart screen on button press', () => {
@@ -68,5 +113,40 @@ describe('WorkPackageBrowsing', () => {
         const { getByTestId } = render(<WorkPackageBrowsing {...mockedParameters}/>);
         fireEvent.press(getByTestId('viewCartButton'));
         expect(navigate).toHaveBeenCalledWith('WorkPackageCart');
+    });
+
+    
+
+    it('renders the work package item correctly', async () => {
+
+        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters} />);
+    
+        await waitFor(() => {
+            expect(findByText('Work Package 1')).toBeTruthy();
+        });
+    });
+
+    it('displays an error message if fetching work packages fails', async () => {
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve({}),
+                status: 500,
+            })
+        );
+
+        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters} />);
+        await waitFor(() => {
+            expect(findByText('Failed to fetch work packages')).toBeTruthy();
+        });
+    });
+
+    it('displays the cart screen when the "View Cart" button is pressed', () => {
+
+        const navigate = jest.fn();
+        useNavigation.mockImplementation(() => ({ navigate }));
+        const { getByTestId } = render(<WorkPackageBrowsing {...mockedParameters} />);
+        fireEvent.press(getByTestId('viewCartButton'));
+        expect(navigate).toHaveBeenCalledWith('WorkPackageCart');
+
     });
 });

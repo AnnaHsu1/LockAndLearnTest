@@ -56,17 +56,17 @@ const ChildProfileScreen = ({ route, navigation }) => {
           style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>Start session</Text>
-         </Button>
+        </Button>
         {/* Add Material */}
         <Button
-            testID="add-child-material"
-            mode="contained"
-            onPress={() => {
-                navigation.navigate('AddChildMaterial');
-            }}
-            style={[styles.button, styles.full_width]}
+          testID="add-child-material"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('AddChildMaterial');
+          }}
+          style={[styles.button, styles.full_width]}
         >
-            <Text style={styles.text}>Add material</Text>
+          <Text style={styles.text}>Add material</Text>
         </Button>
         {/* Edit profile */}
         {/* <Button
@@ -81,12 +81,12 @@ const ChildProfileScreen = ({ route, navigation }) => {
         </Button> */}
         {/* Edit profile */}
         <Button
-            testID="edit-profile"
-            mode="contained"
-            onPress={() => {
-                navigation.navigate('EditChild', { child: child });
-            }}
-            style={[styles.button, styles.full_width]}
+          testID="edit-profile"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('EditChild', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>Edit profile</Text>
         </Button>
@@ -99,6 +99,16 @@ const ChildProfileScreen = ({ route, navigation }) => {
           style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>See performance</Text>
+        </Button>
+        <Button
+          testID="preferences"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('StudyMaterialPreferences', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Set Preferences</Text>
         </Button>
         <Text
           testID="delete-child-link"
