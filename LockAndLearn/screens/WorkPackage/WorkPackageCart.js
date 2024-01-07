@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Text,
     View,
@@ -9,221 +9,369 @@ import {
     ScrollView,
     ImageBackground,
     StyleSheet,
+    Platform,
 } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
+import WebView from 'react-native-webview';
 
 const WorkPackageCart = () => {
-    const navigation = useNavigation();
-    const [workPackages, setWorkPackages] = useState([]);
-    const [workPackageName, setWorkPackageName] = useState('');
-    const [selectedWorkPackage, setSelectedWorkPackage] = useState(null);
-    const [modalAddVisible, setModalAddVisible] = useState(false);
-    const [removedWPs, setRemovedWP] = useState([]);
+  const navigation = useNavigation();
+  const [workPackages, setWorkPackages] = useState([]);
+  const [workPackageName, setWorkPackageName] = useState('');
+  const [selectedWorkPackage, setSelectedWorkPackage] = useState(null);
+  const [modalAddVisible, setModalAddVisible] = useState(false);
+  const [removedWPs, setRemovedWP] = useState([]);
+  const [paypalUrl, setPaypalUrl] = useState(null)
+  const [accessToken, setAccessToken] = useState(null)
+  const webViewRef = useRef(null);
 
-    // Function to handle selecting a work package
-    const selectWorkPackage = (workPackage) => {
-        console.log(workPackage);
-        setSelectedWorkPackage(workPackage._id);
-        setWorkPackageName(workPackage.name); // Set the work package name for the modal display
-        toggleModalAdd();
-    };
 
-    // Retrieve the unowned work packages specific to the user
-    const fetchWorkPackages = async () => {
-        const token = await getItem('@token');
-        const user = JSON.parse(token);
-        const userId = user._id;
-        if (userId) {
-            try {
-                const response = await fetch(
-                    `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                );
-                if (response.status === 200) {
-                    const data = await response.json();
-                    setWorkPackages(data);
-                } else {
-                    console.error('Error fetching workPackagesCart');
-                }
-            } catch (error) {
-                console.error('Network error:', error);
-            }
+  // Function to handle selecting a work package
+  const selectWorkPackage = (workPackage) => {
+    console.log(workPackage);
+    setSelectedWorkPackage(workPackage._id);
+    setWorkPackageName(workPackage.name); // Set the work package name for the modal display
+    toggleModalAdd();
+  };
+
+  // Retrieve the unowned work packages specific to the user
+  const fetchWorkPackages = async () => {
+    const token = await getItem('@token');
+    const user = JSON.parse(token);
+    const userId = user._id;
+    if (userId) {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (response.status === 200) {
+          const data = await response.json();
+          setWorkPackages(data);
         } else {
-            console.log('All work packages owned by the user.');
+          console.error('Error fetching workPackagesCart');
         }
-    };
-    // Function to delete a work package in cart
-    const handleDeleteFile = async (selectedWorkPackage) => {
+      } catch (error) {
+        console.error('Network error:', error);
+      }
+    } else {
+      console.log('All work packages owned by the user.');
+    }
+  };
+  // Function to delete a work package in cart
+  const handleDeleteFile = async (selectedWorkPackage) => {
+    const token = await getItem('@token');
+    const user = JSON.parse(token);
+    const userId = user._id;
+    try {
+      const response = await fetch(
+        `http://localhost:4000/workPackages/deleteFromCart/${userId}/${selectedWorkPackage}`,
+        {
+          method: 'DELETE',
+        }
+      );
+      if (response.ok) {
+        console.log(response);
+
+        // Update the removed work packages list to be shipped to the WorkPackageBrowsing screen
+        setRemovedWP((prevState) => {
+          const updatedRemovedWP = [...prevState, selectedWorkPackage];
+          //console.log("removed packages list from workpackagecart.js", updatedRemovedWP);
+          return updatedRemovedWP;
+        });
+        fetchWorkPackages();
+      }
+    } catch (error) {
+      console.error('Network error');
+    }
+  };
+
+  //Function to handle payment upon pressing "Pay Now"
+  const handlePayment = async () => {
+    try {
+      const token = await getItem('@token');
+      const user = JSON.parse(token);
+      const userId = user._id;
+
+      if (userId) {
+        const response = await fetch('http://localhost:4000/payment/initOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            totalPrice: calculateTotalPrice(), //Send the total payment price
+          }),
+        });
+
+        if (response.ok) {
+          const orderData = await response.json();
+          console.log('Order received and sent:', orderData);
+
+          if (orderData.id) {
+            if (!!orderData?.links) {
+                const findUrl = orderData.links.find(data => data?.rel == "approve")
+                console.log('find URL: ', findUrl.href)
+                setPaypalUrl(findUrl.href)
+
+                
+                //May need to change for android
+                // Conditionally redirect based on platform
+                if (Platform.OS === 'web') {
+                    window.location.href = findUrl.href;
+                } else {
+                    Linking.openURL(findUrl.href)
+                        .then(() => {
+                            // Optionally, perform any actions after the URL is opened
+                        })
+                        .catch((err) => {
+                            console.error('Error opening PayPal URL:', err);
+                        });
+                }
+            }
+
+          } else {
+            const errorDetail = orderData?.details?.[0];
+            const errorMessage = errorDetail
+              ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+              : JSON.stringify(orderData);
+
+            throw new Error(errorMessage);
+          }
+
+        } else {
+          console.error('Could not initiate PayPal Checkout...');
+        }
+      } else {
+        console.log('Must be logged in to purchase work packages');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  };
+
+  // Function to capture the payment after the user has approved the payment
+  const completeOrder = async (orderId) => {
+    try {
         const token = await getItem('@token');
         const user = JSON.parse(token);
         const userId = user._id;
-        try {
-            const response = await fetch(
-                `http://localhost:4000/workPackages/deleteFromCart/${userId}/${selectedWorkPackage}`,
-                {
-                    method: 'DELETE',
-                }
-            );
-            if (response.ok) {
-                console.log(response);
-
-                // Update the removed work packages list to be shipped to the WorkPackageBrowsing screen
-                setRemovedWP(prevState => {
-                    const updatedRemovedWP = [...prevState, selectedWorkPackage];
-                    //console.log("removed packages list from workpackagecart.js", updatedRemovedWP);
-                    return updatedRemovedWP;
-                });
-                fetchWorkPackages();
+  
+        if (userId) {
+          const response = await fetch(`http://localhost:4000/payment/${orderId}/capture`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             }
-        } catch (error) {
-            console.error('Network error');
+          });
+  
+          if (response) {
+            console.log('response from capture', response);
+            alert("Payment successful and confirmed.")
+            clearPaypalState()
+          }
+            
+        } else {
+          console.log('Must be logged in to purchase work packages2');
         }
-    };
+      } catch (error) {
+        console.error('Network error:', error);
+        // Handle network errors or other exceptions
+        // ...
+      }
+}
 
-    // Function to toggle the pop up modal for add to cart
-    const toggleModalAdd = () => {
-        setModalAddVisible(!modalAddVisible);
-    };
-
-    // Function to calculate the total price based on the work packages
-    const calculateTotalPrice = () => {
-        const totalPrice = workPackages.reduce((total, workPackage) => total + (workPackage.price || 0), 0);
-        return totalPrice.toFixed(2);
-
-    };
-
-    useEffect(() => {
-        fetchWorkPackages();
-    }, []);
-
-    // Set the parameters to be sent back to WorkPackageBrowsing
-    useEffect(() => {
-        // Set parameters when navigating back to WorkPackageBrowsing
-        console.log("removed packages list params set from workpackagecart.js", removedWPs);
-        navigation.setParams({
-            removedWPsList: removedWPs, // Replace with the data you want to send back
-        });
-    }, [removedWPs]);
-
-
-    return (
-        <ImageBackground
-            source={require('../../assets/backgroundCloudyBlobsFull.png')}
-            resizeMode="cover"
-            style={styles.container}
-        >
-            <View style={styles.containerFile}>
-                <Text style={styles.TitleName}>Your Cart ({workPackages.length})</Text>
-
-                <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                    {workPackages.map((workPackage) => (
-                        // Display the work package details
-                        <View key={workPackage._id} style={styles.workPackageBox}>
-                            <View style={styles.workPackageText}>
-                                <Text style={styles.workPackageNameText}>
-                                    {`${workPackage.name} - ${workPackage.grade} \n\n`}
-                                </Text>
-                                <Text>
-                                    {`${workPackage.description === undefined ? `` : `${workPackage.description} \n`
-                                        }`}
-                                </Text>
-                                {workPackage.instructorDetails && (
-                                    <Text>
-                                        made by {workPackage.instructorDetails.firstName}{' '}
-                                        {workPackage.instructorDetails.lastName}
-                                    </Text>
-                                )}
-                            </View>
-                            <View style={styles.priceAndButton}>
-                                <Text style={{ fontWeight: '700', marginRight: 10 }}>
-                                    {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
-                                </Text>
-
-                                <Button
-                                    key={workPackage._id}
-                                    mode="contained"
-                                    contentStyle={{
-                                        minWidth: '50%',
-                                        maxWidth: '100%', // Adjust width to fit the content
-                                        minHeight: 20,
-                                        justifyContent: 'center', // Adjust alignment as needed
-                                    }}
-                                    style={[styles.button]}
-                                    onPress={() => {
-                                        selectWorkPackage(workPackage);
-                                    }}
-                                    labelStyle={styles.cart} // Apply text styles directly to the button label
-                                >
-                                    Remove
-                                </Button>
-                            </View>
-                        </View>
-                    ))}
-                    {/* Modal */}
-                    <Modal
-                        testID="modalIdentifier"
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalAddVisible}
-                        onRequestClose={() => {
-                            toggleModalAdd();
-                        }}
-                    >
-                        <View style={styles.containerDeleteModal}>
-                            <View style={styles.containerDeleteMaterial}>
-                                <View style={styles.titleDeleteModal}>
-                                    <Text style={styles.textDeleteModal}>
-                                        Are you sure you want to delete {workPackageName} from your cart ?
-                                    </Text>
-                                </View>
-                                <View style={styles.containerDeleteButtonsModal}>
-                                    <TouchableOpacity
-                                        style={styles.buttonAddModal}
-                                        onPress={() => {
-                                            if (selectedWorkPackage) {
-                                                handleDeleteFile(selectedWorkPackage); // Pass the selected work package to the function
-                                            }
-                                            toggleModalAdd();
-                                        }}
-                                    >
-                                        <Text style={styles.buttonTextAddModal}>Delete</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.buttonCancelModal}
-                                        onPress={() => {
-                                            toggleModalAdd();
-                                        }}
-                                    >
-                                        <Text style={styles.buttonTextCancelModal}>Cancel</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-                </ScrollView>
-                {/* Order Summary Container */}
-                <View style={styles.headerContainer}>
-                    <Text style={styles.headerText}>Order Summary</Text>
-                </View>
-                <View style={styles.totalPriceContainer}>
-                    <Text style={styles.totalPriceText}>Total Price: ${calculateTotalPrice()}</Text>
-                </View>
-
-                <TouchableOpacity style={styles.viewCartButton} onPress={() => { }}>
-                    <Text style={styles.viewCartText}>Pay Now</Text>
-                </TouchableOpacity>
+  const renderPaypalComponent = () => {
+    if (Platform.OS === 'web') {
+      return (
+        <View>
+          {paypalUrl && (
+            <div>
+              <button onClick={clearPaypalState}>Close Modal</button>
+              <div style={{ flex: 1 }}>
+                <iframe
+                  title="PayPal Checkout"
+                  src={paypalUrl}
+                  width="100%"
+                  height="500px" // Adjust the height as needed
+                  frameBorder="0"
+                />
+              </div>
+            </div>
+          )}
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ flex: 1 }}>
+          {paypalUrl && (
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity onPress={clearPaypalState} style={{ margin: 24 }}>
+                <Text>Close Modal</Text>
+              </TouchableOpacity>
+              <WebView source={{ uri: paypalUrl }} />
             </View>
-        </ImageBackground>
-    );
+          )}
+        </View>
+      );
+    }
+  };
+
+  const clearPaypalState = () => {
+    setPaypalUrl(''); // Clear PayPal URL to close the iframe
+  };
+
+  // Function to toggle the pop up modal for add to cart
+  const toggleModalAdd = () => {
+    setModalAddVisible(!modalAddVisible);
+  };
+
+  // Function to calculate the total price based on the work packages
+  const calculateTotalPrice = () => {
+    const totalPrice = workPackages.reduce((total, workPackage) => {
+      // Convert the price to a number before adding it to the total
+      const price = parseFloat(workPackage.price) || 0;
+      return total + price;
+    }, 0);
+
+    return totalPrice.toFixed(2);
+  };
+
+  useEffect(() => {
+    fetchWorkPackages();
+  }, []);
+
+  // Set the parameters to be sent back to WorkPackageBrowsing
+  useEffect(() => {
+    // Set parameters when navigating back to WorkPackageBrowsing
+    console.log('removed packages list params set from workpackagecart.js', removedWPs);
+    navigation.setParams({
+      removedWPsList: removedWPs, // Replace with the data you want to send back
+    });
+  }, [removedWPs]);
+
+  return (
+    <ImageBackground
+      source={require('../../assets/backgroundCloudyBlobsFull.png')}
+      resizeMode="cover"
+      style={styles.container}
+    >
+      <View style={styles.containerFile}>
+        <Text style={styles.TitleName}>Your Cart ({workPackages.length})</Text>
+
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          {workPackages.map((workPackage) => (
+            // Display the work package details
+            <View key={workPackage._id} style={styles.workPackageBox}>
+              <View style={styles.workPackageText}>
+                <Text style={styles.workPackageNameText}>
+                  {`${workPackage.name} - ${workPackage.grade} \n\n`}
+                </Text>
+                <Text>
+                  {`${
+                    workPackage.description === undefined ? `` : `${workPackage.description} \n`
+                  }`}
+                </Text>
+                {workPackage.instructorDetails && (
+                  <Text>
+                    made by {workPackage.instructorDetails.firstName}{' '}
+                    {workPackage.instructorDetails.lastName}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.priceAndButton}>
+                <Text style={{ fontWeight: '700', marginRight: 10 }}>
+                  {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
+                </Text>
+
+                <Button
+                  key={workPackage._id}
+                  mode="contained"
+                  contentStyle={{
+                    minWidth: '50%',
+                    maxWidth: '100%', // Adjust width to fit the content
+                    minHeight: 20,
+                    justifyContent: 'center', // Adjust alignment as needed
+                  }}
+                  style={[styles.button]}
+                  onPress={() => {
+                    selectWorkPackage(workPackage);
+                  }}
+                  labelStyle={styles.cart} // Apply text styles directly to the button label
+                >
+                  Remove
+                </Button>
+              </View>
+            </View>
+          ))}
+          {/* Modal */}
+          <Modal
+            testID="modalIdentifier"
+            animationType="slide"
+            transparent={true}
+            visible={modalAddVisible}
+            onRequestClose={() => {
+              toggleModalAdd();
+            }}
+          >
+            <View style={styles.containerDeleteModal}>
+              <View style={styles.containerDeleteMaterial}>
+                <View style={styles.titleDeleteModal}>
+                  <Text style={styles.textDeleteModal}>
+                    Are you sure you want to delete {workPackageName} from your cart ?
+                  </Text>
+                </View>
+                <View style={styles.containerDeleteButtonsModal}>
+                  <TouchableOpacity
+                    style={styles.buttonAddModal}
+                    onPress={() => {
+                      if (selectedWorkPackage) {
+                        handleDeleteFile(selectedWorkPackage); // Pass the selected work package to the function
+                      }
+                      toggleModalAdd();
+                    }}
+                  >
+                    <Text style={styles.buttonTextAddModal}>Delete</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.buttonCancelModal}
+                    onPress={() => {
+                      toggleModalAdd();
+                    }}
+                  >
+                    <Text style={styles.buttonTextCancelModal}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </ScrollView>
+        {/* Order Summary Container */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}>Order Summary</Text>
+        </View>
+        <View style={styles.totalPriceContainer}>
+          <Text style={styles.totalPriceText}>Total Price: ${calculateTotalPrice()}</Text>
+        </View>
+
+        <TouchableOpacity style={styles.viewCartButton} onPress={handlePayment}>
+          <Text style={styles.viewCartText}>Pay Now</Text>
+        </TouchableOpacity>
+
+        {/*{renderPaypalComponent()}*/}
+
+      </View>
+    </ImageBackground>
+  );
 };
 
 const styles = StyleSheet.create({
