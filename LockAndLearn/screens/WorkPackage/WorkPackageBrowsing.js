@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
+  Image,
+  FlatList,
   TouchableOpacity,
   Modal,
   ScrollView,
   StyleSheet,
   ImageBackground,
 } from 'react-native';
-import { DEVICE_SIZES, minSize } from 'rn-responsive-styles';
-import { Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { Button, Icon } from 'react-native-paper';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
 
 const WorkPackageBrowsingScreen = ({ route }) => {
@@ -43,6 +45,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
   // Function to handle selecting a work package
   const selectWorkPackage = (workPackage) => {
+    console.log(workPackage);
     setSelectedWorkPackage(workPackage);
     setSelectedWorkPackageID(workPackage._id);
     setWorkPackageName(workPackage.name); // Set the work package name for the modal display
@@ -266,6 +269,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
       const token = await getItem('@token');
       const user = JSON.parse(token);
       const userId = user._id;
+      console.log(selectedWorkPackage);
       if (!userId || !selectedWorkPackage) {
         console.error('User ID or selected work package is missing');
         return;
@@ -290,6 +294,45 @@ const WorkPackageBrowsingScreen = ({ route }) => {
       }
     } catch (error) {
       console.error('Error adding work package to user:', error);
+    }
+  };
+
+  // Function to handle acquiring a work package
+  const handleAcquireWorkPackage = async (selectedWorkPackage) => {
+    try {
+      const token = await getItem('@token');
+      const user = JSON.parse(token);
+      const userId = user._id;
+  
+      if (!userId || !selectedWorkPackage) {
+        console.error('User ID or selected work package is missing');
+        return;
+      }
+  
+      const response = await fetch(
+        `http://localhost:4000/workPackages/acquireWorkPackage/${userId}/${selectedWorkPackage._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Work package acquired successfully
+        console.log('Work package acquired'); 
+        // Fetch the updated list of work packages
+        fetchWorkPackages();
+      } else {
+        // Handle error response
+        setTemporaryErrorMessage(data.error);
+        console.error(data.error);
+      }
+    } catch (error) {
+      console.error('Error acquiring work package:', error);
     }
   };
 
@@ -568,6 +611,25 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                     >
                       {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
                     </Button>
+                    {/*Acquire button */}
+                    <Button
+                      key={`acquireButton-${workPackage._id}`}
+                      mode="contained"
+                      contentStyle={{
+                        minWidth: '50%',
+                        maxWidth: '100%',
+                        minHeight: 20,
+                        justifyContent: 'center',
+                        backgroundColor: 'blue', 
+                      }}
+                      style={[styles.button, { marginTop: 10 }]}
+                      onPress={() => {
+                        // Pass the selected work package to the function
+                        handleAcquireWorkPackage(workPackage);
+                      }}
+                    >
+                      Acquire
+                    </Button>
                   </View>
                 </View>
               ))}
@@ -617,73 +679,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
               </Modal>
             </ScrollView>
           </View>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.viewPreferences}>
-          {children.map((child, childIndex) => (
-            <View style={styles.viewChildPreferences} key={child.id}>
-              <Text style={styles.child}>
-                Suggested Materials for {child.firstName} {child.lastName}
-              </Text>
-              {suggestedWorkPackages.length !== 0 &&
-                suggestedWorkPackages[childIndex].map(
-                  (
-                    workPackage // Display the work package details
-                  ) => (
-                    <View key={workPackage._id} style={styles.workPackageBox}>
-                      <View style={styles.workPackageText}>
-                        <Text style={styles.workPackageNameText}>
-                          {`${workPackage.name} - ${workPackage.grade} \n\n`}
-                        </Text>
-                        <Text>
-                          {`${
-                            workPackage.description === undefined
-                              ? ``
-                              : `${workPackage.description} \n`
-                          }`}
-                        </Text>
-                        {workPackage.instructorDetails && (
-                          <Text>
-                            made by {workPackage.instructorDetails.firstName}{' '}
-                            {workPackage.instructorDetails.lastName}
-                          </Text>
-                        )}
-                      </View>
-                      <View style={styles.priceAndButton}>
-                        <Text style={{ fontWeight: '700', marginRight: 10 }}>
-                          {workPackage.price && workPackage.price !== 0
-                            ? `$${workPackage.price}`
-                            : 'Free'}
-                        </Text>
-
-                        <Button
-                          key={workPackage._id}
-                          testID="addButton-wp1"
-                          mode="contained"
-                          contentStyle={{
-                            minWidth: '50%',
-                            maxWidth: '100%', // Adjust width to fit the content
-                            minHeight: 20,
-                            justifyContent: 'center', // Adjust alignment as needed
-                            backgroundColor: isInUserCart(workPackage._id) ? 'green' : undefined,
-                          }}
-                          style={[styles.button]}
-                          onPress={() => {
-                            // Pass the selected work package to the function
-                            selectWorkPackage(workPackage);
-                          }}
-                          labelStyle={{ ...styles.cart, color: 'white' }}
-                          disabled={isInUserCart(workPackage._id)} // Disable button if already in cart
-                        >
-                          {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
-                        </Button>
-                      </View>
-                    </View>
-                  )
-                )}
-            </View>
-          ))}
-        </View>
-          </ScrollView>
           <TouchableOpacity
             testID="viewCartButton"
             style={styles.viewCartButton}

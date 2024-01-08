@@ -422,4 +422,38 @@ router.post('/editWorkPackage/:workPackageId', async (req, res) => {
   }
 });
 
+// Acquire a specific work package by ID
+router.put('/acquireWorkPackage/:userId/:workPackageId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const workPackageId = req.params.workPackageId;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if the work package is already in the user's purchasedWorkPackages
+    const isAlreadyPurchased = user.purchasedWorkPackages.includes(workPackageId);
+
+    if (isAlreadyPurchased) {
+      return res.status(400).json({ error: 'This work package has already been acquired' });
+    }
+
+    // Add the work package ID to the user's purchasedWorkPackages array
+    user.purchasedWorkPackages.push(workPackageId);
+
+    // Save the updated user
+    await user.save();
+
+    // Send a success response
+    res.status(200).json({ message: 'Work package acquired successfully' });
+  } catch (error) {
+    console.error('Error acquiring work package:', error);
+    res.status(500).json({ error: 'An error occurred while acquiring the work package.' });
+  }
+});
+
 module.exports = router;
