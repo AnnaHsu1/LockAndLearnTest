@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
         textColor:'white'
     },
     textReview: {
-        color: 'red',
+        color: '#8D8D8D',
         alignItems: 'center',
         fontSize: 15,
         fontWeight: '500',
