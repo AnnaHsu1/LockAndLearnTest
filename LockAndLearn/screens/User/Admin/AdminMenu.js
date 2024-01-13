@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
@@ -12,92 +12,98 @@ const AdminMenu = ({ route, navigation }) => {
   const styles = useStyles();
   const [isModalVisible, setModalVisible] = useState(false);
 
-
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
 
   return (
     <View style={styles.page}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Icon source="account-circle" color="#fff" size={30} />
-          <Text style={styles.title}>
-                Admin Menu
-          </Text>
+          <Text style={styles.title}>Admin Menu</Text>
         </View>
-        {/* Accounts */}
-        <Button
-          testID="admin-accounts"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AdminAccount');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Accounts</Text>
-        </Button>
-        {/* Finance */}
-        <Button
-          testID="admin-finance"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AdminFinances');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Finances</Text>
-        </Button>
-        {/* Work Packages */}
-        <Button
-          testID="admin-workpackages"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AdminWorkPackages');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Work Packages</Text>
-        </Button>
-        {/* Files */}
-        <Button
-          testID="admin-files"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AdminFiles');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Study Material</Text>
-        </Button>
-        {/* Quizzies */}
-        <Button
-          testID="admin-quizzes"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AdminQuizzes');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Quizzes</Text>
-        </Button>
-        {/* Subcategories */}
-        <Button
-          testID="admin-subcategories"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AdminSubcategories');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Subjects</Text>
-        </Button>
-
+        <ScrollView>
+          {/* Accounts */}
+          <Button
+            testID="admin-accounts"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminAccount');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Accounts</Text>
+          </Button>
+          {/* Finance */}
+          <Button
+            testID="admin-finance"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminFinances');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Finances</Text>
+          </Button>
+          {/* Work Packages */}
+          <Button
+            testID="admin-workpackages"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminWorkPackages');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Work Packages</Text>
+          </Button>
+          {/* Files */}
+          <Button
+            testID="admin-files"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminFiles');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Study Material</Text>
+          </Button>
+          {/* Quizzies */}
+          <Button
+            testID="admin-quizzes"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminQuizzes');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Quizzes</Text>
+          </Button>
+          {/* Subcategories */}
+          <Button
+            testID="admin-subcategories"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminSubcategories');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Subjects</Text>
+          </Button>
+          {/* Certificates to Approve */}
+          <Button
+            testID="admin-certificates"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminCertificates');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Certificates to Review</Text>
+          </Button>
+        </ScrollView>
       </View>
 
       {/* Modal to confirm the deletion of a child */}
@@ -115,9 +121,7 @@ const AdminMenu = ({ route, navigation }) => {
             padding: 20,
           }}
         >
-          <Text style={styles.text}>
-
-          </Text>
+          <Text style={styles.text}></Text>
 
           {/* Cancel */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>

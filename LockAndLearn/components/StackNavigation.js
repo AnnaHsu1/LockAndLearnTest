@@ -47,6 +47,7 @@ import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
 import StudyMaterialPreferences from '../screens/User/Child/StudyMaterialPreferences';
+import AdminCertificates from '../screens/User/Admin/AdminCertificates';
 
 const Stack = createNativeStackNavigator();
 
@@ -246,6 +247,11 @@ const StackNavigation = () => {
           name="AdminSubcategories"
           component={AdminSubcategories}
           options={{ title: 'AdminSubcategories' }}
+        />
+        <Stack.Screen
+          name="AdminCertificates"
+          component={AdminCertificates}
+          options={{ title: 'AdminCertificates' }}
         />
         <Stack.Screen
           name="AdminPackages"
