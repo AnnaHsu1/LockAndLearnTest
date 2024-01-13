@@ -47,6 +47,9 @@ import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
 import StudyMaterialPreferences from '../screens/User/Child/StudyMaterialPreferences';
+import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
+import Payment from '../screens/WorkPackage/Payment';
+import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
 
 const Stack = createNativeStackNavigator();
@@ -148,6 +151,11 @@ const StackNavigation = () => {
           name="QuestionsOverviewScreen"
           component={QuestionsOverviewScreen}
           options={{ title: 'Questions' }}
+              />
+        <Stack.Screen
+            name="PurchaseSuccessPage"
+            component={PurchaseSuccessPage}
+            options={{ headerShown: false }}
         />
         <Stack.Screen
           name="CreateQuestion"
@@ -314,6 +322,16 @@ const StackNavigation = () => {
           name="StudyMaterialPreferences"
           component={StudyMaterialPreferences}
           options={{ title: 'Study Material Preferences' }}
+        />
+        <Stack.Screen
+            name="Payment"
+            component={Payment}
+            options={{ title: 'Payment' }}
+        />
+        <Stack.Screen
+            name="CheckoutForm"
+            component={CheckoutForm}
+            options={{ title: 'CheckoutForm' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

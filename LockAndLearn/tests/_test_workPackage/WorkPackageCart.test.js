@@ -1,7 +1,9 @@
 import WorkPackageCart from '../../screens/WorkPackage/WorkPackageCart';
 import React from 'react';
-import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Linking } from 'react-native'; // Import Linking from 'react-native'
+
 
 // Mocking modules and navigation
 jest.mock('@react-navigation/native', () => ({
@@ -64,7 +66,7 @@ describe('WorkPackageCart', () => {
 
     it('displays total price', () => {
         const { getByText } = render(<WorkPackageCart />);
-        expect(getByText('Total Price: $0.00')).toBeTruthy(); // Assuming initial total price is zero
+        expect(getByText('Total Amount: $0.00 CAD')).toBeTruthy(); // Assuming initial total price is zero
         // Add assertions for the total price based on mocked work packages
     });
 
@@ -77,7 +79,7 @@ describe('WorkPackageCart', () => {
             })
         );
 
-        const { getByText, getByTestId, queryByText } = render(<WorkPackageCart />);
+        const { getByText, getByTestId, queryByText,  } = render(<WorkPackageCart />);
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledTimes(1);
         });
@@ -94,8 +96,14 @@ describe('WorkPackageCart', () => {
 
         
         } else {
-          
-            expect(getByText('Your Cart (0)')).toBeTruthy(); // assertion for an empty cart
+          expect(getByText('Your Cart (0)')).toBeTruthy(); // assertion for an empty cart
+          expect(getByText('Your cart is empty.')).toBeTruthy(); // reminder that the cart is empty
+          const payNowButtonCart = getByText('Pay Now');
+          expect(payNowButtonCart).toBeTruthy(); // Assert that the button is present
+
+          // Ensure that the button is disabled when there are no items in the cart
+          expect(mockWorkPackages.length).toBe(0);
+          expect(payNowButtonCart.props.disabled).toBe(undefined);
         }
     });
     it('displays the "Pay Now" button', () => {

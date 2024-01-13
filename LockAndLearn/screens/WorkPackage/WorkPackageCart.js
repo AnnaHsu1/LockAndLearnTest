@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Text,
     View,
-    Image,
-    FlatList,
     TouchableOpacity,
     Modal,
     ScrollView,
@@ -11,9 +9,7 @@ import {
     StyleSheet,
     Platform,
 } from 'react-native';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import { Button, Icon } from 'react-native-paper';
-import { useRoute } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
 import WebView from 'react-native-webview';
@@ -26,8 +22,6 @@ const WorkPackageCart = () => {
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [removedWPs, setRemovedWP] = useState([]);
   const [paypalUrl, setPaypalUrl] = useState(null)
-  const [accessToken, setAccessToken] = useState(null)
-  const webViewRef = useRef(null);
 
 
   // Function to handle selecting a work package
@@ -36,7 +30,32 @@ const WorkPackageCart = () => {
     setSelectedWorkPackage(workPackage._id);
     setWorkPackageName(workPackage.name); // Set the work package name for the modal display
     toggleModalAdd();
-  };
+    };
+
+    const handlePayment = async () => {
+        try {
+            const token = await getItem('@token');
+            const user = JSON.parse(token);
+            const userId = user._id;
+
+            const totalPrice = calculateTotalPrice(); // Calculate the total price
+            console.log('total', totalPrice);
+
+            if (userId && totalPrice === '0.00' && workPackages.length > 0) {
+                await transferToPurchasedWorkPackage(userId);
+                // Display a message that the payment was bypassed as the total price is 0
+                console.log('Payment bypassed as the total price is 0');
+                navigation.navigate('PurchaseSuccessPage');
+                return;
+            } else {
+                navigation.navigate('Payment', { totalPrice });
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+        }
+    };
+
+
 
   // Retrieve the unowned work packages specific to the user
   const fetchWorkPackages = async () => {
@@ -93,102 +112,144 @@ const WorkPackageCart = () => {
     } catch (error) {
       console.error('Network error');
     }
-  };
+    };
 
-  //Function to handle payment upon pressing "Pay Now"
-  const handlePayment = async () => {
-    try {
-      const token = await getItem('@token');
-      const user = JSON.parse(token);
-      const userId = user._id;
+    /*PAYPAL IMPLEMENTATION TBD*/
 
-      if (userId) {
-        const response = await fetch('http://localhost:4000/payment/initOrder', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            totalPrice: calculateTotalPrice(), //Send the total payment price
-          }),
-        });
+  ////Function to handle payment upon pressing "Pay Now"
+  //const handlePayment = async () => {
+  //    try {
 
-        if (response.ok) {
-          const orderData = await response.json();
-          console.log('Order received and sent:', orderData);
+  //    const token = await getItem('@token');
+  //    const user = JSON.parse(token);
+  //    const userId = user._id;
 
-          if (orderData.id) {
-            if (!!orderData?.links) {
-                const findUrl = orderData.links.find(data => data?.rel == "approve")
-                console.log('find URL: ', findUrl.href)
-                setPaypalUrl(findUrl.href)
+  //        const totalPrice = calculateTotalPrice(); // Calculate the total price
+  //        console.log(totalPrice);
+  //      if (userId && totalPrice === '0.00' && workPackages.length > 0) {
+  //          await transferToPurchasedWorkPackage(userId);
+  //          // display a message that the payment was bypassed as the total price is 0
+  //          console.log('Payment bypassed as the total price is 0');
+  //          navigation.navigate('PurchaseSuccessPage');
+  //          return;
+  //      }
+  //    if (userId) {
+  //      const response = await fetch('http://localhost:4000/payment/initOrder', {
+  //        method: 'POST',
+  //        headers: {
+  //          'Content-Type': 'application/json',
+  //        },
+  //        body: JSON.stringify({
+  //          totalPrice: calculateTotalPrice(), //Send the total payment price
+  //        }),
+  //      });
 
-                
-                //May need to change for android
-                // Conditionally redirect based on platform
-                if (Platform.OS === 'web') {
-                    window.location.href = findUrl.href;
+  //      if (response.ok) {
+  //          const orderData = await response.json();
+  //          console.log(orderData.id);
+  //          await completeOrder(orderData.id);
+  //        console.log('Order received and sent:', orderData);
+  //        if (orderData.id) {
+  //          if (!!orderData?.links) {
+  //              const findUrl = orderData.links.find(data => data?.rel == "approve")
+  //              console.log('find URL: ', findUrl.href)
+  //              setPaypalUrl(findUrl.href)
+
+
+  //              //May need to change for android
+  //              // Conditionally redirect based on platform
+  //              if (Platform.OS === 'web') {
+  //                  window.location.href = findUrl.href;
+  //              } else {
+  //                  Linking.openURL(findUrl.href)
+  //                      .then(() => {
+  //                          // Optionally, perform any actions after the URL is opened
+  //                      })
+  //                      .catch((err) => {
+  //                          console.error('Error opening PayPal URL:', err);
+  //                      });
+  //              }
+  //          }
+
+  //        } else {
+  //          const errorDetail = orderData?.details?.[0];
+  //          const errorMessage = errorDetail
+  //            ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
+  //            : JSON.stringify(orderData);
+
+  //          throw new Error(errorMessage);
+  //        }
+
+  //      } else {
+  //        console.error('Could not initiate PayPal Checkout...');
+  //      }
+  //    } else {
+  //      console.log('Must be logged in to purchase work packages');
+  //    }
+  //  } catch (error) {
+  //    console.error('Network error:', error);
+  //  }
+  //};
+    // Function to capture the payment after the user has approved it
+
+    const completeOrder = async (orderId) => {
+        try {
+            const token = await getItem('@token');
+            const user = JSON.parse(token);
+            const userId = user._id;
+
+            if (userId) {
+                const response = await fetch(`http://localhost:4000/payment/${orderId}/capture`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    console.log('Payment successfully captured.');
+                    alert('Payment successful and confirmed.');
+                    clearPaypalState();
+                    // You might want to navigate the user to a success page or perform other actions upon successful capture
+                    navigation.navigate('PurchaseSuccessPage');
                 } else {
-                    Linking.openURL(findUrl.href)
-                        .then(() => {
-                            // Optionally, perform any actions after the URL is opened
-                        })
-                        .catch((err) => {
-                            console.error('Error opening PayPal URL:', err);
-                        });
+                    console.error('Failed to capture payment:', response.statusText);
+                    alert('Payment capture failed. Please try again.');
+                    // Handle the scenario where payment capture fails
                 }
+            } else {
+                console.log('Must be logged in to capture payment.');
+                alert('Please log in to complete the payment.');
+                // Handle the scenario where user ID is not available
             }
-
-          } else {
-            const errorDetail = orderData?.details?.[0];
-            const errorMessage = errorDetail
-              ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
-              : JSON.stringify(orderData);
-
-            throw new Error(errorMessage);
-          }
-
-        } else {
-          console.error('Could not initiate PayPal Checkout...');
+        } catch (error) {
+            console.error('Error capturing payment:', error);
+            alert('An error occurred while capturing payment. Please try again.');
+            // Handle network errors or other exceptions
         }
-      } else {
-        console.log('Must be logged in to purchase work packages');
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-    }
-  };
+    };
+    const transferToPurchasedWorkPackage = async (userId) => {
+        try {
+            const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    workPackages: workPackages, // Pass the workPackages array from state
+                }),
+            });
 
-  // Function to capture the payment after the user has approved the payment
-  const completeOrder = async (orderId) => {
-    try {
-        const token = await getItem('@token');
-        const user = JSON.parse(token);
-        const userId = user._id;
-  
-        if (userId) {
-          const response = await fetch(`http://localhost:4000/payment/${orderId}/capture`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+            if (response.ok) {
+                console.log('Work packages transferred to purchasedWorkPackage successfully.');   
+                fetchWorkPackages(); // Fetch updated work packages after successful transfer
+            } else {
+                console.error('Error transferring work packages:', response.statusText);
             }
-          });
-  
-          if (response) {
-            console.log('response from capture', response);
-            alert("Payment successful and confirmed.")
-            clearPaypalState()
-          }
-            
-        } else {
-          console.log('Must be logged in to purchase work packages2');
+        } catch (error) {
+            console.error('Network error:', error);
         }
-      } catch (error) {
-        console.error('Network error:', error);
-        // Handle network errors or other exceptions
-        // ...
-      }
-}
+    };
 
   const renderPaypalComponent = () => {
     if (Platform.OS === 'web') {
@@ -269,50 +330,69 @@ const WorkPackageCart = () => {
         <Text style={styles.TitleName}>Your Cart ({workPackages.length})</Text>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          {workPackages.map((workPackage) => (
-            // Display the work package details
-            <View key={workPackage._id} style={styles.workPackageBox}>
-              <View style={styles.workPackageText}>
-                <Text style={styles.workPackageNameText}>
-                  {`${workPackage.name} - ${workPackage.grade} \n\n`}
-                </Text>
-                <Text>
-                  {`${
-                    workPackage.description === undefined ? `` : `${workPackage.description} \n`
-                  }`}
-                </Text>
-                {workPackage.instructorDetails && (
-                  <Text>
-                    made by {workPackage.instructorDetails.firstName}{' '}
-                    {workPackage.instructorDetails.lastName}
-                  </Text>
-                )}
-              </View>
-              <View style={styles.priceAndButton}>
-                <Text style={{ fontWeight: '700', marginRight: 10 }}>
-                  {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
-                </Text>
+          {workPackages.length === 0 ? (
+            <Text style={styles.emptyCartText}>Your cart is empty.</Text>
+          ) : (
+            workPackages.map((workPackage) => (
+              // Display the work package details
+              <View key={workPackage._id} style={styles.workPackageBox}>
+                <View style={styles.workPackageText}>
+                  <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
 
-                <Button
-                  key={workPackage._id}
-                  mode="contained"
-                  contentStyle={{
-                    minWidth: '50%',
-                    maxWidth: '100%', // Adjust width to fit the content
-                    minHeight: 20,
-                    justifyContent: 'center', // Adjust alignment as needed
-                  }}
-                  style={[styles.button]}
-                  onPress={() => {
-                    selectWorkPackage(workPackage);
-                  }}
-                  labelStyle={styles.cart} // Apply text styles directly to the button label
-                >
-                  Remove
-                </Button>
+                  <View style={styles.containerTag}>
+                    <View style={styles.tagBox}>
+                      <Text
+                        style={styles.tagText}
+                        selectable={false}
+                      >{`${workPackage.grade}`}</Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.workPackageDescription}>
+                    {`${
+                      workPackage.description === undefined ? `` : `${workPackage.description} \n`
+                    }`}
+                  </Text>
+                  {workPackage.instructorDetails && (
+                    <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                      Made by{' '}
+                      <Text style={styles.boldText}>
+                        {workPackage.instructorDetails.firstName}{' '}
+                        {workPackage.instructorDetails.lastName}
+                      </Text>
+                    </Text>
+                  )}
+                </View>
+                <View style={styles.priceAndButton}>
+                  <Text style={styles.priceWP}>
+                    {workPackage.price && workPackage.price !== 0
+                      ? `$${workPackage.price} CAD`
+                      : 'Free'}
+                  </Text>
+
+                  <Button
+                    key={workPackage._id}
+                    mode="contained"
+                    contentStyle={{
+                      minWidth: '50%',
+                      maxWidth: '100%', 
+                      minHeight: 20,
+                      justifyContent: 'center', 
+                      textAlign: 'center'
+                    }}
+                    style={[styles.button]}
+                    onPress={() => {
+                      selectWorkPackage(workPackage);
+                    }}
+                    labelStyle={styles.cart} 
+                  >
+                    Remove  
+                  </Button>
+                </View>
               </View>
-            </View>
-          ))}
+            ))
+          )}
+
           {/* Modal */}
           <Modal
             testID="modalIdentifier"
@@ -360,15 +440,18 @@ const WorkPackageCart = () => {
           <Text style={styles.headerText}>Order Summary</Text>
         </View>
         <View style={styles.totalPriceContainer}>
-          <Text style={styles.totalPriceText}>Total Price: ${calculateTotalPrice()}</Text>
+          <Text style={styles.totalPriceText}>Total Amount: ${calculateTotalPrice()} CAD</Text>
         </View>
 
-        <TouchableOpacity style={styles.viewCartButton} onPress={handlePayment}>
+        <TouchableOpacity
+          style={workPackages.length === 0 ? styles.viewCartButtonDisabled : styles.viewCartButton}
+          onPress={() => handlePayment()}
+          disabled={workPackages.length === 0}
+        >
           <Text style={styles.viewCartText}>Pay Now</Text>
         </TouchableOpacity>
 
         {/*{renderPaypalComponent()}*/}
-
       </View>
     </ImageBackground>
   );
@@ -410,7 +493,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     workPackageNameText: {
+        fontSize: '150%',
+        color: '#4F85FF',
+    },
+    priceWP: {
+        fontWeight: '700',
+        marginRight: 10,
         fontSize: '120%',
+        color: '#696969',
     },
     workPackageItem: {
         fontSize: 16,
@@ -430,9 +520,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#4F85FF',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderTopLeftRadius: 40,
-        borderTopRightRadius: 40,
-        width: '50%',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        width: '40%',
         alignItems: 'center',
         marginBottom: 5, // Adjust the margin here
     },
@@ -445,7 +535,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F0F0F0', // Change to desired background color
         paddingVertical: 10,
         paddingHorizontal: 20,
-        width: '50%',
+        width: '40%',
         alignItems: 'center',
         marginTop: -5, // Adjust the negative margin here
     },
@@ -466,6 +556,18 @@ const styles = StyleSheet.create({
     },
     viewCartButton: {
         backgroundColor: '#4F85FF',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        position: 'absolute',
+        bottom: 20,
+        left: '50%', // Center the button horizontally
+        transform: [{ translateX: '-50%' }], // Centering trick
+        width: '40%',
+        borderRadius: 8,
+    },
+    viewCartButtonDisabled: {
+        backgroundColor: 'grey',
         alignItems: 'center',
         paddingVertical: 15,
         paddingHorizontal: 20,
@@ -505,17 +607,16 @@ const styles = StyleSheet.create({
         width: '50vw', // Set width as a percentage
         alignSelf: 'center',
     },
-
     button: {
         color: '#ffffff',
-        backgroundColor: '#4F85FF',
+        backgroundColor: '#FD2525',
         borderRadius: 10,
         marginTop: 10,
         height: 40,
     },
 
     cart: {
-        paddingLeft: 10,
+        paddingLeft: 0,
         textAlign: 'center',
         justifyContent: 'center',
         fontSize: 20,
@@ -592,6 +693,41 @@ const styles = StyleSheet.create({
     },
     workPackageText: {
         flex: 1, // Allow text to wrap within the available space
+    },
+    emptyCartText: {
+      textAlign: 'center',
+      fontSize: 30,
+      marginVertical: 20,
+    },
+    workPackageDescription: {
+        fontSize: '110%',
+        color: '#696969',
+    },
+    instructorDetails: {
+        fontSize: '80%',
+        color: '#696969',
+    },
+    tagBox: {
+      backgroundColor: '#7393B3',
+      borderTopLeftRadius: 10, 
+      borderBottomLeftRadius: 10, 
+      borderTopRightRadius: 70, 
+      borderBottomRightRadius: 70,  
+      paddingVertical: 5, 
+      paddingHorizontal: 10, 
+      marginTop: 6, 
+      marginBottom: 6, 
+    },
+    tagText: {
+      textAlign: 'center',
+      color: 'white', 
+    },
+    containerTag: {
+      flexDirection: 'row', 
+      alignItems: 'flex-start', 
+    },
+    boldText: {
+      fontWeight: 'bold', // Make the instructor's name bold
     },
 });
 

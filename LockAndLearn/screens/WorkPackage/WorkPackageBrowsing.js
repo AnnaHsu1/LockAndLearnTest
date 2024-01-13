@@ -11,7 +11,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import { Button, Icon } from 'react-native-paper';
+import { Button, Icon, Checkbox } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
 
@@ -297,44 +297,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
   };
 
-  // Function to handle acquiring a work package
-  const handleAcquireWorkPackage = async (selectedWorkPackage) => {
-    try {
-      const token = await getItem('@token');
-      const user = JSON.parse(token);
-      const userId = user._id;
-  
-      if (!userId || !selectedWorkPackage) {
-        console.error('User ID or selected work package is missing');
-        return;
-      }
-  
-      const response = await fetch(
-        `http://localhost:4000/workPackages/acquireWorkPackage/${userId}/${selectedWorkPackage._id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        // Work package acquired successfully
-        console.log('Work package acquired'); 
-        // Fetch the updated list of work packages
-        fetchWorkPackages();
-      } else {
-        // Handle error response
-        setTemporaryErrorMessage(data.error);
-        console.error(data.error);
-      }
-    } catch (error) {
-      console.error('Error acquiring work package:', error);
-    }
-  };
 
   // Function to check if a work package is in the user's cart
   const isInUserCart = (workPackageId) => {
@@ -428,13 +390,17 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     fetchWorkPackages();
   };
 
-  const Checkbox = ({ label, checked, onChange }) => {
+  const CheckboxComponent = ({ label, checked, onChange }) => {
     return (
-      <View style={styles.checkBoxStyle}>
-        <Text style={{ fontWeight: 'bold' }} fontWeight>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8, marginHorizontal: 8 }}>
+        <Checkbox
+          status={checked ? 'checked' : 'unchecked'}
+          onPress={onChange}
+          color="#6750a4" // Custom color when checked
+        />
+        <Text style={{ fontWeight: 'none', marginLeft: -5, fontSize: 14, color: '#333', lineHeight: 24 }}>
           {label}
         </Text>
-        <input type="checkbox" checked={checked} onChange={onChange} />
       </View>
     );
   };
@@ -449,31 +415,41 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         <View style={styles.page}>
           <Text style={styles.TitleName}>Explore</Text>
           <input id="Search" type="text" placeholder="Search" style={styles.textbox} />
-          <Text style={{ fontWeight: 'bold', color: '#C1C1C1' }}>School Grades</Text>
+          <Text
+            style={{
+              color: '#696969',
+              fontSize: 20,
+              fontWeight: '300',
+              marginTop: '1%',
+              textAlign: 'center',
+            }}
+          >
+            Filter Work Packages by school grade
+          </Text>
           <View style={styles.filterContainer}>
             <View style={styles.checkboxGroupStyle}>
-              <Checkbox
+              <CheckboxComponent
                 label="1st"
                 checked={checkedGrade1}
                 onChange={() => {
                   handleCheckbox(1);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="2nd"
                 checked={checkedGrade2}
                 onChange={() => {
                   handleCheckbox(2);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="3rd"
                 checked={checkedGrade3}
                 onChange={() => {
                   handleCheckbox(3);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="4th"
                 checked={checkedGrade4}
                 onChange={() => {
@@ -482,28 +458,28 @@ const WorkPackageBrowsingScreen = ({ route }) => {
               />
             </View>
             <View style={styles.checkboxGroupStyle}>
-              <Checkbox
+              <CheckboxComponent
                 label="5th"
                 checked={checkedGrade5}
                 onChange={() => {
                   handleCheckbox(5);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="6th"
                 checked={checkedGrade6}
                 onChange={() => {
                   handleCheckbox(6);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="7th"
                 checked={checkedGrade7}
                 onChange={() => {
                   handleCheckbox(7);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="8th"
                 checked={checkedGrade8}
                 onChange={() => {
@@ -512,28 +488,28 @@ const WorkPackageBrowsingScreen = ({ route }) => {
               />
             </View>
             <View style={styles.checkboxGroupStyle}>
-              <Checkbox
+              <CheckboxComponent
                 label="9th"
                 checked={checkedGrade9}
                 onChange={() => {
                   handleCheckbox(9);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="10th"
                 checked={checkedGrade10}
                 onChange={() => {
                   handleCheckbox(10);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="11th"
                 checked={checkedGrade11}
                 onChange={() => {
                   handleCheckbox(11);
                 }}
               />
-              <Checkbox
+              <CheckboxComponent
                 label="12th"
                 checked={checkedGrade12}
                 onChange={() => {
@@ -541,26 +517,29 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                 }}
               />
             </View>
-            <View style={styles.containerFilterButtons}>
+          </View>
+          <View style={styles.containerFilterButtons}>
+            <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.buttonFilter}
                 onPress={() => {
                   filterWorkPackagesByGrade();
                 }}
               >
-                <Text style={styles.viewCartText}>Filter Results</Text>
+                <Icon source="filter" size={30} color="#000" />
               </TouchableOpacity>
+
               <TouchableOpacity
                 style={styles.buttonClearFilter}
                 onPress={() => {
                   clearFilter();
                 }}
               >
-                <Text style={styles.viewCartText}>Clear Filter</Text>
+                <Icon source="filter-remove-outline" size={30} color="#000" />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{ maxHeight: 300 }}>
+          <View style={{ maxHeight: 600 }}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
               {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
 
@@ -568,25 +547,37 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
                   <View style={styles.workPackageText}>
-                    <Text style={styles.workPackageNameText}>
-                      {`${workPackage.name} - ${workPackage.grade} \n\n`}
-                    </Text>
-                    <Text>
+                    <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+
+                    <View style={styles.containerTag}>
+                      <View style={styles.tagBox}>
+                        <Text
+                          style={styles.tagText}
+                          selectable={false}
+                        >{`${workPackage.grade}`}</Text>
+                      </View>
+                    </View>
+
+                    <Text style={styles.workPackageDescription}>
                       {`${
-                        workPackage.description === undefined ? `` : `${workPackage.description} \n`
+                        workPackage.description === undefined ? `` : `${workPackage.description}`
                       }`}
                     </Text>
+
                     {workPackage.instructorDetails && (
-                      <Text>
-                        made by {workPackage.instructorDetails.firstName}{' '}
-                        {workPackage.instructorDetails.lastName}
+                      <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                        Made by{' '}
+                        <Text style={styles.boldText}>
+                          {workPackage.instructorDetails.firstName}{' '}
+                          {workPackage.instructorDetails.lastName}
+                        </Text>
                       </Text>
                     )}
                   </View>
                   <View style={styles.priceAndButton}>
-                    <Text style={{ fontWeight: '700', marginRight: 10 }}>
+                    <Text style={styles.priceWP}>
                       {workPackage.price && workPackage.price !== 0
-                        ? `$${workPackage.price}`
+                        ? `$${workPackage.price} CAD`
                         : 'Free'}
                     </Text>
 
@@ -599,7 +590,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         maxWidth: '100%', // Adjust width to fit the content
                         minHeight: 20,
                         justifyContent: 'center', // Adjust alignment as needed
-                        backgroundColor: isInUserCart(workPackage._id) ? 'green' : undefined,
+                          backgroundColor: isInUserCart(workPackage._id) ? '#25B346' : undefined,
+                          flexWrap: 'wrap',
                       }}
                       style={[styles.button]}
                       onPress={() => {
@@ -610,25 +602,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                       disabled={isInUserCart(workPackage._id)} // Disable button if already in cart
                     >
                       {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
-                    </Button>
-                    {/*Acquire button */}
-                    <Button
-                      key={`acquireButton-${workPackage._id}`}
-                      mode="contained"
-                      contentStyle={{
-                        minWidth: '50%',
-                        maxWidth: '100%',
-                        minHeight: 20,
-                        justifyContent: 'center',
-                        backgroundColor: 'blue', 
-                      }}
-                      style={[styles.button, { marginTop: 10 }]}
-                      onPress={() => {
-                        // Pass the selected work package to the function
-                        handleAcquireWorkPackage(workPackage);
-                      }}
-                    >
-                      Acquire
                     </Button>
                   </View>
                 </View>
@@ -745,6 +718,12 @@ const styles = StyleSheet.create(
       padding: 20, // Add padding to match the styling in QuizzesOverviewScreen
       paddingBottom: 100,
     },
+    priceWP: {
+      fontWeight: '700',
+      marginRight: 10,
+      fontSize: '120%',
+      color: '#696969',
+    },
     title: {
       color: '#4F85FF',
       fontSize: 24,
@@ -760,7 +739,8 @@ const styles = StyleSheet.create(
       paddingBottom: 80, // Space for the "View Cart" button
     },
     workPackageNameText: {
-      fontSize: '120%',
+      fontSize: '150%',
+      color: '#4F85FF',
     },
     viewCartButton: {
       backgroundColor: '#4F85FF',
@@ -792,16 +772,17 @@ const styles = StyleSheet.create(
       backgroundColor: '#4F85FF',
       borderRadius: 10,
       marginTop: 10,
-      height: 40,
+        height: 40,
+        flexWrap: 'wrap',
     },
 
     cart: {
-      paddingLeft: 10,
+      paddingLeft: 0,
       textAlign: 'center',
       justifyContent: 'center',
-      fontSize: 20,
+        fontSize: 20,
+        flexWrap: 'wrap',
     },
-
     selectFiles: {
       color: '#696969',
       fontSize: 35,
@@ -929,9 +910,8 @@ const styles = StyleSheet.create(
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'top',
-      alignSelf: 'center',
-      alignItems: 'top',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     checkboxGroupStyle: {
       backgroundColor: 'white',
@@ -958,24 +938,62 @@ const styles = StyleSheet.create(
       width: '30%',
       height: 40,
       borderRadius: 8,
+      marginHorizontal: 23, // Adjust the margin as needed for spacing
+      paddingVertical: 0,
     },
     buttonClearFilter: {
-      backgroundColor: '#4F85FF',
+      backgroundColor: '#B2BEB5',
       alignItems: 'center',
       justifyContent: 'center',
       width: '30%',
       height: 40,
       borderRadius: 8,
+      marginHorizontal: 23, // Adjust the margin as needed for spacing
+      paddingVertical: 0,
     },
     containerFilterButtons: {
       backgroundColor: 'white',
       width: '100%',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-around',
       alignSelf: 'top',
       alignItems: 'center',
       borderTopLeftRadius: 40,
       borderTopRightRadius: 40,
+      paddingVertical: 20,
+    },
+    workPackageDescription: {
+      fontSize: '110%',
+      color: '#696969',
+    },
+    tagBox: {
+      backgroundColor: '#7393B3',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderTopRightRadius: 70,
+      borderBottomRightRadius: 70,
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      marginTop: 6,
+      marginBottom: 6,
+    },
+    tagText: {
+      textAlign: 'center',
+      color: 'white',
+    },
+    containerTag: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
+    instructorDetails: {
+      fontSize: '80%',
+      color: '#696969',
+    },
+    boldText: {
+      fontWeight: 'bold', // Make the instructor's name bold
+    },
+    buttonContainer: {
+      flexDirection: 'row',
     },
   },
   {
