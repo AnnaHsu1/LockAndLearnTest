@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, FlatList } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { Button, Icon } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getItem } from '../../../components/AsyncStorage';
+import { IoMdStar } from 'react-icons/io';
 
 const ViewPurchasedMaterial = ({ route, navigation }) => {
 
@@ -39,24 +40,89 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
         }
     };
 
+    useEffect(() => {
+        fetchWorkPackages(true);
+    }, []);
+
+    const RenderStarRatings =() => {
+        const [rating, setRating] = useState(null);
+        const [hover, setHover] = useState(null);
+
+        return (
+            <View style={{ flexDirection: 'row' }}>
+                {[...Array(5)].map((star, i) => {
+                    const ratingValue = i + 1;
+                    return (
+                        <View>
+                            <IoMdStar 
+                                key={i}
+                                style={styles.buttonStarRating}
+                                size={30} 
+                                className="star"
+                                color={ratingValue <= (hover || rating) ? "#4f85ff" : "#e4e5e9"}
+                                onMouseEnter={() => setHover(ratingValue)}
+                                onMouseLeave={() => setHover(rating)}
+                                onClick={() => setRating(ratingValue)} // Set the rating to the key when clicking the star
+                            />
+                        </View>
+                    );
+                })}
+            </View>
+        );
+    };
+
     // function to display the work package information
-    const renderWorkPackage = (workPackage) => {
+    const RenderWorkPackage = ({workPackage}) => {
+        const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+
+        const handleClick = () => {
+            setIsReviewModalVisible(!isReviewModalVisible);
+            console.log(isReviewModalVisible);
+        }
+
         return (
             <View key={workPackage._id} style={styles.workPackageItemContainer}>
-                <TouchableOpacity
+                <View
                     style={{ width: '80%' }}
                 >
                     <Text style={styles.workPackageItem}>
                         {workPackage.name} - {workPackage.grade} - {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
                     </Text>
-                </TouchableOpacity>
+                    <Text style={styles.workPackageItem}>
+                        {workPackage.description}
+                    </Text>
+                    <Button 
+                        style={styles.buttonReview} 
+                        onPress= {handleClick}
+                        textColor='white'
+                    >
+                        Leave a Review!
+                    </Button>
+                    {isReviewModalVisible ?
+                        <View>
+                            <Text style={styles.textReview}>
+                                Let others know about your experience with this package
+                            </Text>
+                            <Text style={styles.textReview}>
+                                Star Rating
+                            </Text>
+                            <RenderStarRatings />
+
+                            <input height={500} type="text" placeholder="Enter your review here" />
+                            <Button
+                                style={styles.buttonSubmit}
+                                textColor='white'
+                                onPress={handleClick}
+                            >
+                                Submit
+                            </Button>
+                        </View>
+                        : null
+                    }
+                </View>
             </View>
         );
     };
-
-    useEffect(() => {
-        fetchWorkPackages(true);
-    }, []);
 
     return (
         <ImageBackground
@@ -69,7 +135,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                 {/* Display all work packages */}
                 <FlatList
                     data={workPackages}
-                    renderItem={({ item }) => renderWorkPackage(item)}
+                    renderItem={({ item }) => <RenderWorkPackage workPackage={item} />}
                     keyExtractor={(item) => item._id}
                     style={{ width: '100%', marginTop: '2%' }}
                     contentContainerStyle={{ paddingHorizontal: '5%' }}
@@ -150,15 +216,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-    },
-    workPackageItem: {
-        fontSize: 16,
-        marginVertical: 10,
         color: '#000000',
         borderColor: '#696969',
         borderWidth: 1,
         padding: 13,
         borderRadius: 15,
+        shadowColor: '#000000',
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 0.35,
+        marginTop: '1%',
+    },
+    workPackageItem: {
+        fontSize: 16,
+        marginVertical: 10,
     },
     deleteButton: {
         alignItems: 'center',
@@ -184,7 +254,29 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '500',
     },
-    }
-);
+    buttonReview: {
+        backgroundColor: '#4f85ff',
+        width: "fit-content",
+        alignSelf: 'flex-end',
+        textColor:'white'
+    },
+    textReview: {
+        color: 'red',
+        alignItems: 'center',
+        fontSize: 15,
+        fontWeight: '500',
+    },
+    buttonSubmit: {
+        backgroundColor: '#4f85ff',
+        width: "fit-content",
+        alignSelf: 'center',
+        textColor:'white',
+        marginTop: '2%',
+    },
+    buttonStarRating: {
+        transition: 'color 0.25s',
+        cursor: 'pointer',
+    },
+});
 
 export default ViewPurchasedMaterial;
