@@ -48,7 +48,7 @@ exports.updateChild = async function updateChild(fdata) {
       existingChild.lastName = fdata.LastName;
       existingChild.grade = fdata.Grade;
       existingChild.preferences = fdata.Preferences;
-      existingChild.passingGrade= fdata.PassingGrade;
+      existingChild.passingGrade = fdata.PassingGrade;
     }
 
     // Update the existing document with the new data
@@ -67,5 +67,43 @@ exports.deleteChild = async function deleteChild(childId) {
   } catch (error) {
     console.log('Error deleting child:', error);
     throw error;
+  }
+};
+
+// Function to add/update child material assignment
+exports.updateChildMaterial = async function updateChildMaterial(childId, materialId) {
+  try {
+    assignedMaterials = [];
+    const existingChild = await Child.findById(childId);
+    if (!existingChild) {
+      throw new Error('Child not found with the specified _id');
+    } else {
+      if (existingChild.assignedMaterials) {
+        existingChild.assignedMaterials = materialId;
+      } else {
+        existingChild.assignedMaterials = [materialId];
+      }
+    }
+    // Update the existing document with the new data
+    const editChild = await existingChild.save();
+    return editChild;
+  } catch (error) {
+    console.log('Error updating child:', error);
+    throw error;
+  }
+};
+
+exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
+  try {
+    const child = await Child.findById(childId);
+    if (child) {
+      const workPackages = child.assignedMaterials;
+      return workPackages;
+    } else {
+      console.log('No child found');
+    }
+  } catch (err) {
+    console.log('Error getting work packages for child: ', err);
+    throw err;
   }
 };

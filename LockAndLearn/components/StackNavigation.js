@@ -269,7 +269,7 @@ const StackNavigation = () => {
         <Stack.Screen
           name="AddChildMaterial"
           component={AddChildMaterial}
-          options={{ title: 'Add Child Material' }}
+          options={{ title: 'Add Child Workpackage' }}
         />
         <Stack.Screen
           name="PurchasedMaterial"

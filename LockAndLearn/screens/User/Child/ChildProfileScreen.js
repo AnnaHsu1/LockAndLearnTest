@@ -40,36 +40,37 @@ const ChildProfileScreen = ({ route, navigation }) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Icon source="account-circle" color="#fff" size={30} />
-          <Text style={styles.title}>
-            {child.firstName} {child.lastName}
-          </Text>
-        </View>
-        {/* Start session */}
-        <Button
-          testID="start-session"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('Locking');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Start session</Text>
-        </Button>
-        {/* Add Material */}
-        <Button
-          testID="add-child-material"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AddChildMaterial');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Add material</Text>
-        </Button>
-        {/* Edit profile */}
-        {/* <Button
+        <View>
+          <View style={styles.header}>
+            <Icon source="account-circle" color="#fff" size={30} />
+            <Text style={styles.title}>
+              {child.firstName} {child.lastName}
+            </Text>
+          </View>
+          {/* Start session */}
+          <Button
+            testID="start-session"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('Locking');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Start session</Text>
+          </Button>
+          {/* Add Material */}
+          <Button
+            testID="add-child-material"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AddChildMaterial', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Add material</Text>
+          </Button>
+          {/* Edit profile */}
+          {/* <Button
           testID="purchased-material"
           mode="contained"
           onPress={() => {
@@ -79,37 +80,39 @@ const ChildProfileScreen = ({ route, navigation }) => {
         >
             <Text style={styles.text}>View purchased material</Text>
         </Button> */}
-        {/* Edit profile */}
-        <Button
-          testID="edit-profile"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('EditChild', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Edit profile</Text>
-        </Button>
-        <Button
-          testID="see-performance"
-          mode="contained"
-          onPress={() => {
-            console.log('See performance');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>See performance</Text>
-        </Button>
-        <Button
-          testID="preferences"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('StudyMaterialPreferences', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Set Preferences</Text>
-        </Button>
+          {/* Edit profile */}
+          <Button
+            testID="edit-profile"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('EditChild', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Edit profile</Text>
+          </Button>
+          <Button
+            testID="see-performance"
+            mode="contained"
+            onPress={() => {
+              console.log('See performance');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>See performance</Text>
+          </Button>
+          <Button
+            testID="preferences"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('StudyMaterialPreferences', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Set preferences</Text>
+          </Button>
+        </View>
+
         <Text
           testID="delete-child-link"
           style={styles.link}
@@ -142,20 +145,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
             Are you sure you want to delete {child.firstName}'s account?
           </Text>
 
-          {/* Cancel */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <Button
-              testID="close-modal-button"
-              style={[styles.modalButtons, styles.bgWhite]}
-              title="Hide modal"
-              mode="contained"
-              onPress={() => {
-                toggleModal();
-              }}
-            >
-              <Text style={{ color: '#4F85FF', fontSize: 20 }}>No</Text>
-            </Button>
-
             {/* Confirm child deletion */}
             <Button
               testID="delete-child-button"
@@ -167,7 +157,20 @@ const ChildProfileScreen = ({ route, navigation }) => {
                 deleteChild();
               }}
             >
-              <Text style={{ color: '#fff', fontSize: 20 }}>Yes</Text>
+              <Text style={{ color: '#FF0000', fontSize: 20 }}>Yes</Text>
+            </Button>
+
+            {/* Cancel */}
+            <Button
+              testID="close-modal-button"
+              style={[styles.modalButtons, styles.bgWhite]}
+              title="Hide modal"
+              mode="contained"
+              onPress={() => {
+                toggleModal();
+              }}
+            >
+              <Text style={{ color: '#4F85FF', fontSize: 20 }}>No</Text>
             </Button>
           </View>
         </View>
@@ -193,6 +196,7 @@ const useStyles = CreateResponsiveStyle(
       marginTop: 20,
       borderRadius: 10,
       backgroundColor: '#4F85FF',
+      justifyContent: 'space-between',
     },
     header: {
       alignItems: 'center',
@@ -222,7 +226,10 @@ const useStyles = CreateResponsiveStyle(
       minWidth: 100,
     },
     bgRed: {
-      backgroundColor: '#FF0000',
+      borderColor: '#FF0000',
+      borderWidth: 1,
+      borderRadius: 10,
+      backgroundColor: '#ffffff',
     },
     bgWhite: {
       backgroundColor: '#ffffff',
@@ -248,9 +255,10 @@ const useStyles = CreateResponsiveStyle(
     },
     link: {
       color: '#ffffff',
-      fontSize: 12,
+      fontSize: 16,
       textAlign: 'center',
       justifyContent: 'flex-end',
+      paddingVertical: 20,
     },
   },
   {

@@ -3,6 +3,8 @@ const {
   getChildrenByParentId,
   updateChild,
   deleteChild,
+  updateChildMaterial,
+  getWorkPackagesByChildId,
 } = require('../manager/childManager.js');
 const express = require('express');
 const router = express.Router();
@@ -102,6 +104,30 @@ router.delete('/deletechild/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting child:', error);
     res.status(500).json({ error: 'Unable to delete child' });
+  }
+});
+
+// Handle child material assignment
+router.put('/addChildMaterial/:id', async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const { materials } = req.body;
+    const child = await updateChildMaterial(childId, materials);
+    res.status(200).json(child);
+  } catch (error) {
+    console.error('Error assigning child material:', error);
+    res.status(500).json({ error: 'Unable to assign child material' });
+  }
+});
+
+router.get('/getWorkPackages/:id', async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const previouslyAssignedWorkPackage = await getWorkPackagesByChildId(childId);
+    res.status(200).json(previouslyAssignedWorkPackage);
+  } catch (err) {
+    console.log('Error getting work packages for child: ', err);
+    res.status(500).json({ error: 'Unable to get work packages for child' });
   }
 });
 
