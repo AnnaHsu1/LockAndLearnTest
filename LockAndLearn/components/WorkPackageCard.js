@@ -31,6 +31,25 @@ export const WorkPackageCard = ({ props }) => {
     }
   };
 
+  const getGradeSuffix = (grade) => {
+    if (grade >= 11 && grade <= 13) {
+      return 'th';
+    }
+  
+    const lastDigit = grade % 10;
+  
+    switch (lastDigit) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  };
+
   useEffect(() => {
     setDeviceWidth(width);
     setWorkPackage(props);
@@ -45,7 +64,7 @@ export const WorkPackageCard = ({ props }) => {
         <View style={[{ justifyContent: 'space-between' }]}>
           <View style={[styles.row, { justifyContent: 'space-between' }]}>
             <Text style={styles.header}>
-              {workpackage.name} - {workpackage.grade}
+              {workpackage.name} - {workpackage.grade}{getGradeSuffix(workpackage.grade)} Grade
             </Text>
             <View style={styles.row}>
               <TouchableOpacity

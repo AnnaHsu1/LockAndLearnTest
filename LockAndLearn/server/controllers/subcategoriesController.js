@@ -2,6 +2,28 @@ const express = require('express');
 const router = express.Router();
 const Subcategories = require('../schema/subcategoriesSchema.js');
 
+// Route to fetch subcategories for a specific subject and grade
+router.get('/fetchSubcategories/:subject/:grade', async (req, res) => {
+  try {
+    const { subject, grade } = req.params;
+
+    // Find the subcategories document by subject name
+    const subcategories = await Subcategories.findOne({ name: subject });
+
+    // Check if the subcategories document and grades exist
+    if (subcategories && subcategories.grades && subcategories.grades[grade]) {
+      const gradeSubcategories = subcategories.grades[grade];
+      res.status(200).json(gradeSubcategories);
+    } else {
+      res.status(404).json({ error: 'Subcategories not found for the given subject and grade.' });
+    }
+  } catch (error) {
+    console.error('Error fetching subcategories:', error);
+    res.status(500).json({ error: 'An error occurred while fetching subcategories.' });
+  }
+});
+
+
 // Route to fetch all subcategories
 router.get('/fetchAll', async (req, res) => {
   try {
@@ -125,5 +147,15 @@ router.delete('/delete/:subcategoryId', async (req, res) => {
   }
 });
 
+// Fetch all subjects
+router.get('/allSubjects', async (req, res) => {
+  try {
+    const allSubjects = await Subcategories.find({}, 'name');
+    res.status(200).json(allSubjects);
+  } catch (error) {
+    console.error('Error fetching all subjects:', error);
+    res.status(500).json({ error: 'An error occurred while fetching all subjects.' });
+  }
+});
 
 module.exports = router;

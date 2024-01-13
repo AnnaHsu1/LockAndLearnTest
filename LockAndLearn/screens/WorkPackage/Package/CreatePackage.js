@@ -12,7 +12,6 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../../components/AsyncStorage';
-import { subcategoryData } from '../../../components/WorkPackageConstants';
 
 const CreatePackage = ({ route }) => {
   const navigation = useNavigation();
@@ -31,11 +30,24 @@ const CreatePackage = ({ route }) => {
   }, []);
 
   // Function to diplay the subcategories or not, based on the selected grade and subject
-  const handleGradeAndSubjectChange = () => {
-    const selectedSubcategories =
-      subcategoryData[grade] && subcategoryData[grade][name] ? subcategoryData[grade][name] : [];
-    setPackageSubcategories(['Choose a Subcategory', ...selectedSubcategories]);
-    setSelectedSubcategory('Choose a Subcategory');
+  const handleGradeAndSubjectChange = async () => {
+    try {
+      // Fetch subcategories from the server
+      const response = await fetch(
+        `http://localhost:4000/subcategories/fetchSubcategories/${name}/${grade}`
+      );
+      console.log(name, grade);
+      if (response.status === 200) {
+        const subcategoriesData = await response.json();
+        setPackageSubcategories(['Choose a Subcategory', ...subcategoriesData]);
+        setSelectedSubcategory('Choose a Subcategory');
+      } else {
+        console.error('Error fetching subcategories');
+        console.log(response);
+      }
+    } catch (error) {
+      console.error('Network error while fetching subcategories');
+    }
   };
 
   // Disable the create button if the user has not selected a subject and a grade

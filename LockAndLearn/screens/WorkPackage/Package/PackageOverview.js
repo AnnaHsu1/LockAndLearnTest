@@ -174,6 +174,26 @@ const PackageOverview = ({ props }) => {
     }
   };
 
+  // Function to determine the grade suffix
+  const getGradeSuffix = (grade) => {
+    if (grade >= 11 && grade <= 13) {
+      return 'th';
+    }
+
+    const lastDigit = grade % 10;
+
+    switch (lastDigit) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../../../assets/backgroundCloudyBlobsFull.png')}
@@ -182,7 +202,7 @@ const PackageOverview = ({ props }) => {
     >
       <View style={styles.containerFile}>
         <Text style={styles.selectFiles}>
-          {name} - {grade}
+          {name} - {grade}{getGradeSuffix(grade)} Grade
         </Text>
         {/* Display all work packages from the user */}
         <FlatList

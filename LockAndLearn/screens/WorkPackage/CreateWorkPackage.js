@@ -27,6 +27,7 @@ const CreateWorkPackage = (route) => {
   const [workPackageDescription, setWorkPackageDescription] = useState('');
   const [workPackagePrice, setWorkPackagePrice] = useState('');
   const [isValidPrice, setIsValidPrice] = useState(true);
+  const [subjects, setSubjects] = useState([]);
 
   // Function to diplay the subcategories or not, based on the selected grade and subject
   const handleGradeAndSubjectChange = (grade, subject) => {
@@ -101,6 +102,30 @@ const CreateWorkPackage = (route) => {
     setWorkPackagePrice(input);
   };
 
+  const fetchSubjects = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/subcategories/allSubjects');
+      if (response.status === 200 || 201) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          // Check if data is an array
+          const subjectNames = data.map((subject) => subject.name);
+          setSubjects(['Choose a Subject', ...subjectNames]);
+        } else {
+          console.error('Invalid data format for subjects');
+        }
+      } else {
+        console.error('Error fetching subjects:', response.status);
+      }
+    } catch (error) {
+      console.error('Network error while fetching subjects:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubjects();
+  }, []);
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -119,12 +144,12 @@ const CreateWorkPackage = (route) => {
                 selectedValue={workPackageName}
                 onValueChange={(itemValue) => {
                   setWorkPackageName(itemValue);
-                  handleGradeAndSubjectChange(workPackageGrade, itemValue); // Call the function with selected grade and subject
+                  handleGradeAndSubjectChange(workPackageGrade, itemValue);
                 }}
                 style={styles.workPackageTypePicker}
               >
                 <Picker.Item label="Choose a Subject" value="Choose a Subject" />
-                {workPackageNames.map((name, index) => (
+                {subjects.map((name, index) => (
                   <Picker.Item key={index} label={name} value={name} />
                 ))}
               </Picker>
@@ -137,13 +162,13 @@ const CreateWorkPackage = (route) => {
                 selectedValue={workPackageGrade}
                 onValueChange={(itemValue) => {
                   setWorkPackageGrade(itemValue);
-                  handleGradeAndSubjectChange(itemValue, workPackageName); // Call the function with selected grade and subject
+                  handleGradeAndSubjectChange(itemValue, workPackageName);
                 }}
                 style={styles.workPackageTypePicker}
               >
                 <Picker.Item label="Choose a Grade" value="Choose a Grade" />
-                {workPackageGrades.map((type, index) => (
-                  <Picker.Item key={index} label={type} value={type} />
+                {[...Array(12)].map((_, index) => (
+                  <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
                 ))}
               </Picker>
             </View>
@@ -202,7 +227,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backButton: {
-    backgroundColor: '#bbb', 
+    backgroundColor: '#bbb',
     width: 80,
     height: 35,
     borderRadius: 9,

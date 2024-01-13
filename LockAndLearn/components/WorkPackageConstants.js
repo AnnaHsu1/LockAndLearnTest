@@ -1,3 +1,6 @@
+//THIS FILE IS DEPRECATED
+//KEPT FOR ARCHIVES
+//NOT IN USE ANYMORE
 export const workPackageNames = [
   'Math',
   'English',
@@ -99,7 +102,7 @@ export const subcategoryData = {
   '12th Grade': {
     Math: ['Derivation', 'Algebra'],
     French: ['Essay'],
-    History: ['Advanced History Topics', 'Historical Analysis'],
+    History: ['XXX', 'YYY'],
     Science: ['Advanced Science Topics', 'Research Methods'],
     Physics: ['Advanced Physics Topics', 'Advanced Optics'],
     Chemistry: ['Advanced Chemistry Topics', 'Organic Chemistry'],
