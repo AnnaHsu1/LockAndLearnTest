@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, FlatList } from 'react-native';
-import { Button, Icon } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import Modal from 'react-native-modal';
+import { StyleSheet, Text, View, ImageBackground, FlatList } from 'react-native';
+import { Button } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { IoMdStar } from 'react-icons/io';
 
