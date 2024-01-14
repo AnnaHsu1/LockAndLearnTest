@@ -54,7 +54,6 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
             stars: rating,
             comment: comment,
         };
-        console.log(ratingItem);
         if (userId) {
             try {
                 const response = await fetch('http://localhost:4000/workPackages/updateWorkPackage/' + workPackage._id,
@@ -75,7 +74,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                 if (response.status === 200) {
                     const data = await response.json();
                     console.log('Updated work package:', data);
-                    alert('Review submitted! Thank you!');
+                    alert('Review submitted/Updated! Thank you!');
                 } else {
                     console.error('Error updating work package');
                     console.log(response);
