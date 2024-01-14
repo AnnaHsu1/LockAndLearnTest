@@ -2,6 +2,24 @@
 const mongoose = require('mongoose');
 const collectionName = 'WorkPackage';
 
+const ratingsSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    stars: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5
+    },
+    comment: {
+        type: String,
+        required: true
+    },
+});
+
 const WorkPackage = mongoose.model('WorkPackage', new mongoose.Schema({
     name: {
         type: String,
@@ -26,6 +44,10 @@ const WorkPackage = mongoose.model('WorkPackage', new mongoose.Schema({
     instructorID: {
         type: String,
         required: true,
+    },
+    ratings : {
+        type: [ratingsSchema],
+        default: [],
     },
 }), collectionName);
 
