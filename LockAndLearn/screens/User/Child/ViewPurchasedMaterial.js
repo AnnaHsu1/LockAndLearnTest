@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, FlatList } from 'react-native';
-import { Button, Icon } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import Modal from 'react-native-modal';
+import { StyleSheet, Text, View, ImageBackground, FlatList } from 'react-native';
+import { Button } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { IoMdStar } from 'react-icons/io';
 
 const ViewPurchasedMaterial = ({ route, navigation }) => {
 
     const [workPackages, setWorkPackages] = useState([]);
+    const [userId, setUserId] = useState(''); // User ID
 
     // function to get all owned work packages from the user
     const fetchWorkPackages = async (displayOwned = false) => {
@@ -42,43 +41,97 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
 
     useEffect(() => {
         fetchWorkPackages(true);
+        getUser();
     }, []);
 
-    const RenderStarRatings =() => {
-        const [rating, setRating] = useState(null);
-        const [hover, setHover] = useState(null);
-
-        return (
-            <View style={{ flexDirection: 'row' }}>
-                {[...Array(5)].map((star, i) => {
-                    const ratingValue = i + 1;
-                    return (
-                        <View>
-                            <IoMdStar 
-                                key={i}
-                                style={styles.buttonStarRating}
-                                size={30} 
-                                className="star"
-                                color={ratingValue <= (hover || rating) ? "#4f85ff" : "#e4e5e9"}
-                                onMouseEnter={() => setHover(ratingValue)}
-                                onMouseLeave={() => setHover(rating)}
-                                onClick={() => setRating(ratingValue)} // Set the rating to the key when clicking the star
-                            />
-                        </View>
-                    );
-                })}
-            </View>
-        );
+    // function to handle the update of the work package with the rating
+    const handleUpdateWorkPackage = async (workPackage, rating, comment) => {
+        const token = await getItem('@token');
+        const user = JSON.parse(token);
+        const userId = user._id;
+        const ratingItem = {
+            user: userId,
+            stars: rating,
+            comment: comment,
+        };
+        console.log(ratingItem);
+        if (userId) {
+            try {
+                const response = await fetch('http://localhost:4000/workPackages/updateWorkPackage/' + workPackage._id,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: workPackage.name,
+                            grade: workPackage.grade,
+                            description: workPackage.description,
+                            price: workPackage.price,
+                            ratings: ratingItem,
+                        }),
+                    }
+                );
+                if (response.status === 200) {
+                    const data = await response.json();
+                    console.log('Updated work package:', data);
+                    alert('Review submitted! Thank you!');
+                } else {
+                    console.error('Error updating work package');
+                    console.log(response);
+                }
+            } catch (error) {
+                console.error('Network error');
+            }
+        } else {
+            console.log('No work package found')
+        }
     };
+
+    const getUser = async () => {
+        const token = await getItem('@token');
+        const user = JSON.parse(token);
+        const userId = user._id;
+        setUserId(userId);
+    };
+
+
 
     // function to display the work package information
     const RenderWorkPackage = ({workPackage}) => {
+
+        const index = workPackage.ratings.findIndex((ratings) => ratings.user === userId);
         const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+        const [rating, setRating] = useState(workPackage.ratings[index].stars);
+        const [hover, setHover] = useState(null);
 
         const handleClick = () => {
             setIsReviewModalVisible(!isReviewModalVisible);
-            console.log(isReviewModalVisible);
-        }
+        };
+
+        const RenderStarRatings =() => {
+    
+            return (
+                <View style={{ flexDirection: 'row' }}>
+                    {[...Array(5)].map((star, i) => {
+                        const ratingValue = i + 1;
+                        return (
+                            <View key={i}>
+                                <IoMdStar 
+                                    style={styles.buttonStarRating}
+                                    size={30} 
+                                    className="star"
+                                    color={ratingValue <= (hover || rating) ? "#4f85ff" : "#e4e5e9"}
+                                    onMouseEnter={() => setHover(ratingValue)}
+                                    onMouseLeave={() => setHover(rating)}
+                                    onClick={() => setRating(ratingValue)} // Set the rating to the key when clicking the star
+                                />
+                            </View>
+                        );
+                    })}
+                </View>
+            );
+        };
 
         return (
             <View key={workPackage._id} style={styles.workPackageItemContainer}>
@@ -106,13 +159,13 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                             <Text style={styles.textReview}>
                                 Star Rating
                             </Text>
-                            <RenderStarRatings />
+                            <RenderStarRatings/>
 
-                            <input height={500} type="text" placeholder="Enter your review here" />
+                            <input id="commentField" height={500} type="text" placeholder="Enter your review here" defaultValue={workPackage.ratings[index].comment}/>
                             <Button
                                 style={styles.buttonSubmit}
                                 textColor='white'
-                                onPress={handleClick}
+                                onPress={() => {handleUpdateWorkPackage(workPackage, rating, document.getElementById("commentField").value);}}
                             >
                                 Submit
                             </Button>

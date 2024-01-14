@@ -55,18 +55,28 @@ router.delete('/deleteWorkPackage/:workpackageID', async (req, res) => {
 router.put('/updateWorkPackage/:workpackageID', async (req, res) => {
   try {
     const workPackageId = req.params.workpackageID;
-    const { name, grade, description, price } = req.body;
+    const { name, grade, description, price, ratings } = req.body;
     const existingWorkPackage = await WorkPackage2.findById(workPackageId);
     if (!existingWorkPackage) {
       throw new Error('Work package not found with the specified _id');
-    } else {
-      existingWorkPackage.name = name;
-      existingWorkPackage.grade = grade;
-      existingWorkPackage.description = description;
-      existingWorkPackage.price = price;
+    } 
+    else {
+    existingWorkPackage.name = name;
+    existingWorkPackage.grade = grade;
+    existingWorkPackage.description = description;
+    existingWorkPackage.price = price;
+
+    if(existingWorkPackage.ratings.find(ratings => ratings.user._id.toString() === req.body.ratings.user) != null){
+      console.log("User already rated this package, updating review");
+      const index = existingWorkPackage.ratings.findIndex(ratings => ratings.user._id.toString() === req.body.ratings.user);
+      existingWorkPackage.ratings[index] = req.body.ratings;
+    }
+    else{
+      existingWorkPackage.ratings.push(ratings);
     }
     const editedWorkpackage = await existingWorkPackage.save();
     res.status(200).json(editedWorkpackage);
+    } 
   } catch (error) {
     console.error('Error editing work package:', error);
     res.status(500).json({ error: 'An error occurred while editing the work package.' });
