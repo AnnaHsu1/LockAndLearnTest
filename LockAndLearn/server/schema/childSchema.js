@@ -19,6 +19,10 @@ const childSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  subjectPassingGrades: {
+    type: Array,
+    default: [],
+  },
   parentId: {
     type: String,
     required: true,

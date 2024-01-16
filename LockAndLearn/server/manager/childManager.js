@@ -70,6 +70,27 @@ exports.deleteChild = async function deleteChild(childId) {
   }
 };
 
+// Function to add/update child passing grade requirement per subject
+exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassingGrade(userId, subjects) {
+  try {
+    const existingUser = await Child.findById(userId);
+    if (!existingUser) {
+      throw new Error('User not found with the specified _id');
+    } else {
+      // Initialize the subjectPassingGrades field if it doesn't exist
+      if (!existingUser.subjectPassingGrades) {
+        existingUser.subjectPassingGrades = [];
+      }
+      existingUser.subjectPassingGrades = subjects; // Update the subjects field
+    }
+    const updatedUser = await existingUser.save();
+    return updatedUser;
+  } catch (error) {
+    console.error('Error updating user subjects:', error);
+    throw error;
+  }
+};
+
 // Function to add/update child material assignment
 exports.updateChildMaterial = async function updateChildMaterial(childId, materialId) {
   try {
@@ -93,7 +114,22 @@ exports.updateChildMaterial = async function updateChildMaterial(childId, materi
   }
 };
 
-exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
+exports.getPreviousPassingGrades = async function getPreviousPassingGrades(childId) {
+  try {
+    const child = await Child.findById(childId);
+    if (child) {
+      const prevPassingGrades = child.subjectPassingGrades;
+      return prevPassingGrades;
+    } else {
+      console.log('No child found');
+    }
+  } catch (err) {
+    console.log('Error getting previous passing grades for child: ', err);
+  }
+};
+    
+    
+  exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
   try {
     const child = await Child.findById(childId);
     if (child) {

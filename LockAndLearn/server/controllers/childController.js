@@ -3,6 +3,8 @@ const {
   getChildrenByParentId,
   updateChild,
   deleteChild,
+  updateUserSubjectsPassingGrade,
+  getPreviousPassingGrades,
   updateChildMaterial,
   getWorkPackagesByChildId,
 } = require('../manager/childManager.js');
@@ -104,6 +106,30 @@ router.delete('/deletechild/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting child:', error);
     res.status(500).json({ error: 'Unable to delete child' });
+  }
+});
+
+// updates/adds subjects passing grade to child collection
+router.put('/updateUserSubjectsPassingGrade/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { subjects } = req.body;
+    const child = await updateUserSubjectsPassingGrade(userId, subjects);
+    res.status(200).json(child);
+  } catch (error) {
+    console.error('Error updating user subjects:', error);
+    res.status(500).json({ error: 'Unable to update user subjects' });
+  }
+});
+
+router.get('/getPreviousPassingGrades/:id', async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const previousPassingGrades = await getPreviousPassingGrades(childId);
+    res.status(200).json(previousPassingGrades);
+  } catch (err) {
+    console.log('Error getting previous passing grades for child: ', err);
+    res.status(500).json({ error: 'Unable to get passing grades for child' });
   }
 });
 

@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Modal from 'react-native-modal';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
 
 const ChildProfileScreen = ({ route, navigation }) => {
@@ -40,7 +36,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <View>
           <View style={styles.header}>
             <Icon source="account-circle" color="#fff" size={30} />
             <Text style={styles.title}>
@@ -109,21 +104,29 @@ const ChildProfileScreen = ({ route, navigation }) => {
             }}
             style={[styles.button, styles.full_width]}
           >
-            <Text style={styles.text}>Set preferences</Text>
+            <Text style={styles.text}>Set Preferences</Text>
           </Button>
-        </View>
+          <Button
+            testID="settings"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('ChildSettings', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Settings</Text>
+          </Button>
+          <Button
+            testID="delete-child-link"
+            style={styles.link}
+            onPress={() => {
+              toggleModal();
+            }}
+          >
+            <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
+          </Button>
 
-        <Text
-          testID="delete-child-link"
-          style={styles.link}
-          onPress={() => {
-            toggleModal();
-          }}
-        >
-          Delete {child.firstName}'s account
-        </Text>
-
-        {/* Delete child link */}
+          {/* Delete child link */}
       </View>
 
       {/* Modal to confirm the deletion of a child */}
@@ -182,39 +185,43 @@ const ChildProfileScreen = ({ route, navigation }) => {
 const useStyles = CreateResponsiveStyle(
   {
     page: {
-      backgroundColor: '#ffffff',
+      backgroundColor: '#FFFFFF',
       maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
       minWidth: '90%',
-      minHeight: '90%',
+      maxHeight: 520,
       paddingLeft: 20,
       paddingRight: 20,
-      paddingTop: 20,
-      marginTop: 20,
+      paddingTop: 10,
+      marginTop: "3%",
+      marginBottom: 10,
       borderRadius: 10,
       backgroundColor: '#4F85FF',
+      flex: 1,
       justifyContent: 'space-between',
     },
     header: {
       alignItems: 'center',
+      height: 75,
+      flexDirection: 'row',
       justifyContent: 'center',
-      minHeight: '20%',
     },
     title: {
       color: '#ffffff',
       fontSize: 24,
       textAlign: 'center',
-      paddingTop: 15,
+      paddingTop: 2,
+      paddingLeft: 5,
     },
     button: {
       color: '#4F85FF',
       backgroundColor: '#ffffff',
       borderRadius: 10,
-      marginVertical: 10,
-      height: 80,
+      marginVertical: 5,
+      minHeight: 50,
       justifyContent: 'center',
       minWidth: 100,
     },
@@ -254,11 +261,16 @@ const useStyles = CreateResponsiveStyle(
       alignItems: 'center',
     },
     link: {
-      color: '#ffffff',
-      fontSize: 16,
+      borderRadius: 10,
+      minHeight: 20,
+      justifyContent: 'center',
+      minWidth: 100,
+      fontSize: 12,
       textAlign: 'center',
-      justifyContent: 'flex-end',
-      paddingVertical: 20,
+    },
+    linkText: {
+      color: 'red',
+      fontSize: 12,
     },
   },
   {

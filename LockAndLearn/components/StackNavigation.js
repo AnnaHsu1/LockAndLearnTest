@@ -47,6 +47,8 @@ import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
 import StudyMaterialPreferences from '../screens/User/Child/StudyMaterialPreferences';
+import ChildSettings from '../screens/User/Child/ChildSettings';
+import ChildPassingGradePerSubject from '../screens/User/Child/ChildPassingGradePerSubject';
 import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
 import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
@@ -322,6 +324,16 @@ const StackNavigation = () => {
           name="StudyMaterialPreferences"
           component={StudyMaterialPreferences}
           options={{ title: 'Study Material Preferences' }}
+        />
+        <Stack.Screen
+          name="ChildSettings"
+          component={ChildSettings}
+          options={{ title: 'Child Settings' }}
+        />
+        <Stack.Screen
+          name="ChildPassingGradePerSubject"
+          component={ChildPassingGradePerSubject}
+          options={{ title: 'Passing Grade Per Subject' }}
         />
         <Stack.Screen
             name="Payment"
