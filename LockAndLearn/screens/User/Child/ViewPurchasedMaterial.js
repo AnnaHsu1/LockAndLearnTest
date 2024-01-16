@@ -165,7 +165,10 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                             <Button
                                 style={styles.buttonSubmit}
                                 textColor='white'
-                                onPress={() => {handleUpdateWorkPackage(workPackage, rating, document.getElementById("commentField").value);}}
+                                onPress={() => 
+                                    {handleUpdateWorkPackage(workPackage, rating, document.getElementById("commentField").value) !== null ? document.getElementById("commentField").value : " ";
+                                    setComment(document.getElementById("commentField").value);
+                                }}
                             >
                                 Submit
                             </Button>
