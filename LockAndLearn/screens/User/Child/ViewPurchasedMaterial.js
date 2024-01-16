@@ -99,9 +99,10 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     // function to display the work package information
     const RenderWorkPackage = ({workPackage}) => {
 
-        const index = workPackage.ratings.findIndex((ratings) => ratings.user === userId);
+        const index = workPackage.ratings ? workPackage.ratings.findIndex((ratings) => ratings.user === userId) : -1;
         const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-        const [rating, setRating] = useState(workPackage.ratings[index].stars);
+        const [rating, setRating] = useState(index !== -1 ? workPackage.ratings[index].stars : 0);
+        const [comment, setComment] = useState(index !== -1 ? workPackage.ratings[index].comment : '');
         const [hover, setHover] = useState(null);
 
         const handleClick = () => {
@@ -160,7 +161,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                             </Text>
                             <RenderStarRatings/>
 
-                            <input id="commentField" height={500} type="text" placeholder="Enter your review here" defaultValue={workPackage.ratings[index].comment}/>
+                            <input id="commentField" height={500} type="text" placeholder="Enter your review here" defaultValue={comment}/>
                             <Button
                                 style={styles.buttonSubmit}
                                 textColor='white'
