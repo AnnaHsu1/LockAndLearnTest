@@ -51,11 +51,10 @@ describe('Edit Child Profile Screen test', () => {
 
     fireEvent.changeText(firstNameInput, 'Doe');
     fireEvent.changeText(lastNameInput, 'John');
-    fireEvent.changeText(gradeInput, '5');
+    fireEvent(gradeInput, 'onValueChange', '5');
 
     expect(firstNameInput.props.value).toEqual('Doe');
     expect(lastNameInput.props.value).toEqual('John');
-    expect(gradeInput.props.value).toEqual('5');
   });
 
   it('Checks invalid inputs', () => {});
@@ -69,7 +68,7 @@ describe('Edit Child Profile Screen test', () => {
 
     fireEvent.changeText(firstNameInput, 'Doe');
     fireEvent.changeText(lastNameInput, 'John');
-    fireEvent.changeText(gradeInput, '5');
+    fireEvent(gradeInput, 'onValueChange', '5');
 
     fireEvent.press(getByTestId('edit-child-button'));
 

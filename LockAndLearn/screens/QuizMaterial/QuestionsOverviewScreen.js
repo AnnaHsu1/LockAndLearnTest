@@ -10,6 +10,8 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getUser } from '../../components/AsyncStorage';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 
 const QuestionsOverviewScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -80,13 +82,7 @@ const QuestionsOverviewScreen = ({ route }) => {
             {questions &&
               questions.map((question, index) => (
                 <View key={index} style={styles.questionItemContainer}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      // Goes to a page/modal where you can edit the question
-                    }}
-                  >
-                    <Text style={styles.questionItem}>{question.questionText}</Text>
-                  </TouchableOpacity>
+                  <Text style={styles.questionItem}>{question.questionText}</Text>
                   <TouchableOpacity
                     onPress={() => {
                       navigation.navigate('EditQuestion', {
@@ -94,18 +90,16 @@ const QuestionsOverviewScreen = ({ route }) => {
                         questionIndex: index,
                       });
                     }}
-                    style={styles.editButton}
                   >
-                    <Text style={styles.deleteButtonText}>E</Text>
+                    <MaterialIcons name="edit" size={40} color="green" />
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
                       // Delete the question
                       deleteQuestion(index);
                     }}
-                    style={styles.deleteButton}
                   >
-                    <Text style={styles.deleteButtonText}>X</Text>
+                    <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -120,9 +114,9 @@ const QuestionsOverviewScreen = ({ route }) => {
           </TouchableOpacity>
         
         
-          <View style={styles.createQuestionButtonContainer}>
+          <View style={styles.addQuestionButtonContainer}>
             <TouchableOpacity
-              style={styles.createQuestionButton}
+              style={styles.addQuestionButton}
               onPress={() => {
                 // Navigate to the QuestionsOverviewScreen and pass the workPackageId
                 navigation.navigate('CreateQuestion', {
@@ -130,7 +124,7 @@ const QuestionsOverviewScreen = ({ route }) => {
                 });
               }}
             >
-              <Text style={styles.createQuestionButtonText}>Add Question</Text>
+              <Text style={styles.addQuestionButtonText}>Add Question</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -147,12 +141,12 @@ const styles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: 'gray', 
-    width: 190, 
-    height: 45, 
-    borderRadius: 30,
+    width: 190,
+    height: 45,
+    borderRadius: 15, 
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10, 
+    marginRight: 10,
   },
   backButtonText: {
     color: '#FFFFFF',
@@ -171,16 +165,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FAFAFA',
     alignItems: 'center',
-    width: '100%',
+    width: '80%',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginTop: '5%',
   },
   selectFiles: {
-    color: '#696969',
-    fontSize: 36,
+    color: '#696969', // Or any other color used in the other screen
+    fontSize: 36, // Adjust size as per the other screen
     fontWeight: '500',
-    marginTop: '1%',
+    marginTop: 20, // Add space at the top
+    textAlign: 'center', // Center text if it's the case in the other screen
   },
   questionList: {
     marginTop: '5%',
@@ -190,22 +185,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  questionItem: {
-    fontSize: 18,
-    marginVertical: 10,
-    color: '#333',
-    borderColor: '#333',
-    borderWidth: 1,
+    width: '90%',
+    alignSelf: 'center',
+    borderWidth: 2,
+    borderColor: '#407BFF', // Blue border
+    color: '#407BFF',
     padding: 10,
     borderRadius: 5,
-    marginRight: 10,
+    marginBottom: 10,
+  },
+  questionItem: {
+    flex: 1, // Take up all available space
+    fontSize: 22, // Bigger, as per your requirement
+    fontWeight: 'bold', // Make text bold
+    fontFamily: 'Arial', // Example of a boxy font
+    color: '#407BFF', // Same color as in the other screen
+    padding: 10,
+    borderRadius: 5,
   },
   deleteButton: {
-    backgroundColor: 'red',
+    backgroundColor: 'red', // Or a consistent color from the other screen
     width: 30,
     height: 20,
-    borderRadius: 5,
+    borderRadius: 5, // Less rounded if that's the style on the other screen
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 5,
@@ -216,35 +218,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   editButton: {
-    backgroundColor: 'green',
+    backgroundColor: 'green', // Or use a consistent color from the other screen
     width: 30,
     height: 20,
-    borderRadius: 5,
+    borderRadius: 5, // Less rounded if that's the style on the other screen
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 5,
   },
 
-  createQuestionButtonContainer: {
+  addQuestionButtonContainer: {
 
     alignItems: 'center',
   },
-  createQuestionButton: {
-    backgroundColor: '#407BFF',
+  addQuestionButton: {
+    backgroundColor: '#407BFF', 
     width: 190,
     height: 45,
-    borderRadius: 30,
+    borderRadius: 15, 
     alignItems: 'center',
     justifyContent: 'center',
   },
-  createQuestionButtonText: {
+  addQuestionButtonText: {
     color: '#FFFFFF',
     fontSize: 20,
     fontWeight: 'bold',
   },
   scrollContainer: {
-    height: 300,
-    width: 600,
+    height: 300, // Or match the height from the other screen
+    width: '70%', // Use full width for consistency
   },
 });
 

@@ -178,10 +178,8 @@ const AdminWorkPackages = ({ route, navigation }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalText}>
-                Are you sure you want to delete this work package?
-              </Text>
-              <Text style={styles.modalText}>Enter your password to confirm deletion</Text>
+              <Text style={styles.modalText}>Are you sure you want to delete this work package?</Text>
+              <Text style={styles.modalTextConfirm}>Enter your password to confirm deletion</Text>
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Enter your password"
@@ -191,11 +189,11 @@ const AdminWorkPackages = ({ route, navigation }) => {
               />
               {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
               <View style={styles.modalButtons}>
-                <TouchableOpacity onPress={handleDeletePress}>
-                  <Text style={styles.modalButton}>Delete</Text>
+                <TouchableOpacity onPress={handleDeletePress} style={styles.confirmButton}>
+                  <Text style={styles.confirmButtonText}>Delete</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={closeModal}>
-                  <Text style={styles.modalButton}>Cancel</Text>
+                <TouchableOpacity onPress={closeModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -234,23 +232,44 @@ const useStyles = CreateResponsiveStyle(
       backgroundColor: '#fff',
       borderRadius: 10,
       padding: 20,
-      width: '80%',
+      width: '50%',
       alignItems: 'center',
     },
     modalText: {
-      fontSize: 18,
+      fontSize: 23,
       marginBottom: 20,
+      textAlign: 'center', 
     },
     modalButtons: {
       flexDirection: 'row',
       justifyContent: 'space-around',
       width: '100%',
+      borderRadius: 10,
+      marginVertical: 10,
+      height: 50,
+      justifyContent: 'center',
+      minWidth: 100,
     },
-    modalButton: {
-      color: '#4F85FF',
-      fontSize: 16,
-      fontWeight: 'bold',
+    confirmButton: {
+      backgroundColor: '#F24E1E',
       padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
+    },
+    confirmButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    cancelButton: {
+      backgroundColor: '#407BFF',
+      padding: 10,
+      borderRadius: 10,
+      justifyContent: 'center',
+    },
+    cancelButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
     materialContainer: {
       marginTop: 10,
@@ -319,17 +338,7 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       backgroundColor: '#ffffff',
       borderRadius: 10,
-      marginVertical: 10,
-      height: 80,
       justifyContent: 'center',
-      minWidth: 100,
-    },
-    modalButtons: {
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 50,
-      justifyContent: 'center',
-      minWidth: 100,
     },
     bgRed: {
       backgroundColor: '#FF0000',
@@ -351,16 +360,9 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       fontSize: 20,
     },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
+    modalTextConfirm: {
+      fontSize: 14,
+      marginBottom: 20,
     },
     workPackageContainer: {
       backgroundColor: '#ffffff',
@@ -380,6 +382,9 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       marginTop: 20,
     },
+    scrollView : {
+      paddingRight: 20.
+    }
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {

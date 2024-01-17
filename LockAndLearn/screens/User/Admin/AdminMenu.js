@@ -25,7 +25,7 @@ const AdminMenu = ({ route, navigation }) => {
           <Icon source="account-circle" color="#fff" size={30} />
           <Text style={styles.title}>Admin Menu</Text>
         </View>
-        <ScrollView>
+        <ScrollView style={styles.ScrollView}>
           {/* Accounts */}
           <Button
             testID="admin-accounts"
@@ -231,6 +231,9 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 12,
       textAlign: 'center',
       justifyContent: 'flex-end',
+    },
+    ScrollView: {
+      paddingRight: 20,
     },
   },
   {

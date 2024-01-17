@@ -125,7 +125,7 @@ const AdminFiles = ({ route, navigation }) => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>Are you sure you want to delete this file?</Text>
-              <Text style={styles.modalText}>Enter your password to confirm deletion</Text>
+              <Text style={styles.modalTextConfirm}>Enter your password to confirm deletion</Text>
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Enter your password"
@@ -135,11 +135,11 @@ const AdminFiles = ({ route, navigation }) => {
               />
               {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
               <View style={styles.modalButtons}>
-                <TouchableOpacity onPress={handleDeletePress}>
-                  <Text style={styles.modalButton}>Delete</Text>
+                <TouchableOpacity onPress={handleDeletePress} style={styles.confirmButton}>
+                  <Text style={styles.confirmButtonText}>Delete</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={closeModal}>
-                  <Text style={styles.modalButton}>Cancel</Text>
+                <TouchableOpacity onPress={closeModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -174,12 +174,18 @@ const useStyles = CreateResponsiveStyle(
       backgroundColor: '#fff',
       borderRadius: 10,
       padding: 20,
-      width: '80%',
+      width: '50%',
       alignItems: 'center',
     },
     modalText: {
       fontSize: 18,
       marginBottom: 20,
+      textAlign: 'center',
+    },
+    modalTextConfirm: {
+      fontSize: 14,
+      marginBottom: 20,
+      textAlign: 'center',
     },
     modalButtons: {
       flexDirection: 'row',
@@ -272,6 +278,30 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 18,
       textAlign: 'center',
       marginTop: 20,
+    },
+    fileListContainer: {
+      paddingRight: 20,
+    },
+    confirmButton: {
+      backgroundColor: '#F24E1E',
+      padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
+    },
+    confirmButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    cancelButton: {
+      backgroundColor: '#407BFF',
+      padding: 10,
+      borderRadius: 10,
+      justifyContent: 'center',
+    },
+    cancelButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
   },
   {

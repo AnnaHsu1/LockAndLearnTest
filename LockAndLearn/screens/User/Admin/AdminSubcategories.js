@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
+import { Icon } from 'react-native-paper';
 
 const AdminSubcategories = ({ navigation }) => {
   const styles = useStyles();
@@ -273,15 +274,24 @@ const AdminSubcategories = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Subjects</Text>
-          <Button title="Create" onPress={openModal} />
+          <TouchableOpacity onPress={openModal} style={styles.createButton}>
+            <Text style={styles.createButtonText}>Create</Text>
+          </TouchableOpacity>
         </View>
         <ScrollView style={styles.scrollView}>
           {subcategories.length > 0 ? (
             subcategories.map((subcategory, index) => (
               <View key={index} style={styles.subcategoryContainer}>
-                <TouchableOpacity onPress={() => toggleGradesVisibility(subcategory._id)}>
-                  <Text style={styles.subcategoryTitle}>{subcategory.name}</Text>
-                </TouchableOpacity>
+                <View style={styles.subcategoryHeader}>
+                  <TouchableOpacity onPress={() => toggleGradesVisibility(subcategory._id)}>
+                    <Text style={styles.subcategoryTitle}>{subcategory.name}</Text>
+                  </TouchableOpacity>
+
+                  {/* Display "Delete" button on the same level as the subject name and on the far right */}
+                  <TouchableOpacity onPress={() => openSubcategoryDeleteModal(subcategory._id)}>
+                    <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                  </TouchableOpacity>
+                </View>
 
                 {/* Displaying the list of grades for the subcategory */}
                 {visibleGrades[subcategory._id] &&
@@ -289,49 +299,52 @@ const AdminSubcategories = ({ navigation }) => {
                 Object.keys(subcategory.grades).length > 0 ? (
                   Object.entries(subcategory.grades).map(([grade, value], gradeIndex) => (
                     <View key={gradeIndex} style={styles.gradeContainer}>
-                      <Text style={styles.gradeText}>Grade {grade}:</Text>
+                      <View style={styles.gradeContent}>
+                        <Text style={styles.gradeText}>Grade {grade}</Text>
+                        {/* "Add Subcategory" button */}
+                        <TouchableOpacity
+                          onPress={() => openAddSubcategoryModal(gradeIndex, grade, subcategory)}
+                        >
+                          <Icon source="plus-circle-outline" size={20} color={'#4CAF50'} />
+                        </TouchableOpacity>
+                      </View>
 
                       {/* Display each subcategory as a vertical list */}
                       <View style={styles.subcategoryList}>
                         {value.map((subcategoryName, subcategoryIndex) => (
                           <View key={subcategoryIndex} style={styles.subcategoryListItem}>
-                            <Text style={styles.subcategoryText}>{subcategoryName}</Text>
-                            <TouchableOpacity
-                              onPress={() =>
-                                deleteSubcategoryFromGrade(subcategory._id, grade, subcategoryIndex)
-                              }
-                            >
-                              <Text style={styles.deleteSubcategoryButton}>Delete</Text>
-                            </TouchableOpacity>
+                            <View style={styles.subcategoryContent}>
+                              <Text style={styles.subcategoryText}>{subcategoryName}</Text>
+                              <View style={styles.deleteButtonContainer}>
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    deleteSubcategoryFromGrade(
+                                      subcategory._id,
+                                      grade,
+                                      subcategoryIndex
+                                    )
+                                  }
+                                >
+                                  <Icon source="close-circle-outline" size={20} color={'#F24E1E'} />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
                           </View>
                         ))}
                       </View>
-
-                      {/* "Add Subcategory" button */}
-                      <TouchableOpacity
-                        onPress={() => openAddSubcategoryModal(gradeIndex, grade, subcategory)}
-                      >
-                        <Text style={styles.addSubcategoryButton}>Add Subcategory</Text>
-                      </TouchableOpacity>
                     </View>
                   ))
                 ) : (
                   <Text style={styles.gradeText}></Text>
                 )}
-
-                <TouchableOpacity
-                  onPress={() =>
-                    openSubcategoryDeleteModal(subcategory._id)
-                  }
-                >
-                  <Text style={styles.deleteButton}>Delete</Text>
-                </TouchableOpacity>
               </View>
             ))
           ) : (
             <Text style={styles.noSubcategoriesText}>No subcategories available</Text>
           )}
         </ScrollView>
+
+        {/* MODALS ======================================================================================= */}
         {/* Modal for subcategory creation */}
         <Modal
           animationType="slide"
@@ -427,7 +440,7 @@ const AdminSubcategories = ({ navigation }) => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>Are you sure you want to delete this subject?</Text>
-              <Text style={styles.modalText}>Enter your password to confirm deletion</Text>
+              <Text style={styles.modalTextConfirm}>Enter your password to confirm deletion</Text>
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Enter your password"
@@ -439,11 +452,11 @@ const AdminSubcategories = ({ navigation }) => {
                 <Text style={styles.errorText}>{deletePasswordError}</Text>
               ) : null}
               <View style={styles.modalButtons}>
-                <TouchableOpacity onPress={handleDeleteConfirmation}>
-                  <Text style={styles.modalButton}>Delete</Text>
+                <TouchableOpacity onPress={handleDeleteConfirmation} style={styles.confirmButton}>
+                  <Text style={styles.confirmButtonText}>Delete</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={closeDeleteModal}>
-                  <Text style={styles.modalButton}>Cancel</Text>
+                <TouchableOpacity onPress={closeDeleteModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -461,7 +474,7 @@ const AdminSubcategories = ({ navigation }) => {
               <Text style={styles.modalText}>
                 Are you sure you want to delete this subcategory?
               </Text>
-              <Text style={styles.modalText}>Enter your password to confirm deletion</Text>
+              <Text style={styles.modalTextConfirm}>Enter your password to confirm deletion</Text>
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Enter your password"
@@ -473,11 +486,14 @@ const AdminSubcategories = ({ navigation }) => {
                 <Text style={styles.errorText}>{deletePasswordError}</Text>
               ) : null}
               <View style={styles.modalButtons}>
-                <TouchableOpacity onPress={handleSubcategoryDeleteConfirmation}>
-                  <Text style={styles.modalButton}>Delete</Text>
+                <TouchableOpacity
+                  onPress={handleSubcategoryDeleteConfirmation}
+                  style={styles.confirmButton}
+                >
+                  <Text style={styles.confirmButtonText}>Delete</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={closeSubcategoryDeleteModal}>
-                  <Text style={styles.modalButton}>Cancel</Text>
+                <TouchableOpacity onPress={closeSubcategoryDeleteModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -490,6 +506,37 @@ const AdminSubcategories = ({ navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    scrollView: {
+      paddingRight: 20,
+    },
+    subcategoryHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    subcategoryText: {
+      color: 'grey',
+    },
+    subcategoryListItem: {
+      marginLeft: 10,
+    },
+    gradeContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    subcategoryContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    deleteButtonContainer: {
+      marginLeft: 'auto',
+    },
+    subcategoryTextContainer: {
+      flex: 1,
+    },
     deleteSubcategoryButton: {
       color: '#D32F2F',
       fontSize: 14,
@@ -505,7 +552,6 @@ const useStyles = CreateResponsiveStyle(
     subcategoryTitle: {
       fontSize: 18,
       fontWeight: 'bold',
-      marginBottom: 5,
       color: '#4F85FF',
     },
     gradeContainer: {
@@ -515,19 +561,17 @@ const useStyles = CreateResponsiveStyle(
       paddingBottom: 10,
     },
     gradeText: {
-      color: '#555',
-      fontSize: 16,
+      color: '#333',
+      fontSize: 18,
       marginBottom: 8,
     },
     addSubcategoryButton: {
       color: '#4CAF50',
       fontSize: 14,
-      marginTop: 5,
+      paddingBottom: 10,
     },
     deleteButton: {
       color: '#D32F2F',
-      fontSize: 14,
-      marginTop: 5,
     },
     noSubcategoriesText: {
       fontSize: 16,
@@ -545,7 +589,7 @@ const useStyles = CreateResponsiveStyle(
       backgroundColor: '#fff',
       borderRadius: 10,
       padding: 20,
-      width: '80%',
+      width: '50%',
       alignItems: 'center',
     },
     modalText: {
@@ -566,28 +610,17 @@ const useStyles = CreateResponsiveStyle(
       flexDirection: 'row',
       justifyContent: 'space-around',
       width: '100%',
-      marginTop: 15,
+      borderRadius: 10,
+      marginVertical: 10,
+      height: 50,
+      justifyContent: 'center',
+      minWidth: 100,
     },
     modalButton: {
       color: '#4CAF50',
       fontSize: 16,
       fontWeight: 'bold',
       padding: 10,
-    },
-    addSubcategoryButton: {
-      color: 'green',
-      marginTop: 10,
-    },
-    gradeContainer: {
-      marginTop: 10,
-    },
-    gradeText: {
-      color: 'grey',
-      fontSize: 14,
-    },
-    deleteButton: {
-      color: 'red',
-      marginTop: 10,
     },
     passwordInput: {
       height: 40,
@@ -607,62 +640,35 @@ const useStyles = CreateResponsiveStyle(
       alignItems: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    modalContent: {
-      backgroundColor: '#fff',
-      borderRadius: 10,
-      padding: 20,
-      width: '80%',
-      alignItems: 'center',
-    },
     modalText: {
-      fontSize: 18,
+      fontSize: 23,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    modalTextConfirm: {
+      fontSize: 14,
       marginBottom: 20,
     },
-    modalButtons: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      width: '100%',
-    },
-    modalButton: {
-      color: '#4F85FF',
-      fontSize: 16,
-      fontWeight: 'bold',
+    confirmButton: {
+      backgroundColor: '#F24E1E',
       padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
     },
-    materialContainer: {
-      marginTop: 10,
+    confirmButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
-    materialTitle: {
-      color: '#4F85FF',
-      fontSize: 16,
-      marginBottom: 5,
+    cancelButton: {
+      backgroundColor: '#407BFF',
+      padding: 10,
+      borderRadius: 10,
+      justifyContent: 'center',
     },
-    materialText: {
-      color: 'grey',
-      fontSize: 14,
-    },
-    quizContainer: {
-      marginTop: 10,
-    },
-    quizTitle: {
-      color: '#4F85FF',
-      fontSize: 16,
-      marginBottom: 5,
-    },
-    quizText: {
-      color: 'grey',
-      fontSize: 14,
-    },
-    divider: {
-      borderBottomWidth: 1,
-      borderBottomColor: 'grey',
-      marginVertical: 5,
-    },
-    instructorInfoContainer: {
-      marginTop: 1,
-    },
-    greyText: {
-      color: 'grey',
+    cancelButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
     page: {
       backgroundColor: '#ffffff',
@@ -680,20 +686,17 @@ const useStyles = CreateResponsiveStyle(
       backgroundColor: '#4F85FF',
     },
     header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexDirection: 'column',
+      justifyContent: 'center',
       alignItems: 'center',
       minHeight: '2%',
       paddingBottom: 20,
     },
-
     title: {
       color: '#ffffff',
       fontSize: 24,
       textAlign: 'center',
-      flex: 1,
     },
-
     button: {
       color: '#4F85FF',
       backgroundColor: '#FFFFFF',
@@ -702,14 +705,6 @@ const useStyles = CreateResponsiveStyle(
       height: 40,
       paddingHorizontal: 10,
       justifyContent: 'center',
-    },
-
-    modalButtons: {
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 50,
-      justifyContent: 'center',
-      minWidth: 100,
     },
     bgRed: {
       backgroundColor: '#FF0000',
@@ -728,6 +723,20 @@ const useStyles = CreateResponsiveStyle(
       flex: 0.75,
       justifyContent: 'space-around',
       alignItems: 'center',
+    },
+    createButton: {
+      backgroundColor: '#ffffff',
+      borderRadius: 10,
+      marginTop: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 30,
+      justifyContent: 'center',
+    },
+    createButtonText: {
+      color: '#4CAF50',
+      fontWeight: 'bold',
+      fontSize: 16,
+      textAlign: 'center',
     },
   },
   {

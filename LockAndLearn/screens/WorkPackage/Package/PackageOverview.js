@@ -64,15 +64,7 @@ const PackageOverview = ({ props }) => {
     return (
       <View
         key={this_Package._id}
-        style={{
-          flexDirection: 'column',
-          marginVertical: 5,
-          color: '#000000',
-          borderColor: '#407BFF',
-          borderWidth: 1,
-          padding: 10,
-          borderRadius: 15,
-        }}
+        style={styles.containerCard}
       >
         <View key={this_Package._id} style={styles.workPackageItemContainer}>
           <TouchableOpacity
@@ -143,10 +135,14 @@ const PackageOverview = ({ props }) => {
           </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: '#696969' }}>{this_Package.materials.length} file(s)</Text>
+          <Text style={{ color: '#696969', fontSize: 12 }}>
+            {this_Package.materials.length} file(s)
+          </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: '#696969' }}>{this_Package.quizzes.length} question(s)</Text>
+          <Text style={{ color: '#696969', fontSize: 12 }}>
+            {this_Package.quizzes.length} question(s)
+          </Text>
         </View>
       </View>
     );
@@ -264,6 +260,18 @@ const PackageOverview = ({ props }) => {
 };
 
 const styles = StyleSheet.create({
+  containerCard: {
+    flexDirection: 'column',
+    marginVertical: 5,
+    color: '#000000',
+    borderColor: '#407BFF',
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 15,
+    alignContent: 'center',
+    width: '90%',
+    alignSelf: 'center',
+  },
   deleteConfirmationModal: {
     width: '50%',
     backgroundColor: 'white',
@@ -321,6 +329,7 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontWeight: '500',
     marginTop: '1%',
+    marginBottom: '2%',
     textAlign: 'center',
     paddingHorizontal: 10,
     paddingTop: 10,

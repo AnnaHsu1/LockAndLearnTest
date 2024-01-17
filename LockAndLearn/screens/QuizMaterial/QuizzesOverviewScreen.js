@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getUser } from '../../components/AsyncStorage';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const QuizzesOverviewScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -78,42 +79,41 @@ const QuizzesOverviewScreen = ({ route }) => {
       style={styles.container}
     >
       <View style={styles.containerFile}>
-        <Text style={styles.selectFiles}>Quizzes</Text>
-        <ScrollView style={styles.scrollContainer}>
-          <View style={styles.quizList}>
-            {quizzes.map((quiz) => (
-              <View key={quiz._id} style={styles.quizItemContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('QuestionsOverviewScreen', {
-                      quizId: quiz._id,
-                    });
-                  }}
-                >
-                  <Text style={styles.quizItem}>{quiz.name}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => deleteQuiz(quiz._id)}
-                  style={styles.deleteButton}
-                >
-                  <Text style={styles.deleteButtonText} testID="delete-button-x">
-                    X
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+          <Text style={styles.selectFiles}>Quizzes</Text>
+          <ScrollView style={styles.scrollContainer}>
+            <View style={styles.quizList}>
+              {quizzes.map((quiz) => (
+                <View key={quiz._id} style={styles.quizItemContainer}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('QuestionsOverviewScreen', {
+                        quizId: quiz._id,
+                      });
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    <Text style={styles.quizItem}>{quiz.name}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => deleteQuiz(quiz._id)}
+                    // style={styles.deleteButton}
+                  >
+                    <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+          <View style={styles.createQuizButtonContainer}>
+            <TouchableOpacity
+              style={styles.createQuizButton}
+              onPress={() => {
+                navigation.navigate('CreateQuiz');
+              }}
+            >
+              <Text style={styles.createQuizButtonText}>Create New Quiz</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-        <View style={styles.createQuizButtonContainer}>
-          <TouchableOpacity
-            style={styles.createQuizButton}
-            onPress={() => {
-              navigation.navigate('CreateQuiz');
-            }}
-          >
-            <Text style={styles.createQuizButtonText}>Create</Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       <Modal
@@ -159,11 +159,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  selectFiles: {
+    color: '#696969',
+    fontSize: 36,
+    fontWeight: '500',
+    marginTop: 20, // Add top margin for more space
+  },
   confirmationText: {
     fontSize: 18,
     marginBottom: 20,
     textAlign: 'center',
-  },
+  },  
   confirmationButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -198,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FAFAFA',
     alignItems: 'center',
-    width: '100%',
+    width: '80%',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginTop: '5%',
@@ -217,16 +223,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  quizItem: {
-    fontSize: 18,
-    marginVertical: 10,
-    color: '#333',
-    borderColor: '#333',
-    borderWidth: 1,
+    width: '90%',
+    alignSelf: 'center',
+    borderWidth: 2,
+    borderColor: '#407BFF', // Blue border
+    color: '#407BFF',
     padding: 10,
     borderRadius: 5,
-    marginRight: 10,
+    marginBottom: 10,
+  },
+  quizItem: {
+    flex: 1, // Take up all available space
+    fontSize: 22, // Bigger, as per your requirement
+    fontWeight: 'bold', // Make text bold
+    fontFamily: 'Arial', // Example of a boxy font
+    color: '#407BFF', // Same color as in the other screen
+    padding: 10,
+    borderRadius: 5,
   },
   deleteButton: {
     backgroundColor: 'red',
@@ -249,9 +262,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#407BFF',
     width: 190,
     height: 45,
-    borderRadius: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
   },
   createQuizButtonText: {
     color: '#FFFFFF',
@@ -260,7 +274,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     height: 300,
-    width: 300,
+    width: '70%', // Increase width
   },
 });
 

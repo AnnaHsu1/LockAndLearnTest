@@ -396,7 +396,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         <Checkbox
           status={checked ? 'checked' : 'unchecked'}
           onPress={onChange}
-          color="#6750a4" // Custom color when checked
+          color="blue" // Custom color when checked
         />
         <Text style={{ fontWeight: 'none', marginLeft: -5, fontSize: 14, color: '#333', lineHeight: 24 }}>
           {label}
@@ -905,7 +905,7 @@ const styles = StyleSheet.create(
       flex: 1, // Allow text to wrap within the available space
     },
     filterContainer: {
-      backgroundColor: 'white',
+      backgroundColor: 'FAFAFA',
       width: '100%',
       flex: 1,
       display: 'flex',
@@ -914,14 +914,13 @@ const styles = StyleSheet.create(
       alignItems: 'center',
     },
     checkboxGroupStyle: {
-      backgroundColor: 'white',
+        backgroundColor: 'FAFAFA',
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'center',
       alignSelf: 'top',
       alignItems: 'center',
-      borderTopLeftRadius: 40,
-      borderTopRightRadius: 40,
+  
     },
     checkBoxStyle: {
       backgroundColor: 'white',
@@ -952,7 +951,7 @@ const styles = StyleSheet.create(
       paddingVertical: 0,
     },
     containerFilterButtons: {
-      backgroundColor: 'white',
+      backgroundColor: 'FAFAFA',
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-around',

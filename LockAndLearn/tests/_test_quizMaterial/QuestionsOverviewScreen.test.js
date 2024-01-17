@@ -53,8 +53,8 @@ describe('QuestionsOverviewScreen Tests', () => {
     fetchMock.mockResponseOnce(JSON.stringify(mockQuestions));  // Initial fetch
     fetchMock.mockResponseOnce(JSON.stringify(updatedMockQuestions));  // After deletion
 
-    const { findByText } = render(<QuestionsOverviewScreen route={{ params: { quizId: '123' } }} />);
-    const deleteButton = await findByText('X');
+    const { findByTestId } = render(<QuestionsOverviewScreen route={{ params: { quizId: '123' } }} />);
+    const deleteButton = await findByTestId('delete-button-x');
 
     fireEvent.press(deleteButton);
 

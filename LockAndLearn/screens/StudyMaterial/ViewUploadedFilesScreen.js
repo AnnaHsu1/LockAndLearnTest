@@ -225,35 +225,37 @@ const ViewUploadedFilesScreen = () => {
 
   // function to render each row (which is a file)
   const renderFile = (file, index, totalItems) => (
-    // display a row with a file name and a delete button & have a grey border at the bottom of each row (except the last row)
-    <View
-      style={[
-        styles.row,
-        index < totalItems - 1 ? { borderBottomWidth: 1, borderBottomColor: 'lightgray' } : null,
-      ]}
+    
+    <TouchableOpacity
+      key={index.toString()}
+      style={styles.card}
+      onPress={() => displayFile(file.originalname)}
+      testID={`fileTouchableOpacity-${index}`}
     >
-      <TouchableOpacity
-        key={index.toString()}
-        onPress={() => displayFile(file.originalname)}
-        testID={`fileTouchableOpacity-${index}`}
-      >
-        <Text numberOfLines={1} ellipsizeMode='middle' style={{ maxWidth: maxTextWidth, marginTop: 5 }}>{file.originalname}</Text>
-        <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.fileDescriptionText, {maxWidth: maxDescriptionTextWidth}]}>{file.description}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonDelete}
-        testID={`deleteButton-${index}`}
-        onPress={() => {
-          toggleModal();
-          setFileId(file.id);
-          setFileName(file.originalname);
-        }}
-      >
-        <View style={styles.deleteButtonBackground}>
-          <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+      <View style={styles.cardContent}>
+        <View style={[{ justifyContent: 'space-between' }]}>
+          <View style={[styles.carRow, { justifyContent: 'space-between' }]}>
+            <Text numberOfLines={1} ellipsizeMode='middle' style={[styles.carHeader, { maxWidth: maxTextWidth, marginTop: 5 }]}>{file.originalname}</Text>
+            <View style={styles.carRow}>
+              <TouchableOpacity
+                testID={`deleteButton-${index}`}
+                onPress={() => {
+                  toggleModal();
+                  setFileId(file.id);
+                  setFileName(file.originalname);
+                }}
+                // style={{justifyContent: 'center'}} //to add if want to center the delete button with title text
+              >
+                <View>
+                  <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.carText, {maxWidth: maxDescriptionTextWidth, paddingTop: 10}]}>{file.description}</Text>
         </View>
-      </TouchableOpacity>
-    </View>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -274,7 +276,7 @@ const ViewUploadedFilesScreen = () => {
         />
         {/* display title */}
         <Text testID="selectFileText" style={styles.selectFiles}>
-          Select files
+          Select Files
         </Text>
         <TouchableOpacity
           style={styles.buttonFilter}
@@ -429,6 +431,32 @@ const ViewUploadedFilesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  card: {
+    borderColor: '#407BFF',
+    borderWidth: 1,
+    borderRadius: 15,
+    marginVertical: 5,
+    width: '90%',
+    alignSelf: 'center',
+  },
+  cardContent: {
+    padding: 20,
+    height: '100%',
+    justifyContent: 'space-between',
+  },
+  carRow: {
+    flexDirection: 'row',
+  },
+  carText: {
+    color: '#696969',
+    fontSize: 18,
+    fontWeight: '300',
+  },
+  carHeader: {
+    color: '#4F85FF',
+    fontSize: 24,
+    fontWeight: '500',
+  },
   checkedboxItemsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -532,8 +560,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: '1%',
-    color: '#696969',
-    fontSize: 36,
+    color: '#696969', 
+    fontSize: 35,
     fontWeight: '500',
     // flex: 1,
   },

@@ -108,7 +108,7 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
 
         <Text style={styles.learningSubjectTitle}>Learning Subject Preferences</Text>
 
-        <View style={styles.center}>
+        <View style={styles.preferencesContainer}>
           <Text style={styles.learningSubjectSubTitle}>
             Customize your child's learning experience
           </Text>
@@ -125,6 +125,7 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
                   status={checkedboxItems[item.id] ? 'checked' : 'unchecked'}
                   onPress={() => toggleCheckbox(item.id)}
                   testID={`checkbox-${item.id}`}
+                  color="#4F85FF"
                 />
                 <Text>{item.label}</Text>
               </View>
@@ -152,13 +153,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   savePreferencesButton: {
-    backgroundColor: '#407BFF',
+    backgroundColor: '#4F85FF',
     width: 190,
     height: 35,
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
+  },
+  buttonText: {
+    color: '#ffffff',
+    backgroundColor: '#4F85FF',
+    borderRadius: 10,
   },
   learningSubjectSubTitle: {
     color: '#696969',
@@ -167,18 +173,25 @@ const styles = StyleSheet.create({
     marginTop: '3%',
     textAlign: 'center',
   },
-  center: {
-    flex: 1,
+  preferencesContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 20,
+    minHeight: '75%',
+    minWidth: '30%',
   },
   containerContentModalFilter: {
+    flex: 1,
     width: '100%',
     height: '100%',
     backgroundColor: 'white',
     borderRadius: 10,
     paddingTop: '1%',
     paddingBottom: '1.5%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalContainerFilter: {
     flex: 1,

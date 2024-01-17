@@ -58,7 +58,7 @@ const WorkPackage = ({ navigation, route }) => {
     >
       <View style={styles.container}>
         <View style={styles.cardContainer}>
-          <Text style={styles.header}>My work packages</Text>
+          <Text style={styles.header}>My Work Packages</Text>
           {workPackages.map((workpackage) => (
             <WorkPackageCard key={workpackage._id} props={workpackage} />
           ))}
@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
   },
   header: {
     color: '#696969',
-    fontSize: 24,
-    fontWeight: '450',
+    fontSize: 35,
+    fontWeight: '500',
     paddingVertical: '3%',
     textAlign: 'center',
   },

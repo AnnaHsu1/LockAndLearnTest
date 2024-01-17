@@ -196,7 +196,7 @@ const UploadScreen = () => {
               onPress={() => deleteFile(index)}
             >
               {fileType == 'pdf' ? (
-                <Icon source="trash-can-outline" size={22} color={'#F24E1E'} />
+                <Icon source="delete-outline" size={22} color={'#F24E1E'} />
               ) : (
                 <Icon source="close-circle" size={20} color={'#F24E1E'} />
               )}
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   errorMsgRow: {
-    marginBottom: '1%',
+    marginBottom: 10,
   },
   errorText: {
     color: '#F24E1E',

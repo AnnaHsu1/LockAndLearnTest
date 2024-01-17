@@ -251,7 +251,7 @@ const EditPackage = () => {
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.containerInput}>
             <View style={styles.containerPicker}>
-              <Text style={{ color: '#ADADAD' }}>Subject</Text>
+              <Text style={styles.textFields}>Subject</Text>
               <Picker
                 enabled={false}
                 testID="subject-picker"
@@ -263,7 +263,7 @@ const EditPackage = () => {
             </View>
             {/* Display picker for grade */}
             <View style={styles.containerPicker}>
-              <Text style={{ color: '#ADADAD' }}>School Grade</Text>
+              <Text style={styles.textFields}>School Grade</Text>
               <Picker
                 enabled={false}
                 testID="grade-picker"
@@ -275,7 +275,7 @@ const EditPackage = () => {
             </View>
             {/* Display picker for subcategory */}
             <View style={styles.containerPicker}>
-              <Text style={{ color: '#000000' }}>Subcategory</Text>
+              <Text style={styles.textFields}>Subcategory</Text>
               <Picker
                 testID="subcategory-picker"
                 selectedValue={selectedSubcategory}
@@ -289,7 +289,7 @@ const EditPackage = () => {
             </View>
             {/* Display description */}
             <View style={[styles.containerPicker, { marginTop: 10 }]}>
-              <Text style={{ color: '#000000' }}>Description</Text>
+              <Text style={styles.textFields}>Description</Text>
               <TextInput
                 multiline={true}
                 // numberOfLines={4}
@@ -314,7 +314,7 @@ const EditPackage = () => {
                   width: '100%',
                 }}
               >
-                <Text>Study Material</Text>
+                <Text style={styles.textFields}>Study Material</Text>
                 <TouchableOpacity
                   style={{ alignItems: 'center' }}
                   onPress={() =>
@@ -337,52 +337,54 @@ const EditPackage = () => {
                   <Text style={{ color: '#407BFF', fontSize: 25, fontWeight: 100 }}>+</Text>
                 </TouchableOpacity>
               </View>
-              {files.length === 0 ? (
-                <Text style={styles.noFilesText}>No files added</Text>
-              ) : (
-                files.map((file) => (
-                  <View
-                    style={[
-                      styles.row,
-                      file.id === files.length
-                        ? { borderBottomWidth: 1, paddingBottom: 5, borderBottomColor: '#FAFAFA' }
-                        : null,
-                      files.length === 0 ? { paddingTop: 5 } : null,
-                    ]}
-                    key={file.id}
-                  >
-                    <TouchableOpacity onPress={() => downloadFile(file.name)}>
-                      <Text
-                        numberOfLines={1}
-                        ellipsizeMode="middle"
-                        style={{ maxWidth: maxTextWidth, marginTop: 5 }}
-                      >
-                        {file.name}
-                      </Text>
-                      <Text
-                        numberOfLines={2}
-                        ellipsizeMode="middle"
-                        style={{ maxWidth: maxTextWidth, color: '#696969', marginBottom: 5 }}
-                      >
-                        {file.description}
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.buttonDelete}
-                      onPress={() => {
-                        setFileDeleteId(file.originalId);
-                        setFileDeleteName(file.name);
-                        toggleModalDelete();
-                      }}
-                      testID="toggle-delete-modal-button"
+              <View style={styles.rowContainer}>
+                {files.length === 0 ? (
+                  <Text style={styles.noFilesText}>No files added</Text>
+                ) : (
+                  files.map((file) => (
+                    <View
+                      style={[
+                        styles.row,
+                        file.id === files.length
+                          ? { borderBottomWidth: 1, paddingBottom: 5, borderBottomColor: '#FAFAFA' }
+                          : null,
+                        files.length === 0 ? { paddingTop: 5 } : null,
+                      ]}
+                      key={file.id}
                     >
-                      <View style={styles.deleteButtonBackground}>
-                        <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                ))
-              )}
+                      <TouchableOpacity onPress={() => downloadFile(file.name)}>
+                        <Text
+                          numberOfLines={1}
+                          ellipsizeMode="middle"
+                          style={{ maxWidth: maxTextWidth, marginTop: 5 }}
+                        >
+                          {file.name}
+                        </Text>
+                        <Text
+                          numberOfLines={2}
+                          ellipsizeMode="middle"
+                          style={{ maxWidth: maxTextWidth, color: '#696969', marginBottom: 5 }}
+                        >
+                          {file.description}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.buttonDelete}
+                        onPress={() => {
+                          setFileDeleteId(file.originalId);
+                          setFileDeleteName(file.name);
+                          toggleModalDelete();
+                        }}
+                        testID="toggle-delete-modal-button"
+                      >
+                        <View style={styles.deleteButtonBackground}>
+                          <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                )}
+              </View>
             </View>
             <View style={styles.containerPicker}>
               <View
@@ -394,12 +396,9 @@ const EditPackage = () => {
                   textAlign: 'center',
                   alignSelf: 'center',
                   width: '100%',
-                  borderTopWidth: 1,
-                  borderTopColor: '#696969',
-                  paddingTop: 10,
                 }}
               >
-                <Text>Quizzes</Text>
+                <Text style={styles.textFields}>Quizzes</Text>
                 <TouchableOpacity
                   style={{ alignItems: 'center' }}
                   onPress={() =>
@@ -422,46 +421,48 @@ const EditPackage = () => {
                   <Text style={{ color: '#407BFF', fontSize: 25, fontWeight: 100 }}>+</Text>
                 </TouchableOpacity>
               </View>
-              {quizzes.length === 0 ? (
-                <Text style={styles.noQuizzesText}>No quizzes added</Text>
-              ) : (
-                quizzes.map((quizName, index) => (
-                  <View
-                    style={[
-                      styles.row,
-                      index === quizzes.length - 1
-                        ? { borderBottomWidth: 1, paddingBottom: 5, borderBottomColor: '#FAFAFA' }
-                        : null,
-                      files.length === 0 ? { paddingTop: 5 } : null,
-                    ]}
-                    key={index}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        // Navigate to QuestionsOverviewScreen and pass the quiz _id
-                        navigation.navigate('QuestionsOverviewScreen', {
-                          quizId: p_quizzes[index],
-                        });
-                      }}
+              <View style={styles.rowContainer}>
+                {quizzes.length === 0 ? (
+                  <Text style={styles.noQuizzesText}>No quizzes added</Text>
+                ) : (
+                  quizzes.map((quizName, index) => (
+                    <View
+                      style={[
+                        styles.row,
+                        index === quizzes.length - 1
+                          ? { borderBottomWidth: 1, borderBottomColor: '#FAFAFA' }
+                          : null,
+                        files.length === 0 ? { paddingTop: 5 } : null,
+                      ]}
+                      key={index}
                     >
-                      <Text>{quizName}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.buttonDelete}
-                      onPress={() => {
-                        setQuizDeleteId(index);
-                        setQuizDeleteName(quizName);
-                        toggleModalDelete();
-                      }}
-                      testID="toggle-delete-modal-button"
-                    >
-                      <View style={styles.deleteButtonBackground}>
-                        <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                ))
-              )}
+                      <TouchableOpacity
+                        onPress={() => {
+                          // Navigate to QuestionsOverviewScreen and pass the quiz _id
+                          navigation.navigate('QuestionsOverviewScreen', {
+                            quizId: p_quizzes[index],
+                          });
+                        }}
+                      >
+                        <Text>{quizName}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.buttonDelete}
+                        onPress={() => {
+                          setQuizDeleteId(index);
+                          setQuizDeleteName(quizName);
+                          toggleModalDelete();
+                        }}
+                        testID="toggle-delete-modal-button"
+                      >
+                        <View style={styles.deleteButtonBackground}>
+                          <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  ))
+                )}
+              </View>
             </View>
           </View>
           {/* Display button to show modal to add files/quizzes */}
@@ -472,17 +473,37 @@ const EditPackage = () => {
                 saveChanges();
               }}
               // todo: add padding to button Save
-              style={[styles.buttonAddMaterial, isButtonDisabled && styles.disabledButton]}
+              style={[
+                styles.button_add_save,
+                isButtonDisabled && styles.disabledButton,
+                {
+                  backgroundColor: '#407BFF',
+                  borderColor: '#FFFFFF',
+                },
+              ]}
               testID="addMaterialModal"
               disabled={isButtonDisabled}
             >
-              <Text style={[styles.buttonText, isButtonDisabled && styles.disabledButtonText]}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  isButtonDisabled && styles.disabledButtonText,
+                  { color: 'white' },
+                ]}
+              >
                 Save
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={toggleModalFilter}
-              style={[styles.buttonAddMaterial, isButtonDisabled && styles.disabledButton]}
+              style={[
+                styles.button_add_save,
+                isButtonDisabled && styles.disabledButton,
+                {
+                  backgroundColor: '#FFFFFF',
+                  borderColor: '#407BFF',
+                },
+              ]}
               testID="addMaterialModal"
               disabled={isButtonDisabled}
             >
@@ -626,7 +647,7 @@ const EditPackage = () => {
 const styles = StyleSheet.create({
   workPackageInputText: {
     height: 70,
-    borderColor: 'gray',
+    borderColor: '#407BFF',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
@@ -643,9 +664,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 10,
   },
+  textFields: {
+    fontSize: 20,
+    color: '#407BFF',
+  },
   workPackageTypePicker: {
     height: 45,
-    borderColor: 'gray',
+    borderColor: '#407BFF',
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
@@ -655,12 +680,12 @@ const styles = StyleSheet.create({
   noQuizzesText: {
     paddingLeft: '5%',
     paddingTop: 10,
-    paddingBottom: 5,
+    paddingBottom: 10,
   },
   noFilesText: {
     paddingLeft: '5%',
     paddingTop: 10,
-    paddingBottom: 15,
+    paddingBottom: 10,
   },
   quizzesText: {
     borderTopWidth: 1,
@@ -759,7 +784,7 @@ const styles = StyleSheet.create({
   },
   selectFiles: {
     color: '#696969',
-    fontSize: 28,
+    fontSize: 35,
     fontWeight: '500',
     textAlign: 'center',
     paddingHorizontal: 10,
@@ -779,30 +804,33 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   row: {
-    width: '80%',
+    width: '95%',
     alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  rowContainer: {
+    borderColor: '#407BFF',
+    borderWidth: 1,
+    borderRadius: 5,
+  },
   buttonDelete: {
-    padding: 8,
+    paddingVertical: 8,
   },
   deleteButtonBackground: {
     backgroundColor: 'rgba(242, 78, 30, 0.13)',
     borderRadius: 100,
     padding: 5,
   },
-  buttonAddMaterial: {
-    backgroundColor: '#FFFFFF',
+  button_add_save: {
     width: 220,
     height: 25,
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 8,
+    padding: 15,
     marginTop: 10,
-    borderColor: '#407BFF',
     borderWidth: 1,
   },
   buttonText: {

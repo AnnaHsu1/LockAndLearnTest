@@ -32,32 +32,10 @@ jest.mock('@react-navigation/native', () => ({
   }),
 }));
 
-
-// beforeAll(() => {
-//   const fetchMock = require('jest-fetch-mock');
-//   fetchMock.enableMocks();
-//   global.fetch = jest.fn(() =>
-//     Promise.resolve({
-//       json: () =>
-//         Promise.resolve({
-//           uploadedFiles: [
-//             { metadata: { userId: '1' }, filename: 'Uploaded_file_1.pdf' },
-//             { metadata: { userId: '2' }, filename: 'Uploaded_file_2.pdf' },
-//           ],
-//         }),
-//     })
-//   );
-// });
-
-// afterAll(() => {
-//   global.fetch.mockClear();
-//   delete global.fetch;
-// });
-
 describe('view uploaded files tests', () => {
   it('select file is present on screen', () => {
-    const { getByText } = render(<ViewUploadedFilesScreen />);
-    const selectFile = getByText('Select files');
+    const { getByTestId } = render(<ViewUploadedFilesScreen />);
+    const selectFile = getByTestId('selectFileText');
     expect(selectFile).toBeTruthy();
   });
 

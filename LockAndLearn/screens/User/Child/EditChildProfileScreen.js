@@ -8,6 +8,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker';
 
 const EditChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -78,16 +79,32 @@ const EditChildProfileScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Edit grade */}
-        <View style={styles.input}>
-          <Text style={styles.field}>Grade</Text>
-          <TextInput
-            testID="grade-input"
-            style={[styles.textbox, styles.full_width]}
-            value={fdata.Grade}
-            onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}
-          />
-        </View>
+              {/* Edit grade */}
+              <View style={[styles.containerPicker, { marginTop: 10 }]}>
+                  <Text style={{ color: '#ADADAD' }}>Grade</Text>
+                  <Picker
+                      testID="grade-input"
+                      selectedValue={fdata.Grade}
+                      onValueChange={(newText) => {
+                          setFdata({ ...fdata, Grade: newText });
+                      }}
+                      style={styles.textbox}
+                  >
+                      <Picker.Item label="Choose a Grade" value="Choose a Grade" />
+                      {[...Array(12)].map((_, index) => (
+                          <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
+                      ))}
+                  </Picker>
+              </View>
+        {/*<View style={styles.input}>*/}
+        {/*  <Text style={styles.field}>Grade</Text>*/}
+        {/*  <TextInput*/}
+        {/*    testID="grade-input"*/}
+        {/*    style={[styles.textbox, styles.full_width]}*/}
+        {/*    value={fdata.Grade}*/}
+        {/*    onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}*/}
+        {/*  />*/}
+        {/*</View>*/}
         {/* Parent can edit passing grade here */}
         <View style={styles.input}>
           <Text style={styles.field}>Passing Grade</Text>
@@ -212,7 +229,8 @@ const useStyles = CreateResponsiveStyle(
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: 1,
-    },
+        },
+
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
