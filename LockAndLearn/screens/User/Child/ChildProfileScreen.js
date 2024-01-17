@@ -116,6 +116,17 @@ const ChildProfileScreen = ({ route, navigation }) => {
           >
             <Text style={styles.text}>Settings</Text>
           </Button>
+          {/* to be removed (tmp): quick tmp way to access page */}
+          <Button
+            testID="settings"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('DisplayStudyMaterial', { child_ID: child._id });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>assign wp - child pov</Text>
+          </Button>
           <Button
             testID="delete-child-link"
             style={styles.link}
