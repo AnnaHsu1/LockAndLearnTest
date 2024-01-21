@@ -47,7 +47,10 @@ const DisplayStudyMaterial = ({ props }) => {
             const data = await response.json();
             console.log("packageInfo: ", data)
             console.log("materials: ", data.materials)
-
+            // get the url PDFs with material IDs
+            data.materials.forEach(material => {
+                getPDFs(material)
+            })
             // detect if there is no package assigned to the child, don't display pdfs
             if (data.message) {
                 console.log(data.message)
@@ -59,6 +62,8 @@ const DisplayStudyMaterial = ({ props }) => {
              *      package_id, name, grade, workPackageDescription,
              *      packageDescription, subcategory, materials, quizzes)
              *  - display the PDF on the screen (using material ID)
+             *  - if many PDF, display them one by one with a button to go to the next one/previous one
+             *  - end of the PDFs, display button to do the quiz
              */
         } else {
             console.error('Error fetching study material');
@@ -68,6 +73,25 @@ const DisplayStudyMaterial = ({ props }) => {
     }
   };
   
+  // function to get url of PDF
+  const getPDFs = async (materialID) => {
+    try {
+      console.log("materialIDs: ", materialID)
+
+      const response = await fetch(`http://localhost:4000/files/uploadFilesById/${materialID}`, {
+        method: 'GET',
+      });
+      if (response.status === 200) {
+        const fileBlob = await response.blob();
+        const fileUrl = URL.createObjectURL(fileBlob);
+        console.log("PDFs: ", fileUrl)
+      } else {
+        console.error('Error fetching PDFs');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  };
 
   // function to get work package information
   const fetchPackages = async () => {
