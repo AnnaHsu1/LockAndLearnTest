@@ -21,7 +21,6 @@ const DisplayStudyMaterial = ({ props }) => {
   const [selectedPackageId, setSelectedPackageId] = useState(null);
   const params = route.params;
   const childID = params?.child_ID;
-  console.log(childID)
 //   const { _id, name, grade } = params?.workPackage;
   const _id = "6599f29af077ba0bb1dc2093"
   const name = "Math"
@@ -32,7 +31,43 @@ const DisplayStudyMaterial = ({ props }) => {
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
     fetchPackages();
+    fetchPackageInfo();
   }, [params]);
+
+  // function to get all study material info
+  const fetchPackageInfo = async () => {
+    try {
+        const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.status === 200) {
+            const data = await response.json();
+            console.log("packageInfo: ", data)
+            console.log("materials: ", data.materials)
+
+            // detect if there is no package assigned to the child, don't display pdfs
+            if (data.message) {
+                console.log(data.message)
+            }
+            //todo:
+            /**
+             *  - display the packageInfo on the screen
+             *  - (data of packageInfo: 
+             *      package_id, name, grade, workPackageDescription,
+             *      packageDescription, subcategory, materials, quizzes)
+             *  - display the PDF on the screen (using material ID)
+             */
+        } else {
+            console.error('Error fetching study material');
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+  };
+  
 
   // function to get work package information
   const fetchPackages = async () => {

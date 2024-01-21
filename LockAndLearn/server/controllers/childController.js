@@ -159,7 +159,7 @@ router.get('/getWorkPackages/:id', async (req, res) => {
 });
 
 // Get packages info (name, grade, description) by package Ids
-router.get('/getWorkPackagesInfo/:id', async (req, res) => {
+router.get('/getPackagesInfo/:id', async (req, res) => {
   try {
     const childId = req.params.id;
     // get all the packages assigned to the child
