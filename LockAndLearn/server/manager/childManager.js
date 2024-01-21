@@ -1,4 +1,6 @@
 const Child = require('../schema/childSchema.js'); // Import the User model from UserSchema.js
+const WorkPackage2 = require('../schema/workPackage.js');
+const Package = require('../schema/packageSchema.js');
 
 // Function to create a user within DB
 exports.createChild = async function createChild(fdata) {
@@ -128,8 +130,7 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
   }
 };
     
-    
-  exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
+exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
   try {
     const child = await Child.findById(childId);
     if (child) {
@@ -143,3 +144,28 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
     throw err;
   }
 };
+
+exports.getPackageByPackageId = async function getPackageByPackageId(packageId) {
+  try {
+    if (!packageId) {
+      return null;
+      // throw new Error('Package not found with the specified _id');
+    }
+    const package = await Package.findById(packageId);
+    const workPackage = await WorkPackage2.findById(package.workPackageID);  
+    const packagesInfo = {
+      package_id: package._id,
+      name: workPackage.name,
+      grade: workPackage.grade,
+      workPackageDescription: workPackage.description,
+      packageDescription: package.description,
+      subcategory: package.subcategory,
+      materials: package.materials,
+      quizzes: package.quizzes,
+    };
+    return packagesInfo;
+  } catch (err) {
+    console.log('Error getting work packages by id: ', err);
+    throw err;
+  }
+};  

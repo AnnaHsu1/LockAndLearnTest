@@ -7,6 +7,7 @@ const {
   getPreviousPassingGrades,
   updateChildMaterial,
   getWorkPackagesByChildId,
+  getPackageByPackageId,
 } = require('../manager/childManager.js');
 const express = require('express');
 const router = express.Router();
@@ -151,6 +152,28 @@ router.get('/getWorkPackages/:id', async (req, res) => {
     const childId = req.params.id;
     const previouslyAssignedWorkPackage = await getWorkPackagesByChildId(childId);
     res.status(200).json(previouslyAssignedWorkPackage);
+  } catch (err) {
+    console.log('Error getting work packages for child: ', err);
+    res.status(500).json({ error: 'Unable to get work packages for child' });
+  }
+});
+
+// Get packages info (name, grade, description) by package Ids
+router.get('/getWorkPackagesInfo/:id', async (req, res) => {
+  try {
+    const childId = req.params.id;
+    // get all the packages assigned to the child
+    const previouslyAssignedPackage = await getWorkPackagesByChildId(childId);
+    // handle: when no packages assigned
+    if (previouslyAssignedPackage === null) {
+      return res.status(200).json({ message: 'No work packages assigned' });
+    }
+    // randomly pick one of the packages
+    const randomIndex = Math.floor(Math.random() * previouslyAssignedPackage.length);
+    const randomPackageId = previouslyAssignedPackage[randomIndex];
+    // get the package info
+    const packageInfo = await getPackageByPackageId(randomPackageId);
+    res.status(200).json(packageInfo);
   } catch (err) {
     console.log('Error getting work packages for child: ', err);
     res.status(500).json({ error: 'Unable to get work packages for child' });
