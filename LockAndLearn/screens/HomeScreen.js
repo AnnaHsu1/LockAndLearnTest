@@ -27,6 +27,9 @@ import { getItem, removeItem, setUserTokenWithExpiry } from '../components/Async
 import { useRoute } from '@react-navigation/native';
 import { getUser, handleLogout } from '../components/AsyncStorage';
 
+import { Immersive } from 'react-native-kiosk-mode'; // Import the Immersive component
+
+
 const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
@@ -85,6 +88,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Immersive />
       {windowDimensions.width > 1200 ? (
         <ImageBackground
           source={require('../assets/homescreen_web.png')}
