@@ -1,0 +1,18 @@
+{
+  "name": "lockandlearn-desktop",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "cd ../lockandlearn && yarn run build && cd ../Electron && rmdir /s /q ./builder && rmdir /s /q ./dist && mkdir ./builder && xcopy /e ../lockandlearn/build/. ./builder && electron-builder"
+
+  },
+  "devDependencies": {
+    "electron": "^28.1.4",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "electron-is-dev": "^3.0.1"
+  }
+}
