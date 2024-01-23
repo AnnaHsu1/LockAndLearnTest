@@ -9,6 +9,7 @@ import UploadScreen from '../screens/StudyMaterial/UploadScreen';
 import SignupScreen from '../screens/User/SignupScreen';
 import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsScreen';
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
+import FreeTimeSession from '../screens/Locking/FreeTimeSessionScreen';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
 import CreateQuiz from '../screens/QuizMaterial/CreateQuiz';
@@ -103,6 +104,11 @@ const StackNavigation = () => {
           name="LockingSchedulePresentation"
           component={LockingSchedulePresentation}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FreeTimeSession"
+          component={FreeTimeSession}
+          options={{ title: 'FreeTimeSession', headerShown: false }}
         />
         <Stack.Screen
           name="StudyMaterial"
