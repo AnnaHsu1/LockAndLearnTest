@@ -144,7 +144,7 @@ router.get('/allWorkPackages', async (req, res) => {
 // Fetch work packages of a specific parent user (owned or unowned)
 router.get('/fetchWorkpackagesParent/:id', async (req, res) => {
   const parentId = req.params.id;
-  console.log('query type:' + req.query.displayOwned);
+  // console.log('query type:' + req.query.displayOwned);
   const displayOwned = req.query.displayOwned === 'true';
 
   try {
@@ -157,7 +157,7 @@ router.get('/fetchWorkpackagesParent/:id', async (req, res) => {
       return res.status(404).json({ error: 'Parent user not found' });
     }
 
-    console.log('Parent found' + parentUser);
+    // console.log('Parent found' + parentUser);
 
     // Handle empty or undefined purchasedWorkPackages
     const purchasedWorkPackages = parentUser.purchasedWorkPackages || [];
@@ -243,7 +243,7 @@ router.get('/fetchWorkpackagesCart/:id', async (req, res) => {
             return res.status(404).json({ error: 'Parent user not found' });
         }
 
-        console.log('Parent found' + parentUser);
+        // console.log('Parent found' + parentUser);
 
         // Handle empty or undefined cartWorkPackages
         const cartWorkPackages = parentUser.CartWorkPackages || [];
@@ -318,7 +318,7 @@ router.put('/addToCart/:userId', async (req, res) => {
         const workPackageId = req.body.CartWorkPackages;
         
 
-        console.log(workPackageId);
+        // console.log(workPackageId);
         // Find the user by ID
         const user = await User.findById(userId);
         if (!user) {

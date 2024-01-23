@@ -97,15 +97,21 @@ exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassin
 exports.updateChildMaterial = async function updateChildMaterial(childId, materialId) {
   try {
     assignedMaterials = [];
+    let packageIds = [];
+    // Get the existing child document
     const existingChild = await Child.findById(childId);
     if (!existingChild) {
       throw new Error('Child not found with the specified _id');
     } else {
-      if (existingChild.assignedMaterials) {
-        existingChild.assignedMaterials = materialId;
-      } else {
-        existingChild.assignedMaterials = [materialId];
-      }
+      // Get packageID(s) from workpackageID(s) and assign to assignedMaterials which is linked to child
+      const promises = materialId.map(async (material) => {
+        const packageId = await Package.find({workPackageID: material}); // find packageID(s) from workpackageID
+        packageId.forEach((this_packageId) => {
+          packageIds.push(this_packageId._id);
+        });
+      });
+      await Promise.all(promises);
+      existingChild.assignedMaterials = packageIds;
     }
     // Update the existing document with the new data
     const editChild = await existingChild.save();

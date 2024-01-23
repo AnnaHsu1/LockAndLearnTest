@@ -18,7 +18,7 @@ router.post('/addchild', async (req, res) => {
     // Extract user data from the request body
     // console.log(req.body);
     const { FirstName, LastName, Grade, PassingGrade, ParentId, Preferences } = req.body;
-    console.log(FirstName, LastName, Grade, PassingGrade, ParentId, Preferences);
+    // console.log(FirstName, LastName, Grade, PassingGrade, ParentId, Preferences);
 
     // Input validations
     if (!FirstName || !LastName || !Grade || !ParentId) {
