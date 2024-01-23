@@ -106,6 +106,11 @@ exports.updateChildMaterial = async function updateChildMaterial(childId, materi
       // Get packageID(s) from workpackageID(s) and assign to assignedMaterials which is linked to child
       const promises = materialId.map(async (material) => {
         const packageId = await Package.find({workPackageID: material}); // find packageID(s) from workpackageID
+        // tmp fix for workpackage having 0 package
+        if (packageId == '') {
+          const wpId = 'wp' + material;
+          packageIds.push(wpId);
+        }
         packageId.forEach((this_packageId) => {
           packageIds.push(this_packageId._id);
         });
