@@ -17,6 +17,7 @@ import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
+import ParentMainAccount from '../screens/User/Child/ParentMainAccountScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
@@ -129,6 +130,14 @@ const StackNavigation = () => {
         <Stack.Screen
           name="ParentAccount"
           component={ParentAccount}
+          options={({ navigation }) => ({
+            title: 'Lock And Learn',
+            headerLeft: () => null,
+          })}
+        />
+        <Stack.Screen
+          name="ParentMainAccount"
+          component={ParentMainAccount}
           options={({ navigation }) => ({
             title: 'Lock And Learn',
             headerLeft: () => null,
