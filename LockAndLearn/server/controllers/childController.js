@@ -147,6 +147,7 @@ router.put('/addChildMaterial/:id', async (req, res) => {
   }
 });
 
+// Get all work packages assigned to the child
 router.get('/getWorkPackages/:id', async (req, res) => {
   try {
     const childId = req.params.id;

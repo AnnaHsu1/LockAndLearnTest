@@ -127,6 +127,7 @@ exports.updateChildMaterial = async function updateChildMaterial(childId, materi
   }
 };
 
+// Function to get subjectPassingGrades assigned to the child with childId
 exports.getPreviousPassingGrades = async function getPreviousPassingGrades(childId) {
   try {
     const child = await Child.findById(childId);
@@ -140,12 +141,28 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
     console.log('Error getting previous passing grades for child: ', err);
   }
 };
-    
+  
+// Function to get all workPackageIDs assigned to the child with packageIDs
 exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
   try {
     const child = await Child.findById(childId);
     if (child) {
-      const workPackages = child.assignedMaterials;
+      const workPackagesID = [];
+      const packages = child.assignedMaterials;
+      const promises = packages.map(async (package) => {
+        // if package has wp (length = 26), then it is a workpackageID
+        if (package.length == 26) {
+          // remove wp from package
+          const workPackageID = package.substring(2);
+          workPackagesID.push(workPackageID);
+          return;
+        }
+        const workPackageID = await Package.findById(package);
+        workPackagesID.push(workPackageID.workPackageID);
+      });
+      await Promise.all(promises);
+      // check if workpackageid has duplicates
+      const workPackages = [...new Set(workPackagesID)];
       return workPackages;
     } else {
       console.log('No child found');
@@ -156,6 +173,7 @@ exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(child
   }
 };
 
+// Function to get all packagesInfo assigned to the child with packageId
 exports.getPackageByPackageId = async function getPackageByPackageId(packageId) {
   try {
     if (!packageId) {
