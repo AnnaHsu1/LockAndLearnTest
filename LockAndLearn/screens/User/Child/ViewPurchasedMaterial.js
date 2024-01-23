@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, FlatList } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import Modal from 'react-native-modal';
+import { StyleSheet, Text, View, ImageBackground, FlatList } from 'react-native';
+import { Button } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
+import { IoMdStar } from 'react-icons/io';
 
 const ViewPurchasedMaterial = ({ route, navigation }) => {
 
     const [workPackages, setWorkPackages] = useState([]);
+    const [userId, setUserId] = useState(''); // User ID
 
     // function to get all owned work packages from the user
     const fetchWorkPackages = async (displayOwned = false) => {
@@ -39,24 +39,146 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
         }
     };
 
+    useEffect(() => {
+        fetchWorkPackages(true);
+        getUser();
+    }, []);
+
+    // function to handle the update of the work package with the rating
+    const handleUpdateWorkPackage = async (workPackage, rating, comment) => {
+        const token = await getItem('@token');
+        const user = JSON.parse(token);
+        const userId = user._id;
+        const ratingItem = {
+            user: userId,
+            stars: rating,
+            comment: comment,
+        };
+        if (userId) {
+            try {
+                const response = await fetch('http://localhost:4000/workPackages/updateWorkPackage/' + workPackage._id,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: workPackage.name,
+                            grade: workPackage.grade,
+                            description: workPackage.description,
+                            price: workPackage.price,
+                            ratings: ratingItem,
+                        }),
+                    }
+                );
+                if (response.status === 200) {
+                    const data = await response.json();
+                    console.log('Updated work package:', data);
+                    alert('Review submitted/Updated! Thank you!');
+                } else {
+                    console.error('Error updating work package');
+                    console.log(response);
+                }
+            } catch (error) {
+                console.error('Network error');
+            }
+        } else {
+            console.log('No work package found')
+        }
+    };
+
+    const getUser = async () => {
+        const token = await getItem('@token');
+        const user = JSON.parse(token);
+        const userId = user._id;
+        setUserId(userId);
+    };
+
+
+
     // function to display the work package information
-    const renderWorkPackage = (workPackage) => {
+    const RenderWorkPackage = ({workPackage}) => {
+
+        const index = workPackage.ratings ? workPackage.ratings.findIndex((ratings) => ratings.user === userId) : -1;
+        const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+        const [rating, setRating] = useState(index !== -1 ? workPackage.ratings[index].stars : 0);
+        const [comment, setComment] = useState(index !== -1 ? workPackage.ratings[index].comment : '');
+        const [hover, setHover] = useState(null);
+
+        const handleClick = () => {
+            setIsReviewModalVisible(!isReviewModalVisible);
+        };
+
+        const RenderStarRatings =() => {
+    
+            return (
+                <View style={{ flexDirection: 'row' }}>
+                    {[...Array(5)].map((star, i) => {
+                        const ratingValue = i + 1;
+                        return (
+                            <View key={i}>
+                                <IoMdStar 
+                                    style={styles.buttonStarRating}
+                                    size={30} 
+                                    className="star"
+                                    color={ratingValue <= (hover || rating) ? "#4f85ff" : "#e4e5e9"}
+                                    onMouseEnter={() => setHover(ratingValue)}
+                                    onMouseLeave={() => setHover(rating)}
+                                    onClick={() => setRating(ratingValue)} // Set the rating to the key when clicking the star
+                                />
+                            </View>
+                        );
+                    })}
+                </View>
+            );
+        };
+
         return (
             <View key={workPackage._id} style={styles.workPackageItemContainer}>
-                <TouchableOpacity
+                <View
                     style={{ width: '80%' }}
                 >
                     <Text style={styles.workPackageItem}>
                         {workPackage.name} - {workPackage.grade} - {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
                     </Text>
-                </TouchableOpacity>
+                    <Text style={styles.workPackageItem}>
+                        {workPackage.description}
+                    </Text>
+                    <Button 
+                        style={styles.buttonReview} 
+                        onPress= {handleClick}
+                        textColor='white'
+                    >
+                        Leave a Review!
+                    </Button>
+                    {isReviewModalVisible ?
+                        <View>
+                            <Text style={styles.textReview}>
+                                Let others know about your experience with this package
+                            </Text>
+                            <Text style={styles.textReview}>
+                                Star Rating
+                            </Text>
+                            <RenderStarRatings/>
+
+                            <input id="commentField" height={500} type="text" placeholder="Enter your review here" defaultValue={comment}/>
+                            <Button
+                                style={styles.buttonSubmit}
+                                textColor='white'
+                                onPress={() => 
+                                    {handleUpdateWorkPackage(workPackage, rating, document.getElementById("commentField").value) !== null ? document.getElementById("commentField").value : " ";
+                                    setComment(document.getElementById("commentField").value);
+                                }}
+                            >
+                                Submit
+                            </Button>
+                        </View>
+                        : null
+                    }
+                </View>
             </View>
         );
     };
-
-    useEffect(() => {
-        fetchWorkPackages(true);
-    }, []);
 
     return (
         <ImageBackground
@@ -69,7 +191,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                 {/* Display all work packages */}
                 <FlatList
                     data={workPackages}
-                    renderItem={({ item }) => renderWorkPackage(item)}
+                    renderItem={({ item }) => <RenderWorkPackage workPackage={item} />}
                     keyExtractor={(item) => item._id}
                     style={{ width: '100%', marginTop: '2%' }}
                     contentContainerStyle={{ paddingHorizontal: '5%' }}
@@ -150,15 +272,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-    },
-    workPackageItem: {
-        fontSize: 16,
-        marginVertical: 10,
         color: '#000000',
         borderColor: '#696969',
         borderWidth: 1,
         padding: 13,
         borderRadius: 15,
+        shadowColor: '#000000',
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 0.35,
+        marginTop: '1%',
+    },
+    workPackageItem: {
+        fontSize: 16,
+        marginVertical: 10,
     },
     deleteButton: {
         alignItems: 'center',
@@ -184,7 +310,29 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '500',
     },
-    }
-);
+    buttonReview: {
+        backgroundColor: '#4f85ff',
+        width: "fit-content",
+        alignSelf: 'flex-end',
+        textColor:'white'
+    },
+    textReview: {
+        color: '#8D8D8D',
+        alignItems: 'center',
+        fontSize: 15,
+        fontWeight: '500',
+    },
+    buttonSubmit: {
+        backgroundColor: '#4f85ff',
+        width: "fit-content",
+        alignSelf: 'center',
+        textColor:'white',
+        marginTop: '2%',
+    },
+    buttonStarRating: {
+        transition: 'color 0.25s',
+        cursor: 'pointer',
+    },
+});
 
 export default ViewPurchasedMaterial;
