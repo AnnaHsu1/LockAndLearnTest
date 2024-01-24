@@ -9,6 +9,7 @@ import {
   FlatList,
   Dimensions,
   Modal,
+  TextInput,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -22,6 +23,8 @@ import { Icon } from 'react-native-paper';
 const LandingPage = ({ navigation }) => {
   const [userId, setUserId] = useState(null);
   const [fileName, setFileName] = useState([]);
+  const [fullName, setFullName] = useState("");
+  const [highestDegree, setHighestDegree] = useState("");
   const [files, setFiles] = useState([]);
   const [modalOverwriteFilesVisible, setModalOverwriteFilesVisible] = useState(false);
   const [duplicateFiles, setDuplicateFiles] = useState([]);
@@ -86,6 +89,8 @@ const LandingPage = ({ navigation }) => {
     files.forEach((file) => {
       fileData.append('certificates', file);
     });
+    fileData.append('fullName', fullName);
+    fileData.append('highestDegree', highestDegree);
 
     try {
       const response = await fetch('http://localhost:4000/certificates/uploadCertificates', {
@@ -105,6 +110,8 @@ const LandingPage = ({ navigation }) => {
           //navigation.navigate('ViewUploads', { newFilesAdded: fileName });
           setFileName([]);
           setFiles([]);
+          setFullName("");
+          setHighestDegree("");
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
@@ -123,6 +130,8 @@ const LandingPage = ({ navigation }) => {
     files.forEach((file) => {
       fileData.append('certificates', file);
     });
+    fileData.append('fullName', fullName);
+    fileData.append('highestDegree', highestDegree);
     try {
       const response = await fetch('http://localhost:4000/certificates/overwriteCertificates', {
         method: 'PUT',
@@ -134,6 +143,8 @@ const LandingPage = ({ navigation }) => {
           //navigation.navigate('ViewUploads', { newFilesAdded: duplicateFiles });
           setFileName([]);
           setFiles([]);
+          setFullName("");
+          setHighestDegree("");
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
@@ -146,6 +157,8 @@ const LandingPage = ({ navigation }) => {
   const toggleModalOverwriteFiles = () => {
     setModalOverwriteFilesVisible(!modalOverwriteFilesVisible);
   };
+
+  const validateFields = fullName == "" || highestDegree == "" || files.length == 0
 
   // function to render each row (which is uploaded file)
   const renderFile = (item, index) => {
@@ -291,6 +304,24 @@ const LandingPage = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.containerUploaded}>
+            <View style={styles.item}>
+              <Text style={styles.field}>Full Name</Text>
+              <TextInput
+                testID="full-name-input"
+                style={[styles.textbox, styles.full_width]}
+                value={fullName}
+                onChangeText={(newText) => setFullName(newText)}
+              />
+            </View>
+            <View style={styles.item}>
+                <Text style={styles.field}>Highest Degree</Text>
+                <TextInput
+                  testID="highest-degree-input"
+                  style={[styles.textbox, styles.full_width]}
+                  value={highestDegree}
+                  onChangeText={(newText) => setHighestDegree(newText)}
+                />
+            </View>
             <Text style={styles.uploadFiles}>Uploads - {fileName.length} certificates</Text>
             <Text style={[styles.supportedFormats, { marginTop: 2, marginBottom: 10 }]}>
               Uploading certificates that already existed in our system will be overwritten by the
@@ -302,13 +333,14 @@ const LandingPage = ({ navigation }) => {
               renderItem={({ item, index }) => renderFile(item, index)}
               keyExtractor={(item, index) => index.toString()}
               style={{ width: '100%' }}
-            />
+            />         
             {/* display button to confirm: uploading files */}
             <View style={{ alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={uploadCertificatesHandler}
-                style={styles.buttonUpload}
+                style={[styles.buttonUpload, validateFields && styles.disabledButton]}
                 testID="uploadButton"
+                disabled={validateFields}
               >
                 <Text style={styles.buttonText}>Upload</Text>
               </TouchableOpacity>
@@ -375,6 +407,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+  },
+  item: {
+    display: 'flex',
+    width: '100%',
+    paddingVertical: 10,
+  },
+  field: {
+    color: '#ADADAD',
+  },
+  textbox: {
+    display: 'flex',
+    minHeight: 30,
+    borderRadius: 10,
+    borderColor: '#407BFF',
+    borderStyle: 'solid',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+  },
+  full_width: {
+    minWidth: '100%',
   },
   duplicateRow: {
     marginBottom: '1%',

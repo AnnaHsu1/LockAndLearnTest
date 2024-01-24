@@ -21,7 +21,7 @@ conn.once('open', () => {
   gfs.collection('UploadCertificates'); //collection name in db
 });
 
-// // Create storage engine, needed for bucket creation
+// Create storage engine, needed for bucket creation
 // const storage = new GridFsStorage({
 //   url: 'mongodb+srv://LockAdmin1:8B9oXdKh2MrdFZIs@lockdb.ivi3cnu.mongodb.net/LockNLearn?retryWrites=true&w=majority', // Specify your MongoDB connection string and database name
 //   options: { useNewUrlParser: true, useUnifiedTopology: true },
@@ -31,13 +31,15 @@ conn.once('open', () => {
 //       bucketName: 'UploadCertificates', // Specify the bucket/collection name
 //       metadata: {
 //         userId: req.body.userId,
+//         fullName: req.body.fullName,
+//         highestDegree: req.body.highestDegree
 //       },
 //     };
 //   },
 // });
 
-//Needed for bucket creation
-//const uploadCertificates = multer({ storage });
+// Needed for bucket creation
+// const uploadCertificates = multer({ storage });
 
 const uploadCertificates = multer();
 
@@ -48,6 +50,8 @@ router.put(
   async (req, res) => {
     const certificates = req.files;
     const userId = req.body.userId;
+    const fullName = req.body.fullName;
+    const highestDegree = req.body.highestDegree;
     const conn = mongoose.connection;
     const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
     for (let i = 0; i < certificates.length; i++) {
@@ -63,7 +67,7 @@ router.put(
         });
       }
       const uploadStream = bucket.openUploadStream(certificate.originalname, {
-        metadata: { userId, filename: certificate.originalname },
+        metadata: { userId, filename: certificate.originalname, fullName, highestDegree },
       });
       uploadStream.on('error', (error) => {
         console.log('Error uploading certificate:', error);
@@ -85,6 +89,8 @@ router.post(
   async (req, res) => {
     const certificates = req.files;
     const userId = req.body.userId;
+    const fullName = req.body.fullName;
+    const highestDegree = req.body.highestDegree;
     const conn = mongoose.connection;
     const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
     const duplicatedCertificates = [];
@@ -105,7 +111,7 @@ router.post(
     for (let i = 0; i < certificates.length; i++) {
       const certificate = certificates[i];
       const uploadStream = bucket.openUploadStream(certificate.originalname, {
-        metadata: { userId, filename: certificate.originalname },
+        metadata: { userId, filename: certificate.originalname, fullName, highestDegree  },
       });
       uploadStream.on('error', (error) => {
         console.log('Error uploading certificate:', error);
