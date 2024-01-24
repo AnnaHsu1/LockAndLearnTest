@@ -34,6 +34,11 @@ const User = mongoose.model('User', new mongoose.Schema({
         type: String,
         required: true,
     },
+    revenue: {
+        type: Number,
+        default: 0,
+        required: false
+    },
     purchasedWorkPackages: {
         type: [mongoose.Schema.Types.ObjectId], // Array of WorkPackage IDs
         default: [] // Initialize as an empty array by default

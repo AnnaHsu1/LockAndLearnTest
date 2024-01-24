@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
@@ -10,28 +10,61 @@ import {
 const AdminFinances = ({ route, navigation }) => {
   const styles = useStyles();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [transactions, setTransactions] = useState([]);
 
 
-  useEffect(() => {
+    useEffect(() => {
+        fetchAllTransactions();
+    }, []);
 
-  }, []);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+    const fetchAllTransactions = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/payment/transactions');
+            if (response.ok) {
+                const data = await response.json();
+                setTransactions(data);
 
+                // Log the updated state here, directly after setting it
+                console.log('Updated transactions:', data);
+                console.log('check', transactions);
 
-  return (
-    <View style={styles.page} testID="main-view">
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>
-                Finances
-          </Text>
+            } else {
+                console.error('Failed to fetch transactions:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+        }
+    };
+
+    return (
+        <View style={styles.page} testID="main-view">
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>
+                        Finances
+                    </Text>
+                </View>
+                {/* Displaying the list of transactions */}
+                <ScrollView style={styles.transactionListContainer}>
+                    {transactions.length > 0 ? (
+                        transactions.map((transaction, index) => (
+                            <View key={index} style={styles.transactionContainer}>
+                                <Text>
+                                    {transaction.amount}
+                                </Text>
+                            </View>
+                        ))
+                    ) : (
+                        <Text style={styles.noTransactionsText}>No transactions available</Text>
+                    )}
+                </ScrollView>
+            </View>
         </View>
-      </View>
-    </View>
-  );
+    );
 };
 
 const useStyles = CreateResponsiveStyle(

@@ -4,7 +4,7 @@ const router = express.Router();
 require('dotenv').config({ path: '../.env' });
 const base = "https://api-m.sandbox.paypal.com";
 const User = require('../schema/userSchema.js');
-
+const WorkPackage = require('../schema/workPackage.js'); // Import the WorkPackage model
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 
@@ -35,6 +35,41 @@ router.post("/:orderID/capture", async (req, res) => {
   }
 });
 
+const increaseTeacherRevenue = async (teacherId, amount) => {
+    try {
+        const teacher = await User.findById(teacherId);
+
+        if (!teacher) {
+            throw new Error('Teacher not found');
+        }
+
+        if (teacher.isParent) {
+            throw new Error('Cannot increase revenue for a non-teacher user.');
+        }
+
+        teacher.revenue += amount;
+        await teacher.save();
+    } catch (error) {
+        console.error('Error increasing teacher revenue:', error);
+        throw new Error('Failed to increase teacher revenue.');
+    }
+};
+
+// Function to calculate the total revenue based on an array of work package IDs
+const calculateTotalRevenue = async (workPackageIds) => {
+    try {
+        // Assuming WorkPackage model has a 'price' field
+        const workPackages = await WorkPackage.find({ _id: { $in: workPackageIds } });
+        const totalRevenue = workPackages.reduce((acc, workPackage) => acc + workPackage.price, 0);
+
+        return totalRevenue;
+    } catch (error) {
+        console.error('Error calculating total revenue:', error);
+        throw error;
+    }
+};
+
+
 // Endpoint to transfer work packages from CartWorkPackage to purchasedWorkPackage
 router.post("/transferWorkPackages/:userId", async (req, res) => {
     try {
@@ -45,6 +80,32 @@ router.post("/transferWorkPackages/:userId", async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+        // Fetch the teacher ID for each work package and update purchasedWorkPackages array
+        //const updatedPurchasedWorkPackages = await Promise.all(
+        //    user.CartWorkPackages.map(async (workPackageId) => {
+        //        // Fetch the work package by ID
+        //        const workPackage = await WorkPackage.findById(workPackageId);
+        //        if (!workPackage) {
+        //            console.error(`Work package not found with ID: ${workPackageId}`);
+        //            return null; // or handle as needed
+        //        }
+
+        //        // Fetch the teacher ID from the fetched work package
+        //        const teacherId = workPackage.instructorID;
+        //        console.log(teacherId);
+        //        // Increase revenue for the teacher (if the user is a teacher)
+        //        if (user.isParent) {
+        //            const totalRevenue = calculateTotalRevenue([workPackageId]); // Assuming calculateTotalRevenue expects an array
+        //            await increaseTeacherRevenue(teacherId, totalRevenue);
+        //        }
+
+        //        return workPackageId;
+        //    })
+        //);
+
+        //// Move all CartWorkPackages to purchasedWorkPackages
+        //user.purchasedWorkPackages.push(...updatedPurchasedWorkPackages);
+        //user.CartWorkPackages = []; // Empty the CartWorkPackages array
 
         // Move all CartWorkPackages to purchasedWorkPackages
         user.purchasedWorkPackages.push(...user.CartWorkPackages);
@@ -224,5 +285,20 @@ router.post("/initOrderStripe", async (req, res) => {
         });
     }
 });
+
+// Endpoint to fetch all transactions
+router.get('/transactions', async (req, res) => {
+    try {
+        // Use the Stripe API to retrieve a list of payments or transactions
+        const payments = await stripe.paymentIntents.list({ limit: 10 }); // Adjust parameters as needed
+
+        // Return the list of payments as a response
+        res.status(200).json({ payments: payments.data });
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ error: 'An error occurred while fetching transactions.' });
+    }
+});
+
 
 module.exports = router;
