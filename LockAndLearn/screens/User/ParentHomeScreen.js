@@ -29,6 +29,7 @@ const ParentHomeScreen = ({ navigation }) => {
   };
 
   const handleRequest = async (newAccess) => {
+    let data = null;
     if (newAccess) {
       // First time access
       if (!createPin || !confirmPin) {
@@ -42,28 +43,58 @@ const ParentHomeScreen = ({ navigation }) => {
       console.log(createPin, confirmPin);
       console.log(user._id);
 
-      const response = await fetch('http://localhost:4000/users/createPIN/' + user._id, {
-        method: 'POST',
-        credentials: 'include', // Include cookies in the request
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ pin: confirmPin }), // Send confirmPin in the request body
-      });
-      const data = await response.json();
+      try {
+        const response = await fetch('http://localhost:4000/users/createPIN/' + user._id, {
+          method: 'POST',
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ pin: confirmPin }), // Send confirmPin in the request body
+        });
+        if (response.status != 200) {
+          setError('Error with request');
+          return;
+        }
+        if (response.status == 200) {
+          data = await response.json();
+        }
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       // Returning access
       if (!pin) {
         setError('Please enter a PIN');
         return;
-      }
-      if (pin !== user.parentalAccessPIN) {
-        setError('Incorrect PIN');
-        return;
+      } else {
+        try {
+          const response = await fetch('http://localhost:4000/users/getPIN/' + user._id, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pin: pin }),
+          });
+          if (response.status != 200) {
+            setError('Incorrect PIN');
+            return;
+          }
+          if (response.status == 200) {
+            data = await response.json();
+          }
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
-    setParentalAccess(!parentalAccess);
-    navigation.navigate('ParentAccount', { child: null });
+    if (data) {
+      setParentalAccess(!parentalAccess);
+      navigation.navigate('ParentAccount', { child: null });
+    } else {
+      setError('Error with request');
+    }
   };
 
   const getChildren = async () => {
