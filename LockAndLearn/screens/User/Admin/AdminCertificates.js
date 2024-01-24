@@ -37,10 +37,16 @@ const AdminCertificates = ({ route, navigation }) => {
               <View key={index} style={styles.fileContainer}>
                 <TouchableOpacity testID={`certificateContainerTest-${index}`}>
                   <Text style={styles.fileName}>{file.filename}</Text>
-                  <Text style={styles.fileDetail}>ID: {file._id}</Text>
+                  <Text style={styles.fileDetail}>Certificate ID: {file._id}</Text>
                   <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
                   {file.metadata && file.metadata.userId && (
-                    <Text style={styles.fileDetail}>Created by: {file.metadata.userId}</Text>
+                    <Text style={styles.fileDetail}>Tutor ID: {file.metadata.userId}</Text>
+                  )}
+                  {file.metadata && file.metadata.fullName && (
+                    <Text style={styles.fileDetail}>Name: {file.metadata.fullName}</Text>
+                  )}
+                  {file.metadata && file.metadata.highestDegree && (
+                    <Text style={styles.fileDetail}>Highest Degree: {file.metadata.highestDegree}</Text>
                   )}
                 </TouchableOpacity>
                 <View style={styles.divider}></View>
