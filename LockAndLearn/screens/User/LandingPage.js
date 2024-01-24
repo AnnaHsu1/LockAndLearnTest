@@ -30,7 +30,7 @@ const LandingPage = ({ navigation }) => {
   const [modalOverwriteFilesVisible, setModalOverwriteFilesVisible] = useState(false);
   const [duplicateFiles, setDuplicateFiles] = useState([]);
   const [dictionary, setDictionary] = useState([]); // [{key, value}]
-  const [status, setStatus] = useState('rejected');
+  const [status, setStatus] = useState("");
   const dict = [];
   const maxTextWidth = width * 0.9;
   const { width } = Dimensions.get('window');
@@ -41,6 +41,28 @@ const LandingPage = ({ navigation }) => {
       setUserId(userToken._id);
     }
   };
+
+  const getStatus = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/certificates/getCertificatesStatus/${userId}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const returnedStatus = data.firstCertificate.metadata.status;
+        setStatus(returnedStatus);
+        if (returnedStatus == "pending") {
+          toast.info('Your certificate is under review. Please come back later.');
+        }
+        else if (returnedStatus == "rejected") {
+          toast.error('Your certificate has been rejected. Please upload a new certificate.');
+        }
+      }
+      
+    } catch (error) {
+    console.error('An error occurred:', error);
+    }
+  }
 
   const certificateSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
@@ -160,7 +182,7 @@ const LandingPage = ({ navigation }) => {
     setModalOverwriteFilesVisible(!modalOverwriteFilesVisible);
   };
 
-  const validateFields = fullName == "" || highestDegree == "" || files.length == 0
+  const validateFields = fullName == "" || highestDegree == "" || files.length == 0 || status == "pending"
 
   // function to render each row (which is uploaded file)
   const renderFile = (item, index) => {
@@ -217,12 +239,6 @@ const LandingPage = ({ navigation }) => {
     setDictionary(filteredDictionary);
   };
 
-  const mainMenuNavigation = () => {
-    console.log(status);
-    setStatus('accepted');
-    console.log(status);
-  };
-
   const renderDuplicateCertificates = (item, index) => {
     return (
       <View key={index}>
@@ -245,6 +261,10 @@ const LandingPage = ({ navigation }) => {
   useEffect(() => {
     getUserToken();
   }, []);
+
+  useEffect(() => {
+    getStatus();
+  }, [userId]);
 
   return (
     <View style={styles.page}>
@@ -283,6 +303,7 @@ const LandingPage = ({ navigation }) => {
             closeOnClick
             theme="dark"
             style={{ marginTop: '70px' }}
+            autoClose={7000}
           />
           <Text style={styles.certificateTitle}>
             Please upload your professional certificates to proceed further
@@ -335,7 +356,12 @@ const LandingPage = ({ navigation }) => {
               renderItem={({ item, index }) => renderFile(item, index)}
               keyExtractor={(item, index) => index.toString()}
               style={{ width: '100%' }}
-            />         
+            />
+            {status && status == "pending" ? 
+            <View> 
+            <Text style={styles.selectCertificates}>Your certificate is currently under review</Text>
+          </View> : null  }
+                  
             {/* display button to confirm: uploading files */}
             <View style={{ alignItems: 'center' }}>
               <TouchableOpacity
@@ -347,9 +373,6 @@ const LandingPage = ({ navigation }) => {
                 <Text style={styles.buttonText}>Upload</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={mainMenuNavigation}>
-              <Text>Go to main menu</Text>
-            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -477,6 +500,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '500',
     marginTop: '1%',
+    textAlign: "center",
   },
   uploadFiles: {
     color: '#696969',

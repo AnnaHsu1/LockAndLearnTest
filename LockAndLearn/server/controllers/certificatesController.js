@@ -148,7 +148,7 @@ router.get('/uploadCertificates/:filename', async (req, res) => {
 router.put('/acceptUserCertificates/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
-  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  //const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
   const updateStatus = await conn.db
     .collection('UploadCertificates.files')
     .updateMany({ 'metadata.userId': requestUserId }, { $set: { 'metadata.status': 'accepted' } });
@@ -159,11 +159,21 @@ router.put('/acceptUserCertificates/:userId', async (req, res) => {
 router.put('/rejectUserCertificates/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
-  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  //const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
   const updateStatus = await conn.db
     .collection('UploadCertificates.files')
     .updateMany({ 'metadata.userId': requestUserId }, { $set: { 'metadata.status': 'rejected' } });
   res.status(200).json({ message: 'STATUS UPDATED' });
+});
+
+// get status of user 
+router.get('/getCertificatesStatus/:userId', async (req, res) => {
+  const requestUserId = req.params.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' }); //bucketName = collection name in db
+  const uploadedCertificates = await bucket.find({ "metadata.userId": requestUserId }).toArray();
+  const firstCertificate = uploadedCertificates[0];
+  res.status(201).json({ firstCertificate });
 });
 
 module.exports = router;
