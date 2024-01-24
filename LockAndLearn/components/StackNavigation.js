@@ -18,7 +18,7 @@ import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
-import ParentMainAccount from '../screens/User/Child/ParentMainAccountScreen';
+import ParentHomeScreen from '../screens/User/Child/ParentHomeScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
@@ -142,8 +142,8 @@ const StackNavigation = () => {
           })}
         />
         <Stack.Screen
-          name="ParentMainAccount"
-          component={ParentMainAccount}
+          name="ParentHomeScreen"
+          component={ParentHomeScreen}
           options={({ navigation }) => ({
             title: 'Lock And Learn',
             headerLeft: () => null,
@@ -169,11 +169,11 @@ const StackNavigation = () => {
           name="QuestionsOverviewScreen"
           component={QuestionsOverviewScreen}
           options={{ title: 'Questions' }}
-              />
+        />
         <Stack.Screen
-            name="PurchaseSuccessPage"
-            component={PurchaseSuccessPage}
-            options={{ headerShown: false }}
+          name="PurchaseSuccessPage"
+          component={PurchaseSuccessPage}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="CreateQuestion"
@@ -356,15 +356,11 @@ const StackNavigation = () => {
           component={ChildPassingGradePerSubject}
           options={{ title: 'Passing Grade Per Subject' }}
         />
+        <Stack.Screen name="Payment" component={Payment} options={{ title: 'Payment' }} />
         <Stack.Screen
-            name="Payment"
-            component={Payment}
-            options={{ title: 'Payment' }}
-        />
-        <Stack.Screen
-            name="CheckoutForm"
-            component={CheckoutForm}
-            options={{ title: 'CheckoutForm' }}
+          name="CheckoutForm"
+          component={CheckoutForm}
+          options={{ title: 'CheckoutForm' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

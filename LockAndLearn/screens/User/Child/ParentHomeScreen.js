@@ -6,7 +6,7 @@ import { Button, Icon } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 import { getUser } from '../../../components/AsyncStorage';
 
-const ParentMainAccountScreen = ({ navigation }) => {
+const ParentHomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const deviceSize = useDeviceSize();
   const route = useRoute();
@@ -381,4 +381,4 @@ const useStyles = CreateResponsiveStyle(
   }
 );
 
-export default ParentMainAccountScreen;
+export default ParentHomeScreen;
