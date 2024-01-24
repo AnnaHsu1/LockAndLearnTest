@@ -53,6 +53,7 @@ import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
 import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
+import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 
 const Stack = createNativeStackNavigator();
 
@@ -344,6 +345,11 @@ const StackNavigation = () => {
             name="CheckoutForm"
             component={CheckoutForm}
             options={{ title: 'CheckoutForm' }}
+        />
+        <Stack.Screen
+            name="WorkPackagePreview"
+            component={WorkPackagePreview}
+            options={{ title: 'WorkPackagePreview' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
