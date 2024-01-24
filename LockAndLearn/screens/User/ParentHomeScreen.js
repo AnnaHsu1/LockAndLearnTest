@@ -4,7 +4,7 @@ import { Text, View, Image, TouchableOpacity, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
-import { getUser } from '../../../components/AsyncStorage';
+import { getUser } from '../../components/AsyncStorage';
 
 const ParentHomeScreen = ({ navigation }) => {
   const styles = useStyles();
@@ -267,7 +267,7 @@ const ParentHomeScreen = ({ navigation }) => {
         </View>
       )}
 
-      <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
+      <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
     </View>
   );
 };

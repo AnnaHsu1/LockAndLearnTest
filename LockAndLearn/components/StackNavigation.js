@@ -18,7 +18,7 @@ import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
-import ParentHomeScreen from '../screens/User/Child/ParentHomeScreen';
+import ParentHomeScreen from '../screens/User/ParentHomeScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
