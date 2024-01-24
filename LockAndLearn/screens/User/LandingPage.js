@@ -22,6 +22,7 @@ import { Icon } from 'react-native-paper';
 
 const LandingPage = ({ navigation }) => {
   const [userId, setUserId] = useState(null);
+  const [certificateStatus, setCertificateStatus] = useState('pending');
   const [fileName, setFileName] = useState([]);
   const [fullName, setFullName] = useState("");
   const [highestDegree, setHighestDegree] = useState("");
@@ -86,6 +87,7 @@ const LandingPage = ({ navigation }) => {
 
     const fileData = new FormData();
     fileData.append('userId', userId);
+    fileData.append('status', certificateStatus);
     files.forEach((file) => {
       fileData.append('certificates', file);
     });

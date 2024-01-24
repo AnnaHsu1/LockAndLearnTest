@@ -24,6 +24,51 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
+  const handleAcceptCertificate = async (userId) => {
+    const response = await fetch(
+      `http://localhost:4000/certificates/acceptUserCertificates/${userId}`,
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (response.ok) {
+      console.log('Status is accepted!');
+    }
+  };
+
+  const handleRejectCertificate = async (userId) => {
+    const response = await fetch(
+      `http://localhost:4000/certificates/rejectUserCertificates/${userId}`,
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (response.ok) {
+      console.log('Status is rejected!');
+    }
+  };
+
+  const downloadCertificate = async (fileName) => {
+    console.log(fileName);
+    const response = await fetch(
+      `http://localhost:4000/certificates/uploadCertificates/${fileName}`,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (response.ok) {
+      const test = await response.blob();
+      const url = URL.createObjectURL(test);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${fileName}`;
+      a.click();
+    }
+  };
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -35,7 +80,10 @@ const AdminCertificates = ({ route, navigation }) => {
           {certificates.length > 0 ? (
             certificates.map((file, index) => (
               <View key={index} style={styles.fileContainer}>
-                <TouchableOpacity testID={`certificateContainerTest-${index}`}>
+                <TouchableOpacity
+                  testID={`certificateContainerTest-${index}`}
+                  onPress={() => downloadCertificate(file.filename)}
+                >
                   <Text style={styles.fileName}>{file.filename}</Text>
                   <Text style={styles.fileDetail}>ID: {file._id}</Text>
                   <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
@@ -45,10 +93,16 @@ const AdminCertificates = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <View style={styles.divider}></View>
                 <View style={styles.buttons}>
-                  <TouchableOpacity testID="acceptTest">
+                  <TouchableOpacity
+                    testID="acceptTest"
+                    onPress={() => handleAcceptCertificate(file.metadata.userId)}
+                  >
                     <Text style={styles.acceptButton}>Accept</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity testID="rejectTest">
+                  <TouchableOpacity
+                    testID="rejectTest"
+                    onPress={() => handleRejectCertificate(file.metadata.userId)}
+                  >
                     <Text style={styles.rejectButton}>Reject</Text>
                   </TouchableOpacity>
                 </View>

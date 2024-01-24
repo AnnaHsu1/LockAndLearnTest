@@ -89,6 +89,7 @@ router.post(
   async (req, res) => {
     const certificates = req.files;
     const userId = req.body.userId;
+    const status = req.body.status;
     const fullName = req.body.fullName;
     const highestDegree = req.body.highestDegree;
     const conn = mongoose.connection;
@@ -111,7 +112,7 @@ router.post(
     for (let i = 0; i < certificates.length; i++) {
       const certificate = certificates[i];
       const uploadStream = bucket.openUploadStream(certificate.originalname, {
-        metadata: { userId, filename: certificate.originalname, fullName, highestDegree  },
+        metadata: { userId, filename: certificate.originalname, status, fullName, highestDegree },
       });
       uploadStream.on('error', (error) => {
         console.log('Error uploading certificate:', error);
@@ -132,6 +133,37 @@ router.get('/uploadCertificates', async (req, res) => {
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
   const uploadedCertificates = await bucket.find().toArray();
   res.status(201).json({ uploadedCertificates });
+});
+
+// get uploaded certificate to download by fileName
+router.get('/uploadCertificates/:filename', async (req, res) => {
+  const requestFileName = req.params.filename;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const downloadStream = bucket.openDownloadStreamByName(requestFileName);
+  downloadStream.pipe(res);
+});
+
+// accept all user certificates
+router.put('/acceptUserCertificates/:userId', async (req, res) => {
+  const requestUserId = req.params.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const updateStatus = await conn.db
+    .collection('UploadCertificates.files')
+    .updateMany({ 'metadata.userId': requestUserId }, { $set: { 'metadata.status': 'accepted' } });
+  res.status(200).json({ message: 'STATUS UPDATED' });
+});
+
+// reject all user certificates
+router.put('/rejectUserCertificates/:userId', async (req, res) => {
+  const requestUserId = req.params.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const updateStatus = await conn.db
+    .collection('UploadCertificates.files')
+    .updateMany({ 'metadata.userId': requestUserId }, { $set: { 'metadata.status': 'rejected' } });
+  res.status(200).json({ message: 'STATUS UPDATED' });
 });
 
 module.exports = router;
