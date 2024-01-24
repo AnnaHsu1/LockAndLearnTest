@@ -56,6 +56,7 @@ import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
 import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial';
+import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
 
 const Stack = createNativeStackNavigator();
 
@@ -365,6 +366,11 @@ const StackNavigation = () => {
             name="CheckoutForm"
             component={CheckoutForm}
             options={{ title: 'CheckoutForm' }}
+        />
+        <Stack.Screen
+          name="ChildTimeframes"
+          component={ChildTimeframes}
+          options={{ title: `List Child's Timeframes` }}
         />
       </Stack.Navigator>
     </NavigationContainer>

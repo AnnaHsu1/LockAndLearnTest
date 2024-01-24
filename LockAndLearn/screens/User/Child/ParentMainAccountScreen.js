@@ -22,8 +22,8 @@ const ParentMainAccountScreen = ({ navigation }) => {
     if (child) {
       // todo: redirect to either lock or free time screen depending on child's schedule
       // navigation.navigate('Locking');
-      navigation.navigate('FreeTimeSession');
-      // navigation.navigate('ChildProfile', { child: child });
+      // navigation.navigate('FreeTimeSession');
+      navigation.navigate('ChildProfile', { child: child });
     }
   };
 

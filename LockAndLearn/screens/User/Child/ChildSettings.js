@@ -50,8 +50,17 @@ const ChildSettings = ({ route, navigation }) => {
         >
           <Text style={styles.text}>Passing Grade</Text>
         </Button>
-
-     
+        {/* Scheduling */}
+        <Button
+          testID="scheduling"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('ChildTimeframes', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Scheduling</Text>
+        </Button>
       </View>
     </View>
   );
@@ -121,6 +130,7 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
+      padding: 10,
     },
     options: {
       flex: 0.75,
