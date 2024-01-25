@@ -39,6 +39,7 @@ import AdminFiles from '../screens/User/Admin/AdminFiles';
 import AdminQuizzes from '../screens/User/Admin/AdminQuizzes';
 import AdminSubcategories from '../screens/User/Admin/AdminSubcategories';
 import AddChildMaterial from '../screens/User/Child/AssignChildMaterial';
+import AdminReportCenter from '../screens/User/Admin/AdminReportCenter';
 import PurchasedMaterial from '../screens/User/Child/ViewPurchasedMaterial';
 import WorkPackageBrowsing from '../screens/WorkPackage/WorkPackageBrowsing';
 import WorkPackageCart from '../screens/WorkPackage/WorkPackageCart';
@@ -53,6 +54,7 @@ import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
 import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -241,6 +243,11 @@ const StackNavigation = () => {
           name="AdminFinances"
           component={AdminFinances}
           options={{ title: 'AdminFinances' }}
+        />
+        <Stack.Screen
+          name="AdminReportCenter"
+          component={AdminReportCenter}
+          options={{ title: 'AdminReportCenter' }}
         />
         <Stack.Screen
           name="AdminWorkPackages"

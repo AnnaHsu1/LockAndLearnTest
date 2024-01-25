@@ -103,6 +103,17 @@ const AdminMenu = ({ route, navigation }) => {
           >
             <Text style={styles.text}>Certificates to Review</Text>
           </Button>
+          {/* Report Center */}
+          <Button
+            testID="admin-reportcenter"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminReportCenter');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Report Center</Text>
+          </Button>
         </ScrollView>
       </View>
 
