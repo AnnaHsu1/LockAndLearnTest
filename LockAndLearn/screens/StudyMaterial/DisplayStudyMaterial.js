@@ -31,7 +31,9 @@ const DisplayStudyMaterial = ({ props }) => {
   const maxTextWidth = width * 0.9;
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
-  let currentPdfIndex = 0;
+  const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
+
+
 
 
   const ProgressBar = ({ current, total }) => {
@@ -145,6 +147,25 @@ const DisplayStudyMaterial = ({ props }) => {
       }
     } catch (error) {
       console.error('Network error:', error);
+    }
+  };
+
+  const handleNextPdf = (nextIndex, length) => {
+    // Function logic here
+    console.log("Next index", nextIndex);
+    console.log("Length", length);
+
+    if (nextIndex < length){
+      setCurrentPdfIndex(nextIndex);
+    }
+  };
+  const handlePrevPdf = (prevIndex, length) => {
+    // Function logic here
+    console.log("Next index", prevIndex);
+    console.log("Length", length);
+
+    if (prevIndex >= length){
+      setCurrentPdfIndex(prevIndex);
     }
   };
 
@@ -317,15 +338,14 @@ const DisplayStudyMaterial = ({ props }) => {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Button
                     style={styles.modalButtons}
-                    onPress={() => {
-                    }}
+                    onPress={() => handlePrevPdf(currentPdfIndex-1, 0)}
+
                 >
                     <Text style = {styles.buttonText}>Previous</Text>
                 </Button>
                 <Button
                     style={styles.modalButtons}
-                    onPress={() => {
-                    }}
+                    onPress={() => handleNextPdf(currentPdfIndex+1, pdfUrls.length)}
                 >
                     <Text style = {styles.buttonText}>Next</Text>
                 </Button>
