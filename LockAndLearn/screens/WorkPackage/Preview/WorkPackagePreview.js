@@ -49,16 +49,6 @@ const WorkPackagePreview = ({ props }) => {
     }
   };
 
-  // function to delete a work package
-  const deletePackage = async (_id) => {
-    try {
-      setSelectedPackageId(_id);
-      setDeleteConfirmationModalVisible(true);
-    } catch (error) {
-      console.error('Network error:', error);
-    }
-  };
-
   // function to display the work package information
   const renderPackage = (this_Package) => {
     return (
@@ -217,7 +207,6 @@ const WorkPackagePreview = ({ props }) => {
         {/* Display button to create a new work package */}
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
-            style={styles.buttonUpload}
             testID="reportButton"
           >
             <Text style={styles.buttonText}>Report Work Package</Text>
@@ -351,11 +340,15 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   buttonText: {
-    color: '#FFFFFF',
-    alignItems: 'center',
+    color: '#F24E1E', 
+    borderColor: '#F24E1E', 
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    textAlign: 'center',
     fontSize: 15,
     fontWeight: '500',
-  },
+  }
 });
 
 export default WorkPackagePreview;
