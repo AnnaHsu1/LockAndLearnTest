@@ -6,18 +6,20 @@ const AdminCertificates = ({ route, navigation }) => {
   const styles = useStyles();
   const [certificates, setCertificates] = useState([]);
   const [certificateId, setCertificateId] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [isAcceptModalVisible, setIsAcceptModalVisible] = useState(false);
+  const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
 
   useEffect(() => {
-    fetchAllCertificates();
+    fetchAllPendingCertificates();
   }, []);
 
-  const fetchAllCertificates = async () => {
+  const fetchAllPendingCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:4000/certificates/uploadCertificates');
+      const response = await fetch('http://localhost:4000/certificates/uploadCertificates/pending');
       if (response.ok) {
         const data = await response.json();
-        setCertificates(data.uploadedCertificates);
+        setCertificates(data.uploadedPendingCertificates);
       } else {
         console.error('Failed to fetch certificates:', response.status);
       }
@@ -35,7 +37,13 @@ const AdminCertificates = ({ route, navigation }) => {
     );
 
     if (response.ok) {
-      console.log('Status is accepted!');
+      const updatedCertificates = certificates.filter(
+        (certificate) => certificate.metadata.userId !== userId
+      );
+      setCertificates(updatedCertificates);
+      closeAcceptModal();
+    } else {
+      console.error('Failed to delete certificate:', response.status);
     }
   };
 
@@ -48,7 +56,13 @@ const AdminCertificates = ({ route, navigation }) => {
     );
 
     if (response.ok) {
-      console.log('Status is rejected!');
+      const updatedCertificates = certificates.filter(
+        (certificate) => certificate._id !== certificateId
+      );
+      setCertificates(updatedCertificates);
+      closeRejectModal();
+    } else {
+      console.error('Failed to delete certificate:', response.status);
     }
   };
 
@@ -71,13 +85,22 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
-  const openModal = (fileId) => {
+  const openRejectModal = (fileId) => {
     setCertificateId(fileId);
-    setIsModalVisible(true);
+    setIsRejectModalVisible(true);
   };
 
-  const closeModal = () => {
-    setIsModalVisible(false);
+  const openAcceptModal = (userId) => {
+    setUserId(userId);
+    setIsAcceptModalVisible(true);
+  };
+
+  const closeRejectModal = () => {
+    setIsRejectModalVisible(false);
+  };
+
+  const closeAcceptModal = () => {
+    setIsAcceptModalVisible(false);
   };
 
   return (
@@ -109,20 +132,26 @@ const AdminCertificates = ({ route, navigation }) => {
                       Highest Degree: {file.metadata.highestDegree}
                     </Text>
                   )}
+                  {file.metadata && file.metadata.status && (
+                    <Text style={styles.fileStatusDetail}>
+                      Status: <Text style={styles.statusText}>{file.metadata.status}</Text>
+                    </Text>
+                  )}
                 </TouchableOpacity>
                 <View style={styles.divider}></View>
                 <View style={styles.buttons}>
                   <TouchableOpacity
                     testID="acceptTest"
-                    onPress={() => handleAcceptCertificate(file.metadata.userId)}
+                    onPress={() => {
+                      openAcceptModal(file.metadata.userId);
+                    }}
                   >
                     <Text style={styles.acceptButton}>Accept</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     testID="rejectTest"
                     onPress={() => {
-                      openModal(file._id);
-                      console.log(file._id);
+                      openRejectModal(file._id);
                     }}
                   >
                     <Text style={styles.rejectButton}>Reject</Text>
@@ -137,8 +166,34 @@ const AdminCertificates = ({ route, navigation }) => {
         <Modal
           animationType="slide"
           transparent={true}
-          visible={isModalVisible}
-          onRequestClose={closeModal}
+          visible={isAcceptModalVisible}
+          onRequestClose={closeAcceptModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to accept this application? This will accept all user's
+                applications and allow user to become a tutor.
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  onPress={() => handleAcceptCertificate(userId)}
+                  style={styles.confirmAcceptButton}
+                >
+                  <Text style={styles.confirmButtonText}>Accept</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeAcceptModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isRejectModalVisible}
+          onRequestClose={closeRejectModal}
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -148,11 +203,11 @@ const AdminCertificates = ({ route, navigation }) => {
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   onPress={() => handleRejectCertificate(certificateId)}
-                  style={styles.confirmButton}
+                  style={styles.confirmRejectButton}
                 >
                   <Text style={styles.confirmButtonText}>Reject</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={closeModal} style={styles.cancelButton}>
+                <TouchableOpacity onPress={closeRejectModal} style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
@@ -273,6 +328,15 @@ const useStyles = CreateResponsiveStyle(
       color: 'grey',
       fontSize: 14,
     },
+    fileStatusDetail: {
+      color: 'grey',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    statusText: {
+      color: 'blue',
+      fontStyle: 'italic',
+    },
     divider: {
       borderBottomWidth: 1,
       borderBottomColor: 'grey',
@@ -312,7 +376,14 @@ const useStyles = CreateResponsiveStyle(
       fontWeight: 'bold',
       padding: 10,
     },
-    confirmButton: {
+    confirmAcceptButton: {
+      backgroundColor: '#228B22',
+      padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
+    },
+    confirmRejectButton: {
       backgroundColor: '#F24E1E',
       padding: 10,
       borderRadius: 10,
