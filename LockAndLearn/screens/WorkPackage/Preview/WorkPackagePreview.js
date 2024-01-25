@@ -70,7 +70,7 @@ const WorkPackagePreview = ({ props }) => {
           <TouchableOpacity
             style={{ width: '75%' }}
             onPress={() => {
-              navigation.navigate('EditPackage', {
+              navigation.navigate('PackagePreview', {
                 workPackage: {
                   wp_id: _id,
                   name: name,
