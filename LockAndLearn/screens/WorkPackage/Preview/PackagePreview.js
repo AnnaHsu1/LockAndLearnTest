@@ -258,12 +258,12 @@ const PackagePreview = () => {
             {/* Display school grade */}
             <View style={styles.containerPicker}>
               <Text style={styles.textFields}>School Grade</Text>
-              <Text style={styles.workPackageType}>{grade}</Text>
+              <Text style={styles.workPackageInputText}>{grade}</Text>
             </View>
             {/* Display subcategory */}
             <View style={styles.containerPicker}>
               <Text style={styles.textFields}>Subcategory</Text>
-              <Text style={styles.workPackageType}>{selectedSubcategory}</Text>
+              <Text style={styles.workPackageInputText}>{selectedSubcategory}</Text>
             </View>
             {/* Display description */}
             <View style={[styles.containerPicker, { marginTop: 10 }]}>
@@ -622,7 +622,6 @@ const PackagePreview = () => {
 
 const styles = StyleSheet.create({
   workPackageInputText: {
-    height: 70,
     borderColor: '#407BFF',
     borderWidth: 1,
     borderRadius: 5,
