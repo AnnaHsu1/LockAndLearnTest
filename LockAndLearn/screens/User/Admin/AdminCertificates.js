@@ -172,8 +172,8 @@ const AdminCertificates = ({ route, navigation }) => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>
-                Are you sure you want to accept this application? This will accept all user's
-                applications and allow user to become a tutor.
+                Are you sure you want to accept this application? This will accept all the user's
+                applications and allow the user to become a tutor.
               </Text>
               <View style={styles.modalButtons}>
                 <TouchableOpacity

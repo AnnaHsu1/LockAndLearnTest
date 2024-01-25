@@ -25,6 +25,7 @@ const LandingPage = ({ navigation }) => {
   const [certificateStatus, setCertificateStatus] = useState('pending');
   const [fileName, setFileName] = useState([]);
   const [fullName, setFullName] = useState("");
+  const [refresh, setRefresh] = useState(false);
   const [highestDegree, setHighestDegree] = useState("");
   const [files, setFiles] = useState([]);
   const [modalOverwriteFilesVisible, setModalOverwriteFilesVisible] = useState(false);
@@ -50,6 +51,12 @@ const LandingPage = ({ navigation }) => {
       if (response.ok) {
         const data = await response.json();
         const returnedStatus = data.firstCertificate.metadata.status;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].metadata.status == "accepted") {
+            returnedStatus = "accepted";
+            break;
+          }
+        }
         setStatus(returnedStatus);
         if (returnedStatus == "pending") {
           toast.info('Your certificate is under review. Please come back later.');
@@ -131,7 +138,6 @@ const LandingPage = ({ navigation }) => {
         // no duplicated files - save files to db
         else if (data.message == 'Certificate uploaded successfully') {
           toast.success('Certificates uploaded successfully!');
-          //navigation.navigate('ViewUploads', { newFilesAdded: fileName });
           setFileName([]);
           setFiles([]);
           setFullName("");
@@ -140,6 +146,7 @@ const LandingPage = ({ navigation }) => {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
+      setRefresh(true)
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -264,7 +271,7 @@ const LandingPage = ({ navigation }) => {
 
   useEffect(() => {
     getStatus();
-  }, [userId]);
+  }, [userId, refresh]);
 
   return (
     <View style={styles.page}>

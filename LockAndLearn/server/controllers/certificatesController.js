@@ -191,14 +191,26 @@ router.delete('/deleteCertificate/:id', (req, res) => {
   });
 });
 
-// get at least one accepted status of user
+// // get at least one accepted status of user
+// router.get('/getCertificatesStatus/:userId', async (req, res) => {
+//   console.log(req.params.userId);
+//   const requestUserId = req.params.userId;
+//   const conn = mongoose.connection;
+//   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+//   const uploadedCertificates = await bucket
+//     .find({ 'metadata.userId': requestUserId, 'metadata.status': 'accepted' })
+//     .toArray();
+//   const firstCertificate = uploadedCertificates[0];
+//   console.log(firstCertificate)
+//   res.status(201).json({ firstCertificate });
+// });
+
+// get status of user 
 router.get('/getCertificatesStatus/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
-  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
-  const uploadedCertificates = await bucket
-    .find({ 'metadata.userId': requestUserId, 'metadata.status': 'accepted' })
-    .toArray();
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' }); //bucketName = collection name in db
+  const uploadedCertificates = await bucket.find({ "metadata.userId": requestUserId }).toArray();
   const firstCertificate = uploadedCertificates[0];
   res.status(201).json({ firstCertificate });
 });
