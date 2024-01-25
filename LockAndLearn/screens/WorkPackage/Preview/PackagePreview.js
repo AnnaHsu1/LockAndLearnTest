@@ -6,28 +6,17 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
-  Modal,
   Dimensions,
-  TextInput,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Icon } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
 import { subcategoryData } from '../../../components/WorkPackageConstants';
 
 const PackagePreview = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [modalFilterVisible, setModalFilterVisible] = useState(false);
-  const [showButton, setShowButton] = useState(false);
   const [files, setFiles] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   let counterIndex = 0;
-  const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
-  const [fileDeleteId, setFileDeleteId] = useState('');
-  const [fileDeleteName, setFileDeleteName] = useState('');
-  const [quizDeleteId, setQuizDeleteId] = useState('');
-  const [quizDeleteName, setQuizDeleteName] = useState('');
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.4;
   const params = route.params;
@@ -134,86 +123,6 @@ const PackagePreview = () => {
     }
   };
 
-  // Function to delete a file in work package
-  const handleDeleteFile = async (id, contentType) => {
-    try {
-      const response = await fetch(
-        `http://localhost:4000/packages/deleteContent/${contentType}/${p_id}/${id}`,
-        {
-          method: 'DELETE',
-        }
-      );
-      if (response.ok) {
-        setFiles(files.filter((file) => file.originalId !== id));
-      } else {
-        console.error('Failed to delete file');
-      }
-    } catch (error) {
-      console.error('Network error');
-    }
-  };
-
-  // Function to delete a quiz in work package
-  const handleDeleteQuiz = async (id, contentType) => {
-    try {
-      const updatedQuizzes = [...quizzes];
-      const deletedQuizName = updatedQuizzes.splice(id, 1)[0];
-      setQuizzes(updatedQuizzes);
-
-      const response = await fetch(
-        `http://localhost:4000/packages/deleteContent/${contentType}/${p_id}/${p_quizzes[id]}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      if (!response.ok) {
-        setQuizzes([...updatedQuizzes, deletedQuizName]);
-        console.error('Failed to delete quiz');
-      }
-    } catch (error) {
-      console.error('Network error', error);
-    }
-  };
-
-  // Function to toggle the pop up modal for filter section
-  const toggleModalFilter = () => {
-    setModalFilterVisible(!modalFilterVisible);
-  };
-
-  // Function to toggle the pop up modal for delete section
-  const toggleModalDelete = () => {
-    setModalDeleteVisible(!modalDeleteVisible);
-  };
-
-  const saveChanges = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/packages/update/${p_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          description: packageDescription,
-          subcategory: selectedSubcategory,
-        }),
-      });
-      if (response.status == 200) {
-        navigation.navigate('PackageOverview', {
-          workPackage: {
-            _id: wp_id,
-            name: name,
-            grade: grade,
-          },
-        });
-      } else {
-        console.error('Failed to add quizzes to the work package:', response.status);
-      }
-    } catch (error) {
-      console.error('Error editing work package', error);
-    }
-  };
-
   // Function to download file
   const downloadFile = async (fileName) => {
     const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
@@ -228,10 +137,6 @@ const PackagePreview = () => {
       a.click();
     }
   };
-
-  // Disable the button if the user has not selected a subcategory and entered a description
-  const isButtonDisabled =
-    selectedSubcategory === 'Choose a Subcategory' || packageDescription === '';
 
   return (
     <ImageBackground
@@ -268,12 +173,7 @@ const PackagePreview = () => {
             {/* Display description */}
             <View style={[styles.containerPicker, { marginTop: 10 }]}>
               <Text style={styles.textFields}>Description</Text>
-              <Text style={styles.workPackageInputText}>
-                {name}
-                {grade}
-                {subcategory}
-                {packageDescription}
-              </Text>
+              <Text style={styles.workPackageInputText}>{packageDescription}</Text>
             </View>
           </View>
           {/* Display all files and quizzes from the work package */}
@@ -291,27 +191,6 @@ const PackagePreview = () => {
                 }}
               >
                 <Text style={styles.textFields}>Study Material</Text>
-                <TouchableOpacity
-                  style={{ alignItems: 'center' }}
-                  onPress={() =>
-                    navigation.navigate('SelectStudyMaterialToAdd', {
-                      package: {
-                        p_id: p_id,
-                        p_quizzes: p_quizzes,
-                        p_materials: p_materials,
-                        subcategory: selectedSubcategory,
-                        description: packageDescription,
-                      },
-                      workPackage: {
-                        name: name,
-                        grade: grade,
-                        wp_id: wp_id,
-                      },
-                    })
-                  }
-                >
-                  <Text style={{ color: '#407BFF', fontSize: 25, fontWeight: 100 }}>+</Text>
-                </TouchableOpacity>
               </View>
               <View style={styles.rowContainer}>
                 {files.length === 0 ? (
@@ -344,19 +223,6 @@ const PackagePreview = () => {
                           {file.description}
                         </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.buttonDelete}
-                        onPress={() => {
-                          setFileDeleteId(file.originalId);
-                          setFileDeleteName(file.name);
-                          toggleModalDelete();
-                        }}
-                        testID="toggle-delete-modal-button"
-                      >
-                        <View style={styles.deleteButtonBackground}>
-                          <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                        </View>
-                      </TouchableOpacity>
                     </View>
                   ))
                 )}
@@ -375,27 +241,6 @@ const PackagePreview = () => {
                 }}
               >
                 <Text style={styles.textFields}>Quizzes</Text>
-                <TouchableOpacity
-                  style={{ alignItems: 'center' }}
-                  onPress={() =>
-                    navigation.navigate('SelectQuizToAdd', {
-                      package: {
-                        p_id: p_id,
-                        p_quizzes: p_quizzes,
-                        p_materials: p_materials,
-                        subcategory: selectedSubcategory,
-                        description: packageDescription,
-                      },
-                      workPackage: {
-                        name: name,
-                        grade: grade,
-                        wp_id: wp_id,
-                      },
-                    })
-                  }
-                >
-                  <Text style={{ color: '#407BFF', fontSize: 25, fontWeight: 100 }}>+</Text>
-                </TouchableOpacity>
               </View>
               <View style={styles.rowContainer}>
                 {quizzes.length === 0 ? (
@@ -406,7 +251,7 @@ const PackagePreview = () => {
                       style={[
                         styles.row,
                         index === quizzes.length - 1
-                          ? { borderBottomWidth: 1, borderBottomColor: '#FAFAFA' }
+                          ? { borderBottomWidth: 1, padding: 5, borderBottomColor: '#FAFAFA' }
                           : null,
                         files.length === 0 ? { paddingTop: 5 } : null,
                       ]}
@@ -422,199 +267,13 @@ const PackagePreview = () => {
                       >
                         <Text>{quizName}</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.buttonDelete}
-                        onPress={() => {
-                          setQuizDeleteId(index);
-                          setQuizDeleteName(quizName);
-                          toggleModalDelete();
-                        }}
-                        testID="toggle-delete-modal-button"
-                      >
-                        <View style={styles.deleteButtonBackground}>
-                          <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                        </View>
-                      </TouchableOpacity>
                     </View>
                   ))
                 )}
               </View>
             </View>
           </View>
-          {/* Display button to show modal to add files/quizzes */}
-          <View style={{ alignItems: 'center' }}>
-            <TouchableOpacity
-              // todo: save new updates in db for this package (subcategory, description, files, quizzes)
-              onPress={() => {
-                saveChanges();
-              }}
-              // todo: add padding to button Save
-              style={[
-                styles.button_add_save,
-                isButtonDisabled && styles.disabledButton,
-                {
-                  backgroundColor: '#407BFF',
-                  borderColor: '#FFFFFF',
-                },
-              ]}
-              testID="addMaterialModal"
-              disabled={isButtonDisabled}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  isButtonDisabled && styles.disabledButtonText,
-                  { color: 'white' },
-                ]}
-              >
-                Save
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={toggleModalFilter}
-              style={[
-                styles.button_add_save,
-                isButtonDisabled && styles.disabledButton,
-                {
-                  backgroundColor: '#FFFFFF',
-                  borderColor: '#407BFF',
-                },
-              ]}
-              testID="addMaterialModal"
-              disabled={isButtonDisabled}
-            >
-              <Text style={[styles.buttonText, isButtonDisabled && styles.disabledButtonText]}>
-                Add Material
-              </Text>
-            </TouchableOpacity>
-          </View>
         </ScrollView>
-        {/* Display modal to add files/quizzes */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalFilterVisible}
-          onRequestClose={toggleModalFilter}
-        >
-          <View style={styles.containerModal}>
-            <View
-              style={[
-                styles.containerMaterial,
-                { flexDirection: 'column', justifyContent: 'space-around' },
-              ]}
-            >
-              <View style={styles.titleModal}>
-                {wp_id && (
-                  <View>
-                    <Text style={styles.titleModalText}>
-                      {name} - {grade}
-                    </Text>
-                    {selectedSubcategory !== 'Choose a Subcategory' && (
-                      <Text style={styles.titleModalText}>{selectedSubcategory}</Text>
-                    )}
-                  </View>
-                )}
-              </View>
-              <View style={styles.containerButtonsModal}>
-                <TouchableOpacity
-                  style={styles.buttonAddStudyMaterial}
-                  onPress={() => {
-                    toggleModalFilter();
-                    navigation.navigate('SelectStudyMaterialToAdd', {
-                      package: {
-                        p_id: p_id,
-                        p_quizzes: p_quizzes,
-                        p_materials: p_materials,
-                        subcategory: selectedSubcategory,
-                        description: packageDescription,
-                      },
-                      workPackage: {
-                        name: name,
-                        grade: grade,
-                        wp_id: wp_id,
-                      },
-                    });
-                  }}
-                >
-                  <Text style={styles.buttonAddMaterialText}>Add Study Material</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonAddQuizMaterial}
-                  onPress={() => {
-                    toggleModalFilter();
-                    navigation.navigate('SelectQuizToAdd', {
-                      package: {
-                        p_id: p_id,
-                        p_quizzes: p_quizzes,
-                        p_materials: p_materials,
-                        subcategory: selectedSubcategory,
-                        description: packageDescription,
-                      },
-                      workPackage: {
-                        name: name,
-                        grade: grade,
-                        wp_id: wp_id,
-                      },
-                    });
-                  }}
-                >
-                  <Text style={styles.buttonAddMaterialText}>Add Quiz Material</Text>
-                </TouchableOpacity>
-              </View>
-              <View>
-                <TouchableOpacity
-                  style={styles.buttonCancelMaterial}
-                  onPress={() => {
-                    toggleModalFilter();
-                  }}
-                >
-                  <Text style={styles.buttonAddMaterialText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-        {/* Display modal for confirming deletion of file/quiz */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalDeleteVisible}
-          onRequestClose={toggleModalDelete}
-          testID="modal-delete" // Add testID here
-        >
-          <View style={styles.containerDeleteModal}>
-            <View style={styles.containerDeleteMaterial}>
-              <View style={styles.titleDeleteModal}>
-                <Text style={styles.textDeleteModal}>
-                  Are you sure you want to delete {fileDeleteName || quizDeleteName}?
-                </Text>
-              </View>
-              <View style={styles.containerDeleteButtonsModal}>
-                <TouchableOpacity
-                  style={styles.buttonDeleteModal}
-                  onPress={() => {
-                    toggleModalDelete();
-                    setFileDeleteId('');
-                    setFileDeleteName('');
-                    fileDeleteId !== ''
-                      ? handleDeleteFile(fileDeleteId, 'material')
-                      : handleDeleteQuiz(quizDeleteId, 'quiz');
-                  }}
-                >
-                  <Text style={styles.buttonTextDeleteModal}>Delete</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancelModal}
-                  onPress={() => {
-                    toggleModalDelete();
-                  }}
-                >
-                  <Text style={styles.buttonTextCancelModal}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
       </View>
     </ImageBackground>
   );
