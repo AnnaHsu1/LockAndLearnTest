@@ -250,54 +250,30 @@ const PackagePreview = () => {
         </View>
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.containerInput}>
+            {/* Display subject */}
             <View style={styles.containerPicker}>
               <Text style={styles.textFields}>Subject</Text>
-              <Picker
-                enabled={false}
-                testID="subject-picker"
-                selectedValue={name}
-                style={styles.workPackageTypePicker}
-              >
-                <Picker.Item label={name} value={name} />
-              </Picker>
+              <Text style={styles.workPackageInputText}>{name}</Text>
             </View>
-            {/* Display picker for grade */}
+            {/* Display school grade */}
             <View style={styles.containerPicker}>
               <Text style={styles.textFields}>School Grade</Text>
-              <Picker
-                enabled={false}
-                testID="grade-picker"
-                selectedValue={grade}
-                style={styles.workPackageTypePicker}
-              >
-                <Picker.Item label={grade} value={grade} />
-              </Picker>
+              <Text style={styles.workPackageType}>{grade}</Text>
             </View>
-            {/* Display picker for subcategory */}
+            {/* Display subcategory */}
             <View style={styles.containerPicker}>
               <Text style={styles.textFields}>Subcategory</Text>
-              <Picker
-                testID="subcategory-picker"
-                selectedValue={selectedSubcategory}
-                onValueChange={(itemValue) => setSelectedSubcategory(itemValue)}
-                style={styles.workPackageTypePicker}
-              >
-                {packageSubcategories.map((subcategory, index) => (
-                  <Picker.Item key={index} label={subcategory} value={subcategory} />
-                ))}
-              </Picker>
+              <Text style={styles.workPackageType}>{selectedSubcategory}</Text>
             </View>
             {/* Display description */}
             <View style={[styles.containerPicker, { marginTop: 10 }]}>
               <Text style={styles.textFields}>Description</Text>
-              <TextInput
-                multiline={true}
-                // numberOfLines={4}
-                value={packageDescription}
-                onChangeText={setPackageDescription}
-                style={styles.workPackageInputText}
-                // placeholder="Enter your description"
-              />
+              <Text style={styles.workPackageInputText}>
+                {name}
+                {grade}
+                {subcategory}
+                {packageDescription}
+              </Text>
             </View>
           </View>
           {/* Display all files and quizzes from the work package */}
