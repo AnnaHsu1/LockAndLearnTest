@@ -26,11 +26,9 @@ const AdminFinances = ({ route, navigation }) => {
             const response = await fetch('http://localhost:4000/payment/transactions');
             if (response.ok) {
                 const data = await response.json();
-                setTransactions(data);
-
-                // Log the updated state here, directly after setting it
                 console.log('Updated transactions:', data);
-                console.log('check', transactions);
+
+                setTransactions(data.payments);
 
             } else {
                 console.error('Failed to fetch transactions:', response.status);
@@ -51,13 +49,13 @@ const AdminFinances = ({ route, navigation }) => {
                 {/* Displaying the list of transactions */}
                 <ScrollView style={styles.transactionListContainer}>
                     {transactions.length > 0 ? (
-                        transactions.map((transaction, index) => (
-                            <View key={index} style={styles.transactionContainer}>
-                                <Text>
-                                    {transaction.amount}
-                                </Text>
+                        transactions.map((transaction) => (
+                            <View key={transaction.id} style={styles.transactionContainer}>
+                                <Text> Transaction ID: {transaction.id} </Text>
+                                <Text> Amount: {transaction.amount} {transaction.currency}  </Text>
+                                <Text> Status: {transaction.status}  </Text>
                             </View>
-                        ))
+                        ))  
                     ) : (
                         <Text style={styles.noTransactionsText}>No transactions available</Text>
                     )}
