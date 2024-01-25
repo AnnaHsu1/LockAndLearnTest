@@ -364,6 +364,23 @@ const PackagePreview = () => {
 };
 
 const styles = StyleSheet.create({
+  quizModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  quizModalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  closeQuizModalText: {
+    color: 'blue', // Customize the close text color
+    textAlign: 'right',
+    marginBottom: 10,
+  },
   workPackageInputText: {
     borderColor: '#407BFF',
     borderWidth: 1,
