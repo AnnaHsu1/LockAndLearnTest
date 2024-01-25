@@ -155,23 +155,42 @@ router.put('/acceptUserCertificates/:userId', async (req, res) => {
   res.status(200).json({ message: 'STATUS UPDATED' });
 });
 
-// reject all user certificates
-router.put('/rejectUserCertificates/:userId', async (req, res) => {
-  const requestUserId = req.params.userId;
+// reject certificate by its ID
+router.put('/rejectCertificate/:id', async (req, res) => {
+  const requestFileId = req.params.id;
+  console.log('BE ' + requestFileId);
   const conn = mongoose.connection;
-  //const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const file = await bucket.find({ _id: new mongoose.Types.ObjectId(requestFileId) }).toArray();
+  if (file.length === 0) {
+    return res.status(201).json({ message: 'File not found' });
+  }
   const updateStatus = await conn.db
     .collection('UploadCertificates.files')
-    .updateMany({ 'metadata.userId': requestUserId }, { $set: { 'metadata.status': 'rejected' } });
-  res.status(200).json({ message: 'STATUS UPDATED' });
+    .updateOne(
+      { _id: new mongoose.Types.ObjectId(requestFileId) },
+      { $set: { 'metadata.status': 'rejected' } }
+    );
+  res.status(200).json({ message: 'REJECTED STATUS UPDATED' });
 });
 
-// get status of user 
+// delete certificate from database
+router.delete('/deleteCertificate/:id', (req, res) => {
+  console.log('CERTIFICATE BE: ' + req.params.id);
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  bucket.delete(new mongoose.Types.ObjectId(req.params.id), (err, data) => {
+    if (err) return res.status(404).json({ err: err.message });
+  });
+});
+
+// get at least one accepted status of user
 router.get('/getCertificatesStatus/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
-  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' }); //bucketName = collection name in db
-  const uploadedCertificates = await bucket.find({ "metadata.userId": requestUserId }).toArray();
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const uploadedCertificates = await bucket
+    .find({ 'metadata.userId': requestUserId, 'metadata.status': 'accepted' })
+    .toArray();
   const firstCertificate = uploadedCertificates[0];
   res.status(201).json({ firstCertificate });
 });

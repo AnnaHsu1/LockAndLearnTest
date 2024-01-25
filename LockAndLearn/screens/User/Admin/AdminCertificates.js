@@ -5,6 +5,8 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 const AdminCertificates = ({ route, navigation }) => {
   const styles = useStyles();
   const [certificates, setCertificates] = useState([]);
+  const [certificateId, setCertificateId] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     fetchAllCertificates();
@@ -37,9 +39,9 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
-  const handleRejectCertificate = async (userId) => {
+  const handleRejectCertificate = async (certificateId) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/rejectUserCertificates/${userId}`,
+      `http://localhost:4000/certificates/rejectCertificate/${certificateId}`,
       {
         method: 'PUT',
       }
@@ -69,6 +71,15 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
+  const openModal = (fileId) => {
+    setCertificateId(fileId);
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -94,7 +105,9 @@ const AdminCertificates = ({ route, navigation }) => {
                     <Text style={styles.fileDetail}>Name: {file.metadata.fullName}</Text>
                   )}
                   {file.metadata && file.metadata.highestDegree && (
-                    <Text style={styles.fileDetail}>Highest Degree: {file.metadata.highestDegree}</Text>
+                    <Text style={styles.fileDetail}>
+                      Highest Degree: {file.metadata.highestDegree}
+                    </Text>
                   )}
                 </TouchableOpacity>
                 <View style={styles.divider}></View>
@@ -107,7 +120,10 @@ const AdminCertificates = ({ route, navigation }) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     testID="rejectTest"
-                    onPress={() => handleRejectCertificate(file.metadata.userId)}
+                    onPress={() => {
+                      openModal(file._id);
+                      console.log(file._id);
+                    }}
                   >
                     <Text style={styles.rejectButton}>Reject</Text>
                   </TouchableOpacity>
@@ -118,6 +134,31 @@ const AdminCertificates = ({ route, navigation }) => {
             <Text style={styles.emptyCertificatesList}>No certificates to approve</Text>
           )}
         </ScrollView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to reject this application?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  onPress={() => handleRejectCertificate(certificateId)}
+                  style={styles.confirmButton}
+                >
+                  <Text style={styles.confirmButtonText}>Reject</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -236,6 +277,61 @@ const useStyles = CreateResponsiveStyle(
       borderBottomWidth: 1,
       borderBottomColor: 'grey',
       marginVertical: 5,
+    },
+    text: {
+      color: '#696969',
+      fontSize: 18,
+      fontWeight: '300',
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      padding: 20,
+      width: '50%',
+      alignItems: 'center',
+    },
+    modalText: {
+      fontSize: 18,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      width: '100%',
+    },
+    modalButton: {
+      color: '#4F85FF',
+      fontSize: 16,
+      fontWeight: 'bold',
+      padding: 10,
+    },
+    confirmButton: {
+      backgroundColor: '#F24E1E',
+      padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
+    },
+    confirmButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    cancelButton: {
+      backgroundColor: '#407BFF',
+      padding: 10,
+      borderRadius: 10,
+      justifyContent: 'center',
+    },
+    cancelButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
   },
   {
