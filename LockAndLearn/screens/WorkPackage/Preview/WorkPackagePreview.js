@@ -94,7 +94,7 @@ const WorkPackagePreview = ({ props }) => {
               alignItems: 'center',
             }}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 navigation.navigate('EditPackage', {
                   workPackage: {
@@ -122,7 +122,7 @@ const WorkPackagePreview = ({ props }) => {
               testID={`deleteButton-${this_Package._id}`}
             >
               <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
@@ -217,15 +217,10 @@ const WorkPackagePreview = ({ props }) => {
         {/* Display button to create a new work package */}
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('CreatePackage', {
-                workPackage: params.workPackage,
-              });
-            }}
             style={styles.buttonUpload}
-            testID="uploadButton"
+            testID="reportButton"
           >
-            <Text style={styles.buttonText}>Add package</Text>
+            <Text style={styles.buttonText}>Report Work Package</Text>
           </TouchableOpacity>
         </View>
       </View>
