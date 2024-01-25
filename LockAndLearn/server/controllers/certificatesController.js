@@ -135,6 +135,14 @@ router.get('/uploadCertificates', async (req, res) => {
   res.status(201).json({ uploadedCertificates });
 });
 
+// get all pending uploaded certificates
+router.get('/uploadCertificates/pending', async (req, res) => {
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const uploadedPendingCertificates = await bucket.find({ 'metadata.status': 'pending' }).toArray();
+  res.status(201).json({ uploadedPendingCertificates });
+});
+
 // get uploaded certificate to download by fileName
 router.get('/uploadCertificates/:filename', async (req, res) => {
   const requestFileName = req.params.filename;
