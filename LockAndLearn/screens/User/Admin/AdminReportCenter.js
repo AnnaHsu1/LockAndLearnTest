@@ -22,17 +22,17 @@ const AdminReportCenter = ({ route, navigation }) => {
 
 
     return (
-        <View style= { styles.page } testID = "main-view" >
-            <View style={ styles.container }>
-                <View style={ styles.header }>
-                    <Text style={ styles.title }>
-                        Finances
-                        < /Text>
-                        < /View>
-                        < /View>
-                        < /View>
-  );
-};
+        <View style={styles.page} testID="main-view">
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <Text style={styles.title}>
+                    Report Center 
+              </Text>
+            </View>
+          </View>
+        </View>
+      );
+    };
 
 const useStyles = CreateResponsiveStyle(
     {
