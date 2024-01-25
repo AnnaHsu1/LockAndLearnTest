@@ -37,7 +37,8 @@ const AdminAccount = ({ route, navigation }) => {
         method: 'DELETE',
       });
       if (response.ok) {
-        setUsers(users.filter((user) => user.id !== userId));
+        const updatedUsers = users.filter((user) => user._id !== userId);
+        setUsers(updatedUsers);
         closeModal();
       } else {
         console.error('Failed to delete user:', response.status);
