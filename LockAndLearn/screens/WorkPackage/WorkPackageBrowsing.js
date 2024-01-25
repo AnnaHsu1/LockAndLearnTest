@@ -14,6 +14,8 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 import { Button, Icon, Checkbox } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Carousel } from 'react-responsive-carousel';
 
 const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -556,7 +558,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           <View style={{ maxHeight: 600 }}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
               {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
-
               {workPackages.map((workPackage) => (
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
@@ -668,78 +669,80 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           </View>
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <View style={styles.viewPreferences}>
-              {children.map((child, childIndex) => (
-                <View style={styles.viewChildPreferences} key={child.id}>
-                  <Text style={styles.child}>
-                    Suggested Materials for {child.firstName} {child.lastName}
-                  </Text>
-                  {suggestedWorkPackages.length !== 0 &&
-                    suggestedWorkPackages[childIndex].map((workPackage) => (
-                      <View key={workPackage._id} style={styles.workPackageBox}>
-                        <View style={styles.workPackageText}>
-                          <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+              <Carousel>
+                {children.map((child, childIndex) => (
+                  <View style={styles.viewChildPreferences} key={child.id}>
+                    <Text style={styles.child}>
+                      Suggested Materials for {child.firstName} {child.lastName}
+                    </Text>
+                    {suggestedWorkPackages.length !== 0 &&
+                      suggestedWorkPackages[childIndex].map((workPackage) => (
+                        <View key={workPackage._id} style={styles.workPackageBox}>
+                          <View style={styles.workPackageText}>
+                            <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
 
-                          <View style={styles.containerTag}>
-                            <View style={styles.tagBox}>
-                              <Text
-                                style={styles.tagText}
-                                selectable={false}
-                              >{`${workPackage.grade}`}</Text>
+                            <View style={styles.containerTag}>
+                              <View style={styles.tagBox}>
+                                <Text
+                                  style={styles.tagText}
+                                  selectable={false}
+                                >{`${workPackage.grade}`}</Text>
+                              </View>
                             </View>
-                          </View>
 
-                          <Text style={styles.workPackageDescription}>
-                            {`${
-                              workPackage.description === undefined
-                                ? ``
-                                : `${workPackage.description} \n`
-                            }`}
-                          </Text>
-                          {workPackage.instructorDetails && (
-                            <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
-                              Made by{' '}
-                              <Text style={styles.boldText}>
-                                {workPackage.instructorDetails.firstName}{' '}
-                                {workPackage.instructorDetails.lastName}
-                              </Text>
+                            <Text style={styles.workPackageDescription}>
+                              {`${
+                                workPackage.description === undefined
+                                  ? ``
+                                  : `${workPackage.description} \n`
+                              }`}
                             </Text>
-                          )}
-                        </View>
-                        <View style={styles.priceAndButton}>
-                          <Text style={styles.priceWP}>
-                            {workPackage.price && workPackage.price !== 0
-                              ? `$${workPackage.price} CAD`
-                              : 'Free'}
-                          </Text>
+                            {workPackage.instructorDetails && (
+                              <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                                Made by{' '}
+                                <Text style={styles.boldText}>
+                                  {workPackage.instructorDetails.firstName}{' '}
+                                  {workPackage.instructorDetails.lastName}
+                                </Text>
+                              </Text>
+                            )}
+                          </View>
+                          <View style={styles.priceAndButton}>
+                            <Text style={styles.priceWP}>
+                              {workPackage.price && workPackage.price !== 0
+                                ? `$${workPackage.price} CAD`
+                                : 'Free'}
+                            </Text>
 
-                          <Button
-                            key={workPackage._id}
-                            testID="addButton-wp1"
-                            mode="contained"
-                            contentStyle={{
-                              minWidth: '50%',
-                              maxWidth: '100%',
-                              minHeight: 20,
-                              justifyContent: 'center',
-                              backgroundColor: isInUserCart(workPackage._id)
-                                ? '#25B346'
-                                : undefined,
-                              flexWrap: 'wrap',
-                            }}
-                            style={[styles.button]}
-                            onPress={() => {
-                              selectWorkPackage(workPackage);
-                            }}
-                            labelStyle={{ ...styles.cart, color: 'white' }}
-                            disabled={isInUserCart(workPackage._id)}
-                          >
-                            {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
-                          </Button>
+                            <Button
+                              key={workPackage._id}
+                              testID="addButton-wp1"
+                              mode="contained"
+                              contentStyle={{
+                                minWidth: '50%',
+                                maxWidth: '100%',
+                                minHeight: 20,
+                                justifyContent: 'center',
+                                backgroundColor: isInUserCart(workPackage._id)
+                                  ? '#25B346'
+                                  : undefined,
+                                flexWrap: 'wrap',
+                              }}
+                              style={[styles.button]}
+                              onPress={() => {
+                                selectWorkPackage(workPackage);
+                              }}
+                              labelStyle={{ ...styles.cart, color: 'white' }}
+                              disabled={isInUserCart(workPackage._id)}
+                            >
+                              {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
+                            </Button>
+                          </View>
                         </View>
-                      </View>
-                    ))}
-                </View>
-              ))}
+                      ))}
+                  </View>
+                ))}
+              </Carousel>
             </View>
           </ScrollView>
           <TouchableOpacity
