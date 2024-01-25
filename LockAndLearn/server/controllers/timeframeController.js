@@ -10,13 +10,13 @@ router.post('/addtimeframe', async (req, res) => {
     const { childId, day, startTime, endTime } = req.body;
     // console.log(ChildId, Day, StartTime, EndTime);
 
-    console.log(childId, day, startTime, endTime);
+    // console.log(childId, day, startTime, endTime);
 
     startHour = parseInt(startTime.substring(0, 2));
     startMin = parseInt(startTime.substring(3, 5));
     endHour = parseInt(endTime.substring(0, 2));
     endMin = parseInt(endTime.substring(3, 5));
-    console.log(startHour, startMin, endHour, endMin);
+    // console.log(startHour, startMin, endHour, endMin);
 
     // Input validations
     if (!childId || !day || !startTime || !endTime) {
@@ -42,6 +42,17 @@ router.post('/addtimeframe', async (req, res) => {
     console.error('Error adding timeframe:', error);
     res.status(500).json({ error: 'Unable to add timeframe' });
   }
+});
+
+router.get('/gettimeframes/:childId', async (req, res) => {
+    try {
+        const childId = req.params.childId;
+        const timeframes = await Timeframe.find({ childId: childId });
+        res.status(200).json(timeframes);
+    } catch (error) {
+        console.error('Error getting timeframes:', error);
+        res.status(500).json({ error: 'Unable to get timeframes' });
+    }
 });
 
 module.exports = router;

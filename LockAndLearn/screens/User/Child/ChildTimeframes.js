@@ -25,25 +25,49 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [endhour, setEndHour] = useState('');
   const [endminute, setEndMinute] = useState('');
 
-  const [mondayTimeframes, setMondayTimeframes] = useState([
-    { day: 'Monday' },
-    // {
-    //     start: "7:00AM",
-    //     end: "9:00AM"
-    // },
-    // {
-    //     start: "4:00PM",
-    //     end: "5:00PM"
-    // }
-  ]);
-  const [tuesdayTimeframes, setTuesdayTimeframes] = useState([]);
-  const [wednesdayTimeframes, setWednesdayTimeframes] = useState([]);
-  const [thursdayTimeframes, setThursdayTimeframes] = useState([]);
-  const [fridayTimeframes, setFridayTimeframes] = useState([]);
-  const [saturdayTimeframes, setSaturdayTimeframes] = useState([]);
-  const [sundayTimeframes, setSundayTimeframes] = useState([]);
+  //   const [mondayTimeframes, setMondayTimeframes] = useState([
+  //     { day: 'Monday' },
+  //     // {
+  //     //     start: "7:00AM",
+  //     //     end: "9:00AM"
+  //     // },
+  //     // {
+  //     //     start: "4:00PM",
+  //     //     end: "5:00PM"
+  //     // }
+  //   ]);
+  //   const [tuesdayTimeframes, setTuesdayTimeframes] = useState([]);
+  //   const [wednesdayTimeframes, setWednesdayTimeframes] = useState([]);
+  //   const [thursdayTimeframes, setThursdayTimeframes] = useState([]);
+  //   const [fridayTimeframes, setFridayTimeframes] = useState([]);
+  //   const [saturdayTimeframes, setSaturdayTimeframes] = useState([]);
+  //   const [sundayTimeframes, setSundayTimeframes] = useState([]);
 
-  const saveTimeframe = async () => {
+  const [timeframes, setTimeframes] = useState([]);
+
+  const getChildTimeframes = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:4000/timeframes/gettimeframes/' + childSelected._id,
+        {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        }
+      );
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        console.log('Timeframes retrieved successfully!');
+        // console.log(data);
+        setTimeframes(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addTimeframe = async () => {
     try {
       console.log(selectedDay, starthour, startminute, endhour, endminute);
       const response = await fetch('http://localhost:4000/timeframes/addtimeframe', {
@@ -84,6 +108,7 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   useEffect(() => {
     setChild(childSelected);
+    getChildTimeframes();
   }, []);
 
   return (
@@ -116,6 +141,7 @@ const ChildTimeframes = ({ route, navigation }) => {
             )}
           </TouchableOpacity>
         </View>
+        {/* adding new timeframes */}
         {addMode ? (
           <View style={[{ width: '100%' }]}>
             {/* change to row */}
@@ -236,7 +262,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                     justifyContent: 'center',
                   },
                 ]}
-                onPress={saveTimeframe}
+                onPress={addTimeframe}
               >
                 <Text style={[{ color: '#407BFF' }]}>Save</Text>
               </TouchableOpacity>
@@ -245,9 +271,10 @@ const ChildTimeframes = ({ route, navigation }) => {
         ) : (
           <>
             {!editMode ? (
-              <>
-                {mondayTimeframes.map((timeframe) => (
-                  <View style={{ width: '100%', height: '100%' }}>
+              /* viewing time frames */
+              <View style={{ width: '100%', height: '100%' }}>
+                {timeframes.map((timeframe) => (
+                  <View>
                     <View
                       style={{
                         flexDirection: 'column',
@@ -270,41 +297,10 @@ const ChildTimeframes = ({ route, navigation }) => {
                         }}
                       >
                         <View style={{ flexDirection: 'column' }}>
-                          <Text style={{ fontSize: 15 }}>Monday</Text>
-                          <Text style={{ fontSize: 15 }}>7:00AM - 10:00AM</Text>
-                        </View>
-                        <Switch
-                          trackColor={{ false: 'lightgray', true: '#81b0ff' }}
-                          thumbColor={isEnabled ? '#407BFF' : 'gray'}
-                          onValueChange={toggleSwitch}
-                          value={isEnabled}
-                        />
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flex: 1,
-                        backgroundColor: '#FAFAFA',
-                        marginBottom: 10,
-                        width: '100%',
-                        alignSelf: 'center',
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          width: '111%',
-                          alignItems: 'center',
-                          justifyContent: 'space-around',
-                          flex: 1,
-                        }}
-                      >
-                        <View style={{ flexDirection: 'column' }}>
-                          <Text style={{ fontSize: 15 }}>Tuesday</Text>
-                          <Text style={{ fontSize: 15 }}>7:00AM - 10:00AM</Text>
+                          <Text style={{ fontSize: 15 }}>{timeframe.day}</Text>
+                          <Text style={{ fontSize: 15 }}>
+                            {timeframe.startTime} - {timeframe.endTime}
+                          </Text>
                         </View>
                         <Switch
                           trackColor={{ false: 'lightgray', true: '#81b0ff' }}
@@ -316,11 +312,12 @@ const ChildTimeframes = ({ route, navigation }) => {
                     </View>
                   </View>
                 ))}
-              </>
+              </View>
             ) : (
+              /* editing time frame*/
               <View style={{ width: '100%', height: '100%' }}>
-                {mondayTimeframes.map((timeframe) => (
-                  <View style={{ width: '100%', height: '100%' }}>
+                {timeframes.map((timeframe) => (
+                  <View>
                     <View
                       style={{
                         flexDirection: 'column',
@@ -343,36 +340,10 @@ const ChildTimeframes = ({ route, navigation }) => {
                         }}
                       >
                         <View style={{ flexDirection: 'column' }}>
-                          <Text style={{ fontSize: 15 }}>Monday</Text>
-                          <Text style={{ fontSize: 15 }}>7:00AM - 10:00AM</Text>
-                        </View>
-                        <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                      </View>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flex: 1,
-                        backgroundColor: '#FAFAFA',
-                        marginBottom: 10,
-                        width: '100%',
-                        alignSelf: 'center',
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          width: '111%',
-                          alignItems: 'center',
-                          justifyContent: 'space-around',
-                          flex: 1,
-                        }}
-                      >
-                        <View style={{ flexDirection: 'column' }}>
-                          <Text style={{ fontSize: 15 }}>Tuesday</Text>
-                          <Text style={{ fontSize: 15 }}>7:00AM - 10:00AM</Text>
+                          <Text style={{ fontSize: 15 }}>{timeframe.day}</Text>
+                          <Text style={{ fontSize: 15 }}>
+                            {timeframe.startTime} - {timeframe.endTime}
+                          </Text>
                         </View>
                         <Icon source="delete-outline" size={20} color={'#F24E1E'} />
                       </View>
