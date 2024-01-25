@@ -10,6 +10,11 @@ import {
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { subcategoryData } from '../../../components/WorkPackageConstants';
+import { Modal } from 'react-native';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 const PackagePreview = () => {
   const route = useRoute();
@@ -25,6 +30,12 @@ const PackagePreview = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState(subcategory);
   const [packageDescription, setPackageDescription] = useState(description);
   const [packageSubcategories, setPackageSubcategories] = useState([]);
+
+  const [pdf, setPdf] = useState(null);
+  const newPlugin = defaultLayoutPlugin({
+    innerContainer: styles.customInnerContainer, // Customize inner container styles if needed
+  });
+  const [isPdfModalVisible, setPdfModalVisible] = useState(false);
 
   useEffect(() => {
     getQuizzes();
@@ -138,6 +149,19 @@ const PackagePreview = () => {
     }
   };
 
+  const displayFile = async (fileName) => {
+    const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
+      method: 'GET',
+    });
+
+    if (response.ok) {
+      const test = await response.blob();
+      const url = URL.createObjectURL(test);
+      setPdf(url);
+      setPdfModalVisible(true);
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../../../assets/backgroundCloudyBlobsFull.png')}
@@ -207,7 +231,7 @@ const PackagePreview = () => {
                       ]}
                       key={file.id}
                     >
-                      <TouchableOpacity onPress={() => downloadFile(file.name)}>
+                      <TouchableOpacity onPress={() => displayFile(file.name)}>
                         <Text
                           numberOfLines={1}
                           ellipsizeMode="middle"
@@ -275,6 +299,29 @@ const PackagePreview = () => {
           </View>
         </ScrollView>
       </View>
+      
+      {/* PDF Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isPdfModalVisible}
+        onRequestClose={() => setPdfModalVisible(false)}
+      >
+        <View style={styles.pdfModalContainer}>
+          <View style={styles.pdfModalContent}>
+            <TouchableOpacity onPress={() => setPdfModalVisible(false)}>
+              <Text style={styles.closePdfModalText}>Close</Text>
+            </TouchableOpacity>
+            {pdf && (
+              <View style={styles.pdfContainer}>
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
+                  <Viewer fileUrl={pdf} plugins={[newPlugin]} defaultScale={1} />
+                </Worker>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
