@@ -52,7 +52,7 @@ const AdminFinances = ({ route, navigation }) => {
                         transactions.map((transaction) => (
                             <View key={transaction.id} style={styles.transactionContainer}>
                                 <Text> Transaction ID: {transaction.id} </Text>
-                                <Text> Amount: {transaction.amount} {transaction.currency}  </Text>
+                                <Text> Amount: {transaction.amount / 100} {transaction.currency}  </Text>
                                 <Text> Status: {transaction.status}  </Text>
                             </View>
                         ))  
