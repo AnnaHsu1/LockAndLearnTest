@@ -31,7 +31,7 @@ const DisplayStudyMaterial = ({ props }) => {
   const maxTextWidth = width * 0.9;
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
-  const currentPdfIndex = 0;
+  let currentPdfIndex = 0;
 
 
   const ProgressBar = ({ current, total }) => {
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
   progressBarText: {
-    color: '#4a4a4a', 
+    color: 'darkgrey', 
     fontSize: 14, 
   },
 });
