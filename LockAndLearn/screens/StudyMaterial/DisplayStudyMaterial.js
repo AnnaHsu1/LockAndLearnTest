@@ -310,7 +310,7 @@ const DisplayStudyMaterial = ({ props }) => {
               
               </Worker>
             </View>
-            <Text>Document {currentPdfIndex+1} out of {pdfUrls.length}</Text>
+            <Text style={styles.progressBarText}>Document {currentPdfIndex+1} out of {pdfUrls.length}</Text>
             <ProgressBar current={currentPdfIndex + 1} total={pdfUrls.length} />
 
             
@@ -492,7 +492,14 @@ const styles = StyleSheet.create({
   progressBar: {
     height: '100%',
     backgroundColor: 'darkgrey', // or any color you prefer
-    borderRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  progressBarText: {
+    color: '#4a4a4a', 
+    fontSize: 14, 
   },
 });
 
