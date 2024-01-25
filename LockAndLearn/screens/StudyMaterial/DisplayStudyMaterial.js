@@ -32,6 +32,7 @@ const DisplayStudyMaterial = ({ props }) => {
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
   const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
+  const [takeQuiz, setTakeQuiz]= useState(false);
 
 
 
@@ -157,7 +158,7 @@ const DisplayStudyMaterial = ({ props }) => {
 
     if (nextIndex < length){
       setCurrentPdfIndex(nextIndex);
-    }
+    } 
   };
   const handlePrevPdf = (prevIndex, length) => {
     // Function logic here
@@ -166,7 +167,7 @@ const DisplayStudyMaterial = ({ props }) => {
 
     if (prevIndex >= length){
       setCurrentPdfIndex(prevIndex);
-    }
+    } 
   };
 
   // // function to delete a work package
@@ -339,16 +340,23 @@ const DisplayStudyMaterial = ({ props }) => {
                 <Button
                     style={styles.modalButtons}
                     onPress={() => handlePrevPdf(currentPdfIndex-1, 0)}
-
                 >
                     <Text style = {styles.buttonText}>Previous</Text>
                 </Button>
+                {currentPdfIndex+1 < pdfUrls.length ? (
                 <Button
                     style={styles.modalButtons}
                     onPress={() => handleNextPdf(currentPdfIndex+1, pdfUrls.length)}
                 >
                     <Text style = {styles.buttonText}>Next</Text>
                 </Button>
+                ):(
+                  <Button
+                  style={styles.takeQuizButton}
+                  >
+                      <Text style = {styles.buttonText}>Take Quiz</Text>
+                  </Button>
+                )}
             </View>
           </View>
         ) : (
@@ -489,6 +497,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minWidth: 100,
     backgroundColor: '#407BFF',
+    marginHorizontal: 10, // Adjust space between buttons
+    width: 150, // Adjust width as needed
+    height: 40, // Adjust height as needed
+    alignItems: 'center', // Center content horizontally
+  },
+  takeQuizButton: {
+    borderRadius: 10,
+    marginVertical: 10,
+    justifyContent: 'center',
+    minWidth: 100,
+    backgroundColor: 'darkblue',
     marginHorizontal: 10, // Adjust space between buttons
     width: 150, // Adjust width as needed
     height: 40, // Adjust height as needed
