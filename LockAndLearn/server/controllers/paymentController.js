@@ -249,12 +249,14 @@ router.get("/config", (req, res) => {
     });
 });
 
-router.post("/initOrderStripe", async (req, res) => {
+router.post("/initOrderStripe/:userId", async (req, res) => {
     try {
         console.log("initOrderStripe endpoint hit!");
         const { totalPrice } = req.body;
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
         console.log("server total price: ", totalPrice);
-
+        console.log("user", user);
         if (!totalPrice) {
             throw new Error("Total price is missing or invalid.");
         }
@@ -265,15 +267,24 @@ router.post("/initOrderStripe", async (req, res) => {
         const amountInCents = Math.round(priceInDollars * 100); // Rounding to the nearest cent
 
         console.log("amount in cents", amountInCents);
+        const userFullName = user.firstName +" " + user.lastName;
+        console.log("full name", userFullName);
+        const customer = await stripe.customers.create({
+            name: userFullName,
+            email: user.email,
+        });
+        console.log(customer.id);
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amountInCents,
             currency: 'cad',
+            customer: customer.id,
         });
 
         console.log("Sending client secret...");
         // Send publishable key and PaymentIntent details to client
         res.send({
             clientSecret: paymentIntent.client_secret,
+            customer: customer.id,
         });
         console.log("Sent to front-end.");
     } catch (e) {
