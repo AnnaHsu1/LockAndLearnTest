@@ -298,14 +298,7 @@ const PackagePreview = () => {
                       ]}
                       key={index}
                     >
-                      <TouchableOpacity
-                        onPress={() => {
-                          // Navigate to QuestionsOverviewScreen and pass the quiz _id
-                          navigation.navigate('QuestionsOverviewScreen', {
-                            quizId: p_quizzes[index],
-                          });
-                        }}
-                      >
+                      <TouchableOpacity onPress={() => displayQuizDetails(p_quizzes[index])}>
                         <Text>{quizName}</Text>
                       </TouchableOpacity>
                     </View>
@@ -316,7 +309,7 @@ const PackagePreview = () => {
           </View>
         </ScrollView>
       </View>
-      
+
       {/* PDF Modal */}
       <Modal
         animationType="slide"
@@ -331,9 +324,36 @@ const PackagePreview = () => {
             </TouchableOpacity>
             {pdf && (
               <View style={styles.pdfContainer}>
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
+                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
                   <Viewer fileUrl={pdf} plugins={[newPlugin]} defaultScale={1} />
                 </Worker>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isQuizModalVisible}
+        onRequestClose={() => setQuizModalVisible(false)}
+      >
+        <View style={styles.quizModalContainer}>
+          <View style={styles.quizModalContent}>
+            <TouchableOpacity onPress={() => setQuizModalVisible(false)}>
+              <Text style={styles.closeQuizModalText}>Close</Text>
+            </TouchableOpacity>
+            {selectedQuiz && (
+              <View>
+                <Text>{selectedQuiz.name}</Text>
+                <Text>Questions:</Text>
+                <ScrollView>
+                  {selectedQuiz.questions.map((question, index) => (
+                    <View key={index}>
+                      <Text>{question.questionText}</Text>
+                    </View>
+                  ))}
+                </ScrollView>
               </View>
             )}
           </View>
