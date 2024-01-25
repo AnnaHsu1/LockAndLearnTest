@@ -33,7 +33,12 @@ const DisplayStudyMaterial = ({ props }) => {
   const [packageInfo, setPackageInfo] = useState([]);
   const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
   const [takeQuiz, setTakeQuiz]= useState(false);
+  const [quiz, setQuiz]= useState([]);
+  const [quizLength, setQuizLength]= useState([]);
+  const [quizzesArray, setQuizzesArray]= useState([]);
 
+
+  const [quizId, setQuizId]= useState([]);
 
 
 
@@ -71,8 +76,10 @@ const DisplayStudyMaterial = ({ props }) => {
         if (response.status === 200) {
             const data = await response.json();
             console.log("packageInfo: ", data)
+            setQuizLength(data.quizzes.length)
             setPackageInfo(data);
-            console.log("IUNF=OOOOOOO",packageInfo);
+            console.log("IUNF=OOOOOOO",data);
+            setQuizzesArray(data.quizzes)
             console.log("materials: ", data.materials)
             // get the url PDFs with material IDs
             data.materials.forEach(material => {
@@ -150,6 +157,44 @@ const DisplayStudyMaterial = ({ props }) => {
       console.error('Network error:', error);
     }
   };
+
+  const fetchQuizById = async (quizId) => {
+    console.log("Fetching Quiz with ID:", quizId);
+    try {
+      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.status === 200) {
+        const data = await response.json();
+        // Assuming you have a state setter function like setQuiz to store the fetched quiz
+        setQuiz(data);
+        console.log("DATAAAAA",data);
+        return data;
+      } else {
+        console.error('Error fetching quiz with ID:', quizId);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  };
+
+  const handleTakeQuiz = async (quizId) => {
+    const quiz = await fetchQuizById(quizId);
+    console.log("FETCCHCHHCHCHC", quiz);
+
+    navigation.navigate('DisplayQuizzScreen', {
+      quizId: quiz._id,
+      quizLength: quiz.questions.length,
+      questionIndex: 0,
+    });
+
+  };
+
+
 
   const handleNextPdf = (nextIndex, length) => {
     // Function logic here
@@ -353,6 +398,7 @@ const DisplayStudyMaterial = ({ props }) => {
                 ):(
                   <Button
                   style={styles.takeQuizButton}
+                  onPress={() => handleTakeQuiz(quizzesArray[0])}
                   >
                       <Text style = {styles.buttonText}>Take Quiz</Text>
                   </Button>
