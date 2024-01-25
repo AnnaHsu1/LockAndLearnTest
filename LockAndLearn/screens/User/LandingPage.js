@@ -50,10 +50,18 @@ const LandingPage = ({ navigation }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        const returnedStatus = data.firstCertificate.metadata.status;
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].metadata.status == "accepted") {
+        const certificateStatus = data.uploadedCertificates;
+        let returnedStatus = "rejected"
+        for (let i = 0; i < certificateStatus.length; i++) {
+          if (certificateStatus[i].metadata.status == "accepted") {
             returnedStatus = "accepted";
+            break;
+          }
+        }
+        
+        for (let i = 0; i < certificateStatus.length; i++) {
+          if (certificateStatus[i].metadata.status == "pending") {
+            returnedStatus = "pending";
             break;
           }
         }
@@ -61,7 +69,7 @@ const LandingPage = ({ navigation }) => {
         if (returnedStatus == "pending") {
           toast.info('Your certificate is under review. Please come back later.');
         }
-        else if (returnedStatus == "rejected") {
+        else if (certificateStatus.length != 0 && returnedStatus == "rejected") {
           toast.error('Your certificate has been rejected. Please upload a new certificate.');
         }
       }
@@ -180,6 +188,7 @@ const LandingPage = ({ navigation }) => {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
+      setRefresh(true)
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -366,7 +375,7 @@ const LandingPage = ({ navigation }) => {
             />
             {status && status == "pending" ? 
             <View> 
-            <Text style={styles.selectCertificates}>Your certificate is currently under review</Text>
+            <Text style={styles.selectCertificates}>You cannot upload new documents while your certificate is under review.</Text>
           </View> : null  }
                   
             {/* display button to confirm: uploading files */}
