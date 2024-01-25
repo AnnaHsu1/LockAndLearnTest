@@ -398,7 +398,7 @@ const DisplayStudyMaterial = ({ props }) => {
                 ):(
                   <Button
                   style={styles.takeQuizButton}
-                  onPress={() => handleTakeQuiz(quizzesArray[0])}
+                  onPress={() => handleTakeQuiz(quizzesArray[Math.floor(Math.random() * quizzesArray.length)])}
                   >
                       <Text style = {styles.buttonText}>Take Quiz</Text>
                   </Button>
