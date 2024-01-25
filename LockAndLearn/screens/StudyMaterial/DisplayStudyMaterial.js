@@ -26,10 +26,25 @@ const DisplayStudyMaterial = ({ props }) => {
 //   const { _id, name, grade } = params?.workPackage;
   const _id = "6599f29af077ba0bb1dc2093"
   const name = "Math"
-  const grade = 10
+  // const grade = 10
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.9;
   const [pdfUrls, setPdfUrls] = useState([]);
+  const [packageInfo, setPackageInfo] = useState([]);
+  const currentPdfIndex = 0;
+
+
+  const ProgressBar = ({ current, total }) => {
+    const completionPercentage = (current / total) * 100;
+  
+    return (
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBar, { width: `${completionPercentage}%` }]} />
+        </View>
+    );
+  };
+
+  
 
   const newPlugin = defaultLayoutPlugin({
     innerContainer: styles.customInnerContainer,
@@ -53,6 +68,8 @@ const DisplayStudyMaterial = ({ props }) => {
         if (response.status === 200) {
             const data = await response.json();
             console.log("packageInfo: ", data)
+            setPackageInfo(data);
+            console.log("IUNF=OOOOOOO",packageInfo);
             console.log("materials: ", data.materials)
             // get the url PDFs with material IDs
             data.materials.forEach(material => {
@@ -131,126 +148,126 @@ const DisplayStudyMaterial = ({ props }) => {
     }
   };
 
-  // function to delete a work package
-  const deletePackage = async (_id) => {
-    try {
-      setSelectedPackageId(_id);
-      setDeleteConfirmationModalVisible(true);
-    } catch (error) {
-      console.error('Network error:', error);
-    }
-  };
+  // // function to delete a work package
+  // const deletePackage = async (_id) => {
+  //   try {
+  //     setSelectedPackageId(_id);
+  //     setDeleteConfirmationModalVisible(true);
+  //   } catch (error) {
+  //     console.error('Network error:', error);
+  //   }
+  // };
 
-  // function to display the work package information
-  const renderPackage = (this_Package) => {
-    return (
-      <View
-        key={this_Package._id}
-        style={styles.containerCard}
-      >
-        <View key={this_Package._id} style={styles.workPackageItemContainer}>
-          <TouchableOpacity
-            style={{ width: '75%' }}
-            onPress={() => {
-              navigation.navigate('DisplayPdfFile', {
-                workPackage: {
-                  wp_id: _id,
-                  name: name,
-                  grade: grade,
-                },
-                package: {
-                  p_id: this_Package._id,
-                  subcategory: this_Package.subcategory,
-                  description: this_Package.description,
-                  p_materials: this_Package.materials,
-                  p_quizzes: this_Package.quizzes,
-                },
-              });
-            }}
-          >
-            <Text style={styles.workPackageItem}>{this_Package.subcategory}</Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('EditPackage', {
-                  workPackage: {
-                    wp_id: _id,
-                    name: name,
-                    grade: grade,
-                  },
-                  package: {
-                    p_id: this_Package._id,
-                    subcategory: this_Package.subcategory,
-                    description: this_Package.description,
-                    p_materials: this_Package.materials,
-                    p_quizzes: this_Package.quizzes,
-                  },
-                });
-              }}
-              testID={`editButton-${this_Package._id}`}
-            >
-              <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                deletePackage(this_Package._id);
-              }}
-              testID={`deleteButton-${this_Package._id}`}
-            >
-              <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-          <Text
-            numberOfLines={3}
-            ellipsizeMode="middle"
-            style={{ maxWidth: maxTextWidth, color: '#696969' }}
-          >
-            {this_Package.description}
-          </Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.materials.length} file(s)
-          </Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.quizzes.length} question(s)
-          </Text>
-        </View>
-      </View>
-    );
-  };
+  // // function to display the work package information
+  // const renderPackage = (this_Package) => {
+  //   return (
+  //     <View
+  //       key={this_Package._id}
+  //       style={styles.containerCard}
+  //     >
+  //       <View key={this_Package._id} style={styles.workPackageItemContainer}>
+  //         <TouchableOpacity
+  //           style={{ width: '75%' }}
+  //           onPress={() => {
+  //             navigation.navigate('DisplayPdfFile', {
+  //               workPackage: {
+  //                 wp_id: _id,
+  //                 name: name,
+  //                 grade: grade,
+  //               },
+  //               package: {
+  //                 p_id: this_Package._id,
+  //                 subcategory: this_Package.subcategory,
+  //                 description: this_Package.description,
+  //                 p_materials: this_Package.materials,
+  //                 p_quizzes: this_Package.quizzes,
+  //               },
+  //             });
+  //           }}
+  //         >
+  //           <Text style={styles.workPackageItem}>{this_Package.subcategory}</Text>
+  //         </TouchableOpacity>
+  //         <View
+  //           style={{
+  //             flexDirection: 'row',
+  //             alignItems: 'center',
+  //           }}
+  //         >
+  //           <TouchableOpacity
+  //             onPress={() => {
+  //               navigation.navigate('EditPackage', {
+  //                 workPackage: {
+  //                   wp_id: _id,
+  //                   name: name,
+  //                   grade: grade,
+  //                 },
+  //                 package: {
+  //                   p_id: this_Package._id,
+  //                   subcategory: this_Package.subcategory,
+  //                   description: this_Package.description,
+  //                   p_materials: this_Package.materials,
+  //                   p_quizzes: this_Package.quizzes,
+  //                 },
+  //               });
+  //             }}
+  //             testID={`editButton-${this_Package._id}`}
+  //           >
+  //             <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
+  //           </TouchableOpacity>
+  //           <TouchableOpacity
+  //             onPress={() => {
+  //               deletePackage(this_Package._id);
+  //             }}
+  //             testID={`deleteButton-${this_Package._id}`}
+  //           >
+  //             <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+  //           </TouchableOpacity>
+  //         </View>
+  //       </View>
+  //       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+  //         <Text
+  //           numberOfLines={3}
+  //           ellipsizeMode="middle"
+  //           style={{ maxWidth: maxTextWidth, color: '#696969' }}
+  //         >
+  //           {this_Package.description}
+  //         </Text>
+  //       </View>
+  //       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+  //         <Text style={{ color: '#696969', fontSize: 12 }}>
+  //           {this_Package.materials.length} file(s)
+  //         </Text>
+  //       </View>
+  //       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+  //         <Text style={{ color: '#696969', fontSize: 12 }}>
+  //           {this_Package.quizzes.length} question(s)
+  //         </Text>
+  //       </View>
+  //     </View>
+  //   );
+  // };
 
   // function to delete a work package
-  const confirmDelete = async () => {
-    if (selectedPackageId) {
-      try {
-        const response = await fetch(`http://localhost:4000/packages/delete/${selectedPackageId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (response.status === 200) {
-          setDeleteConfirmationModalVisible(false);
-          fetchPackages();
-        } else {
-          console.error('Error deleting work package');
-        }
-      } catch (error) {
-        console.error('Network error:', error);
-      }
-    }
-  };
+  // const confirmDelete = async () => {
+  //   if (selectedPackageId) {
+  //     try {
+  //       const response = await fetch(`http://localhost:4000/packages/delete/${selectedPackageId}`, {
+  //         method: 'DELETE',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
+  //       if (response.status === 200) {
+  //         setDeleteConfirmationModalVisible(false);
+  //         fetchPackages();
+  //       } else {
+  //         console.error('Error deleting work package');
+  //       }
+  //     } catch (error) {
+  //       console.error('Network error:', error);
+  //     }
+  //   }
+  // };
 
   // Function to determine the grade suffix
   const getGradeSuffix = (grade) => {
@@ -279,18 +296,23 @@ const DisplayStudyMaterial = ({ props }) => {
       style={styles.container}
     >
       <View style={styles.containerFile} >
+      {pdfUrls.length > 0 ? (
           <View
             style={styles.pdfViewContainer}
           >
+            <Text style={styles.packageInfoText}>
+              {packageInfo.name} - {packageInfo.grade} - {packageInfo.packageDescription}
+            </Text>
             <View style={styles.pdfContainer}>
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
-              {pdfUrls.length > 0 ? (
-                <Viewer fileUrl={pdfUrls[0]} plugins={[newPlugin]} defaultScale={1} />
-              ) : (
-                <Text>No pdf has been found for this package.</Text> 
-              )}
+              
+                <Viewer fileUrl={pdfUrls[currentPdfIndex]} plugins={[newPlugin]} defaultScale={1} />
+              
               </Worker>
             </View>
+            <Text>Document {currentPdfIndex+1} out of {pdfUrls.length}</Text>
+            <ProgressBar current={currentPdfIndex + 1} total={pdfUrls.length} />
+
             
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Button
@@ -298,17 +320,21 @@ const DisplayStudyMaterial = ({ props }) => {
                     onPress={() => {
                     }}
                 >
-                    <Text>Previous</Text>
+                    <Text style = {styles.buttonText}>Previous</Text>
                 </Button>
                 <Button
                     style={styles.modalButtons}
                     onPress={() => {
                     }}
                 >
-                    <Text>Next</Text>
+                    <Text style = {styles.buttonText}>Next</Text>
                 </Button>
             </View>
           </View>
+        ) : (
+            <Text>No pdf has been found for this package.</Text> 
+          )}
+          
       </View>
       
     </ImageBackground>
@@ -412,7 +438,7 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   buttonText: {
-    color: '#FFFFFF',
+    color: '#FFFFFF', // White color for text
     alignItems: 'center',
     fontSize: 15,
     fontWeight: '500',
@@ -440,10 +466,33 @@ const styles = StyleSheet.create({
   modalButtons: {
     borderRadius: 10,
     marginVertical: 10,
-    height: 50,
     justifyContent: 'center',
     minWidth: 100,
     backgroundColor: '#407BFF',
+    marginHorizontal: 10, // Adjust space between buttons
+    width: 150, // Adjust width as needed
+    height: 40, // Adjust height as needed
+    alignItems: 'center', // Center content horizontally
+  },
+  packageInfoText: {
+    marginTop: 20, // Adjust as needed
+    fontSize: 18, // Adjust as needed
+    fontWeight: 'bold',
+    color: '#000080', // Dark blue color
+    textAlign: 'center',
+  },
+  progressBarContainer: {
+    height: 10,
+    width: "50%",
+    backgroundColor: 'lightgrey',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginVertical: 20,
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: 'darkgrey', // or any color you prefer
+    borderRadius: 10,
   },
 });
 
