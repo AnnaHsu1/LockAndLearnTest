@@ -8,17 +8,13 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Modal from 'react-native-modal';
-import { getItem } from '../../../components/AsyncStorage';
 
 const WorkPackagePreview = ({ props }) => {
   const route = useRoute();
   const navigation = useNavigation();
   const [packages, setPackages] = useState([]);
-  const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
-  const [selectedPackageId, setSelectedPackageId] = useState(null);
   const params = route.params;
   const { _id, name, grade } = params?.workPackage;
   const { width } = Dimensions.get('window');
@@ -84,35 +80,6 @@ const WorkPackagePreview = ({ props }) => {
               alignItems: 'center',
             }}
           >
-            {/* <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('EditPackage', {
-                  workPackage: {
-                    wp_id: _id,
-                    name: name,
-                    grade: grade,
-                  },
-                  package: {
-                    p_id: this_Package._id,
-                    subcategory: this_Package.subcategory,
-                    description: this_Package.description,
-                    p_materials: this_Package.materials,
-                    p_quizzes: this_Package.quizzes,
-                  },
-                });
-              }}
-              testID={`editButton-${this_Package._id}`}
-            >
-              <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                deletePackage(this_Package._id);
-              }}
-              testID={`deleteButton-${this_Package._id}`}
-            >
-              <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-            </TouchableOpacity> */}
           </View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
@@ -136,28 +103,6 @@ const WorkPackagePreview = ({ props }) => {
         </View>
       </View>
     );
-  };
-
-  // function to delete a work package
-  const confirmDelete = async () => {
-    if (selectedPackageId) {
-      try {
-        const response = await fetch(`http://localhost:4000/packages/delete/${selectedPackageId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (response.status === 200) {
-          setDeleteConfirmationModalVisible(false);
-          fetchPackages();
-        } else {
-          console.error('Error deleting work package');
-        }
-      } catch (error) {
-        console.error('Network error:', error);
-      }
-    }
   };
 
   // Function to determine the grade suffix
@@ -213,32 +158,6 @@ const WorkPackagePreview = ({ props }) => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* Display modal for confirming deletion of file/quiz */}
-      <Modal
-        isVisible={deleteConfirmationModalVisible}
-        onBackdropPress={() => setDeleteConfirmationModalVisible(false)}
-        transparent={true}
-        style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
-      >
-        <View style={styles.deleteConfirmationModal}>
-          <Text style={styles.confirmationText}>Are you sure you want to delete this package?</Text>
-          <View style={styles.confirmationButtons}>
-            <TouchableOpacity
-              testID="deleteConfirmationModal"
-              onPress={confirmDelete}
-              style={[styles.confirmButton, { marginRight: 10 }]}
-            >
-              <Text style={styles.confirmButtonText}>Confirm</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setDeleteConfirmationModalVisible(false)}
-              style={styles.cancelButton}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </ImageBackground>
   );
 };
