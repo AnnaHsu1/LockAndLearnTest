@@ -284,7 +284,8 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
         // Send publishable key and PaymentIntent details to client
         res.send({
             clientSecret: paymentIntent.client_secret,
-            customer: customer.id,
+            customerName: customer.name,
+            customerEmail: customer.email,
         });
         console.log("Sent to front-end.");
     } catch (e) {
@@ -301,7 +302,7 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
 router.get('/transactions', async (req, res) => {
     try {
         // Use the Stripe API to retrieve a list of payments or transactions
-        const payments = await stripe.paymentIntents.list({ limit: 10 }); // Adjust parameters as needed
+        const payments = await stripe.paymentIntents.list({ limit: 100 }); // Adjust parameters as needed
 
         // Return the list of payments as a response
         res.status(200).json({ payments: payments.data });
