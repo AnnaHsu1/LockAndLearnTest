@@ -8,8 +8,10 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { Icon, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import Modal from 'react-native-modal';
 import { getItem } from '../../components/AsyncStorage';
 
@@ -27,6 +29,11 @@ const DisplayStudyMaterial = ({ props }) => {
   const grade = 10
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.9;
+  const [pdfUrls, setPdfUrls] = useState([]);
+
+  const newPlugin = defaultLayoutPlugin({
+    innerContainer: styles.customInnerContainer,
+  });
 
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
@@ -65,6 +72,9 @@ const DisplayStudyMaterial = ({ props }) => {
              *  - if many PDF, display them one by one with a button to go to the next one/previous one
              *  - end of the PDFs, display button to do the quiz
              */
+
+
+            // if package info null, dont do anything
         } else {
             console.error('Error fetching study material');
         }
@@ -84,7 +94,15 @@ const DisplayStudyMaterial = ({ props }) => {
       if (response.status === 200) {
         const fileBlob = await response.blob();
         const fileUrl = URL.createObjectURL(fileBlob);
-        console.log("PDFs: ", fileUrl)
+        // HEREEEEE CREATE AN ARRAY TO SAVE THE PDFS  
+        // console.log("PDFs: ", fileUrl)
+        setPdfUrls(prevUrls => {
+          const newUrls = [...prevUrls, fileUrl];
+          console.log("Updated PDF URLs:", newUrls); // Log to check
+          return newUrls;
+        });
+        // pdfUrls.push(fileUrl); // Add the new PDF URL to the array
+        console.log("PDFs: ", pdfUrls); // Log the array of PDF URLs
       } else {
         console.error('Error fetching PDFs');
       }
@@ -134,7 +152,7 @@ const DisplayStudyMaterial = ({ props }) => {
           <TouchableOpacity
             style={{ width: '75%' }}
             onPress={() => {
-              navigation.navigate('EditPackage', {
+              navigation.navigate('DisplayPdfFile', {
                 workPackage: {
                   wp_id: _id,
                   name: name,
@@ -260,65 +278,39 @@ const DisplayStudyMaterial = ({ props }) => {
       resizeMode="cover"
       style={styles.container}
     >
-      <View style={styles.containerFile}>
-        <Text style={styles.selectFiles}>
-          {name} - {grade}{getGradeSuffix(grade)} Grade
-        </Text>
-        {/* Display all work packages from the user */}
-        <FlatList
-          data={packages}
-          renderItem={({ item }) => renderPackage(item)}
-          keyExtractor={(item) => item._id}
-          style={{ width: '100%' }}
-          contentContainerStyle={{ paddingHorizontal: '5%' }}
-          ListEmptyComponent={() => (
-            // Display when no work packages are found
-            <View style={{ alignItems: 'center', marginTop: 20 }}>
-              <Text>No created work packages</Text>
-            </View>
-          )}
-        />
-        {/* Display button to create a new work package */}
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('CreatePackage', {
-                workPackage: params.workPackage,
-              });
-            }}
-            style={styles.buttonUpload}
-            testID="uploadButton"
+      <View style={styles.containerFile} >
+          <View
+            style={styles.pdfViewContainer}
           >
-            <Text style={styles.buttonText}>Add package</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      {/* Display modal for confirming deletion of file/quiz */}
-      <Modal
-        isVisible={deleteConfirmationModalVisible}
-        onBackdropPress={() => setDeleteConfirmationModalVisible(false)}
-        transparent={true}
-        style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
-      >
-        <View style={styles.deleteConfirmationModal}>
-          <Text style={styles.confirmationText}>Are you sure you want to delete this package?</Text>
-          <View style={styles.confirmationButtons}>
-            <TouchableOpacity
-              testID="deleteConfirmationModal"
-              onPress={confirmDelete}
-              style={[styles.confirmButton, { marginRight: 10 }]}
-            >
-              <Text style={styles.confirmButtonText}>Confirm</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setDeleteConfirmationModalVisible(false)}
-              style={styles.cancelButton}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            <View style={styles.pdfContainer}>
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
+              {pdfUrls.length > 0 ? (
+                <Viewer fileUrl={pdfUrls[0]} plugins={[newPlugin]} defaultScale={1} />
+              ) : (
+                <Text>No pdf has been found for this package.</Text> 
+              )}
+              </Worker>
+            </View>
+            
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Button
+                    style={styles.modalButtons}
+                    onPress={() => {
+                    }}
+                >
+                    <Text>Previous</Text>
+                </Button>
+                <Button
+                    style={styles.modalButtons}
+                    onPress={() => {
+                    }}
+                >
+                    <Text>Next</Text>
+                </Button>
+            </View>
           </View>
-        </View>
-      </Modal>
+      </View>
+      
     </ImageBackground>
   );
 };
@@ -424,6 +416,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     fontSize: 15,
     fontWeight: '500',
+  },
+  pdfViewContainer: {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: "#FAFAFA"
+  },
+  pdfContainer: {
+    width: '75%',
+    overflowY: 'auto',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    paddingTop: 20,
+  },
+  modalButtons: {
+    borderRadius: 10,
+    marginVertical: 10,
+    height: 50,
+    justifyContent: 'center',
+    minWidth: 100,
+    backgroundColor: '#407BFF',
   },
 });
 
