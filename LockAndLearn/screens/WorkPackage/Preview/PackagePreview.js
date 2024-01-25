@@ -30,6 +30,8 @@ const PackagePreview = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState(subcategory);
   const [packageDescription, setPackageDescription] = useState(description);
   const [packageSubcategories, setPackageSubcategories] = useState([]);
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [isQuizModalVisible, setQuizModalVisible] = useState(false);
 
   const [pdf, setPdf] = useState(null);
   const newPlugin = defaultLayoutPlugin({
@@ -159,6 +161,21 @@ const PackagePreview = () => {
       const url = URL.createObjectURL(test);
       setPdf(url);
       setPdfModalVisible(true);
+    }
+  };
+
+  const displayQuizDetails = async (quizId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
+      if (response.status === 200 || response.status === 201) {
+        const quizDetails = await response.json();
+        setSelectedQuiz(quizDetails);
+        setQuizModalVisible(true);
+      } else {
+        console.error('Error fetching quiz details');
+      }
+    } catch (error) {
+      console.error('Network error', error);
     }
   };
 
