@@ -10,11 +10,14 @@ import {
 const AdminFinances = ({ route, navigation }) => {
   const styles = useStyles();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [transactions, setTransactions] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [balance, setBalance] = useState([]);
+
 
 
     useEffect(() => {
         fetchAllTransactions();
+        fetchBalance();
     }, []);
 
     const toggleModal = () => {
@@ -37,16 +40,45 @@ const AdminFinances = ({ route, navigation }) => {
             console.error('Error fetching transactions:', error);
         }
     };
+    const fetchBalance = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/payment/balanceAdmin');
+            if (response.ok) {
+                const data = await response.json();
+                
+                
+                console.log("balance", balance);
+                const availableBalance = data.balance.available[0].amount;
 
+                // Access the amount from the pending field
+                const pendingAmount = data.balance.pending[0].amount;
+
+                // Add the amounts together
+                const totalBalance = (availableBalance + pendingAmount)/100;
+
+                setBalance(totalBalance);
+                console.log("available", totalBalance);
+            } else {
+                console.error('Failed to fetch balance:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching balance:', error);
+        }
+    };
     return (
         <View style={styles.page} testID="main-view">
             <View style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.title}>
-                        Finances
+                        Finances 
                     </Text>
                 </View>
                 {/* Displaying the list of transactions */}
+                <View>
+                    <Text>
+                       {balance} CAD
+                    </Text>
+                </View>
                 <ScrollView style={styles.transactionListContainer}>
                     {transactions.length > 0 ? (
                         transactions.map((transaction) => (

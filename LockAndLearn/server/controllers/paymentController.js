@@ -311,5 +311,17 @@ router.get('/transactions', async (req, res) => {
     }
 });
 
+router.get('/balanceAdmin', async (req, res) => {
+    try {
+        const balance = await stripe.balance.retrieve();
+        console.log("balance", balance);
+        // Return the list of payments as a response
+        res.status(200).json({ balance: balance});
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ error: 'An error occurred while fetching transactions.' });
+    }
+});
+
 
 module.exports = router;
