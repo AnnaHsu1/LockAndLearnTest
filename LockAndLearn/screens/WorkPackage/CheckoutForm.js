@@ -6,7 +6,6 @@ import {
     Text,
     View,
     TouchableOpacity,
-    Button,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';

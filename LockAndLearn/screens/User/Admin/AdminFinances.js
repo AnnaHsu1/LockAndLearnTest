@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
+
 
 const AdminFinances = ({ route, navigation }) => {
   const styles = useStyles();
