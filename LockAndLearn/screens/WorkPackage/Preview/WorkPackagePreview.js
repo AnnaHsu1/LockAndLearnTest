@@ -204,11 +204,66 @@ const WorkPackagePreview = ({ props }) => {
           </TouchableOpacity>
         </View>
       </View>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        backdropOpacity={0.5}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Report Work Package</Text>
+          <TextInput
+            style={styles.modalInput}
+            placeholder="Enter reason for reporting"
+            value={reportReason}
+            onChangeText={(text) => setReportReason(text)}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              createReport(_id, reportReason);
+              setModalVisible(false);
+            }}
+            style={styles.modalButton}
+          >
+            <Text style={styles.modalButtonText}>Submit Report</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+
+  modalButton: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   containerCard: {
     flexDirection: 'column',
     marginVertical: 5,
@@ -305,8 +360,8 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   buttonReportText: {
-    color: '#F24E1E', 
-    borderColor: '#F24E1E', 
+    color: '#F24E1E',
+    borderColor: '#F24E1E',
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
@@ -314,7 +369,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     marginBottom: 40,
-  }
+  },
 });
 
 export default WorkPackagePreview;
