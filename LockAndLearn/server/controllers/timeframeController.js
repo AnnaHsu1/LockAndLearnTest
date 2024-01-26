@@ -34,13 +34,13 @@ router.post('/addtimeframe', async (req, res) => {
       return res.status(400).json({ msg: 'Start time must be before end time.' });
     }
 
-    // const newTimeframe = new Timeframe({
-    //   childId,
-    //   day,
-    //   startTime,
-    //   endTime,
-    // });
-    // await newTimeframe.save();
+    const newTimeframe = new Timeframe({
+      childId,
+      day,
+      startTime,
+      endTime,
+    });
+    await newTimeframe.save();
 
     // Respond with the newly created user
     res.status(201).json({ message: 'Successfully added timeframe' });

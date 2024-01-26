@@ -221,13 +221,15 @@ const ChildTimeframes = ({ route, navigation }) => {
   }, [addedSuccessful]);
 
   return (
-    
     <ImageBackground
       source={require('../../../assets/backgroundCloudyBlobsFull.png')}
       resizeMode="cover"
       style={[styles.container, { flex: 1, width: '100%', height: '100%' }]}
     >
-      <ScrollView style={{width: '100%', alignContent: 'center'}} contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
+      <ScrollView
+        style={{ width: '100%', alignContent: 'center' }}
+        contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}
+      >
         <View style={[styles.containerFile]}>
           <View
             style={{
@@ -289,18 +291,19 @@ const ChildTimeframes = ({ route, navigation }) => {
           ) : null}
           {/* adding new timeframes */}
           {addMode ? (
-            <View style={[{ width: '100%' }]}>
+            <View style={[{ width: '100%', flexDirection: 'row' }]}>
               {/* change to row */}
-              <View style={[{ flexDirection: 'column' }]}>
+              <View style={[{ flexDirection: 'column', margin: 10 }]}>
                 {days.map((day) => (
-                  <View style={{ flexDirection: 'column' }} key={day}>
+                  <View key={day}>
                     <View
                       style={[
                         {
                           paddingVertical: 10,
                           borderColor: selectedDay === day ? '#407BFF' : '#D3D3D3',
-                          borderWidth: 1,
-                          marginHorizontal: 5,
+                          borderWidth: 2,
+                          marginHorizontal: 10,
+                          marginVertical: 5,
                           width: 100,
                           borderRadius: 5,
                         },
@@ -316,85 +319,71 @@ const ChildTimeframes = ({ route, navigation }) => {
                   </View>
                 ))}
               </View>
-              <View style={[{ alignItems: 'center', justifyContent: 'center' }]}>
-                <View>
-                  <Text style={[{ color: '#000', fontSize: 16 }]}>Start</Text>
-                  <View style={[{ flexDirection: 'row' }]}>
-                    <TextInput
-                      style={[
-                        {
-                          borderColor: '#407BFF',
-                          borderWidth: 1,
-                          width: 50,
-                          borderRadius: 5,
-                          textAlign: 'center',
-                          fontSize: 14,
-                        },
-                      ]}
-                      placeholder="HH"
-                      keyboardType="numeric"
-                      value={starthour}
-                      onChangeText={setStartHour}
-                      maxLength={2}
-                    />
-                    <Text>:</Text>
-                    <TextInput
-                      style={[
-                        {
-                          borderColor: '#407BFF',
-                          borderWidth: 1,
-                          width: 50,
-                          borderRadius: 5,
-                          textAlign: 'center',
-                          fontSize: 14,
-                        },
-                      ]}
-                      placeholder="MM"
-                      keyboardType="numeric"
-                      value={startminute}
-                      onChangeText={setStartMinute}
-                      maxLength={2}
-                    />
+              <View style={[{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }]}>
+                <View style={[{ justifyContent: 'center', flex: 1 }]}>
+                  <View style={[{ marginVertical: 10 }]}>
+                    <Text style={[{ color: '#333', fontSize: 16 }]}>Start time</Text>
+                    <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                      <TextInput
+                        style={[
+                          styles.timeframeInput,
+                          {
+                            marginRight: 5,
+                          },
+                        ]}
+                        placeholder="HH"
+                        keyboardType="numeric"
+                        value={starthour}
+                        onChangeText={setStartHour}
+                        maxLength={2}
+                      />
+                      <Text>:</Text>
+                      <TextInput
+                        style={[
+                          styles.timeframeInput,
+                          {
+                            marginLeft: 5,
+                          },
+                        ]}
+                        placeholder="MM"
+                        keyboardType="numeric"
+                        value={startminute}
+                        onChangeText={setStartMinute}
+                        maxLength={2}
+                      />
+                    </View>
                   </View>
-                </View>
-                <View>
-                  <Text style={[{ color: '#000', fontSize: 16 }]}>End</Text>
-                  <View style={[{ flexDirection: 'row' }]}>
-                    <TextInput
-                      style={[
-                        {
-                          borderColor: '#407BFF',
-                          borderWidth: 1,
-                          width: 50,
-                          borderRadius: 5,
-                          textAlign: 'center',
-                          fontSize: 14,
-                        },
-                      ]}
-                      placeholder="HH"
-                      keyboardType="numeric"
-                      value={endhour}
-                      onChangeText={setEndHour}
-                      maxLength={2}
-                    />
-                    <Text>:</Text>
-                    <TextInput
-                      style={[
-                        {
-                          borderColor: '#407BFF',
-                          borderWidth: 1,
-                          width: 50,
-                          borderRadius: 5,
-                          textAlign: 'center',
-                          fontSize: 14,
-                        },
-                      ]}
-                      placeholder="MM"
-                      keyboardType="numeric"
-                      value={endminute}
-                      onChangeText={setEndMinute}
-                      maxLength={2}
-                    />
+                  <View style={[{ marginVertical: 10 }]}>
+                    <Text style={[{ color: '#333', fontSize: 16 }]}>End time</Text>
+                    <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                      <TextInput
+                        style={[
+                          styles.timeframeInput,
+                          {
+                            marginRight: 5,
+                          },
+                        ]}
+                        placeholder="HH"
+                        keyboardType="numeric"
+                        value={endhour}
+                        onChangeText={setEndHour}
+                        maxLength={2}
+                      />
+                      <Text>:</Text>
+                      <TextInput
+                        style={[
+                          styles.timeframeInput,
+                          {
+                            marginLeft: 5,
+                          },
+                        ]}
+                        placeholder="MM"
+                        keyboardType="numeric"
+                        value={endminute}
+                        onChangeText={setEndMinute}
+                        maxLength={2}
+                      />
+                    </View>
                   </View>
                 </View>
                 <TouchableOpacity
@@ -406,11 +395,12 @@ const ChildTimeframes = ({ route, navigation }) => {
                       borderRadius: 5,
                       alignItems: 'center',
                       justifyContent: 'center',
+                      paddingVertical: 10,
                     },
                   ]}
                   onPress={addTimeframe}
                 >
-                  <Text style={[{ color: '#407BFF' }]}>Save</Text>
+                  <Text style={[{ color: '#407BFF', fontSize: 18 }]}>Save</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -644,10 +634,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
     alignItems: 'center',
     width: '90%',
+    maxWidth: 800,
     borderRadius: 5,
     paddingTop: 10,
     paddingBottom: 10,
-    marginTop: 20,
+    marginTop: 50,
     marginBottom: 60,
   },
   title: {
@@ -733,6 +724,15 @@ const styles = StyleSheet.create({
     padding: 8,
     // marginTop: 10,
     alignSelf: 'center',
+  },
+  timeframeInput: {
+    borderColor: '#407BFF',
+    borderWidth: 1,
+    width: 75,
+    height: 40,
+    borderRadius: 5,
+    textAlign: 'center',
+    fontSize: 14,
   },
 });
 
