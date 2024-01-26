@@ -12,23 +12,23 @@ import { Icon, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-import Modal from 'react-native-modal';
-import { getItem } from '../../components/AsyncStorage';
+// import Modal from 'react-native-modal';
+// import { getItem } from '../../components/AsyncStorage';
 
 const DisplayStudyMaterial = ({ props }) => {
   const route = useRoute();
   const navigation = useNavigation();
   const [packages, setPackages] = useState([]);
-  const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
-  const [selectedPackageId, setSelectedPackageId] = useState(null);
+  // const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
+  // const [selectedPackageId, setSelectedPackageId] = useState(null);
   const params = route.params;
   const childID = params?.child_ID;
 //   const { _id, name, grade } = params?.workPackage;
   const _id = "6599f29af077ba0bb1dc2093"
-  const name = "Math"
+  // const name = "Math"
   // const grade = 10
   const { width } = Dimensions.get('window');
-  const maxTextWidth = width * 0.9;
+  // const maxTextWidth = width * 0.9;
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
   const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
@@ -38,10 +38,7 @@ const DisplayStudyMaterial = ({ props }) => {
   const [quizzesArray, setQuizzesArray]= useState([]);
 
 
-  const [quizId, setQuizId]= useState([]);
-
-
-
+  // const [quizId, setQuizId]= useState([]);
   const ProgressBar = ({ current, total }) => {
     const completionPercentage = (current / total) * 100;
   
@@ -51,8 +48,6 @@ const DisplayStudyMaterial = ({ props }) => {
         </View>
     );
   };
-
-  
 
   const newPlugin = defaultLayoutPlugin({
     innerContainer: styles.customInnerContainer,
@@ -75,33 +70,17 @@ const DisplayStudyMaterial = ({ props }) => {
         });
         if (response.status === 200) {
             const data = await response.json();
-            console.log("packageInfo: ", data)
             setQuizLength(data.quizzes.length)
             setPackageInfo(data);
-            console.log("IUNF=OOOOOOO",data);
             setQuizzesArray(data.quizzes)
-            console.log("materials: ", data.materials)
             // get the url PDFs with material IDs
             data.materials.forEach(material => {
                 getPDFs(material)
             })
             // detect if there is no package assigned to the child, don't display pdfs
-            if (data.message) {
-                console.log(data.message)
-            }
-            //todo:
-            /**
-             *  - display the packageInfo on the screen
-             *  - (data of packageInfo: 
-             *      package_id, name, grade, workPackageDescription,
-             *      packageDescription, subcategory, materials, quizzes)
-             *  - display the PDF on the screen (using material ID)
-             *  - if many PDF, display them one by one with a button to go to the next one/previous one
-             *  - end of the PDFs, display button to do the quiz
-             */
-
-
-            // if package info null, dont do anything
+            // if (data.message) {
+            //     console.log(data.message)
+            // }
         } else {
             console.error('Error fetching study material');
         }
@@ -121,15 +100,11 @@ const DisplayStudyMaterial = ({ props }) => {
       if (response.status === 200) {
         const fileBlob = await response.blob();
         const fileUrl = URL.createObjectURL(fileBlob);
-        // HEREEEEE CREATE AN ARRAY TO SAVE THE PDFS  
-        // console.log("PDFs: ", fileUrl)
         setPdfUrls(prevUrls => {
           const newUrls = [...prevUrls, fileUrl];
-          console.log("Updated PDF URLs:", newUrls); // Log to check
           return newUrls;
         });
-        // pdfUrls.push(fileUrl); // Add the new PDF URL to the array
-        console.log("PDFs: ", pdfUrls); // Log the array of PDF URLs
+
       } else {
         console.error('Error fetching PDFs');
       }
@@ -170,9 +145,7 @@ const DisplayStudyMaterial = ({ props }) => {
   
       if (response.status === 200) {
         const data = await response.json();
-        // Assuming you have a state setter function like setQuiz to store the fetched quiz
         setQuiz(data);
-        console.log("DATAAAAA",data);
         return data;
       } else {
         console.error('Error fetching quiz with ID:', quizId);
@@ -184,7 +157,6 @@ const DisplayStudyMaterial = ({ props }) => {
 
   const handleTakeQuiz = async (quizId) => {
     const quiz = await fetchQuizById(quizId);
-    console.log("FETCCHCHHCHCHC", quiz);
 
     navigation.navigate('DisplayQuizzScreen', {
       quizId: quiz._id,
@@ -195,166 +167,38 @@ const DisplayStudyMaterial = ({ props }) => {
   };
 
 
-
   const handleNextPdf = (nextIndex, length) => {
-    // Function logic here
-    console.log("Next index", nextIndex);
-    console.log("Length", length);
 
     if (nextIndex < length){
       setCurrentPdfIndex(nextIndex);
     } 
   };
   const handlePrevPdf = (prevIndex, length) => {
-    // Function logic here
-    console.log("Next index", prevIndex);
-    console.log("Length", length);
 
     if (prevIndex >= length){
       setCurrentPdfIndex(prevIndex);
     } 
   };
 
-  // // function to delete a work package
-  // const deletePackage = async (_id) => {
-  //   try {
-  //     setSelectedPackageId(_id);
-  //     setDeleteConfirmationModalVisible(true);
-  //   } catch (error) {
-  //     console.error('Network error:', error);
-  //   }
-  // };
-
-  // // function to display the work package information
-  // const renderPackage = (this_Package) => {
-  //   return (
-  //     <View
-  //       key={this_Package._id}
-  //       style={styles.containerCard}
-  //     >
-  //       <View key={this_Package._id} style={styles.workPackageItemContainer}>
-  //         <TouchableOpacity
-  //           style={{ width: '75%' }}
-  //           onPress={() => {
-  //             navigation.navigate('DisplayPdfFile', {
-  //               workPackage: {
-  //                 wp_id: _id,
-  //                 name: name,
-  //                 grade: grade,
-  //               },
-  //               package: {
-  //                 p_id: this_Package._id,
-  //                 subcategory: this_Package.subcategory,
-  //                 description: this_Package.description,
-  //                 p_materials: this_Package.materials,
-  //                 p_quizzes: this_Package.quizzes,
-  //               },
-  //             });
-  //           }}
-  //         >
-  //           <Text style={styles.workPackageItem}>{this_Package.subcategory}</Text>
-  //         </TouchableOpacity>
-  //         <View
-  //           style={{
-  //             flexDirection: 'row',
-  //             alignItems: 'center',
-  //           }}
-  //         >
-  //           <TouchableOpacity
-  //             onPress={() => {
-  //               navigation.navigate('EditPackage', {
-  //                 workPackage: {
-  //                   wp_id: _id,
-  //                   name: name,
-  //                   grade: grade,
-  //                 },
-  //                 package: {
-  //                   p_id: this_Package._id,
-  //                   subcategory: this_Package.subcategory,
-  //                   description: this_Package.description,
-  //                   p_materials: this_Package.materials,
-  //                   p_quizzes: this_Package.quizzes,
-  //                 },
-  //               });
-  //             }}
-  //             testID={`editButton-${this_Package._id}`}
-  //           >
-  //             <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-  //           </TouchableOpacity>
-  //           <TouchableOpacity
-  //             onPress={() => {
-  //               deletePackage(this_Package._id);
-  //             }}
-  //             testID={`deleteButton-${this_Package._id}`}
-  //           >
-  //             <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-  //           </TouchableOpacity>
-  //         </View>
-  //       </View>
-  //       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-  //         <Text
-  //           numberOfLines={3}
-  //           ellipsizeMode="middle"
-  //           style={{ maxWidth: maxTextWidth, color: '#696969' }}
-  //         >
-  //           {this_Package.description}
-  //         </Text>
-  //       </View>
-  //       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-  //         <Text style={{ color: '#696969', fontSize: 12 }}>
-  //           {this_Package.materials.length} file(s)
-  //         </Text>
-  //       </View>
-  //       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-  //         <Text style={{ color: '#696969', fontSize: 12 }}>
-  //           {this_Package.quizzes.length} question(s)
-  //         </Text>
-  //       </View>
-  //     </View>
-  //   );
-  // };
-
-  // function to delete a work package
-  // const confirmDelete = async () => {
-  //   if (selectedPackageId) {
-  //     try {
-  //       const response = await fetch(`http://localhost:4000/packages/delete/${selectedPackageId}`, {
-  //         method: 'DELETE',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       });
-  //       if (response.status === 200) {
-  //         setDeleteConfirmationModalVisible(false);
-  //         fetchPackages();
-  //       } else {
-  //         console.error('Error deleting work package');
-  //       }
-  //     } catch (error) {
-  //       console.error('Network error:', error);
-  //     }
-  //   }
-  // };
-
   // Function to determine the grade suffix
-  const getGradeSuffix = (grade) => {
-    if (grade >= 11 && grade <= 13) {
-      return 'th';
-    }
+  // const getGradeSuffix = (grade) => {
+  //   if (grade >= 11 && grade <= 13) {
+  //     return 'th';
+  //   }
 
-    const lastDigit = grade % 10;
+  //   const lastDigit = grade % 10;
 
-    switch (lastDigit) {
-      case 1:
-        return 'st';
-      case 2:
-        return 'nd';
-      case 3:
-        return 'rd';
-      default:
-        return 'th';
-    }
-  };
+  //   switch (lastDigit) {
+  //     case 1:
+  //       return 'st';
+  //     case 2:
+  //       return 'nd';
+  //     case 3:
+  //       return 'rd';
+  //     default:
+  //       return 'th';
+  //   }
+  // };
 
   return (
     <ImageBackground
@@ -367,7 +211,7 @@ const DisplayStudyMaterial = ({ props }) => {
           <View
             style={styles.pdfViewContainer}
           >
-            <Text style={styles.packageInfoText}>
+            <Text style={styles.packageInfoText} testID="packageInfo">
               {packageInfo.name} - {packageInfo.grade} - {packageInfo.packageDescription}
             </Text>
             <View style={styles.pdfContainer}>
