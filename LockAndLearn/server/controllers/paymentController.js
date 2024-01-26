@@ -35,40 +35,6 @@ router.post("/:orderID/capture", async (req, res) => {
   }
 });
 
-const increaseTeacherRevenue = async (teacherId, amount) => {
-    try {
-        const teacher = await User.findById(teacherId);
-
-        if (!teacher) {
-            throw new Error('Teacher not found');
-        }
-
-        if (teacher.isParent) {
-            throw new Error('Cannot increase revenue for a non-teacher user.');
-        }
-
-        teacher.revenue += amount;
-        await teacher.save();
-    } catch (error) {
-        console.error('Error increasing teacher revenue:', error);
-        throw new Error('Failed to increase teacher revenue.');
-    }
-};
-
-// Function to calculate the total revenue based on an array of work package IDs
-const calculateTotalRevenue = async (workPackageIds) => {
-    try {
-        // Assuming WorkPackage model has a 'price' field
-        const workPackages = await WorkPackage.find({ _id: { $in: workPackageIds } });
-        const totalRevenue = workPackages.reduce((acc, workPackage) => acc + workPackage.price, 0);
-
-        return totalRevenue;
-    } catch (error) {
-        console.error('Error calculating total revenue:', error);
-        throw error;
-    }
-};
-
 
 // Endpoint to transfer work packages from CartWorkPackage to purchasedWorkPackage
 router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, res) => {
@@ -86,34 +52,23 @@ router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, r
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        // Fetch the teacher ID for each work package and update purchasedWorkPackages array
-        //const updatedPurchasedWorkPackages = await Promise.all(
-        //    user.CartWorkPackages.map(async (workPackageId) => {
-        //        // Fetch the work package by ID
-        //        const workPackage = await WorkPackage.findById(workPackageId);
-        //        if (!workPackage) {
-        //            console.error(`Work package not found with ID: ${workPackageId}`);
-        //            return null; // or handle as needed
-        //        }
 
-        //        // Fetch the teacher ID from the fetched work package
-        //        const teacherId = workPackage.instructorID;
-        //        console.log(teacherId);
-        //        // Increase revenue for the teacher (if the user is a teacher)
-        //        if (user.isParent) {
-        //            const totalRevenue = calculateTotalRevenue([workPackageId]); // Assuming calculateTotalRevenue expects an array
-        //            await increaseTeacherRevenue(teacherId, totalRevenue);
-        //        }
 
-        //        return workPackageId;
-        //    })
-        //);
+        // Iterate through the CartWorkPackages and update the stripePurchaseId field
+        for (const workPackageId of user.CartWorkPackages) {
+            const workPackage = await WorkPackage.findById(workPackageId);
+            console.log("work Package:", workPackageId);
+            if (workPackage) {
+                // Add stripeId to the stripePurchaseId array
+                workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId.toString()];
+                await workPackage.save();
+            }
+        }
+        console.log("success");
 
-        //// Move all CartWorkPackages to purchasedWorkPackages
-        //user.purchasedWorkPackages.push(...updatedPurchasedWorkPackages);
-        //user.CartWorkPackages = []; // Empty the CartWorkPackages array
-
-        
+        // Add the stripe purchased ID to the stripe purchased ID array of work package
+ /*        WorkPackage.stripePurchaseId.push(stripeId.toString());*/
+ 
         // Save the updated user's payment stripe info and the bought WPs
         user.purchasedWorkPackages.push({
           stripePurchaseId: stripeId.toString(),
