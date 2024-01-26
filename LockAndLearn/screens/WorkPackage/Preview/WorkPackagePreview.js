@@ -93,12 +93,12 @@ const WorkPackagePreview = ({ props }) => {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.materials.length} file(s)
+            {this_Package.materials.length} File(s)
           </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.quizzes.length} question(s)
+            {this_Package.quizzes.length} Quizz(es)
           </Text>
         </View>
       </View>
