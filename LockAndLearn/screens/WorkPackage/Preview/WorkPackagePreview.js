@@ -23,6 +23,7 @@ const WorkPackagePreview = ({ props }) => {
   const maxTextWidth = width * 0.9;
   const [isModalVisible, setModalVisible] = useState(false);
   const [reportReason, setReportReason] = useState('');
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
 
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
@@ -68,16 +69,17 @@ const WorkPackagePreview = ({ props }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            workPackageId,
+            idOfWp: workPackageId,
             timeOfReport: currentTime,
             reporterId: userId,
-            reason,
+            reason: reason,
           }),
         });
 
         if (response.status === 200 || response.status === 201) {
           console.log('Report created successfully');
           fetchPackages();
+          setSuccessModalVisible(true);
         } else {
           console.error('Error creating report:', response.status);
         }
@@ -248,11 +250,36 @@ const WorkPackagePreview = ({ props }) => {
           </TouchableOpacity>
         </View>
       </Modal>
+      <Modal
+        isVisible={isSuccessModalVisible}
+        onBackdropPress={() => setSuccessModalVisible(false)}
+        backdropOpacity={0.5}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Report Sent</Text>
+          <Text style={styles.modalText}>Your report has been sent successfully.</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setSuccessModalVisible(false);
+              // Add any additional actions you want to perform after the user acknowledges the success
+            }}
+            style={styles.modalButton}
+          >
+            <Text style={styles.modalButtonText}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#696969',
+  },
   disabledModalButton: {
     backgroundColor: '#ccc',
   },
@@ -260,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    width: '70%',
+    width: '65%',
     alignSelf: 'center',
   },
   modalTitle: {
@@ -272,12 +299,11 @@ const styles = StyleSheet.create({
 
   modalInput: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#4F85FF',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-    height: 100,
-    textAlignVertical: 'top',
+    color: '#696969', 
   },
 
   modalButton: {
