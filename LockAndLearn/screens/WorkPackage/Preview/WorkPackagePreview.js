@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Modal from 'react-native-modal';
+import {getItem} from '../../../components/AsyncStorage';
 
 const WorkPackagePreview = ({ props }) => {
   const route = useRoute();
@@ -24,6 +25,19 @@ const WorkPackagePreview = ({ props }) => {
   useEffect(() => {
     fetchPackages();
   }, [params]);
+
+  const fetchUserData = async () => {
+    try {
+      const token = await getItem('@token');
+      const user = JSON.parse(token);
+      const userId = user._id;
+
+      // Now you have the user ID (userId), you can use it as needed
+      console.log('User ID:', userId);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   // function to get work package information
   const fetchPackages = async () => {
