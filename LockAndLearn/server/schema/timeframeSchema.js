@@ -18,6 +18,9 @@ const timeframeSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    isActive: {
+        type: Boolean,
+    },
 });
 
 const Timeframes = mongoose.model('Timeframes', timeframeSchema, collectionName); // Where the item will be stored in the database
