@@ -19,6 +19,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
+  const [addedSuccessful, setAddedSuccessful] = useState(false);
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   const [selectedDay, setSelectedDay] = useState('');
@@ -70,7 +71,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         // console.log(data);
         getSwitchesStatus(data);
         const orderedTimeframes = orderSortTimeframes(data);
-        console.log("orderedTimeframes", orderedTimeframes);
+        console.log('orderedTimeframes', orderedTimeframes);
         setTimeframes(orderedTimeframes);
       }
     } catch (error) {
@@ -83,9 +84,9 @@ const ChildTimeframes = ({ route, navigation }) => {
     var switchesStatus = {};
     timeframes.forEach(function (timeframe) {
       switchesStatus[timeframe._id] = timeframe.isActive;
-    }); 
+    });
     setToggleSwitchItem(switchesStatus);
-  }
+  };
 
   // Order and sort timeframes by day and start time
   const orderSortTimeframes = (timeframes) => {
@@ -132,6 +133,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log('Timeframe added successfully!');
         setAddMode(false);
         clearAddFields();
+        setAddedSuccessful(true);
       }
     } catch (error) {
       console.log(error.msg);
@@ -146,24 +148,14 @@ const ChildTimeframes = ({ route, navigation }) => {
     setSelectedDay('');
   };
 
-  useEffect(() => {
-    setDeviceWidth(width);
-    setChild(childSelected);
-    getChildTimeframes();
-  }, []);
-
-  useEffect(() => {
-    updateSwitch();
-  }, [toggleSwitchItem]);
-  
   // Function to toggle switch for timeframes based on timeframe id
   const toggleSwitch = async (timeframeId) => {
     setToggleSwitchItem((prevToggleSwitchItem) => ({
       ...prevToggleSwitchItem,
       [timeframeId]: !prevToggleSwitchItem[timeframeId] || false,
     }));
-  }
-  
+  };
+
   // Function to update the database when a switch is toggled
   const updateSwitch = async () => {
     try {
@@ -190,7 +182,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     } catch (error) {
       console.log(error.msg);
     }
-  }
+  };
 
   // Function to toggle pop up modal for deleting a timeframe
   const toggleDeleteModal = () => {
@@ -200,10 +192,13 @@ const ChildTimeframes = ({ route, navigation }) => {
   // Function to delete a timeframe
   const handleDeleteTimeframe = async (timeframeId) => {
     try {
-      const response = await fetch('http://localhost:4000/timeframes/deletetimeframe/' + timeframeId, {
-        method: 'DELETE',
-        credentials: 'include', // Include cookies in the request
-      });
+      const response = await fetch(
+        'http://localhost:4000/timeframes/deletetimeframe/' + timeframeId,
+        {
+          method: 'DELETE',
+          credentials: 'include', // Include cookies in the request
+        }
+      );
       const data = await response.json();
       if (response.status != 200) {
         console.log(data.msg);
@@ -215,6 +210,22 @@ const ChildTimeframes = ({ route, navigation }) => {
       console.log(error.msg);
     }
   };
+
+  useEffect(() => {
+    setDeviceWidth(width);
+    setChild(childSelected);
+    getChildTimeframes();
+  }, []);
+
+  useEffect(() => {
+    updateSwitch();
+  }, [toggleSwitchItem]);
+
+  useEffect(() => {
+    getChildTimeframes();
+    console.log(555555555555555555555555);
+    setAddedSuccessful(false);
+  }, [addedSuccessful]);
 
   return (
     <ImageBackground
@@ -233,27 +244,29 @@ const ChildTimeframes = ({ route, navigation }) => {
           }}
         >
           {/* if addMode is true, then setEditMode is disabled */}
-          <TouchableOpacity onPress={() => setEditMode(addMode ? null : !editMode)} disabled={addMode} style={{ opacity: addMode ? 0.5 : 1 }}>
+          <TouchableOpacity
+            onPress={() => setEditMode(addMode ? null : !editMode)}
+            disabled={addMode}
+            style={{ opacity: addMode ? 0.5 : 1 }}
+          >
             {editMode ? (
               addMode ? (
                 // if editMode is true and addMode is true
                 <Text style={{ fontSize: 15, color: '#407BFF' }}>Edit</Text>
+              ) : // for mobile
+              deviceWidth < 450 ? (
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ marginRight: 1 }}>
+                    <Icon source="close" size={17} color="#F24E1E" />
+                  </View>
+                  <Icon source="check" size={17} color="#407BFF" />
+                </View>
               ) : (
-                // for mobile
-                deviceWidth < 450 ? (
-                  <View style={{ flexDirection:"row" }}>
-                    <View style={{ marginRight: 1 }}>
-                      <Icon source="close" size={17} color="#F24E1E" />
-                    </View>
-                    <Icon source="check" size={17} color="#407BFF" />
-                  </View>
-                ) : (
-                  // if editMode is true and addMode is false
-                  <View style={{flexDirection:"row", marginLeft: -40}}>
-                    <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
-                    <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
-                  </View>
-                )
+                // if editMode is true and addMode is false
+                <View style={{ flexDirection: 'row', marginLeft: -40 }}>
+                  <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
+                  <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
+                </View>
               )
             ) : (
               // if editMode is false
@@ -262,7 +275,7 @@ const ChildTimeframes = ({ route, navigation }) => {
           </TouchableOpacity>
           <Text style={[styles.title]}>Timeframes</Text>
           {/* if editMode is true,  addMode is also true */}
-          <TouchableOpacity onPress={() => setAddMode(!addMode)} >
+          <TouchableOpacity onPress={() => setAddMode(!addMode)}>
             {addMode ? (
               <Text style={{ fontSize: 15, color: '#F24E1E' }}>Cancel</Text> // if addMode is true
             ) : (
@@ -276,7 +289,7 @@ const ChildTimeframes = ({ route, navigation }) => {
             {/* change to row */}
             <View style={[{ flexDirection: 'column' }]}>
               {days.map((day) => (
-                <View style={{ flexDirection: 'column' }}>
+                <View style={{ flexDirection: 'column' }} key={day}>
                   <View
                     style={[
                       {
@@ -412,21 +425,34 @@ const ChildTimeframes = ({ route, navigation }) => {
               >
                 {/* go through all days (Monday -> Sunday) */}
                 {Object.keys(timeframes).map((day) => {
-                  const startTimes = timeframes[day].map(time => Object.values(time)[3]);
-                  const endTimes = timeframes[day].map(time => Object.values(time)[4]);
-                  const timePeriods = [];  
+                  const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
+                  const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+                  const timePeriods = [];
                   // display message if there are no time periods for the day
-                  if (startTimes.length === 0 && day === "Sunday") {
+                  if (startTimes.length === 0 && day === 'Sunday') {
                     timePeriods.push(
-                      <View key={`${day}-empty`} style={{ width: '70%', alignItems: 'center', marginBottom: 5 }}>
-                        <Text style={{ fontSize: 15, textAlign: 'center' }}>Add timeframes by clicking on the + to start Lock and Learn!</Text>
+                      <View
+                        key={`${day}-empty`}
+                        style={{ width: '70%', alignItems: 'center', marginBottom: 5 }}
+                      >
+                        <Text style={{ fontSize: 15, textAlign: 'center' }}>
+                          Add timeframes by clicking on the + to start Lock and Learn!
+                        </Text>
                       </View>
                     );
                   }
                   // display day (Monday, ..., Sunday) if there are time periods for the day
                   if (startTimes.length > 0) {
                     timePeriods.push(
-                      <View key={`${day}-heading`} style={{ flexDirection: 'row', width: '70%', alignItems: 'center', marginBottom: 5 }}>
+                      <View
+                        key={`${day}-heading`}
+                        style={{
+                          flexDirection: 'row',
+                          width: '70%',
+                          alignItems: 'center',
+                          marginBottom: 5,
+                        }}
+                      >
                         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{day}</Text>
                       </View>
                     );
@@ -434,32 +460,29 @@ const ChildTimeframes = ({ route, navigation }) => {
                   // display time periods for the day
                   startTimes.forEach((time, index) => {
                     timePeriods.push(
-                      <View
-                        key={`${day}-${index}`}
-                        style={styles.timePeriod}
-                      >
-                          <Text style={{ fontSize: 15 }}>
-                            {time} - {endTimes[index]}
-                          </Text>
+                      <View key={`${day}-${index}`} style={styles.timePeriod}>
+                        <Text style={{ fontSize: 15 }}>
+                          {time} - {endTimes[index]}
+                        </Text>
                         <Switch
                           trackColor={{ false: 'lightgray', true: '#81b0ff' }}
                           thumbColor={isEnabled ? '#407BFF' : 'gray'}
                           onValueChange={() => toggleSwitch(timeframes[day][index]._id)}
                           value={toggleSwitchItem[timeframes[day][index]._id] || false}
                         />
-                      </View> 
-                    )
+                      </View>
+                    );
                     // add divider if is last time period of the day
-                    if (index === startTimes.length - 1 && day !== "Sunday") {
+                    if (index === startTimes.length - 1 && day !== 'Sunday') {
                       timePeriods.push(
-                        <Divider 
+                        <Divider
                           key={`${day}-${index}-divider`}
-                          style={{ width: "75%", marginTop: 15, marginBottom: 20}}
+                          style={{ width: '75%', marginTop: 15, marginBottom: 20 }}
                           color="#407BFF"
                           width={1}
                           orientation="horizontal"
                         />
-                      )
+                      );
                     }
                   });
                   return timePeriods;
@@ -468,43 +491,53 @@ const ChildTimeframes = ({ route, navigation }) => {
             ) : (
               /* editing time frame*/
               <View
-              style={{
-                alignItems: 'center',
-                marginBottom: 10,
-                width: '100%',
-                height: '100%',
-                marginTop: 5,
-              }}
-            >
-              {/* go through all days (Monday -> Sunday) */}
-              {Object.keys(timeframes).map((day) => {
-                const startTimes = timeframes[day].map(time => Object.values(time)[3]);
-                const endTimes = timeframes[day].map(time => Object.values(time)[4]);
-                const timePeriods = [];  
-                // display message if there are no time periods for the day
-                if (startTimes.length === 0 && day === "Sunday") {
-                  timePeriods.push(
-                    <View key={`${day}-empty`} style={{ width: '70%', alignItems: 'center', marginBottom: 5 }}>
-                      <Text style={{ fontSize: 15, textAlign: 'center' }}>Add timeframes by clicking on the + to start Lock and Learn!</Text>
-                    </View>
-                  );
-                }
-                // display day (Monday, ..., Sunday) if there are time periods for the day
-                if (startTimes.length > 0) {
-                  timePeriods.push(
-                    <View key={`${day}-heading`} style={{ flexDirection: 'row', width: '70%', alignItems: 'center', marginBottom: 5 }}>
-                      <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{day}</Text>
-                    </View>
-                  );
-                }
-                // display time periods for the day
-                startTimes.forEach((time, index) => {
-                  console.log("delete", day, time, endTimes[index])
-                  timePeriods.push(
-                    <View
-                      key={`${day}-${index}`}
-                      style={styles.timePeriod}
-                    >
+                style={{
+                  alignItems: 'center',
+                  marginBottom: 10,
+                  width: '100%',
+                  height: '100%',
+                  marginTop: 5,
+                }}
+              >
+                {/* go through all days (Monday -> Sunday) */}
+                {Object.keys(timeframes).map((day) => {
+                  const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
+                  const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+                  const timePeriods = [];
+                  // display message if there are no time periods for the day
+                  if (startTimes.length === 0 && day === 'Sunday') {
+                    timePeriods.push(
+                      <View
+                        key={`${day}-empty`}
+                        style={{ width: '70%', alignItems: 'center', marginBottom: 5 }}
+                      >
+                        <Text style={{ fontSize: 15, textAlign: 'center' }}>
+                          Add timeframes by clicking on the + to start Lock and Learn!
+                        </Text>
+                      </View>
+                    );
+                  }
+                  // display day (Monday, ..., Sunday) if there are time periods for the day
+                  if (startTimes.length > 0) {
+                    timePeriods.push(
+                      <View
+                        key={`${day}-heading`}
+                        style={{
+                          flexDirection: 'row',
+                          width: '70%',
+                          alignItems: 'center',
+                          marginBottom: 5,
+                        }}
+                      >
+                        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{day}</Text>
+                      </View>
+                    );
+                  }
+                  // display time periods for the day
+                  startTimes.forEach((time, index) => {
+                    console.log('delete', day, time, endTimes[index]);
+                    timePeriods.push(
+                      <View key={`${day}-${index}`} style={styles.timePeriod}>
                         <Text style={{ fontSize: 15 }}>
                           {time} - {endTimes[index]}
                         </Text>
@@ -516,7 +549,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                         >
                           <TouchableOpacity
                             onPress={() => {
-                              console.log("edit", day, time, endTimes[index])
+                              console.log('edit', day, time, endTimes[index]);
                               setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
                             }}
                           >
@@ -532,41 +565,37 @@ const ChildTimeframes = ({ route, navigation }) => {
                             <Icon source="delete-outline" size={20} color={'#F24E1E'} />
                           </TouchableOpacity>
                         </View>
-                    </View> 
-                  )
-                  // add divider if is last time period of the day
-                  if (index === startTimes.length - 1 && day !== "Sunday") {
-                    timePeriods.push(
-                      <Divider 
-                        key={`${day}-${index}-divider`}
-                        style={{ width: "75%", marginTop: 15, marginBottom: 20}}
-                        color="#407BFF"
-                        width={1}
-                        orientation="horizontal"
-                      />
-                    )
-                  }
-                });
-                return timePeriods;
-              })}
-            </View>
+                      </View>
+                    );
+                    // add divider if is last time period of the day
+                    if (index === startTimes.length - 1 && day !== 'Sunday') {
+                      timePeriods.push(
+                        <Divider
+                          key={`${day}-${index}-divider`}
+                          style={{ width: '75%', marginTop: 15, marginBottom: 20 }}
+                          color="#407BFF"
+                          width={1}
+                          orientation="horizontal"
+                        />
+                      );
+                    }
+                  });
+                  return timePeriods;
+                })}
+              </View>
             )}
           </>
         )}
       </View>
       {/* Pop-up: Confirmation to delete timeframe */}
-      <Modal
-        transparent={true}
-        visible={isDeleteModalVisible}
-        onRequestClose={toggleDeleteModal}
-      >
+      <Modal transparent={true} visible={isDeleteModalVisible} onRequestClose={toggleDeleteModal}>
         {/* display modal's background */}
         <View style={styles.modalContainer}>
           {/* display modal */}
           <View style={styles.modalView1}>
             <Text style={styles.text}>Are you sure you want to delete</Text>
             <Text style={styles.textName}>{periodDate} ?</Text>
-            {console.log(periodDate)}
+            {/* {console.log(periodDate)} */}
             <View style={styles.modalView}>
               <Button
                 style={styles.modalNoButton}
