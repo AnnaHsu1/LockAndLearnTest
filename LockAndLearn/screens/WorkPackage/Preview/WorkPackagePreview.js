@@ -154,7 +154,7 @@ const WorkPackagePreview = ({ props }) => {
           <TouchableOpacity
             testID="reportButton"
           >
-            <Text style={styles.buttonText}>Report Work Package</Text>
+            <Text style={styles.buttonReportText}>Report Work Package</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     marginTop: '5%',
     marginBottom: '5%',
   },
-  buttonText: {
+  buttonReportText: {
     color: '#F24E1E', 
     borderColor: '#F24E1E', 
     borderWidth: 1,
@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontWeight: '500',
+    marginBottom: 40,
   }
 });
 
