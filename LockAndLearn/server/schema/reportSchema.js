@@ -11,7 +11,7 @@ const reportsSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  idOfReporter: {
+  reporterId: {
     type: String,
     required: true
   },

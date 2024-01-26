@@ -22,7 +22,7 @@ router.post('/create-report', async (req, res) => {
     descriptionOfWp: req.body.descriptionOfWp,
     instructorId: req.body.instructorId,
     timeOfReport: req.body.timeOfReport,
-    idOfReporter: req.body.idOfReporter,
+    reporterId: req.body.reporterId,
     reason: req.body.reason
   });
 
