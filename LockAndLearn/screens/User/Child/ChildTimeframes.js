@@ -27,6 +27,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { height, width } = useWindowDimensions();
   const [toggleSwitchItem, setToggleSwitchItem] = useState({});
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
   //   const [mondayTimeframes, setMondayTimeframes] = useState([
   //     { day: 'Monday' },
@@ -179,6 +180,11 @@ const ChildTimeframes = ({ route, navigation }) => {
       console.log(error.msg);
     }
   }
+
+  // Function to toggle pop up modal for deleting a timeframe
+  const toggleDeleteModal = () => {
+    setDeleteModalVisible(!isDeleteModalVisible);
+  };
 
   return (
     <ImageBackground
