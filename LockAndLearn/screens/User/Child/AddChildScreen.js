@@ -5,6 +5,7 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 import { Button } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { Picker } from '@react-native-picker/picker';
+import PropTypes from 'prop-types';
 
 const AddChildScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
@@ -174,6 +175,12 @@ const AddChildScreen = ({ navigation, setToken }) => {
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
   );
+};
+
+// PropTypes
+AddChildScreen.propTypes = {
+    navigation: PropTypes.object.isRequired,
+    setToken: PropTypes.func.isRequired,
 };
 
 const useStyles = CreateResponsiveStyle(
