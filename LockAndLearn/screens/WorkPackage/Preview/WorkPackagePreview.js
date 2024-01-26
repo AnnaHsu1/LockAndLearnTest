@@ -93,12 +93,12 @@ const WorkPackagePreview = ({ props }) => {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.materials.length} file(s)
+            {this_Package.materials.length} File(s)
           </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.quizzes.length} question(s)
+            {this_Package.quizzes.length} Quizz(es)
           </Text>
         </View>
       </View>
@@ -154,7 +154,7 @@ const WorkPackagePreview = ({ props }) => {
           <TouchableOpacity
             testID="reportButton"
           >
-            <Text style={styles.buttonText}>Report Work Package</Text>
+            <Text style={styles.buttonReportText}>Report Work Package</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     marginTop: '5%',
     marginBottom: '5%',
   },
-  buttonText: {
+  buttonReportText: {
     color: '#F24E1E', 
     borderColor: '#F24E1E', 
     borderWidth: 1,
@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontWeight: '500',
+    marginBottom: 40,
   }
 });
 
