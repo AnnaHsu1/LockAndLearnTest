@@ -13,6 +13,7 @@ const AdminFinances = ({ route, navigation }) => {
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [transactions, setTransactions] = useState([]);
+  const [detailedTransactions, setDetailedTransactions] = useState([]);
   const [balance, setBalance] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,6 +65,7 @@ const AdminFinances = ({ route, navigation }) => {
     }
   };
 
+  // Fetch more information about the transaction from a selected transaction
   const fetchMoreTransactionInfo = async (stripePurchaseId) => {
     try {
       const response = await fetch(
@@ -72,8 +74,11 @@ const AdminFinances = ({ route, navigation }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Assuming you want to do something with the parentName data
-        console.log('Parent Name:', data.parentName);
+        // Update state with the clicked transaction and its details
+        setDetailedTransactions((prevClickedTransactions) => [
+          ...prevClickedTransactions,
+          { id: stripePurchaseId, details: data.parentName },
+        ]);
       } else {
         // Display error message in modal
         setErrorMessage(data.message);
@@ -102,19 +107,55 @@ const AdminFinances = ({ route, navigation }) => {
           {transactions.length > 0 ? (
             transactions.map((transaction) => (
               <View key={transaction.id} style={styles.userContainer}>
-                <Text style={styles.transactionName}> Transaction ID: {transaction.id} </Text>
-                <Text style={styles.userDetails}> Parent Name: {transaction.id} </Text>
+                <Text style={styles.transactionName}>
+                  {' '}
+                  <Text style={{ fontWeight: 'bold' }}>Transaction ID: </Text>
+                  {transaction.id}
+                </Text>
                 <Text style={styles.userDetails}>
                   {' '}
-                  Amount: {transaction.amount / 100} {transaction.currency}{' '}
+                  <Text style={{ fontWeight: 'bold' }}>Amount:</Text> {transaction.amount / 100}{' '}
+                  {transaction.currency}{' '}
                 </Text>
-                <Text style={styles.userDetails}> Status: {transaction.status} </Text>
-                <TouchableOpacity
-                  style={styles.content}
-                  onPress={() => fetchMoreTransactionInfo(transaction.id)}
-                >
-                  <Text style={styles.text}> More details </Text>
-                </TouchableOpacity>
+                <Text style={styles.userDetails}>
+                  {' '}
+                  <Text style={{ fontWeight: 'bold' }}>Status:</Text> {transaction.status}{' '}
+                </Text>
+                {detailedTransactions.find(
+                  (detailedTransaction) => detailedTransaction.id === transaction.id
+                ) ? (
+                  <View>
+                    <View
+                      style={{ borderBottomWidth: 1, borderBottomColor: 'black', paddingBottom: 7 }}
+                    />
+                    <Text style={styles.userDetails}>
+                      {/* Display the name of the buyer. */}
+                      <Text style={{ fontWeight: 'bold' }}> Name of Buyer: </Text>
+                      {
+                        detailedTransactions.find(
+                          (detailedTransaction) => detailedTransaction.id === transaction.id
+                        ).details
+                      }
+                    </Text>
+                    <Text style={styles.userDetails}>
+                      {/* Display the time of creation of the payment intent.*/}
+                      <Text style={{ fontWeight: 'bold' }}> Payment created on: </Text>
+                      {new Date(transaction.created * 1000).toLocaleString()}
+                    </Text>
+                    <Text style={styles.userDetails}>
+                      {/* Display the Stripe client secret key */}
+                      <Text style={{ fontWeight: 'bold' }}> Stripe Client Secret Key: </Text>
+                      {transaction.client_secret}
+                    </Text>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.content}
+                    onPress={() => fetchMoreTransactionInfo(transaction.id)}
+                  >
+                    <Text style={styles.text}> More details </Text>
+                  </TouchableOpacity>
+                )}
               </View>
             ))
           ) : (
@@ -129,17 +170,20 @@ const AdminFinances = ({ route, navigation }) => {
       </View>
 
       {/* Error Modal */}
-      <Modal animationType="slide"
+      <Modal
+        animationType="slide"
         isVisible={errorModalVisible}
         onBackdropPress={() => setErrorModalVisible(false)}
         transparent={true}
-        style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}>
+        style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
+      >
         <View style={styles.modalCard}>
           <Text style={styles.modalText}>{errorMessage}</Text>
           <TouchableOpacity
-          style={[styles.modalButton, { borderColor: 'red' }]}
-          onPress={() => setErrorModalVisible(false)}>
-            <Text>Close</Text>
+            style={[styles.modalButton, { backgroundColor: '#4F85FF', borderColor: '#4F85FF'}]}
+            onPress={() => setErrorModalVisible(false)}
+          >
+            <Text style={{fontWeight: 'bold', color: 'white'}}>Okay</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -216,7 +260,7 @@ const useStyles = CreateResponsiveStyle(
     },
     transactionName: {
       color: '#4F85FF',
-      fontSize: 18,
+      fontSize: 15,
       marginBottom: 5,
     },
     button: {
@@ -253,7 +297,7 @@ const useStyles = CreateResponsiveStyle(
     },
     userDetails: {
       color: 'grey',
-      fontSize: 16,
+      fontSize: 13,
     },
 
     noUsersText: {
@@ -284,8 +328,8 @@ const useStyles = CreateResponsiveStyle(
       backgroundColor: '#fff',
       borderRadius: 15,
       padding: 20,
-      height: 400,
-      maxHeight: 250,
+      height: 200,
+      maxHeight: 200,
       maxWidth: 800,
       marginVertical: 10,
       width: '80%',
@@ -296,13 +340,13 @@ const useStyles = CreateResponsiveStyle(
       borderRadius: 5,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 10,
-      marginTop: 10,
+      padding: 5,
+      marginTop: 5,
     },
     modalText: {
         color: '#696969',
         fontSize: 18,
-        fontWeight: '300',
+        fontWeight: 'bold',
       },
   },
   {
