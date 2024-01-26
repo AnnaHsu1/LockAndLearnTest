@@ -12,6 +12,7 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 import {
   setUserTokenWithExpiry,
 } from '../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -304,6 +305,9 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
+SignupScreen.propTypes = {
+    navigation: PropTypes.object.isRequired,
+};
 const useStyles = CreateResponsiveStyle(
   {
     page: {
