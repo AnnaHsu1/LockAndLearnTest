@@ -73,4 +73,14 @@ router.put('/updatetimeframe', async (req, res) => {
     timeframeIds.forEach(async (timeframeId, index) => {
       await Timeframe.updateOne({ _id: timeframeId }, { isActive: switchesStatus[index] });
     });
+
+    // Respond with the updated timeframe switch status
+    res.status(200).json({ message: 'Successfully updated timeframe' });
+  } catch (error) {
+    // Handle errors if createUser function fails
+    console.error('Error updating timeframe:', error);
+    res.status(500).json({ msg: 'Unable to update timeframe' });
+  }
+});
+
 module.exports = router;
