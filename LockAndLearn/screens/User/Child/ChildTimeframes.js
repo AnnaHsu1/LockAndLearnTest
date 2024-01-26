@@ -9,6 +9,7 @@ import {
   Switch,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { useWindowDimensions } from 'react-native';
 
 const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
@@ -24,6 +25,8 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [startminute, setStartMinute] = useState('');
   const [endhour, setEndHour] = useState('');
   const [endminute, setEndMinute] = useState('');
+  const [deviceWidth, setDeviceWidth] = useState(0);
+  const { height, width } = useWindowDimensions();
 
   //   const [mondayTimeframes, setMondayTimeframes] = useState([
   //     { day: 'Monday' },
@@ -107,6 +110,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    setDeviceWidth(width);
     setChild(childSelected);
     getChildTimeframes();
   }, []);
@@ -128,16 +132,40 @@ const ChildTimeframes = ({ route, navigation }) => {
           }}
         >
           {/* if addMode is true, then setEditMode is disabled */}
-          <TouchableOpacity onPress={() => setEditMode(addMode ? null : !editMode)}>
-            <Text style={{ fontSize: 15, color: '#407BFF' }}> {editMode ? 'Save' : 'Edit'}</Text>
+          <TouchableOpacity onPress={() => setEditMode(addMode ? null : !editMode)} disabled={addMode} style={{ opacity: addMode ? 0.5 : 1 }}>
+            {editMode ? (
+              addMode ? (
+                // if editMode is true and addMode is true
+                <Text style={{ fontSize: 15, color: '#407BFF' }}>Edit</Text>
+              ) : (
+                // for mobile
+                deviceWidth < 450 ? (
+                  <View style={{ flexDirection:"row" }}>
+                    <View style={{ marginRight: 1 }}>
+                      <Icon source="close" size={17} color="#F24E1E" />
+                    </View>
+                    <Icon source="check" size={17} color="#407BFF" />
+                  </View>
+                ) : (
+                  // if editMode is true and addMode is false
+                  <View style={{flexDirection:"row"}}>
+                    <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
+                    <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
+                  </View>
+                )
+              )
+            ) : (
+              // if editMode is false
+              <Text style={{ fontSize: 15, color: '#407BFF' }}>Edit</Text>
+            )}
           </TouchableOpacity>
           <Text style={[styles.title]}>Timeframes</Text>
-          {/* if editMode is true, then setAddMode is disabled */}
-          <TouchableOpacity onPress={() => setAddMode(editMode ? null : !addMode)}>
+          {/* if editMode is true,  addMode is also true */}
+          <TouchableOpacity onPress={() => setAddMode(!addMode)} >
             {addMode ? (
-              <Text style={{ fontSize: 15, color: '#F24E1E' }}>Cancel</Text>
+              <Text style={{ fontSize: 15, color: '#F24E1E' }}>Cancel</Text> // if addMode is true
             ) : (
-              <Icon source="plus" size={17} color="#407BFF" />
+              <Icon source="plus" size={17} color="#407BFF" /> // if addMode is false
             )}
           </TouchableOpacity>
         </View>
