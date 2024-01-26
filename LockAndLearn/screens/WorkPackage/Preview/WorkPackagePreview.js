@@ -232,11 +232,16 @@ const WorkPackagePreview = ({ props }) => {
           />
           <TouchableOpacity
             onPress={() => {
-              createReport(_id, reportReason);
-              console.log('params passed in createReport', _id, reportReason);
-              setModalVisible(false);
+              if (reportReason.trim() !== '') {
+                createReport(_id, reportReason);
+                console.log('params passed in createReport', _id, reportReason);
+                setModalVisible(false);
+              } else {
+                console.log('Reason for reporting is required.');
+              }
             }}
-            style={styles.modalButton}
+            style={[styles.modalButton, reportReason.trim() === '' && styles.disabledModalButton]}
+            disabled={reportReason.trim() === ''}
           >
             <Text style={styles.modalButtonText}>Submit Report</Text>
           </TouchableOpacity>
@@ -247,6 +252,9 @@ const WorkPackagePreview = ({ props }) => {
 };
 
 const styles = StyleSheet.create({
+  disabledModalButton: {
+    backgroundColor: '#ccc',
+  },
   modalContainer: {
     backgroundColor: 'white',
     padding: 20,
