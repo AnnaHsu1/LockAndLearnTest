@@ -70,6 +70,15 @@ const ChildTimeframes = ({ route, navigation }) => {
     }
   };
 
+  // Toggle switches to be on/off based on the timeframes retrieved from the database
+  const getSwitchesStatus = (timeframes) => {
+    var switchesStatus = {};
+    timeframes.forEach(function (timeframe) {
+      switchesStatus[timeframe._id] = timeframe.isActive;
+    }); 
+    setToggleSwitchItem(switchesStatus);
+  }
+
   const addTimeframe = async () => {
     try {
       console.log(selectedDay, starthour, startminute, endhour, endminute);
