@@ -346,12 +346,10 @@ router.get('/getParentUserName/:stripePurchaseId', async (req, res) => {
     );
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found for the given stripePurchaseId' });
+      return res.status(404).json({ message: 'User not found for the given stripePurchaseId, most likely a legacy account where the purchasedWorkPackage array is not in the right format in the DB.' });
     }
 
     const parentName = `${user.firstName} ${user.lastName}`;
-
-    res.status(200).json({ parentName });
 
     res.status(200).json({ parentName });
   } catch (error) {

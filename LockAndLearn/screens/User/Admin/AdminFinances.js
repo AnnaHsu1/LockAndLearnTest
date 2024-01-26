@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, ActivityIndicator} from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import {
@@ -9,106 +9,142 @@ import {
 
 
 const AdminFinances = ({ route, navigation }) => {
-    const styles = useStyles();
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [transactions, setTransactions] = useState([]);
-    const [balance, setBalance] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const styles = useStyles();
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [transactions, setTransactions] = useState([]);
+  const [balance, setBalance] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchAllTransactions();
-        fetchBalance();
-    }, []);
+  useEffect(() => {
+    fetchAllTransactions();
+    fetchBalance();
+  }, []);
 
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
+  const fetchAllTransactions = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/payment/transactions');
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Updated transactions:', data);
 
-    const fetchAllTransactions = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/payment/transactions');
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Updated transactions:', data);
+        setTransactions(data.payments);
+      } else {
+        console.error('Failed to fetch transactions:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    } finally {
+      console.log('set loading to false!');
+      setLoading(false); // Set loading to false when the request completes
+    }
+  };
+  const fetchBalance = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/payment/balanceAdmin');
+      if (response.ok) {
+        const data = await response.json();
 
-                setTransactions(data.payments);
+        console.log('balance', balance);
+        const availableBalance = data.balance.available[0].amount;
 
-            } else {
-                console.error('Failed to fetch transactions:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching transactions:', error);
-        } finally {
-            console.log('set loading to false!');
-            setLoading(false); // Set loading to false when the request completes
-        }
-    };
-    const fetchBalance = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/payment/balanceAdmin');
-            if (response.ok) {
-                const data = await response.json();
+        // Access the amount from the pending field
+        const pendingAmount = data.balance.pending[0].amount;
 
+        // Add the amounts together
+        const totalBalance = (availableBalance + pendingAmount) / 100;
 
-                console.log("balance", balance);
-                const availableBalance = data.balance.available[0].amount;
+        setBalance(totalBalance);
+        console.log('available', totalBalance);
+      } else {
+        console.error('Failed to fetch balance:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
 
-                // Access the amount from the pending field
-                const pendingAmount = data.balance.pending[0].amount;
+  const fetchMoreTransactionInfo = async (stripePurchaseId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/payment/getParentUserName/${stripePurchaseId}`
+      );
+      const data = await response.json();
 
-                // Add the amounts together
-                const totalBalance = (availableBalance + pendingAmount) / 100;
+      if (response.ok) {
+        // Assuming you want to do something with the parentName data
+        console.log('Parent Name:', data.parentName);
+      } else {
+        // Display error message in modal
+        setErrorMessage(data.message);
+        setErrorModalVisible(true);
+        console.error('Error:', data.message);
+      }
+    } catch (error) {
+      // Display error message in modal
+      setErrorMessage(error.message);
+      setErrorModalVisible(true);
+      console.error('Error:', error.message);
+    }
+  };
 
-                setBalance(totalBalance);
-                console.log("available", totalBalance);
-            } else {
-                console.error('Failed to fetch balance:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching balance:', error);
-        }
-    };
-    
-    return (
-      <View style={styles.page} testID="main-view">
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Finances</Text>
-          </View>
-          {/* Displaying the list of transactions */}
-          <View style={styles.userContainer}>
-            <Text style={styles.balance}>Balance: $ {balance}</Text>
-          </View>
-          <ScrollView style={styles.transactionListContainer}>
-            {transactions.length > 0 ? (
-              transactions.map((transaction) => (
-                <View key={transaction.id} style={styles.userContainer}>
-                  <Text style={styles.transactionName}> Transaction ID: {transaction.id} </Text>
-                  <Text style={styles.userDetails}> Parent Name: {transaction.id} </Text>
-                  <Text style={styles.userDetails}>
-                    {' '}
-                    Amount: {transaction.amount / 100} {transaction.currency}{' '}
-                  </Text>
-                  <Text style={styles.userDetails}> Status: {transaction.status} </Text>
-                  <TouchableOpacity style={styles.content} onPress={() => handleButtonClick(transaction.id)}>
-                    <Text style={styles.text}> More details </Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            ) : (
-                <Text style={styles.noTransactionsText}>
-                    {loading}
-                </Text>
-            )}
-            {loading && (
-                <View>
-                    <ActivityIndicator size="large" color="#0000ff" />
-                </View>
-            )}
-          </ScrollView>
+  return (
+    <View style={styles.page} testID="main-view">
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Finances</Text>
         </View>
+        {/* Displaying the list of transactions */}
+        <View style={styles.userContainer}>
+          <Text style={styles.balance}>Balance: $ {balance}</Text>
+        </View>
+        <ScrollView style={styles.transactionListContainer}>
+          {transactions.length > 0 ? (
+            transactions.map((transaction) => (
+              <View key={transaction.id} style={styles.userContainer}>
+                <Text style={styles.transactionName}> Transaction ID: {transaction.id} </Text>
+                <Text style={styles.userDetails}> Parent Name: {transaction.id} </Text>
+                <Text style={styles.userDetails}>
+                  {' '}
+                  Amount: {transaction.amount / 100} {transaction.currency}{' '}
+                </Text>
+                <Text style={styles.userDetails}> Status: {transaction.status} </Text>
+                <TouchableOpacity
+                  style={styles.content}
+                  onPress={() => fetchMoreTransactionInfo(transaction.id)}
+                >
+                  <Text style={styles.text}> More details </Text>
+                </TouchableOpacity>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noTransactionsText}>{loading}</Text>
+          )}
+          {loading && (
+            <View>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          )}
+        </ScrollView>
       </View>
-    );
+
+      {/* Error Modal */}
+      <Modal animationType="slide"
+        isVisible={errorModalVisible}
+        onBackdropPress={() => setErrorModalVisible(false)}
+        transparent={true}
+        style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.modalCard}>
+          <Text style={styles.modalText}>{errorMessage}</Text>
+          <TouchableOpacity
+          style={[styles.modalButton, { borderColor: 'red' }]}
+          onPress={() => setErrorModalVisible(false)}>
+            <Text>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </View>
+  );
 };
 
 const useStyles = CreateResponsiveStyle(
@@ -240,6 +276,34 @@ const useStyles = CreateResponsiveStyle(
     transactionListContainer: {
       paddingRight: 20,
     },
+    modal: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    modalCard: {
+      backgroundColor: '#fff',
+      borderRadius: 15,
+      padding: 20,
+      height: 400,
+      maxHeight: 250,
+      maxWidth: 800,
+      marginVertical: 10,
+      width: '80%',
+      justifyContent: 'space-between',
+    },
+    modalButton: {
+      borderWidth: 1,
+      borderRadius: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 10,
+      marginTop: 10,
+    },
+    modalText: {
+        color: '#696969',
+        fontSize: 18,
+        fontWeight: '300',
+      },
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
