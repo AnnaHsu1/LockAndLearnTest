@@ -345,12 +345,12 @@ const PackagePreview = () => {
             </TouchableOpacity>
             {selectedQuiz && (
               <View>
-                <Text>{selectedQuiz.name}</Text>
-                <Text>Questions:</Text>
+                <Text style={styles.quizNameText}>{selectedQuiz.name}</Text>
+                <Text style={styles.questionsHeaderText}>Questions you can find in the quiz:</Text>
                 <ScrollView>
                   {selectedQuiz.questions.map((question, index) => (
                     <View key={index}>
-                      <Text>{question.questionText}</Text>
+                      <Text style={styles.questionText}>{question.questionText}</Text>
                     </View>
                   ))}
                 </ScrollView>
@@ -377,9 +377,28 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   closeQuizModalText: {
-    color: 'blue', // Customize the close text color
+    color: '#4F85FF', // Custom color
     textAlign: 'right',
+    fontWeight: 'bold',
     marginBottom: 10,
+  },
+  quizNameText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4F85FF', // Custom color
+    marginBottom: 10,
+  },
+  questionsHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4F85FF', // Custom color
+    marginTop: 10,
+    marginBottom: 5,
+  },
+  questionText: {
+    fontSize: 14,
+    color: '#333333', // Dark grey color
+    marginBottom: 5,
   },
   workPackageInputText: {
     borderColor: '#407BFF',
