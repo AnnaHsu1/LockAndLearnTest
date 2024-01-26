@@ -5,19 +5,19 @@ const collectionName = 'Reports';
 const reportsSchema = new mongoose.Schema({
   idOfWp: {
     type: String,
-    required: true
+    required: false
   },
   timeOfReport: {
     type: String,
-    required: true
+    required: false
   },
   reporterId: {
     type: String,
-    required: true
+    required: false
   },
   reason: {
     type: String,
-    required: true
+    required: false
   }
 });
 

@@ -13,13 +13,14 @@ router.get('/all-reports', async (req, res) => {
   }
 });
 
-// Route to create a new report
 router.post('/create-report', async (req, res) => {
+  console.log('Request Body:', req.body);
+
   const report = new Reports({
     idOfWp: req.body.idOfWp,
     timeOfReport: req.body.timeOfReport,
     reporterId: req.body.reporterId,
-    reason: req.body.reason
+    reason: req.body.reason,
   });
 
   try {
@@ -43,11 +44,7 @@ router.get('/report/:id', async (req, res) => {
 // Route to update a report by ID
 router.patch('/update-report/:id', async (req, res) => {
   try {
-    const updatedReport = await Reports.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
+    const updatedReport = await Reports.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updatedReport);
   } catch (error) {
     res.status(400).json({ message: error.message });
