@@ -463,42 +463,89 @@ const ChildTimeframes = ({ route, navigation }) => {
               </View>
             ) : (
               /* editing time frame*/
-              <View style={{ width: '100%', height: '100%' }}>
-                {timeframes.map((timeframe) => (
-                  <View>
-                    <View
-                      style={{
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flex: 1,
-                        backgroundColor: '#FAFAFA',
-                        marginBottom: 10,
-                        width: '100%',
-                        alignSelf: 'center',
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          width: '111%',
-                          alignItems: 'center',
-                          justifyContent: 'space-around',
-                          flex: 1,
-                        }}
-                      >
-                        <View style={{ flexDirection: 'column' }}>
-                          <Text style={{ fontSize: 15 }}>{timeframe.day}</Text>
-                          <Text style={{ fontSize: 15 }}>
-                            {timeframe.startTime} - {timeframe.endTime}
-                          </Text>
-                        </View>
-                        <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                      </View>
+              <View
+              style={{
+                alignItems: 'center',
+                marginBottom: 10,
+                width: '100%',
+                height: '100%',
+                marginTop: 5,
+              }}
+            >
+              {/* go through all days (Monday -> Sunday) */}
+              {Object.keys(timeframes).map((day) => {
+                const startTimes = timeframes[day].map(time => Object.values(time)[3]);
+                const endTimes = timeframes[day].map(time => Object.values(time)[4]);
+                const timePeriods = [];  
+                // display message if there are no time periods for the day
+                if (startTimes.length === 0 && day === "Sunday") {
+                  timePeriods.push(
+                    <View key={`${day}-empty`} style={{ width: '70%', alignItems: 'center', marginBottom: 5 }}>
+                      <Text style={{ fontSize: 15, textAlign: 'center' }}>Add timeframes by clicking on the + to start Lock and Learn!</Text>
                     </View>
-                  </View>
-                ))}
-              </View>
+                  );
+                }
+                // display day (Monday, ..., Sunday) if there are time periods for the day
+                if (startTimes.length > 0) {
+                  timePeriods.push(
+                    <View key={`${day}-heading`} style={{ flexDirection: 'row', width: '70%', alignItems: 'center', marginBottom: 5 }}>
+                      <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{day}</Text>
+                    </View>
+                  );
+                }
+                // display time periods for the day
+                startTimes.forEach((time, index) => {
+                  console.log("delete", day, time, endTimes[index])
+                  timePeriods.push(
+                    <View
+                      key={`${day}-${index}`}
+                      style={styles.timePeriod}
+                    >
+                        <Text style={{ fontSize: 15 }}>
+                          {time} - {endTimes[index]}
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <TouchableOpacity
+                            onPress={() => {
+                              console.log("edit", day, time, endTimes[index])
+                              setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
+                            }}
+                          >
+                            <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => {
+                              toggleDeleteModal();
+                              setTimeframeId(timeframes[day][index]._id);
+                              setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
+                            }}
+                          >
+                            <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                          </TouchableOpacity>
+                        </View>
+                    </View> 
+                  )
+                  // add divider if is last time period of the day
+                  if (index === startTimes.length - 1 && day !== "Sunday") {
+                    timePeriods.push(
+                      <Divider 
+                        key={`${day}-${index}-divider`}
+                        style={{ width: "75%", marginTop: 15, marginBottom: 20}}
+                        color="#407BFF"
+                        width={1}
+                        orientation="horizontal"
+                      />
+                    )
+                  }
+                });
+                return timePeriods;
+              })}
+            </View>
             )}
           </>
         )}
