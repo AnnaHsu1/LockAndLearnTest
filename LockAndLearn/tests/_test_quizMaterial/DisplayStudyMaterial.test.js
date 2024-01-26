@@ -31,7 +31,7 @@ describe('DisplayStudyMaterial Component Tests', () => {
 
   it('renders correctly', () => {
     const { getByText } = render(<DisplayStudyMaterial />);
-    expect(getByText('No pdf has been found for this package.')).toBeTruthy();
+    expect(getByText('No assigned PDF material has been found.')).toBeTruthy();
   });
 
   it('fetches package info on component mount', async () => {
