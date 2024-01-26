@@ -61,8 +61,23 @@ describe('DisplayStudyMaterial Component Tests', () => {
 
     consoleSpy.mockRestore(); // Restore original console.error behavior
   });
-
-
-  // Add more tests as needed
+  it('renders PDF viewer when PDF URLs are available', async () => {
+    fetch.mockResponseOnce(JSON.stringify({
+      name: 'Math',
+      grade: 10,
+      packageDescription: 'Mathematics material',
+      materials: ['mockMaterialId1'], // Ensure this matches your component's expectations
+      quizzes: [],
+    }));
+  
+    const { findByText } = render(<DisplayStudyMaterial />);
+  
+    // Wait for the component to finish rendering based on the fetched data
+    await waitFor(() => {
+      expect(findByText('Document 1 out of 1')).toBeTruthy();
+    });
+  });
+  
+  
 });
 
