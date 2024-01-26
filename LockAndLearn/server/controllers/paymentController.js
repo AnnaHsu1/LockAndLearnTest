@@ -66,9 +66,6 @@ router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, r
         }
         console.log("success");
 
-        // Add the stripe purchased ID to the stripe purchased ID array of work package
- /*        WorkPackage.stripePurchaseId.push(stripeId.toString());*/
- 
         // Save the updated user's payment stripe info and the bought WPs
         user.purchasedWorkPackages.push({
           stripePurchaseId: stripeId.toString(),
@@ -89,6 +86,67 @@ router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, r
     }
 });
 
+// Endpoint to transfer work packages from CartWorkPackage to purchasedWorkPackage
+router.post("/transferWorkPackages/:userId", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+
+        console.log('userID received:', userId);
+
+        // Assuming you have a User model and CartWorkPackage and purchasedWorkPackage fields
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Generate a random string for stripePurchaseId
+        const stripeId = generateRandomString(20); // Adjust the length as needed
+ 
+        // Iterate through the CartWorkPackages and update the stripePurchaseId field
+        for (const workPackageId of user.CartWorkPackages) {
+            const workPackage = await WorkPackage.findById(workPackageId);
+            console.log("work Package:", workPackageId);
+            if (workPackage) {
+                // Add stripeId to the stripePurchaseId array
+                workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId];
+                await workPackage.save();
+            }
+        }
+        console.log("success");
+
+        // Save the updated user's payment stripe info and the bought WPs
+        user.purchasedWorkPackages.push({
+            stripePurchaseId: stripeId,
+            totalSale: 0,
+            workPackageIds: [...user.CartWorkPackages],
+        });
+
+        user.CartWorkPackages = []; // Empty the CartWorkPackages array
+
+        // Save the updated user
+        await user.save();
+
+        // Send a success response
+        res.status(200).json({ message: 'All work packages transferred to purchased successfully' });
+    } catch (error) {
+        console.error('Error transferring work packages to purchased:', error);
+        res.status(500).json({ error: 'An error occurred while transferring work packages to purchased.' });
+    }
+});
+
+// Function to generate a random string
+function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+    }
+
+    return result;
+}
 
 // Generates an access token from the PayPal API using credentials from the .env file
 const generateAccessToken = async () => {
@@ -282,7 +340,6 @@ router.get('/transactions', async (req, res) => {
 router.get('/balanceAdmin', async (req, res) => {
     try {
         const balance = await stripe.balance.retrieve();
-        console.log("balance", balance);
         // Return the list of payments as a response
         res.status(200).json({ balance: balance});
     } catch (error) {
