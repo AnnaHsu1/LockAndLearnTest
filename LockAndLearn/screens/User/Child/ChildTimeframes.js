@@ -148,6 +148,10 @@ const ChildTimeframes = ({ route, navigation }) => {
     getChildTimeframes();
   }, []);
 
+  useEffect(() => {
+    updateSwitch();
+  }, [toggleSwitchItem]);
+  
   // Function to toggle switch for timeframes based on timeframe id
   const toggleSwitch = async (timeframeId) => {
     setToggleSwitchItem((prevToggleSwitchItem) => ({
