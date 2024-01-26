@@ -137,19 +137,22 @@ const ParentHomeScreen = ({ navigation }) => {
           ) : null}
           <View style={styles.requestAccess}>
             <View style={[{ width: '100%' }]}>
-              <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+              <View
+                style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}
+              >
                 <Icon source="account-child-outline" color="#fff" size={25} />
                 <Text style={styles.requestAccessTitle}>Parental Access</Text>
               </View>
 
               <View style={[styles.pin]}>
                 {/* First time access */}
-                {user.parentalAccessPIN ? (
+                {user?.parentalAccessPIN ? (
                   <>
                     {/* Returning access */}
                     <Text style={styles.requestAccessText}>Enter PIN</Text>
                     <TextInput
                       style={styles.pinInput}
+                      testID="pin-input"
                       onChangeText={(pin) => setPin(pin)}
                       value={pin}
                     />
@@ -195,12 +198,14 @@ const ParentHomeScreen = ({ navigation }) => {
                       style={styles.pinInput}
                       onChangeText={(createPin) => setCreatePin(createPin)}
                       value={createPin}
+                      testID="create-pin-input"
                     />
                     <Text style={styles.requestAccessText}>Confirm PIN</Text>
                     <TextInput
                       style={styles.pinInput}
                       onChangeText={(confirmPin) => setConfirmPin(confirmPin)}
                       value={confirmPin}
+                      testID="confirm-pin-input"
                     />
                     <TouchableOpacity
                       mode="contained"
