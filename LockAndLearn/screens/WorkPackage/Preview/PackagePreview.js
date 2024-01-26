@@ -203,7 +203,7 @@ const PackagePreview = () => {
         >
           <Text style={styles.selectFiles}>Package</Text>
         </View>
-        <ScrollView style={styles.scrollContainer}>
+        <ScrollView style={styles.scrollContainer} testID='scrollView' >
           <View style={styles.containerInput}>
             {/* Display subject */}
             <View style={styles.containerPicker}>
@@ -216,7 +216,7 @@ const PackagePreview = () => {
               <Text style={styles.workPackageInputText}>{grade}</Text>
             </View>
             {/* Display subcategory */}
-            <View style={styles.containerPicker}>
+            <View style={styles.containerPicker} testID='subcategoryPicker'>
               <Text style={styles.textFields}>Subcategory</Text>
               <Text style={styles.workPackageInputText}>{selectedSubcategory}</Text>
             </View>
