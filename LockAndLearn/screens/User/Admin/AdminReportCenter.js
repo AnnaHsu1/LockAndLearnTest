@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, FlatList } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 
@@ -30,20 +30,24 @@ const AdminReportCenter = ({ route, navigation }) => {
         }
     };
 
-    const renderReportItem = ({ item }) => (
-        <View style={styles.reportItem}>
-            <Text style={styles.text}>
-                Report ID: {item._id}
-                {'\n'}
-                Work Package ID: {item.idOfWp}
-                {'\n'}
-                Time of Report: {item.timeOfReport}
-                {'\n'}
-                Reporter ID: {item.reporterId}
-                {'\n'}
-                Reason: {item.reason}
-            </Text>
-        </View>
+    const renderReportItems = () => (
+        <ScrollView>
+            {reports.map((item) => (
+                <View key={item._id} style={styles.reportItem}>
+                    <Text style={styles.text}>
+                        Report ID: {item._id}
+                        {'\n'}
+                        Work Package ID: {item.idOfWp}
+                        {'\n'}
+                        Time of Report: {item.timeOfReport}
+                        {'\n'}
+                        Reporter ID: {item.reporterId}
+                        {'\n'}
+                        Reason: {item.reason}
+                    </Text>
+                </View>
+            ))}
+        </ScrollView>
     );
 
     return (
@@ -52,11 +56,7 @@ const AdminReportCenter = ({ route, navigation }) => {
                 <View style={styles.header}>
                     <Text style={styles.title}>Report Center</Text>
                 </View>
-                <FlatList
-                    data={reports}
-                    renderItem={renderReportItem}
-                    keyExtractor={(item) => item._id}
-                />
+                {renderReportItems()}
             </View>
         </View>
     );
