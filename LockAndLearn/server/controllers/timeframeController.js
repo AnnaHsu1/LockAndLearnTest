@@ -83,4 +83,27 @@ router.put('/updatetimeframe', async (req, res) => {
   }
 });
 
+// Handle timeframe deletion
+router.delete('/deletetimeframe/:timeframeId', async (req, res) => {
+  try {
+    // Extract timeframe data from the request body
+    const timeframeId = req.params.timeframeId;
+    console.log(timeframeId);
+    // Input validations
+    if (!timeframeId) {
+      return res.status(400).json({ msg: 'Timeframe ID must be provided.' });
+    }
+
+    // Delete the timeframe
+    await Timeframe.deleteOne({ _id: timeframeId });
+
+    // Respond with the deleted timeframe
+    res.status(200).json({ message: 'Successfully deleted timeframe' });
+  } catch (error) {
+    // Handle errors if createUser function fails
+    console.error('Error deleting timeframe:', error);
+    res.status(500).json({ msg: 'Unable to delete timeframe' });
+  }
+});
+
 module.exports = router;
