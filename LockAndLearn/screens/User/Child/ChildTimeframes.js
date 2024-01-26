@@ -9,8 +9,9 @@ import {
   Switch,
   Modal,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { Button, Icon } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
+import { Divider } from '@rneui/themed';
 
 const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
@@ -29,6 +30,8 @@ const ChildTimeframes = ({ route, navigation }) => {
   const { height, width } = useWindowDimensions();
   const [toggleSwitchItem, setToggleSwitchItem] = useState({});
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [timeframeId, setTimeframeId] = useState('');
+  const [periodDate, setPeriodDate] = useState('');
 
   //   const [mondayTimeframes, setMondayTimeframes] = useState([
   //     { day: 'Monday' },
@@ -593,16 +596,6 @@ const ChildTimeframes = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  buttonEdit: {
-    backgroundColor: '#407BFF',
-    width: 85,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    padding: 8,
-    // marginTop: 10,
-    alignSelf: 'center',
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -629,92 +622,83 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
   },
-  subjectRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // Aligns children at both ends
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    marginBottom: 10,
-    width: '70%',
-    alignSelf: 'center',
-    borderRadius: 10,
-    padding: 10,
-  },
-  scrollContainer: {
-    width: '70%',
-  },
-  subjectDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1, // Takes available space, pushing TextInput and errorIcon to the right
-  },
-  subjectName: {
-    flex: 1,
-    fontSize: 20, // Increased font size
-    fontFamily: 'YourPrettierFont', // Replace with your font
-    paddingLeft: 10, // Space after the icon
-  },
-  subjectInput: {
-    width: '20%',
-    borderWidth: 2,
-    borderColor: '#407BFF',
-    borderRadius: 10,
-    padding: 10,
-    fontSize: 16,
-    color: '#333333',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 2,
-  },
-  subjectIcon: {
-    color: '#407BFF',
-  },
-  errorIcon: {
-    color: 'red',
-    fontSize: 20, // Adjust size as needed
-    fontWeight: 'bold',
-    marginLeft: 5, // Space from the input field
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '70%',
-    alignSelf: 'center',
-    marginTop: 20,
-  },
   button: {
     flex: 1,
     borderRadius: 10,
     marginHorizontal: 5, // Add space between buttons
   },
-  disabledButton: {
-    backgroundColor: '#E0F7FA', // very light blue color
+  textName: {
+    color: 'black',
+    fontSize: 16,
+    paddingBottom: 45,
+    textAlign: 'center',
   },
-  cancelButton: {
-    backgroundColor: 'gray', // Cancel button color
-    width: '20%', // Reduced width
-    height: 50, // Increased height
-    borderRadius: 10, // Rounded corners
-    justifyContent: 'center', // Center content vertically
-    marginHorizontal: 5, // Spacing between buttons
+  modalView: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
   },
-  saveButton: {
-    backgroundColor: '#4F85FF', // Save button color
-    width: '20%', // Reduced width
-    height: 50, // Increased height
-    borderRadius: 10, // Rounded corners
-    justifyContent: 'center', // Center content vertically
-    marginHorizontal: 5, // Spacing between buttons
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 15,
   },
-  buttonText: {
-    color: '#ffffff', // Text color for buttons
+  modalNoButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    width: '20%',
+    height: '70%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'grey',
   },
-  child: {
-    color: '#ffffff', // Text color for buttons
-    padding: 10, // Padding inside the button
+  modalYesButton: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    width: '20%',
+    height: '70%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FF4136',
+  },
+  modalContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  modalView1: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 250,
+    height: 200,
+  },
+  timePeriod: {
+    flexDirection: 'row',
+    width: '65%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  buttonEdit: {
+    backgroundColor: '#407BFF',
+    width: 85,
+    height: 35,
+    borderRadius: 9,
+    alignItems: 'center',
+    padding: 8,
+    // marginTop: 10,
+    alignSelf: 'center',
   },
 });
 
