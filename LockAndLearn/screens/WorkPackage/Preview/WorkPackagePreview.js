@@ -99,7 +99,7 @@ const WorkPackagePreview = () => {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.quizzes.length} Quizz(es)
+            {this_Package.quizzes.length} Quiz(zes)
           </Text>
         </View>
       </View>
