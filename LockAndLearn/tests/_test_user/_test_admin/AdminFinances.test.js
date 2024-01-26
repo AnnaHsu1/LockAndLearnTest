@@ -33,10 +33,10 @@ describe('AdminFinances Component', () => {
 
     await waitFor(() => {
       expect(getByText('Transaction ID: 1')).toBeTruthy();
-      expect(getByText('Amount: 10 USD')).toBeTruthy();
+      expect(getByText('Amount: 10$ USD')).toBeTruthy();
       expect(getByText('Status: completed')).toBeTruthy();
       expect(getByText('Transaction ID: 2')).toBeTruthy();
-      expect(getByText('Amount: 20 USD')).toBeTruthy();
+      expect(getByText('Amount: 20$ USD')).toBeTruthy();
       expect(getByText('Status: pending')).toBeTruthy();
     });
   });
