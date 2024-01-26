@@ -314,7 +314,7 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
 router.get('/transactions', async (req, res) => {
     try {
         // Use the Stripe API to retrieve a list of payments or transactions
-        const payments = await stripe.paymentIntents.list({ limit: 100 }); // Adjust parameters as needed
+        const payments = await stripe.paymentIntents.list({ limit: 10 }); // Adjust parameters as needed
 
         // Return the list of payments as a response
         res.status(200).json({ payments: payments.data });
@@ -334,6 +334,30 @@ router.get('/balanceAdmin', async (req, res) => {
         console.error('Error fetching transactions:', error);
         res.status(500).json({ error: 'An error occurred while fetching transactions.' });
     }
+});
+
+router.get('/getParentUserName/:stripePurchaseId', async (req, res) => {
+  const stripePurchaseId = req.params.stripePurchaseId;
+
+  try {
+    const user = await User.findOne(
+      { 'purchasedWorkPackages.stripePurchaseId': stripePurchaseId },
+      { firstName: 1, lastName: 1, _id: 0 }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found for the given stripePurchaseId' });
+    }
+
+    const parentName = `${user.firstName} ${user.lastName}`;
+
+    res.status(200).json({ parentName });
+
+    res.status(200).json({ parentName });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 
