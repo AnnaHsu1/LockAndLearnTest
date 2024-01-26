@@ -114,7 +114,7 @@ const AdminFinances = ({ route, navigation }) => {
                 </Text>
                 <Text style={styles.userDetails}>
                   {' '}
-                  <Text style={{ fontWeight: 'bold' }}>Amount:</Text> {transaction.amount / 100}{' '}
+                  <Text style={{ fontWeight: 'bold' }}>Amount:</Text> {transaction.amount / 100}${' '}
                   {transaction.currency}{' '}
                 </Text>
                 <Text style={styles.userDetails}>
