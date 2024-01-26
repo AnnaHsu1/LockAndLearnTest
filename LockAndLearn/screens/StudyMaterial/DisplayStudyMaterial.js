@@ -382,12 +382,13 @@ const DisplayStudyMaterial = ({ props }) => {
 
             
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Button
-                    style={styles.modalButtons}
-                    onPress={() => handlePrevPdf(currentPdfIndex-1, 0)}
-                >
-                    <Text style = {styles.buttonText}>Previous</Text>
-                </Button>
+                {currentPdfIndex+1 > 1 ? (
+                  <Button
+                      style={styles.modalButtons}
+                      onPress={() => handlePrevPdf(currentPdfIndex-1, 0)}
+                  >
+                      <Text style = {styles.buttonText}>Previous</Text>
+                  </Button>):(<View></View>)}
                 {currentPdfIndex+1 < pdfUrls.length ? (
                 <Button
                     style={styles.modalButtons}
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFAFA"
   },
   pdfContainer: {
-    width: '75%',
+    width: '60%',
     overflowY: 'auto',
     display: 'flex',
     justifyContent: 'center',
