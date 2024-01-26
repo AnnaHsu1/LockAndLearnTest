@@ -34,7 +34,7 @@ const WorkPackagePreview = ({ props }) => {
       const token = await getItem('@token');
       const user = JSON.parse(token);
       const userId = user._id;
-      
+
       console.log('User ID:', userId);
       return userId;
     } catch (error) {
@@ -45,10 +45,22 @@ const WorkPackagePreview = ({ props }) => {
   const createReport = async (workPackageId, reason) => {
     try {
       const userId = await fetchUserData();
-      console.log('xxxx',userId);
+      console.log('User ID:', userId);
 
       if (userId) {
         const currentTime = new Date().toISOString();
+
+        console.log(
+          'Creating Report with the following data:',
+          '\nworkPackageId:',
+          workPackageId,
+          '\ntimeOfReport:',
+          currentTime,
+          '\nreporterId:',
+          userId,
+          '\nreason:',
+          reason
+        );
 
         const response = await fetch('http://localhost:4000/reports/create-report', {
           method: 'POST',
@@ -221,6 +233,7 @@ const WorkPackagePreview = ({ props }) => {
           <TouchableOpacity
             onPress={() => {
               createReport(_id, reportReason);
+              console.log('params passed in createReport', _id, reportReason);
               setModalVisible(false);
             }}
             style={styles.modalButton}
