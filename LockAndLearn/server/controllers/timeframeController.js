@@ -55,4 +55,22 @@ router.get('/gettimeframes/:childId', async (req, res) => {
     }
 });
 
+// Handle timeframe update for isActive (switching on/off)
+router.put('/updatetimeframe', async (req, res) => {
+  try {
+    // Extract switch data from the request body
+    const { timeframeIds, switchesStatus } = req.body;
+
+    // Input validations
+    if (!timeframeIds) {
+      return res.status(400).json({ msg: 'Timeframe ID must be provided.' });
+    }
+    if (!switchesStatus) {
+      return res.status(400).json({ msg: 'Switch status must be provided.' });
+    }
+
+    // Update the isActive field of the timeframe
+    timeframeIds.forEach(async (timeframeId, index) => {
+      await Timeframe.updateOne({ _id: timeframeId }, { isActive: switchesStatus[index] });
+    });
 module.exports = router;
