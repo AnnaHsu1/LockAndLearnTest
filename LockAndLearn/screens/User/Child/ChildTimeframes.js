@@ -64,7 +64,10 @@ const ChildTimeframes = ({ route, navigation }) => {
       } else {
         console.log('Timeframes retrieved successfully!');
         // console.log(data);
-        setTimeframes(data);
+        getSwitchesStatus(data);
+        const orderedTimeframes = orderSortTimeframes(data);
+        console.log("orderedTimeframes", orderedTimeframes);
+        setTimeframes(orderedTimeframes);
       }
     } catch (error) {
       console.log(error);
