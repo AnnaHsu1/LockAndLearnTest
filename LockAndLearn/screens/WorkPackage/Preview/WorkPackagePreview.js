@@ -9,9 +9,9 @@ import {
   Dimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import Modal from 'react-native-modal';
+import PropTypes from 'prop-types';
 
-const WorkPackagePreview = ({ props }) => {
+const WorkPackagePreview = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [packages, setPackages] = useState([]);
@@ -42,6 +42,7 @@ const WorkPackagePreview = ({ props }) => {
       }
     } catch (error) {
       console.error('Network error:', error);
+      
     }
   };
 
@@ -162,6 +163,18 @@ const WorkPackagePreview = ({ props }) => {
   );
 };
 
+WorkPackagePreview.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      workPackage: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        grade: PropTypes.number.isRequired,
+      }),
+    }),
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   containerCard: {
     flexDirection: 'column',
@@ -174,41 +187,6 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: '90%',
     alignSelf: 'center',
-  },
-  deleteConfirmationModal: {
-    width: '50%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmationText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  confirmationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  confirmButton: {
-    backgroundColor: '#F24E1E',
-    padding: 10,
-    borderRadius: 10,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 10,
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
   container: {
     flex: 1,
@@ -247,20 +225,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#407BFF',
   },
-  buttonUpload: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: '5%',
-    marginBottom: '5%',
-  },
   buttonReportText: {
-    color: '#F24E1E', 
-    borderColor: '#F24E1E', 
+    color: '#F24E1E',
+    borderColor: '#F24E1E',
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
