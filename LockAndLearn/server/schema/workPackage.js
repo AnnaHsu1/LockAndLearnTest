@@ -49,6 +49,9 @@ const WorkPackage = mongoose.model('WorkPackage', new mongoose.Schema({
         type: [ratingsSchema],
         default: [],
     },
+    deletedByTutor: {
+        type: Boolean,
+    },
 }), collectionName);
 
 module.exports = WorkPackage;
