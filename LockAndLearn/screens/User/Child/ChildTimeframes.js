@@ -15,7 +15,6 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
   const childSelected = route.params.child;
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -27,6 +26,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [endminute, setEndMinute] = useState('');
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { height, width } = useWindowDimensions();
+  const [toggleSwitchItem, setToggleSwitchItem] = useState({});
 
   //   const [mondayTimeframes, setMondayTimeframes] = useState([
   //     { day: 'Monday' },
@@ -144,6 +144,14 @@ const ChildTimeframes = ({ route, navigation }) => {
     getChildTimeframes();
   }, []);
 
+  // Function to toggle switch for timeframes based on timeframe id
+  const toggleSwitch = async (timeframeId) => {
+    setToggleSwitchItem((prevToggleSwitchItem) => ({
+      ...prevToggleSwitchItem,
+      [timeframeId]: !prevToggleSwitchItem[timeframeId] || false,
+    }));
+  }
+  
   return (
     <ImageBackground
       source={require('../../../assets/backgroundCloudyBlobsFull.png')}
