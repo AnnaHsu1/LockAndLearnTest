@@ -39,6 +39,7 @@ router.get('/getWorkPackages/:instructorId', async (req, res) => {
 
 // Fetch and delete a specific work package by ID
 router.delete('/deleteWorkPackage/:workpackageID', async (req, res) => {
+router.put('/deleteWorkPackage/:workpackageID', async (req, res) => {
   try {
     const workPackageId = req.params.workpackageID;
     const deletedWorkPackage = await WorkPackage2.findByIdAndDelete(workPackageId);
