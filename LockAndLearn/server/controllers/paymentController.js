@@ -71,10 +71,16 @@ const calculateTotalRevenue = async (workPackageIds) => {
 
 
 // Endpoint to transfer work packages from CartWorkPackage to purchasedWorkPackage
-router.post("/transferWorkPackages/:userId", async (req, res) => {
+router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, res) => {
     try {
         const userId = req.params.userId;
-        console.log(userId);
+        const stripeId = req.params.stripeId;
+        const stripeSaleInCents = parseFloat(req.params.stripeSale);
+        const stripeSale = stripeSaleInCents / 100;
+
+        console.log('userID received:', userId);
+        console.log('stripeID received:', stripeId);
+        console.log('stripeSale received:', stripeSale);
         // Assuming you have a User model and CartWorkPackage and purchasedWorkPackage fields
         const user = await User.findById(userId);
         if (!user) {
@@ -107,8 +113,14 @@ router.post("/transferWorkPackages/:userId", async (req, res) => {
         //user.purchasedWorkPackages.push(...updatedPurchasedWorkPackages);
         //user.CartWorkPackages = []; // Empty the CartWorkPackages array
 
-        // Move all CartWorkPackages to purchasedWorkPackages
-        user.purchasedWorkPackages.push(...user.CartWorkPackages);
+        
+        // Save the updated user's payment stripe info and the bought WPs
+        user.purchasedWorkPackages.push({
+          stripePurchaseId: stripeId.toString(),
+          totalSale: stripeSale,
+          workPackageIds: [...user.CartWorkPackages],
+        });
+
         user.CartWorkPackages = []; // Empty the CartWorkPackages array
 
         // Save the updated user

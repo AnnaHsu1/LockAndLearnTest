@@ -43,9 +43,8 @@ const CheckoutForm = ({ navigation, route }) => {
         setMessage('An unexpected error occurred.');
       }
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      // Payment succeeded, you can navigate to the success screen
       setMessage('Payment successful!');
-      transferToPurchasedWorkPackage(userId);
+      transferToPurchasedWorkPackage(userId, paymentIntent.id, paymentIntent.amount);
       navigation1.navigate('PurchaseSuccessPage'); // Replace 'SuccessScreen' with your screen name
     } else {
       console.log('Payment failed');
@@ -53,9 +52,11 @@ const CheckoutForm = ({ navigation, route }) => {
 
     setIsProcessing(false);
   };
-  const transferToPurchasedWorkPackage = async (userId) => {
+
+  
+  const transferToPurchasedWorkPackage = async (userId, stripeId, stripeSale) => {
     try {
-      const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}`, {
+      const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}/${stripeId}/${stripeSale}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
