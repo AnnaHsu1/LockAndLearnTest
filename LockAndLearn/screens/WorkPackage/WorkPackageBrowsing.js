@@ -297,7 +297,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
   };
 
-
   // Function to check if a work package is in the user's cart
   const isInUserCart = (workPackageId) => {
     return cartWorkPackages.some((workPackage) => workPackage._id === workPackageId);
@@ -392,13 +391,28 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
   const CheckboxComponent = ({ label, checked, onChange }) => {
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8, marginHorizontal: 8 }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginVertical: 8,
+          marginHorizontal: 8,
+        }}
+      >
         <Checkbox
           status={checked ? 'checked' : 'unchecked'}
           onPress={onChange}
           color="blue" // Custom color when checked
         />
-        <Text style={{ fontWeight: 'none', marginLeft: -5, fontSize: 14, color: '#333', lineHeight: 24 }}>
+        <Text
+          style={{
+            fontWeight: 'none',
+            marginLeft: -5,
+            fontSize: 14,
+            color: '#333',
+            lineHeight: 24,
+          }}
+        >
           {label}
         </Text>
       </View>
@@ -547,7 +561,16 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
                   <View style={styles.workPackageText}>
-                    <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                    
+                    <TouchableOpacity
+                      key={workPackage._id}
+                      onPress={() => {
+                        console.log(workPackage);
+                        navigation.navigate('WorkPackagePreview', { workPackage });
+                      }}
+                    >
+                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                    </TouchableOpacity>
 
                     <View style={styles.containerTag}>
                       <View style={styles.tagBox}>
@@ -590,8 +613,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         maxWidth: '100%', // Adjust width to fit the content
                         minHeight: 20,
                         justifyContent: 'center', // Adjust alignment as needed
-                          backgroundColor: isInUserCart(workPackage._id) ? '#25B346' : undefined,
-                          flexWrap: 'wrap',
+                        backgroundColor: isInUserCart(workPackage._id) ? '#25B346' : undefined,
+                        flexWrap: 'wrap',
                       }}
                       style={[styles.button]}
                       onPress={() => {
@@ -772,16 +795,16 @@ const styles = StyleSheet.create(
       backgroundColor: '#4F85FF',
       borderRadius: 10,
       marginTop: 10,
-        height: 40,
-        flexWrap: 'wrap',
+      height: 40,
+      flexWrap: 'wrap',
     },
 
     cart: {
       paddingLeft: 0,
       textAlign: 'center',
       justifyContent: 'center',
-        fontSize: 20,
-        flexWrap: 'wrap',
+      fontSize: 20,
+      flexWrap: 'wrap',
     },
     selectFiles: {
       color: '#696969',
@@ -914,13 +937,12 @@ const styles = StyleSheet.create(
       alignItems: 'center',
     },
     checkboxGroupStyle: {
-        backgroundColor: 'FAFAFA',
+      backgroundColor: 'FAFAFA',
       width: '100%',
       flexDirection: 'row',
       justifyContent: 'center',
       alignSelf: 'top',
       alignItems: 'center',
-  
     },
     checkBoxStyle: {
       backgroundColor: 'white',
