@@ -378,9 +378,6 @@ const useStyles = CreateResponsiveStyle(
     full_width: {
       minWidth: '100%',
     },
-    auto_width: {
-      minWidth: 'auto',
-    },
     half_width: {
       width: wp('40%'),
     },
