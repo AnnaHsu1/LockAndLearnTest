@@ -152,6 +152,34 @@ const ChildTimeframes = ({ route, navigation }) => {
     }));
   }
   
+  // Function to update the database when a switch is toggled
+  const updateSwitch = async () => {
+    try {
+      if (Object.keys(toggleSwitchItem).length === 0) {
+        return;
+      }
+      const response = await fetch('http://localhost:4000/timeframes/updateTimeframe', {
+        method: 'PUT',
+        credentials: 'include', // Include cookies in the request
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timeframeIds: Object.keys(toggleSwitchItem),
+          switchesStatus: Object.values(toggleSwitchItem),
+        }),
+      });
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        console.log('Timeframe updated successfully!');
+      }
+    } catch (error) {
+      console.log(error.msg);
+    }
+  }
+
   return (
     <ImageBackground
       source={require('../../../assets/backgroundCloudyBlobsFull.png')}
