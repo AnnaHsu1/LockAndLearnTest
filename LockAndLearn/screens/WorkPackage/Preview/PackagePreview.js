@@ -347,11 +347,12 @@ const PackagePreview = () => {
             {selectedQuiz && (
               <View>
                 <Text style={styles.quizNameText}>{selectedQuiz.name}</Text>
+                <View style={styles.divider}></View>
                 <Text style={styles.questionsHeaderText}>Questions you can find in the quiz:</Text>
                 <ScrollView>
                   {selectedQuiz.questions.map((question, index) => (
                     <View key={index}>
-                      <Text style={styles.questionText}>{question.questionText}</Text>
+                      <Text style={styles.questionText}>•{question.questionText}</Text>
                     </View>
                   ))}
                 </ScrollView>
@@ -488,6 +489,11 @@ const styles = StyleSheet.create({
   },
   CloseButton: {
     alignSelf: 'flex-end',
+  },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey',
+    marginVertical: 5,
   },
 
 });
