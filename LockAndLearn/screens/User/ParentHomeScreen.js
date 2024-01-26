@@ -10,7 +10,7 @@ const ParentHomeScreen = ({ navigation }) => {
   const styles = useStyles();
   const route = useRoute();
 
-  const [user, setUser] = useState(); // State to track authentication
+  const [user, setUser] = useState();
   const [children, setChildren] = useState([]);
   const [parentalAccess, setParentalAccess] = useState(false);
   const [createPin, setCreatePin] = useState('');
@@ -18,6 +18,7 @@ const ParentHomeScreen = ({ navigation }) => {
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
 
+  // Select a child and navigate to see if it is time to lock or free time
   const selectChild = (child) => {
     if (child) {
       // todo: redirect to either lock or free time screen depending on child's schedule
@@ -27,6 +28,7 @@ const ParentHomeScreen = ({ navigation }) => {
     }
   };
 
+  // Handle the request for parental access
   const handleRequest = async (newAccess) => {
     let data = null;
     if (newAccess) {
@@ -94,6 +96,7 @@ const ParentHomeScreen = ({ navigation }) => {
     }
   };
 
+  // Get the children of the user
   const getChildren = async () => {
     try {
       const user = await getUser();
@@ -127,7 +130,7 @@ const ParentHomeScreen = ({ navigation }) => {
       ) : (
         <Text style={styles.title}>Welcome back</Text>
       )}
-
+      {/* Is parent requesting parental access, if yes then show the pin inputs, else show children */}
       {parentalAccess ? (
         <View style={[styles.container, { alignItems: 'center' }]}>
           {error ? (
@@ -189,6 +192,7 @@ const ParentHomeScreen = ({ navigation }) => {
                     </TouchableOpacity>
                   </>
                 ) : (
+                // First time access
                   <>
                     <Text style={styles.requestAccessText}>
                       It seems like this is your first time requesting parental access.
@@ -264,6 +268,7 @@ const ParentHomeScreen = ({ navigation }) => {
           </View>
         </View>
       ) : (
+        // Show children
         <View style={styles.container}>
           {children ? <Text style={styles.text}>Select a Child </Text> : null}
           {children.map((child) => (
