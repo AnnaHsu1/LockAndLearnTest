@@ -39,6 +39,38 @@ const WorkPackagePreview = ({ props }) => {
     }
   };
 
+  const createReport = async (workPackageId, reason) => {
+    try {
+      const userId = await fetchUserData();
+  
+      if (userId) {
+        const response = await fetch('http://localhost:4000/reports/createReport', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            workPackageId,
+            reporterId: userId,
+            reason,
+          }),
+        });
+  
+        if (response.status === 200 || response.status === 201) {
+          console.log('Report created successfully');
+          // Optionally, you can fetch the updated list of reports after creating one.
+          fetchPackages();
+        } else {
+          console.error('Error creating report:', response.status);
+        }
+      } else {
+        console.log('Must be logged in to create a report');
+      }
+    } catch (error) {
+      console.error('Network error while creating report:', error);
+    }
+  };
+
   // function to get work package information
   const fetchPackages = async () => {
     try {
