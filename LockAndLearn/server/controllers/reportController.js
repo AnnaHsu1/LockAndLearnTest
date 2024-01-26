@@ -17,10 +17,6 @@ router.get('/all-reports', async (req, res) => {
 router.post('/create-report', async (req, res) => {
   const report = new Reports({
     idOfWp: req.body.idOfWp,
-    nameOfWp: req.body.nameOfWp,
-    gradeOfWp: req.body.gradeOfWp,
-    descriptionOfWp: req.body.descriptionOfWp,
-    instructorId: req.body.instructorId,
     timeOfReport: req.body.timeOfReport,
     reporterId: req.body.reporterId,
     reason: req.body.reason
