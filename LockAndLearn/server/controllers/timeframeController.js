@@ -16,24 +16,31 @@ router.post('/addtimeframe', async (req, res) => {
     startMin = parseInt(startTime.substring(3, 5));
     endHour = parseInt(endTime.substring(0, 2));
     endMin = parseInt(endTime.substring(3, 5));
-    // console.log(startHour, startMin, endHour, endMin);
 
     // Input validations
-    if (!childId || !day || !startTime || !endTime) {
+    if (!childId || !day || !startHour || !startMin || !endHour || !endMin) {
       return res.status(400).json({ msg: 'All fields must be filled.' });
+    }
+
+    if (startHour < 0 || startHour > 23 || endHour < 0 || endHour > 23) {
+      return res.status(400).json({ msg: 'Hour must be between 0 and 23.' });
+    }
+
+    if (startMin < 0 || startMin > 59 || endMin < 0 || endMin > 59) {
+      return res.status(400).json({ msg: 'Minute must be between 0 and 59.' });
     }
 
     if (startHour > endHour || (startHour === endHour && startMin > endMin)) {
       return res.status(400).json({ msg: 'Start time must be before end time.' });
     }
 
-    const newTimeframe = new Timeframe({
-      childId,
-      day,
-      startTime,
-      endTime,
-    });
-    await newTimeframe.save();
+    // const newTimeframe = new Timeframe({
+    //   childId,
+    //   day,
+    //   startTime,
+    //   endTime,
+    // });
+    // await newTimeframe.save();
 
     // Respond with the newly created user
     res.status(201).json({ message: 'Successfully added timeframe' });
@@ -45,14 +52,14 @@ router.post('/addtimeframe', async (req, res) => {
 });
 
 router.get('/gettimeframes/:childId', async (req, res) => {
-    try {
-        const childId = req.params.childId;
-        const timeframes = await Timeframe.find({ childId: childId });
-        res.status(200).json(timeframes);
-    } catch (error) {
-        console.error('Error getting timeframes:', error);
-        res.status(500).json({ error: 'Unable to get timeframes' });
-    }
+  try {
+    const childId = req.params.childId;
+    const timeframes = await Timeframe.find({ childId: childId });
+    res.status(200).json(timeframes);
+  } catch (error) {
+    console.error('Error getting timeframes:', error);
+    res.status(500).json({ error: 'Unable to get timeframes' });
+  }
 });
 
 // Handle timeframe update for isActive (switching on/off)

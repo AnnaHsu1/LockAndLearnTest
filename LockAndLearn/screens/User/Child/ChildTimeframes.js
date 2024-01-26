@@ -33,26 +33,8 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [timeframeId, setTimeframeId] = useState('');
   const [periodDate, setPeriodDate] = useState('');
-
-  //   const [mondayTimeframes, setMondayTimeframes] = useState([
-  //     { day: 'Monday' },
-  //     // {
-  //     //     start: "7:00AM",
-  //     //     end: "9:00AM"
-  //     // },
-  //     // {
-  //     //     start: "4:00PM",
-  //     //     end: "5:00PM"
-  //     // }
-  //   ]);
-  //   const [tuesdayTimeframes, setTuesdayTimeframes] = useState([]);
-  //   const [wednesdayTimeframes, setWednesdayTimeframes] = useState([]);
-  //   const [thursdayTimeframes, setThursdayTimeframes] = useState([]);
-  //   const [fridayTimeframes, setFridayTimeframes] = useState([]);
-  //   const [saturdayTimeframes, setSaturdayTimeframes] = useState([]);
-  //   const [sundayTimeframes, setSundayTimeframes] = useState([]);
-
   const [timeframes, setTimeframes] = useState([]);
+  const [error, setError] = useState('');
 
   const getChildTimeframes = async () => {
     try {
@@ -71,7 +53,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         // console.log(data);
         getSwitchesStatus(data);
         const orderedTimeframes = orderSortTimeframes(data);
-        console.log('orderedTimeframes', orderedTimeframes);
+        // console.log('orderedTimeframes', orderedTimeframes);
         setTimeframes(orderedTimeframes);
       }
     } catch (error) {
@@ -110,7 +92,6 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   const addTimeframe = async () => {
     try {
-      console.log(selectedDay, starthour, startminute, endhour, endminute);
       const response = await fetch('http://localhost:4000/timeframes/addtimeframe', {
         method: 'POST',
         credentials: 'include', // Include cookies in the request
@@ -120,8 +101,14 @@ const ChildTimeframes = ({ route, navigation }) => {
         body: JSON.stringify({
           childId: childSelected._id,
           day: selectedDay,
-          startTime: starthour + ':' + startminute,
-          endTime: endhour + ':' + endminute,
+          startTime:
+            (starthour.length < 2 ? `0${starthour}` : starthour) +
+            ':' +
+            (startminute.length < 2 ? `0${startminute}` : startminute),
+          endTime:
+            (endhour.length < 2 ? `0${endhour}` : endhour) +
+            ':' +
+            (endminute.length < 2 ? `0${endminute}` : endminute),
         }),
       });
 
@@ -129,6 +116,7 @@ const ChildTimeframes = ({ route, navigation }) => {
 
       if (response.status != 201) {
         console.log(data.msg);
+        setError(data.msg);
       } else {
         console.log('Timeframe added successfully!');
         setAddMode(false);
@@ -211,6 +199,11 @@ const ChildTimeframes = ({ route, navigation }) => {
     }
   };
 
+  const cancel = () => {
+    setAddMode(!addMode);
+    setError('');
+  };
+
   useEffect(() => {
     setDeviceWidth(width);
     setChild(childSelected);
@@ -223,7 +216,6 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   useEffect(() => {
     getChildTimeframes();
-    console.log(555555555555555555555555);
     setAddedSuccessful(false);
   }, [addedSuccessful]);
 
@@ -275,7 +267,7 @@ const ChildTimeframes = ({ route, navigation }) => {
           </TouchableOpacity>
           <Text style={[styles.title]}>Timeframes</Text>
           {/* if editMode is true,  addMode is also true */}
-          <TouchableOpacity onPress={() => setAddMode(!addMode)}>
+          <TouchableOpacity onPress={cancel}>
             {addMode ? (
               <Text style={{ fontSize: 15, color: '#F24E1E' }}>Cancel</Text> // if addMode is true
             ) : (
@@ -283,6 +275,15 @@ const ChildTimeframes = ({ route, navigation }) => {
             )}
           </TouchableOpacity>
         </View>
+        {error ? (
+          <View style={[{ width: '80%', margin: 20, borderColor: '#F24E1E', borderWidth: 1 }]}>
+            <Text
+              style={{ color: '#F24E1E', fontSize: 14, textAlign: 'center', paddingVertical: 10 }}
+            >
+              {error}
+            </Text>
+          </View>
+        ) : null}
         {/* adding new timeframes */}
         {addMode ? (
           <View style={[{ width: '100%' }]}>
