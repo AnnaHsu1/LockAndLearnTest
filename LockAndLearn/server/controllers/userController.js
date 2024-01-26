@@ -110,6 +110,11 @@ router.post('/signup', async (req, res) => {
       if (!isOlderThan18) {
           return res.status(400).json({ msg: 'You must be at least 18 years old to register.' });
       }
+      // Ensure that the first name and last name start with a capital letter
+      const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+      const capitalizedFirstName = capitalizeFirstLetter(FirstName);
+      const capitalizedLastName = capitalizeFirstLetter(LastName);
 
     //Encrypt the input password
     const salt = await bcrypt.genSalt();
@@ -119,8 +124,8 @@ router.post('/signup', async (req, res) => {
 
     // Call the createUser function to create a new user
     const user = await createUser({
-      FirstName,
-      LastName,
+      FirstName: capitalizedFirstName,
+      LastName: capitalizedLastName,
       Email,
       isParent,
       passwordHash,
