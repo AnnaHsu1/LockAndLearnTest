@@ -37,16 +37,22 @@ router.get('/getWorkPackages/:instructorId', async (req, res) => {
   }
 });
 
-// Fetch and delete a specific work package by ID
-router.delete('/deleteWorkPackage/:workpackageID', async (req, res) => {
+// Fetch and add delete tag (from tutor) to a specific work package by ID 
 router.put('/deleteWorkPackage/:workpackageID', async (req, res) => {
   try {
     const workPackageId = req.params.workpackageID;
-    const deletedWorkPackage = await WorkPackage2.findByIdAndDelete(workPackageId);
-    if (!deletedWorkPackage) {
-      return res.status(404).json({ error: 'Work package not found' });
+    // add field in workpackage to indicate that tutor deleted the workpackage
+    const existingWorkPackage = await WorkPackage2.findById(workPackageId);
+
+    // input validation
+    if (!existingWorkPackage) {
+      throw new Error('Work package not found with the specified _id');
     }
-    res.status(200).json(deletedWorkPackage);
+    else {
+      existingWorkPackage.deletedByTutor = true;
+      const deletedWorkPackage = await existingWorkPackage.save();
+      res.status(200).json(deletedWorkPackage);
+    }    
   } catch (error) {
     console.error('Error deleting work package:', error);
     res.status(500).json({ error: 'An error occurred while deleting the work package.' });
