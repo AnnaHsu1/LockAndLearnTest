@@ -223,10 +223,11 @@ const WorkPackagePreview = ({ props }) => {
         backdropOpacity={0.5}
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Report Work Package</Text>
+          <Text style={styles.modalTitle}>Report this Work Package</Text>
           <TextInput
             style={styles.modalInput}
-            placeholder="Enter reason for reporting"
+            multiline={true}
+            placeholder="Enter Reason of Report"
             value={reportReason}
             onChangeText={(text) => setReportReason(text)}
           />
@@ -259,12 +260,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
+    width: '70%',
+    alignSelf: 'center',
   },
-
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#4F85FF',
   },
 
   modalInput: {
@@ -273,10 +276,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    height: 100,
+    textAlignVertical: 'top',
   },
 
   modalButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#4F85FF',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -319,19 +324,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F24E1E',
     padding: 10,
     borderRadius: 10,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 10,
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
   container: {
     flex: 1,
