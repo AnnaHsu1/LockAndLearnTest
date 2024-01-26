@@ -1,5 +1,5 @@
 const express = require('express');
-const { parseISO, isBefore } = require('date-fns');
+const { parseISO, isBefore, differenceInYears, startOfDay } = require('date-fns');
 const bcrypt = require('bcrypt');
 const User = require('../schema/userSchema.js');
 const { createUser, getUserByEmail } = require('../manager/userManager.js');
@@ -57,6 +57,12 @@ router.post('/signup', async (req, res) => {
     // Input validations
     if (!FirstName || !LastName || !Email || !Password || !CPassword || !DOB || !isParent) {
       return res.status(400).json({ msg: 'All fields must be filled.' });
+      }
+
+    // Validate FirstName and LastName with regular expressions
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!nameRegex.test(FirstName) || !nameRegex.test(LastName)) {
+        return res.status(400).json({ msg: 'First and Last names can only contain letters.' });
     }
     if (!(Email.includes('@') && Email.includes('.'))) {
       return res.status(400).json({ msg: 'Invalid email format.' });
@@ -73,16 +79,37 @@ router.post('/signup', async (req, res) => {
 
     if (Password !== CPassword) {
       return res.status(400).json({ msg: 'Passwords must match.' });
-    }
+      }
+      const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!DOB || !dobRegex.test(DOB)) {
+          return res.status(400).json({ msg: 'Invalid date format. Please use YYYY-MM-DD.' });
+      }
 
-    // Parse the date of birth and the current date
-    const dob = parseISO(DOB);
-    const currentDate = new Date();
-    const isValid = isBefore(dob, currentDate);
 
-    if (!isValid) {
-      return res.status(400).json({ msg: 'Invalid date of birth.' });
-    }
+      // Attempt to parse the date of birth
+      let dob;
+      try {
+          dob = parseISO(DOB);
+      } catch (error) {
+          return res.status(400).json({ msg: 'Invalid date. Please provide a valid date in the format YYYY-MM-DD.' });
+      }
+
+      // Parse the current date
+      const currentDate = new Date();
+
+      // Check if the date of birth is a day before the current day
+      const isBeforeCurrentDay = isBefore(dob, startOfDay(currentDate));
+
+      if (!isBeforeCurrentDay) {
+          return res.status(400).json({ msg: 'Invalid date of birth. It should be a day before the current day.' });
+      }
+
+      // Check if the user is older than 18
+      const isOlderThan18 = differenceInYears(currentDate, dob) >= 18;
+
+      if (!isOlderThan18) {
+          return res.status(400).json({ msg: 'You must be at least 18 years old to register.' });
+      }
 
     //Encrypt the input password
     const salt = await bcrypt.genSalt();
