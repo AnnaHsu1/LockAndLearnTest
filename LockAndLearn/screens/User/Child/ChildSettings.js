@@ -18,40 +18,50 @@ const ChildSettings = ({ route, navigation }) => {
     setChild(childSelected);
   }, []);
 
-
   return (
     <View style={styles.page}>
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: 'space-between' }]}>
         <View style={styles.header}>
           <Icon source="account-circle" color="#fff" size={30} />
           <Text style={styles.title}>
             {child.firstName} {child.lastName}
           </Text>
         </View>
-        {/* Device Controls */}
-        <Button
-          testID="device-controls"
-          mode="contained"
-          onPress={() => {
-            console.log('See performance');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Device Controls</Text>
-        </Button>
-        {/* Passing Grade*/}
-        <Button
-          testID="passing-grade"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('ChildPassingGradePerSubject', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Passing Grade</Text>
-        </Button>
-
-     
+        <View style={[{ flex: 1, justifyContent: 'space-around' }]}>
+          {/* Device Controls */}
+          <Button
+            testID="device-controls"
+            mode="contained"
+            onPress={() => {
+              console.log('See performance');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Device Controls</Text>
+          </Button>
+          {/* Passing Grade*/}
+          <Button
+            testID="passing-grade"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('ChildPassingGradePerSubject', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Passing Grade</Text>
+          </Button>
+          {/* Scheduling */}
+          <Button
+            testID="scheduling"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('ChildTimeframes', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Scheduling</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -67,7 +77,7 @@ const useStyles = CreateResponsiveStyle(
     },
     container: {
       minWidth: '90%',
-      minHeight: '90%',
+      minHeight: '50%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -121,6 +131,7 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
+      padding: 10,
     },
     options: {
       flex: 0.75,

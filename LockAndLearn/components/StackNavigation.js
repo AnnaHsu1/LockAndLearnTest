@@ -58,6 +58,7 @@ import AdminCertificates from '../screens/User/Admin/AdminCertificates';
 import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial';
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
+import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
 
 const Stack = createNativeStackNavigator();
 
@@ -373,6 +374,11 @@ const StackNavigation = () => {
             name="PackagePreview"
             component={PackagePreview}
             options={{ title: 'PackagePreview' }}
+        />
+        <Stack.Screen
+          name="ChildTimeframes"
+          component={ChildTimeframes}
+          options={{ title: `List Child's Timeframes` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
