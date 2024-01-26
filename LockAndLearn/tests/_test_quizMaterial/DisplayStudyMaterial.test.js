@@ -56,7 +56,7 @@ describe('DisplayStudyMaterial Component Tests', () => {
 
     await waitFor(() => {
       // Use waitFor to wait for asynchronous operations to complete
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching workPackage');
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching study material');
     });
 
     consoleSpy.mockRestore(); // Restore original console.error behavior

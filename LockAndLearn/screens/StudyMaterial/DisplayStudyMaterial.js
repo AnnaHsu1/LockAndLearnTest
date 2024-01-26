@@ -3,42 +3,27 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   ImageBackground,
-  FlatList,
-  Dimensions,
 } from 'react-native';
 import { Icon, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-// import Modal from 'react-native-modal';
-// import { getItem } from '../../components/AsyncStorage';
+
 
 const DisplayStudyMaterial = ({ props }) => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [packages, setPackages] = useState([]);
-  // const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
-  // const [selectedPackageId, setSelectedPackageId] = useState(null);
   const params = route.params;
   const childID = params?.child_ID;
-//   const { _id, name, grade } = params?.workPackage;
-  const _id = "6599f29af077ba0bb1dc2093"
-  // const name = "Math"
-  // const grade = 10
-  const { width } = Dimensions.get('window');
-  // const maxTextWidth = width * 0.9;
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
   const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
-  const [takeQuiz, setTakeQuiz]= useState(false);
   const [quiz, setQuiz]= useState([]);
   const [quizLength, setQuizLength]= useState([]);
   const [quizzesArray, setQuizzesArray]= useState([]);
 
 
-  // const [quizId, setQuizId]= useState([]);
   const ProgressBar = ({ current, total }) => {
     const completionPercentage = (current / total) * 100;
   
@@ -55,7 +40,6 @@ const DisplayStudyMaterial = ({ props }) => {
 
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
-    fetchPackages();
     fetchPackageInfo();
   }, [params]);
 
@@ -107,26 +91,6 @@ const DisplayStudyMaterial = ({ props }) => {
 
       } else {
         console.error('Error fetching PDFs');
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-    }
-  };
-
-  // function to get work package information
-  const fetchPackages = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/packages/fetchPackages/${_id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.status === 200) {
-        const data = await response.json();
-        setPackages(data);
-      } else {
-        console.error('Error fetching workPackage');
       }
     } catch (error) {
       console.error('Network error:', error);
@@ -251,7 +215,7 @@ const DisplayStudyMaterial = ({ props }) => {
             </View>
           </View>
         ) : (
-            <Text>No pdf has been found for this package.</Text> 
+            <Text>No assigned PDF material has been found.</Text> 
           )}
           
       </View>
