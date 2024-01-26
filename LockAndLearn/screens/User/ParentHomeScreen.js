@@ -8,7 +8,6 @@ import { getUser } from '../../components/AsyncStorage';
 
 const ParentHomeScreen = ({ navigation }) => {
   const styles = useStyles();
-  const deviceSize = useDeviceSize();
   const route = useRoute();
 
   const [user, setUser] = useState(); // State to track authentication
@@ -40,8 +39,6 @@ const ParentHomeScreen = ({ navigation }) => {
         setError('PINs do not match');
         return;
       }
-      console.log(createPin, confirmPin);
-      console.log(user._id);
 
       try {
         const response = await fetch('http://localhost:4000/users/createPIN/' + user._id, {
@@ -126,7 +123,7 @@ const ParentHomeScreen = ({ navigation }) => {
   return (
     <View style={styles.page}>
       {user ? (
-        <Text style={styles.title}>Welcome back alicelicielcileiclileie {user.firstName}!</Text>
+        <Text style={styles.title}>Welcome back {user.firstName}!</Text>
       ) : (
         <Text style={styles.title}>Welcome back</Text>
       )}
@@ -140,8 +137,8 @@ const ParentHomeScreen = ({ navigation }) => {
           ) : null}
           <View style={styles.requestAccess}>
             <View style={[{ width: '100%' }]}>
-              <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
-                <Icon source="account-child-outline" color="#fff" size={30} />
+              <View style={[{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+                <Icon source="account-child-outline" color="#fff" size={25} />
                 <Text style={styles.requestAccessTitle}>Parental Access</Text>
               </View>
 
@@ -191,7 +188,7 @@ const ParentHomeScreen = ({ navigation }) => {
                 ) : (
                   <>
                     <Text style={styles.requestAccessText}>
-                      It seems like this is your first time requesting parental access
+                      It seems like this is your first time requesting parental access.
                     </Text>
                     <Text style={styles.requestAccessText}>Please create a PIN</Text>
                     <TextInput
@@ -249,7 +246,7 @@ const ParentHomeScreen = ({ navigation }) => {
                   {
                     backgroundColor: '#4F85FF',
                     borderRadius: 10,
-                    marginTop: 10,
+                    marginTop: 5,
                     height: 40,
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -316,13 +313,13 @@ const useStyles = CreateResponsiveStyle(
       minHeight: '65%',
       paddingLeft: 20,
       paddingRight: 20,
-      paddingTop: 20,
     },
     title: {
       color: '#4F85FF',
       fontSize: 24,
       textAlign: 'center',
-      paddingVertical: 20,
+      paddingTop: 20,
+      paddingBottom: 10,
     },
     button: {
       color: '#ffffff',
@@ -354,7 +351,7 @@ const useStyles = CreateResponsiveStyle(
     errorText: {
       color: '#FF0000',
       fontSize: 16,
-      padding: 10,
+      padding: 5,
     },
     child: {
       paddingLeft: 10,
@@ -365,24 +362,27 @@ const useStyles = CreateResponsiveStyle(
     requestAccess: {
       backgroundColor: '#4F85FF',
       borderRadius: 25,
-      padding: 40,
+      paddingHorizontal: 40,
+      paddingTop: 15,
+      paddingBottom: 10,
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
     },
     requestAccessTitle: {
       color: '#fff',
-      fontSize: 20,
+      fontSize: 18,
       fontWeight: 'bold',
     },
     requestAccessText: {
       color: '#fff',
-      fontSize: 16,
-      paddingTop: 10,
+      fontSize: 14,
+      paddingVertical: 10,
+      textAlign: 'center',
     },
     pin: {
       width: '100%',
-      paddingTop: 20,
+      paddingTop: 5,
     },
     pinInput: {
       height: 40,
