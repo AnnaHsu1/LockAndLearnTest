@@ -7,6 +7,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   Switch,
+  Modal,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
@@ -550,6 +551,43 @@ const ChildTimeframes = ({ route, navigation }) => {
           </>
         )}
       </View>
+      {/* Pop-up: Confirmation to delete timeframe */}
+      <Modal
+        transparent={true}
+        visible={isDeleteModalVisible}
+        onRequestClose={toggleDeleteModal}
+      >
+        {/* display modal's background */}
+        <View style={styles.modalContainer}>
+          {/* display modal */}
+          <View style={styles.modalView1}>
+            <Text style={styles.text}>Are you sure you want to delete</Text>
+            <Text style={styles.textName}>{periodDate} ?</Text>
+            {console.log(periodDate)}
+            <View style={styles.modalView}>
+              <Button
+                style={styles.modalNoButton}
+                mode="contained"
+                onPress={() => {
+                  toggleDeleteModal();
+                }}
+              >
+                <Text style={styles.modalButtonText}>No</Text>
+              </Button>
+              <Button
+                style={styles.modalYesButton}
+                mode="contained"
+                onPress={() => {
+                  toggleDeleteModal();
+                  handleDeleteTimeframe(timeframeId);
+                }}
+              >
+                <Text style={styles.modalButtonText}>Yes</Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
