@@ -19,12 +19,92 @@ const ParentHomeScreen = ({ navigation }) => {
   const [error, setError] = useState('');
 
   // Select a child and navigate to see if it is time to lock or free time
-  const selectChild = (child) => {
+  const selectChild = async (child) => {
     if (child) {
-      // todo: redirect to either lock or free time screen depending on child's schedule
-      // navigation.navigate('Locking');
-      navigation.navigate('FreeTimeSession');
-      // navigation.navigate('ChildProfile', { child: child });
+      (await isLockingTime(child))
+        ? navigation.navigate('Locking')
+        : navigation.navigate('FreeTimeSession');
+    }
+  };
+
+  // Check if it is locking time with timeframes that are returned
+  const isLockingTime = async (child) => {
+    try {
+      console.log(child);
+      const response = await fetch('http://localhost:4000/timeframes/gettimeframes/' + child._id, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      // Array of timeframes
+      const data = await response.json();
+      console.log(data);
+
+      if (response.status != 200) {
+        // Error with request
+        setError('Error with request');
+        return;
+      } else {
+        // No error with request
+        // Check if there are any timeframes
+        if (data.length == 0) {
+          // No timeframes
+          setError('No schedule set for this child');
+          return;
+        } else {
+          var isLockingTime = false;
+          const timeframes = data;
+
+          // Get the current date
+          const date = new Date();
+          // Get the current day, hour, and minute
+          const day = date.toString().substring(0, 3);
+          // console.log(day);
+          const hour = date.getHours();
+          // console.log(hour);
+          const min = date.getMinutes();
+
+          timeframes.some((timeframe) => {
+            // 1. Check day
+            if (timeframe.day.substring(0, 3) == day) {
+              console.log('Good day');
+              // 2. Check active
+              if (timeframe.isActive) {
+                console.log('Good active');
+                // 3. Check time
+                if (
+                  timeframe.startTime.substring(0, 2) <= hour && // needs to be greater than start hour
+                  timeframe.endTime.substring(0, 2) >= hour // needs to be less than end hour
+                ) {
+                  console.log('Good hour');
+                  isLockingTime = true;
+                } else if (
+                  timeframe.startTime.substring(0, 2) == hour && // same start hour
+                  timeframe.endTime.substring(0, 2) <= hour // needs to be less than end hour
+                ) {
+                  // check same start hour
+                  if (timeframe.startTime.substring(3, 5) <= min) {
+                    // current min needs to be greater than start min
+                    isLockingTime = true;
+                  }
+                } else if (
+                  timeframe.endTime.substring(0, 2) == hour && // same end hour
+                  timeframe.startTime.substring(0, 2) >= hour // needs to be greater than start hour
+                ) {
+                  // check same end hour
+                  if (timeframe.endTime.substring(3, 5) >= min) {
+                    // current min needs to be less than end min
+                    isLockingTime = true;
+                  }
+                }
+              }
+            }
+          });
+          return isLockingTime;
+        }
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -192,7 +272,7 @@ const ParentHomeScreen = ({ navigation }) => {
                     </TouchableOpacity>
                   </>
                 ) : (
-                // First time access
+                  // First time access
                   <>
                     <Text style={styles.requestAccessText}>
                       It seems like this is your first time requesting parental access.
