@@ -79,6 +79,26 @@ const ChildTimeframes = ({ route, navigation }) => {
     setToggleSwitchItem(switchesStatus);
   }
 
+  // Order and sort timeframes by day and start time
+  const orderSortTimeframes = (timeframes) => {
+    // group timeframes by day (monday to sunday)
+    var groupedTimeframes = {};
+    timeframes.forEach(function (a) {
+      groupedTimeframes[a.day] = groupedTimeframes[a.day] || [];
+      groupedTimeframes[a.day].push(a);
+    });
+    // sort by day and start time (00:00 to 23:59)
+    var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    var orderedTimeframes = {};
+    days.forEach(function (day) {
+      orderedTimeframes[day] = groupedTimeframes[day] || [];
+      orderedTimeframes[day] = orderedTimeframes[day].sort(function (a, b) {
+        return a.startTime.localeCompare(b.startTime);
+      });
+    });
+    return orderedTimeframes;
+  };
+
   const addTimeframe = async () => {
     try {
       console.log(selectedDay, starthour, startminute, endhour, endminute);
