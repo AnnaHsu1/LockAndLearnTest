@@ -287,7 +287,6 @@ const ParentHomeScreen = ({ navigation }) => {
               styles.text,
               { color: '#4F85FF', fontSize: 14, textAlign: 'center', paddingTop: 20 },
             ]}
-            // todo: change navigation to ParentAccess with modal
             onPress={() => setParentalAccess(!parentalAccess)}
           >
             Parent Access
