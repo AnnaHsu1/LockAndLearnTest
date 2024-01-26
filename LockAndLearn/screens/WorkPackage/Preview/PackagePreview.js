@@ -15,6 +15,7 @@ import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import { Icon } from 'react-native-paper';
 
 const PackagePreview = () => {
   const route = useRoute();
@@ -299,7 +300,7 @@ const PackagePreview = () => {
                       key={index}
                     >
                       <TouchableOpacity onPress={() => displayQuizDetails(p_quizzes[index])}>
-                        <Text>{quizName}</Text>
+                        <Text style = {styles.QuizNameStyle} >{quizName}</Text>
                       </TouchableOpacity>
                     </View>
                   ))
@@ -319,8 +320,8 @@ const PackagePreview = () => {
       >
         <View style={styles.pdfModalContainer}>
           <View style={styles.pdfModalContent}>
-            <TouchableOpacity onPress={() => setPdfModalVisible(false)}>
-              <Text style={styles.closePdfModalText}>Close</Text>
+            <TouchableOpacity onPress={() => setPdfModalVisible(false)} style={styles.CloseButton}>
+            <Icon source="close-circle-outline" size={23} color={'#F24E1E'}/>
             </TouchableOpacity>
             {pdf && (
               <View style={styles.pdfContainer}>
@@ -340,8 +341,8 @@ const PackagePreview = () => {
       >
         <View style={styles.quizModalContainer}>
           <View style={styles.quizModalContent}>
-            <TouchableOpacity onPress={() => setQuizModalVisible(false)}>
-              <Text style={styles.closeQuizModalText}>Close</Text>
+            <TouchableOpacity onPress={() => setQuizModalVisible(false)} style={styles.CloseButton}>
+            <Icon source="close-circle-outline" size={20} color={'#F24E1E'}/>
             </TouchableOpacity>
             {selectedQuiz && (
               <View>
@@ -375,11 +376,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '80%',
-  },
-  closeQuizModalText: {
-    color: 'blue', // Customize the close text color
-    textAlign: 'right',
-    marginBottom: 10,
   },
   workPackageInputText: {
     borderColor: '#407BFF',
@@ -457,101 +453,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
   },
-  buttonText: {
-    color: '#407BFF',
-    alignItems: 'center',
-    fontSize: 15,
-  },
-  containerModal: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  buttonCloseModal: {
-    position: 'absolute',
-    top: '26.5%',
-    right: '27%',
-    zIndex: 1,
-  },
-  containerMaterial: {
-    width: 230,
-    height: 250,
-    backgroundColor: '#4F85FF',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  titleModal: {
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  titleModalText: {
-    fontSize: 14,
-    color: '#696969',
-    fontWeight: '500',
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  containerButtonsModal: {
-    paddingHorizontal: '4%',
-    alignItems: 'center',
-  },
-  buttonAddStudyMaterial: {
-    backgroundColor: '#FFFFFF',
-    width: 150,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginBottom: 15,
-  },
-  buttonAddQuizMaterial: {
-    backgroundColor: '#FFFFFF',
-    width: 150,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-  },
-  buttonCancelMaterial: {
-    backgroundColor: '#FFFFFF',
-    width: 80,
-    height: 30,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-  },
-  buttonAddMaterialText: {
-    fontSize: 12,
-    color: '#4F85FF',
-    alignItems: 'center',
-    fontWeight: 500,
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-    width: 30,
-    height: 20,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   scrollContainer: {
     height: 300,
     width: '100%',
     paddingBottom: 10,
     paddingHorizontal: '2%',
   },
-  disabledButton: {
-    borderColor: '#ccc',
+  QuizNameStyle: {
+    marginTop: 5,
   },
-  disabledButtonText: {
-    color: '#ccc',
+  CloseButton: {
+    alignSelf: 'flex-end',
   },
+
 });
 
 export default PackagePreview;
