@@ -569,7 +569,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         navigation.navigate('WorkPackagePreview', { workPackage });
                       }}
                     >
-                      <Text style={styles.workPackageNameText}>{`${workPackage.name}` + 'x'}</Text>
+                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
                     </TouchableOpacity>
 
                     <View style={styles.containerTag}>
