@@ -7,10 +7,11 @@ import {
   ImageBackground,
   FlatList,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Modal from 'react-native-modal';
-import {getItem} from '../../../components/AsyncStorage';
+import { getItem } from '../../../components/AsyncStorage';
 
 const WorkPackagePreview = ({ props }) => {
   const route = useRoute();
@@ -20,6 +21,8 @@ const WorkPackagePreview = ({ props }) => {
   const { _id, name, grade } = params?.workPackage;
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.9;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [reportReason, setReportReason] = useState('');
 
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
@@ -31,9 +34,9 @@ const WorkPackagePreview = ({ props }) => {
       const token = await getItem('@token');
       const user = JSON.parse(token);
       const userId = user._id;
-
-      // Now you have the user ID (userId), you can use it as needed
+      
       console.log('User ID:', userId);
+      return userId;
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -42,23 +45,26 @@ const WorkPackagePreview = ({ props }) => {
   const createReport = async (workPackageId, reason) => {
     try {
       const userId = await fetchUserData();
-  
+      console.log('xxxx',userId);
+
       if (userId) {
-        const response = await fetch('http://localhost:4000/reports/createReport', {
+        const currentTime = new Date().toISOString();
+
+        const response = await fetch('http://localhost:4000/reports/create-report', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             workPackageId,
+            timeOfReport: currentTime,
             reporterId: userId,
             reason,
           }),
         });
-  
+
         if (response.status === 200 || response.status === 201) {
           console.log('Report created successfully');
-          // Optionally, you can fetch the updated list of reports after creating one.
           fetchPackages();
         } else {
           console.error('Error creating report:', response.status);
@@ -94,10 +100,7 @@ const WorkPackagePreview = ({ props }) => {
   // function to display the work package information
   const renderPackage = (this_Package) => {
     return (
-      <View
-        key={this_Package._id}
-        style={styles.containerCard}
-      >
+      <View key={this_Package._id} style={styles.containerCard}>
         <View key={this_Package._id} style={styles.workPackageItemContainer}>
           <TouchableOpacity
             style={{ width: '75%' }}
@@ -125,8 +128,7 @@ const WorkPackagePreview = ({ props }) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}
-          >
-          </View>
+          ></View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
           <Text
@@ -179,7 +181,8 @@ const WorkPackagePreview = ({ props }) => {
     >
       <View style={styles.containerFile}>
         <Text style={styles.selectFiles}>
-          {name} - {grade}{getGradeSuffix(grade)} Grade
+          {name} - {grade}
+          {getGradeSuffix(grade)} Grade
         </Text>
         {/* Display all work packages from the user */}
         <FlatList
@@ -197,9 +200,7 @@ const WorkPackagePreview = ({ props }) => {
         />
         {/* Display button to create a new work package */}
         <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity
-            testID="reportButton"
-          >
+          <TouchableOpacity testID="reportButton" onPress={() => setModalVisible(true)}>
             <Text style={styles.buttonReportText}>Report Work Package</Text>
           </TouchableOpacity>
         </View>
