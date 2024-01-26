@@ -186,6 +186,25 @@ const ChildTimeframes = ({ route, navigation }) => {
     setDeleteModalVisible(!isDeleteModalVisible);
   };
 
+  // Function to delete a timeframe
+  const handleDeleteTimeframe = async (timeframeId) => {
+    try {
+      const response = await fetch('http://localhost:4000/timeframes/deletetimeframe/' + timeframeId, {
+        method: 'DELETE',
+        credentials: 'include', // Include cookies in the request
+      });
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        console.log('Timeframe deleted successfully!');
+        getChildTimeframes();
+      }
+    } catch (error) {
+      console.log(error.msg);
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../../../assets/backgroundCloudyBlobsFull.png')}
