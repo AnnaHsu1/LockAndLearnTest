@@ -17,29 +17,40 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { Icon } from 'react-native-paper';
 
+/**
+ * PackagePreview component displays detailed information about a specific package,
+ * including subject, grade, subcategory, and associated materials like files and quizzes.
+ */
 const PackagePreview = () => {
   const route = useRoute();
   const navigation = useNavigation();
+
+  // State declarations for managing files, quizzes, and modal visibility
   const [files, setFiles] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   let counterIndex = 0;
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.4;
+
+  // Extracting parameters from the route
   const params = route.params;
   const { wp_id, name, grade } = params?.workPackage;
   const { p_id, p_quizzes, p_materials, subcategory, description } = params?.package;
+
+  // State for selected subcategory and package description
   const [selectedSubcategory, setSelectedSubcategory] = useState(subcategory);
   const [packageDescription, setPackageDescription] = useState(description);
   const [packageSubcategories, setPackageSubcategories] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [isQuizModalVisible, setQuizModalVisible] = useState(false);
-
+  // Plugin for PDF viewer
   const [pdf, setPdf] = useState(null);
   const newPlugin = defaultLayoutPlugin({
     innerContainer: styles.customInnerContainer, // Customize inner container styles if needed
   });
   const [isPdfModalVisible, setPdfModalVisible] = useState(false);
 
+  // Fetch quizzes and files when component mounts or when dependencies change
   useEffect(() => {
     getQuizzes();
     getFiles();
@@ -137,21 +148,12 @@ const PackagePreview = () => {
     }
   };
 
-  // Function to download file
-  const downloadFile = async (fileName) => {
-    const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
-      method: 'GET',
-    });
-    if (response.ok) {
-      const test = await response.blob();
-      const url = URL.createObjectURL(test);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${fileName}`;
-      a.click();
-    }
-  };
-
+  /**
+ * Function to display a file.
+ * Fetches a file from the server based on the provided file name and displays it.
+ * It sets the state for the PDF URL and makes the PDF modal visible for viewing the file.
+ * @param {string} fileName - The name of the file to be fetched and displayed.
+ */
   const displayFile = async (fileName) => {
     const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
       method: 'GET',
@@ -165,6 +167,12 @@ const PackagePreview = () => {
     }
   };
 
+  /**
+ * Function to fetch and display the details of a selected quiz.
+ * It makes a network request to retrieve details of a quiz based on the provided quiz ID,
+ * and then sets the state to make the quiz details visible in a modal.
+ * @param {number} quizId - The ID of the quiz for which details are to be fetched.
+ */
   const displayQuizDetails = async (quizId) => {
     try {
       const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
@@ -300,7 +308,7 @@ const PackagePreview = () => {
                       key={index}
                     >
                       <TouchableOpacity onPress={() => displayQuizDetails(p_quizzes[index])}>
-                        <Text style = {styles.QuizNameStyle} >{quizName}</Text>
+                        <Text style={styles.QuizNameStyle} >{quizName}</Text>
                       </TouchableOpacity>
                     </View>
                   ))
@@ -321,7 +329,7 @@ const PackagePreview = () => {
         <View style={styles.pdfModalContainer}>
           <View style={styles.pdfModalContent}>
             <TouchableOpacity onPress={() => setPdfModalVisible(false)} style={styles.CloseButton}>
-            <Icon source="close-circle-outline" size={23} color={'#F24E1E'}/>
+              <Icon source="close-circle-outline" size={23} color={'#F24E1E'} />
             </TouchableOpacity>
             {pdf && (
               <View style={styles.pdfContainer}>
@@ -342,7 +350,7 @@ const PackagePreview = () => {
         <View style={styles.quizModalContainer}>
           <View style={styles.quizModalContent}>
             <TouchableOpacity onPress={() => setQuizModalVisible(false)} style={styles.CloseButton}>
-            <Icon source="close-circle-outline" size={20} color={'#F24E1E'}/>
+              <Icon source="close-circle-outline" size={20} color={'#F24E1E'} />
             </TouchableOpacity>
             {selectedQuiz && (
               <View>
