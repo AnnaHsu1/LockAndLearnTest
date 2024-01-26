@@ -127,7 +127,9 @@ const ChildProfileScreen = ({ route, navigation }) => {
           >
             <Text style={styles.text}>assign wp - child pov</Text>
           </Button>
-          <Button
+      </View>
+      {/* Delete child link */}
+      <Button
             testID="delete-child-link"
             style={styles.link}
             onPress={() => {
@@ -135,10 +137,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
             }}
           >
             <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
-          </Button>
-
-          {/* Delete child link */}
-      </View>
+      </Button>
 
       {/* Modal to confirm the deletion of a child */}
       <Modal
@@ -207,6 +206,7 @@ const useStyles = CreateResponsiveStyle(
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 10,
+      paddingBottom: 20, // Added bottom padding
       marginTop: "3%",
       marginBottom: 10,
       borderRadius: 10,
@@ -231,7 +231,7 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       backgroundColor: '#ffffff',
       borderRadius: 10,
-      marginVertical: 5,
+      marginVertical: 3,
       minHeight: 50,
       justifyContent: 'center',
       minWidth: 100,
@@ -278,6 +278,7 @@ const useStyles = CreateResponsiveStyle(
       minWidth: 100,
       fontSize: 12,
       textAlign: 'center',
+      backgroundColor: 'white',
     },
     linkText: {
       color: 'red',
