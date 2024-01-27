@@ -24,7 +24,7 @@ const CheckoutForm = ({ navigation, route }) => {
    * @returns {Promise<void>} - A promise that resolves when the submission is complete.
    */
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     const token = await getItem('@token');
     const user = JSON.parse(token);
     const userId = user._id;
@@ -91,14 +91,14 @@ const CheckoutForm = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <View id="payment-form">
-        <PaymentElement id="payment-element" />
+      <View testID="payment-form">
+        <PaymentElement testID="payment-element" />
         <TouchableOpacity
           disabled={isProcessing || !stripe || !elements}
           style={styles.buttonBox}
           onPress={handleSubmit} 
         >
-          <Text style={styles.buttonText}>{isProcessing ? 'Processing ... ' : 'Pay now'}</Text>
+          <Text testID="button-text" style={styles.buttonText}>{isProcessing ? 'Processing ... ' : 'Pay now'}</Text>
         </TouchableOpacity>
         {/* Show any error or success messages */}
         {message && <View id="payment-message">{message}</View>}
