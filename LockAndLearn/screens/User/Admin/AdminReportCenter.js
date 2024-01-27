@@ -125,46 +125,45 @@ const AdminReportCenter = ({ route, navigation }) => {
             {/* Display additional work package properties */}
             {workPackages[item.idOfWp] && (
               <>
-                {workPackages[item.idOfWp].name} - {workPackages[item.idOfWp].grade} 
+                <Text style={styles.boldText}>
+                  {workPackages[item.idOfWp].name} - {workPackages[item.idOfWp].grade}
+                </Text>
                 {'\n'}
-                Description: {workPackages[item.idOfWp].description}
+                {workPackages[item.idOfWp].description}
+                {'\n'}${workPackages[item.idOfWp].price}
                 {'\n'}
-                Price: {workPackages[item.idOfWp].price}
-                {'\n'}
-                Package Count: {workPackages[item.idOfWp].packageCount}
+                {workPackages[item.idOfWp].packageCount} {'package(s)'}
                 {'\n'}
               </>
             )}
-            Time of Report: {item.timeOfReport}
-            {'\n'}
-            Reason: {item.reason}
-            {'\n'}
             {/* Display instructor information */}
             {item.instructor && (
               <>
-                Instructor:
+                <Text style={styles.subTitle}>Instructor</Text>
                 {'\n'}
-                First Name: {item.instructor.firstName}
+                {item.instructor.firstName} {item.instructor.lastName}
                 {'\n'}
-                Last Name: {item.instructor.lastName}
-                {'\n'}
-                Email: {item.instructor.email}
+                {item.instructor.email}
                 {'\n'}
               </>
             )}
             {/* Display reporter information */}
             {item.reporter && (
               <>
-                Reporter:
+                <Text style={styles.subTitle}>Reporter</Text>
                 {'\n'}
-                First Name: {item.reporter.firstName}
+                {item.reporter.firstName} {item.reporter.lastName}
                 {'\n'}
-                Last Name: {item.reporter.lastName}
-                {'\n'}
-                Email: {item.reporter.email}
+                {item.reporter.email}
                 {'\n'}
               </>
             )}
+            <Text style={styles.subTitle}>Reason</Text>
+            {'\n'}
+            {item.reason}
+            {'\n'}
+            {item.timeOfReport}
+            {'\n'}
           </Text>
         </TouchableOpacity>
       ))}
@@ -185,6 +184,14 @@ const AdminReportCenter = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    subTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    boldText: {
+      fontSize: 25,
+      fontWeight: 'bold',
+    },
     reportItem: {
       backgroundColor: '#ffffff',
       borderRadius: 10,
