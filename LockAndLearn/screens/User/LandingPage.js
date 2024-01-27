@@ -312,12 +312,6 @@ const LandingPage = ({ navigation }) => {
           >
             <Text style={styles.text}>My files</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-        style={styles.content}
-        onPress={() => navigation.navigate('ParentAccount')}
-      >
-        <Text style={styles.text}>Parent Account</Text>
-      </TouchableOpacity> */}
         </View>
       ) : (
         <View style={styles.containerFile}>
@@ -413,7 +407,7 @@ const LandingPage = ({ navigation }) => {
         <View style={styles.containerModalOverwriteFiles}>
           <View style={styles.containerModalOverwriteFilesContent}>
             {/* display title of modal */}
-            <View style={styles.containerTextModal}>
+            <View>
               <Text style={[{ fontSize: 20 }, styles.textDuplicateFiles]}>Duplicated File(s)</Text>
               <Text style={[{ fontSize: 12 }, styles.textDuplicateFiles]}>
                 Are you sure you want to overwrite these following files?
