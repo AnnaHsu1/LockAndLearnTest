@@ -94,6 +94,7 @@ const AdminReportCenter = ({ route, navigation }) => {
   };
 
   const handleReportItemClick = (workPackageId) => {
+        _id: workPackageId,
     console.log('Clicked on Report with Work Package ID:', workPackageId);
     navigation.navigate('WorkPackagePreview', { workPackageId });
   };
