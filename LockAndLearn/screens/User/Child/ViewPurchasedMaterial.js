@@ -131,11 +131,31 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
       );
     };
 
+    // Function to determine the grade suffix
+    const getGradeSuffix = (grade) => {
+      if (grade >= 11 && grade <= 13) {
+        return 'th';
+      }
+
+      const lastDigit = grade % 10;
+
+      switch (lastDigit) {
+        case 1:
+          return 'st';
+        case 2:
+          return 'nd';
+        case 3:
+          return 'rd';
+        default:
+          return 'th';
+      }
+    };
+
     return (
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
         <View style={{ width: '80%' }}>
           <Text style={styles.workPackageItem}>
-            {workPackage.name} - {workPackage.grade} -{' '}
+            {workPackage.name} - {workPackage.grade}{getGradeSuffix(workPackage.grade)} grade -{' '}
             {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
           </Text>
           <Text style={styles.workPackageItem}>{workPackage.description}</Text>
