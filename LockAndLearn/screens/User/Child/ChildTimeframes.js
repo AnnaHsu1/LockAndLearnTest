@@ -143,6 +143,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         const orderedTimeframes = orderSortTimeframes(data);
         // console.log('orderedTimeframes', orderedTimeframes);
         setTimeframes(orderedTimeframes);
+        setEditTime(orderedTimeframes);
       }
     } catch (error) {
       console.log(error);
