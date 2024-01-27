@@ -34,11 +34,19 @@ const AdminReportCenter = ({ route, navigation }) => {
       if (response.status === 200) {
         const data = await response.json();
 
-        // Update each report item with reporter information
+        // Update each report item with work package information
         const updatedReports = await Promise.all(
           data.map(async (item) => {
-            const reporter = await fetchReporter(item.reporterId);
-            return { ...item, reporter };
+            const workPackage = await fetchWorkPackage(item.idOfWp);
+            console.log('Fetched Work Package:', workPackage);
+
+            const instructorId = workPackage?.instructorID || null;
+            console.log('Instructor ID:', instructorId);
+
+            const instructor = await fetchInstructor(instructorId);
+            console.log('Fetched Instructor:', instructor);
+
+            return { ...item, instructor };
           })
         );
 
@@ -69,14 +77,14 @@ const AdminReportCenter = ({ route, navigation }) => {
     }
   };
 
-  const fetchReporter = async (reporterId) => {
+  const fetchInstructor = async (instructorId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/getUser/${reporterId}`);
+      const response = await fetch(`http://localhost:4000/users/getUser/${instructorId}`);
       if (response.status === 200) {
-        const reporter = await response.json();
-        return reporter;
+        const instructor = await response.json();
+        return instructor;
       } else {
-        console.error('Error fetching reporter');
+        console.error('Error fetching instructor');
         return null;
       }
     } catch (error) {
@@ -114,14 +122,14 @@ const AdminReportCenter = ({ route, navigation }) => {
                 Instructor ID: {workPackages[item.idOfWp].instructorID}
               </>
             )}
-            {/* Display reporter information */}
-            {item.reporter && (
+            {/* Display instructor information */}
+            {item.instructor && (
               <>
-                First Name: {item.reporter.firstName}
+                First Name: {item.instructor.firstName}
                 {'\n'}
-                Last Name: {item.reporter.lastName}
+                Last Name: {item.instructor.lastName}
                 {'\n'}
-                Email: {item.reporter.email}
+                Email: {item.instructor.email}
                 {'\n'}
               </>
             )}
