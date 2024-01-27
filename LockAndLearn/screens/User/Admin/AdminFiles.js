@@ -90,7 +90,6 @@ const AdminFiles = ({ route, navigation }) => {
     <View style={styles.page}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Icon source="account-circle" color="#fff" size={30} />
           <Text style={styles.title}>Study Material</Text>
         </View>
 
