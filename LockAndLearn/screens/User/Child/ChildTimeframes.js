@@ -114,10 +114,12 @@ const ChildTimeframes = ({ route, navigation }) => {
       const data = await response.json();
       if (response.status != 200) {
         console.log(data.msg);
+        setError(data.msg);
       } else {
         console.log('Timeframe updated successfully!');
         setEditMode(false);
         getChildTimeframes();
+        setError('');
       }
     } catch (error) {
       console.log(error.msg);
@@ -211,6 +213,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         setAddMode(false);
         clearAddFields();
         setAddedSuccessful(true);
+        setError('');
       }
     } catch (error) {
       console.log(error.msg);
@@ -279,6 +282,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       const data = await response.json();
       if (response.status != 200) {
         console.log(data.msg);
+        setError(data.msg);
       } else {
         console.log('Timeframe deleted successfully!');
         getChildTimeframes();
