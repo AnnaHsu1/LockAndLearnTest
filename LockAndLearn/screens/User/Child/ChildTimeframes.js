@@ -512,7 +512,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (startTimes.length === 0 && day === 'Sunday') {
+                    if (startTimes.length === 0 && day === 'Monday' && day === 'Tuesday' && day === 'Monday' && day === 'Wednesday' && day === 'Thursday' && day === 'Friday' && day === 'Saturday' && day === 'Sunday') {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
@@ -588,7 +588,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (startTimes.length === 0 && day === 'Sunday') {
+                    if (startTimes.length === 0 && day === 'Monday' && day === 'Tuesday' && day === 'Monday' && day === 'Wednesday' && day === 'Thursday' && day === 'Friday' && day === 'Saturday' && day === 'Sunday') {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
