@@ -265,15 +265,6 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       paddingTop: 15,
     },
-    button: {
-      color: '#4F85FF',
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 80,
-      justifyContent: 'center',
-      minWidth: 100,
-    },
     buttons: {
       flex: 1,
       flexDirection: 'row',
@@ -290,37 +281,6 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 18,
       textAlign: 'center',
       marginTop: 20,
-    },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
-    full_width: {
-      minWidth: '100%',
-    },
-    bottomCloud: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      width: '100%',
-      height: 250,
-      resizeMode: 'stretch',
-    },
-    text: {
-      color: '#4F85FF',
-      fontSize: 20,
-    },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
     },
     acceptButton: {
       fontWeight: 'bold',
@@ -356,11 +316,6 @@ const useStyles = CreateResponsiveStyle(
       borderBottomColor: 'grey',
       marginVertical: 5,
     },
-    text: {
-      color: '#696969',
-      fontSize: 18,
-      fontWeight: '300',
-    },
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -383,12 +338,6 @@ const useStyles = CreateResponsiveStyle(
       flexDirection: 'row',
       justifyContent: 'space-around',
       width: '100%',
-    },
-    modalButton: {
-      color: '#4F85FF',
-      fontSize: 16,
-      fontWeight: 'bold',
-      padding: 10,
     },
     confirmAcceptButton: {
       backgroundColor: '#228B22',
@@ -424,12 +373,6 @@ const useStyles = CreateResponsiveStyle(
       container: {
         minWidth: 500,
         width: 500,
-      },
-      bottomCloud: {
-        width: '100%',
-        height: 300,
-        resizeMode: 'stretch',
-        flex: 1,
       },
     },
   }
