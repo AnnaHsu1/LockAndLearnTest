@@ -198,3 +198,19 @@ exports.getPackageByPackageId = async function getPackageByPackageId(packageId) 
     throw err;
   }
 };  
+
+// Function to get all packages from child with childId
+exports.getPackagesByChildId = async function getPackagesByChildId(childId) {
+  try {
+    const child = await Child.findById(childId);
+    if (child) {
+      const packages = child.assignedMaterials;
+      return packages;
+    } else {
+      console.log('No child found');
+    }
+  } catch (err) {
+    console.log('Error getting packages for child: ', err);
+    throw err;
+  }
+};

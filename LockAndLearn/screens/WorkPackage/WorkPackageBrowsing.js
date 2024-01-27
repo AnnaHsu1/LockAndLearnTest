@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
-  Image,
-  FlatList,
   TouchableOpacity,
   Modal,
   ScrollView,
   StyleSheet,
   ImageBackground,
 } from 'react-native';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon, Checkbox } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
 
 const WorkPackageBrowsingScreen = ({ route }) => {

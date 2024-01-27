@@ -4,7 +4,7 @@ const router = express.Router();
 require('dotenv').config({ path: '../.env' });
 const base = "https://api-m.sandbox.paypal.com";
 const User = require('../schema/userSchema.js');
-
+const WorkPackage = require('../schema/workPackage.js'); // Import the WorkPackage model
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 
@@ -35,19 +35,44 @@ router.post("/:orderID/capture", async (req, res) => {
   }
 });
 
+
 // Endpoint to transfer work packages from CartWorkPackage to purchasedWorkPackage
-router.post("/transferWorkPackages/:userId", async (req, res) => {
+router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, res) => {
     try {
         const userId = req.params.userId;
-        console.log(userId);
+        const stripeId = req.params.stripeId;
+        const stripeSaleInCents = parseFloat(req.params.stripeSale);
+        const stripeSale = stripeSaleInCents / 100;
+
+        console.log('userID received:', userId);
+        console.log('stripeID received:', stripeId);
+        console.log('stripeSale received:', stripeSale);
         // Assuming you have a User model and CartWorkPackage and purchasedWorkPackage fields
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Move all CartWorkPackages to purchasedWorkPackages
-        user.purchasedWorkPackages.push(...user.CartWorkPackages);
+
+        // Iterate through the CartWorkPackages and update the stripePurchaseId field
+        for (const workPackageId of user.CartWorkPackages) {
+            const workPackage = await WorkPackage.findById(workPackageId);
+            console.log("work Package:", workPackageId);
+            if (workPackage) {
+                // Add stripeId to the stripePurchaseId array
+                workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId.toString()];
+                await workPackage.save();
+            }
+        }
+        console.log("success");
+
+        // Save the updated user's payment stripe info and the bought WPs
+        user.purchasedWorkPackages.push({
+          stripePurchaseId: stripeId.toString(),
+          totalSale: stripeSale,
+          workPackageIds: [...user.CartWorkPackages],
+        });
+
         user.CartWorkPackages = []; // Empty the CartWorkPackages array
 
         // Save the updated user
@@ -61,6 +86,67 @@ router.post("/transferWorkPackages/:userId", async (req, res) => {
     }
 });
 
+// Endpoint to transfer work packages from CartWorkPackage to purchasedWorkPackage
+router.post("/transferWorkPackages/:userId", async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+
+        console.log('userID received:', userId);
+
+        // Assuming you have a User model and CartWorkPackage and purchasedWorkPackage fields
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Generate a random string for stripePurchaseId
+        const stripeId = generateRandomString(20); // Adjust the length as needed
+ 
+        // Iterate through the CartWorkPackages and update the stripePurchaseId field
+        for (const workPackageId of user.CartWorkPackages) {
+            const workPackage = await WorkPackage.findById(workPackageId);
+            console.log("work Package:", workPackageId);
+            if (workPackage) {
+                // Add stripeId to the stripePurchaseId array
+                workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId];
+                await workPackage.save();
+            }
+        }
+        console.log("success");
+
+        // Save the updated user's payment stripe info and the bought WPs
+        user.purchasedWorkPackages.push({
+            stripePurchaseId: stripeId,
+            totalSale: 0,
+            workPackageIds: [...user.CartWorkPackages],
+        });
+
+        user.CartWorkPackages = []; // Empty the CartWorkPackages array
+
+        // Save the updated user
+        await user.save();
+
+        // Send a success response
+        res.status(200).json({ message: 'All work packages transferred to purchased successfully' });
+    } catch (error) {
+        console.error('Error transferring work packages to purchased:', error);
+        res.status(500).json({ error: 'An error occurred while transferring work packages to purchased.' });
+    }
+});
+
+// Function to generate a random string
+function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+    }
+
+    return result;
+}
 
 // Generates an access token from the PayPal API using credentials from the .env file
 const generateAccessToken = async () => {
@@ -188,12 +274,14 @@ router.get("/config", (req, res) => {
     });
 });
 
-router.post("/initOrderStripe", async (req, res) => {
+router.post("/initOrderStripe/:userId", async (req, res) => {
     try {
         console.log("initOrderStripe endpoint hit!");
         const { totalPrice } = req.body;
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
         console.log("server total price: ", totalPrice);
-
+        console.log("user", user);
         if (!totalPrice) {
             throw new Error("Total price is missing or invalid.");
         }
@@ -204,15 +292,25 @@ router.post("/initOrderStripe", async (req, res) => {
         const amountInCents = Math.round(priceInDollars * 100); // Rounding to the nearest cent
 
         console.log("amount in cents", amountInCents);
+        const userFullName = user.firstName +" " + user.lastName;
+        console.log("full name", userFullName);
+        const customer = await stripe.customers.create({
+            name: userFullName,
+            email: user.email,
+        });
+        console.log(customer.id);
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amountInCents,
             currency: 'cad',
+            customer: customer.id,
         });
 
         console.log("Sending client secret...");
         // Send publishable key and PaymentIntent details to client
         res.send({
             clientSecret: paymentIntent.client_secret,
+            customerName: customer.name,
+            customerEmail: customer.email,
         });
         console.log("Sent to front-end.");
     } catch (e) {
@@ -224,5 +322,53 @@ router.post("/initOrderStripe", async (req, res) => {
         });
     }
 });
+
+// Endpoint to fetch all transactions
+router.get('/transactions', async (req, res) => {
+    try {
+        // Use the Stripe API to retrieve a list of payments or transactions
+        const payments = await stripe.paymentIntents.list({ limit: 10 }); // Adjust parameters as needed
+
+        // Return the list of payments as a response
+        res.status(200).json({ payments: payments.data });
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ error: 'An error occurred while fetching transactions.' });
+    }
+});
+
+router.get('/balanceAdmin', async (req, res) => {
+    try {
+        const balance = await stripe.balance.retrieve();
+        // Return the list of payments as a response
+        res.status(200).json({ balance: balance});
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+        res.status(500).json({ error: 'An error occurred while fetching transactions.' });
+    }
+});
+
+router.get('/getParentUserName/:stripePurchaseId', async (req, res) => {
+  const stripePurchaseId = req.params.stripePurchaseId;
+
+  try {
+    const user = await User.findOne(
+      { 'purchasedWorkPackages.stripePurchaseId': stripePurchaseId },
+      { firstName: 1, lastName: 1, _id: 0 }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found for the given stripePurchaseId, most likely a legacy account where the purchasedWorkPackage array is not in the right format in the DB.' });
+    }
+
+    const parentName = `${user.firstName} ${user.lastName}`;
+
+    res.status(200).json({ parentName });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 
 module.exports = router;
