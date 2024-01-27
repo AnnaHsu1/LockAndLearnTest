@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
+import PropTypes from 'prop-types'
 
 const ChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -30,7 +31,9 @@ const ChildProfileScreen = ({ route, navigation }) => {
           updatedChildren: null,
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error deleting child:', error);
+    }
   };
 
   return (
@@ -190,6 +193,15 @@ const ChildProfileScreen = ({ route, navigation }) => {
       </Modal>
     </View>
   );
+};
+
+ChildProfileScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.object.isRequired,
+    }),
+  }).isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 
 const useStyles = CreateResponsiveStyle(

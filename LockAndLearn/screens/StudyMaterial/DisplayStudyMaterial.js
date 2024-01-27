@@ -10,7 +10,6 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
-
 const DisplayStudyMaterial = ({}) => {
   const route = useRoute();
   const navigation = useNavigation();
