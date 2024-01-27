@@ -63,9 +63,16 @@ const QuizGradeScreen = ({ route }) => {
                                 <Text style={styles.containerAnswer}>
                                     {answers[index]}
                                 </Text>
-                                <Text style={styles.containerAnswer}>
-                                    {solutions[index]}
-                                </Text>
+                                
+                                {result ? (
+                                    <Text style={styles.containerCorrectAnswer}>
+                                        ✔
+                                    </Text>
+                                ) : (
+                                    <Text style={styles.containerIncorrectAnswer}>
+                                        ✘
+                                    </Text>
+                                )}
                             </View>
                         </View>
                     );
@@ -136,7 +143,7 @@ const styles = StyleSheet.create({
         color: '#333',
         textAlign: 'left',
         marginBottom: 10,
-        marginRight: "39%",
+        width: "61.5%",
     },
     //Container for the given answer
     containerAnswer: {
@@ -144,19 +151,24 @@ const styles = StyleSheet.create({
         color: '#333',
         textAlign: 'left',
         marginBottom: 10,
-        marginRight: "10%",
+        width: "27%",
     },
     // Display a green background color and border if correct, red if incorrect
     containerCorrectAnswer: {
         backgroundColor: 'green',
         textAlign: 'center',
         justifyContent: 'center',
-
+        color: 'white',
+        width: "4%",
+        borderRadius: 100,
     },
     containerIncorrectAnswer: {
         backgroundColor: 'red',
         textAlign: 'center',
         justifyContent: 'center',
+        color: 'white',
+        width: "4%",
+        borderRadius: 100,
     },
     headerQuestion: {
         fontSize: 20,
