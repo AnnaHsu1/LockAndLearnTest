@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 
@@ -93,10 +93,19 @@ const AdminReportCenter = ({ route, navigation }) => {
     }
   };
 
+  const handleReportItemClick = (workPackageId) => {
+    console.log('Clicked on Report with Work Package ID:', workPackageId);
+    navigation.navigate('WorkPackagePreview', { workPackageId });
+  };
+
   const renderReportItems = () => (
     <ScrollView>
       {reports.map((item) => (
-        <View key={item._id} style={styles.reportItem}>
+        <TouchableOpacity
+          key={item._id}
+          style={styles.reportItem}
+          onPress={() => handleReportItemClick(item.idOfWp)}
+        >
           <Text style={styles.text}>
             Report ID: {item._id}
             {'\n'}
@@ -134,7 +143,7 @@ const AdminReportCenter = ({ route, navigation }) => {
               </>
             )}
           </Text>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
