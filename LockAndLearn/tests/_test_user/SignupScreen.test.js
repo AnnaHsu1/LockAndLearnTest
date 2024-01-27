@@ -86,7 +86,7 @@ describe('SignupScreen', () => {
       DOB: '2000-01-01',
       Password: 'password123',
       CPassword: 'password123',
-      isParent: 'first', // Ensure this is the actual value the component is supposed to send
+      isParent: 'true', // Ensure this is the actual value the component is supposed to send
     };
   
     expect(actualBody).toEqual(expectedBody);

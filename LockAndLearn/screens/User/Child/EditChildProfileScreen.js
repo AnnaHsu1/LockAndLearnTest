@@ -96,14 +96,6 @@ const EditChildProfileScreen = ({ route, navigation }) => {
                       ))}
                   </Picker>
               </View>
-        {/*<View style={styles.input}>*/}
-        {/*  <Text style={styles.field}>Grade</Text>*/}
-        {/*  <TextInput*/}
-        {/*    testID="grade-input"*/}
-        {/*    style={[styles.textbox, styles.full_width]}*/}
-        {/*    value={fdata.Grade}*/}
-        {/*    onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}*/}
-        {/*  />*/}
         {/*</View>*/}
         {/* Parent can edit passing grade here */}
         <View style={styles.input}>

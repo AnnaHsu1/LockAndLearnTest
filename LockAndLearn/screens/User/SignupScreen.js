@@ -2,33 +2,29 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { StyleSheet, Text, TextInput, View, Image, navigation } from 'react-native';
+import { Text, TextInput, View, Image } from 'react-native';
 import { RadioButton, Button } from 'react-native-paper';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import {
-  getItem,
-  setItem,
-  removeItem,
   setUserTokenWithExpiry,
 } from '../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const SignupScreen = ({ navigation }) => {
   const styles = useStyles();
-  const deviceSize = useDeviceSize();
   const [googleUserInfo, setGoogleUserInfo] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
     iosClientId: '113548474045-a3e9t8mijs7s0c9v9ht3ilvlgsjm64oj.apps.googleusercontent.com',
     webClientId: '113548474045-vuk7am9h5b8ug7c1tudd36pcsagv4l6b.apps.googleusercontent.com',
   });
-  const [text, setText] = useState('');
-  const [checked, setChecked] = React.useState('first');
+  const [checked, setChecked] = React.useState('true');
 
   const [fdata, setFdata] = useState({
     FirstName: '',
@@ -42,10 +38,12 @@ const SignupScreen = ({ navigation }) => {
 
   const [errors, setErrors] = useState({
     Fields: '',
+    Name: '',
     Email: '',
     Password: '',
     CPassword: '',
     DOB: '',
+    Other: '',
   });
 
   const storageExpirationTimeInMinutes = 30;
@@ -110,41 +108,62 @@ const SignupScreen = ({ navigation }) => {
       } else {
         setErrors({
           Fields: '',
+          Name: '',
           Email: '',
           Password: '',
           CPassword: '',
           DOB: '',
+          Other: '',
         });
-        if (data.msg === 'All fields must be filled.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Fields: data.msg,
-          }));
-        } else if (
-          data.msg === 'Invalid email format.' ||
-          data.msg === 'Email is already in use.' ||
-          data.msg === 'Email is already in use.'
-        ) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Email: data.msg,
-          }));
-        } else if (data.msg === 'Password must be at least 6 characters long.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Password: data.msg,
-          }));
-        } else if (data.msg === 'Passwords must match.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            CPassword: data.msg,
-          }));
-        } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            DOB: data.msg,
-          }));
-        }
+          if (data.msg === 'All fields must be filled.') {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  Fields: data.msg,
+              }));
+          } else if (
+              data.msg === 'Invalid email format.' ||
+              data.msg === 'Email is already in use.' ||
+              data.msg === 'Email is already in use.'
+          ) {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  Email: data.msg,
+              }));
+          } else if (data.msg === 'Password must be at least 6 characters long.') {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  Password: data.msg,
+              }));
+          } else if (data.msg === 'Passwords must match.') {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  CPassword: data.msg,
+              }));
+          } else if (data.msg === 'First and Last names can only contain letters.') {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  Name: data.msg,
+              }));
+          } else if (data.msg === 'Invalid date format. Please use YYYY-MM-DD.' ||
+              'Invalid date of birth. It should be a day before the current day.' ||
+              'You must be at least 18 years old to register.' ||
+              'Invalid date. Please provide a valid date in the format YYYY-MM-DD.'
+            ) {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  DOB: data.msg,
+              }));
+          } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  DOB: data.msg,
+              }));
+          } else if (checked === null) {
+              setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  Other: 'Please select your account type.',
+              }));
+          }
       }
     } catch (error) {
       console.error('Submitting error when creating user:', error);
@@ -156,7 +175,7 @@ const SignupScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Create your account</Text>
         {errors.Fields ? <Text style={styles.box}>{errors.Fields}</Text> : null}
-
+             
         {/* Email */}
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
@@ -189,9 +208,10 @@ const SignupScreen = ({ navigation }) => {
               value={fdata.LastName}
               onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
             />
-          </View>
+                  </View>
+                  
         </View>
-
+        {errors.Name ? <Text style={{ color: 'red' }}>{errors.Name}</Text> : null}
         {/* Account type */}
         <View style={styles.item}>
           <Text style={styles.field}>Select your account type</Text>
@@ -217,7 +237,7 @@ const SignupScreen = ({ navigation }) => {
             </View>
           </View>
         </View>
-
+        {errors.Other ? <Text style={{ color: 'red' }}>{errors.Other}</Text> : null}
         {/* Birth date */}
         <View style={styles.item}>
           <Text style={styles.field}>Birth Date (YYYY-MM-DD)</Text>
@@ -285,6 +305,9 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
+SignupScreen.propTypes = {
+    navigation: PropTypes.object.isRequired,
+};
 const useStyles = CreateResponsiveStyle(
   {
     page: {
@@ -358,9 +381,6 @@ const useStyles = CreateResponsiveStyle(
     },
     full_width: {
       minWidth: '100%',
-    },
-    auto_width: {
-      minWidth: 'auto',
     },
     half_width: {
       width: wp('40%'),

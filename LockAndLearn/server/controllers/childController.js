@@ -8,6 +8,7 @@ const {
   updateChildMaterial,
   getWorkPackagesByChildId,
   getPackageByPackageId,
+  getPackagesByChildId,
 } = require('../manager/childManager.js');
 const express = require('express');
 const router = express.Router();
@@ -163,16 +164,20 @@ router.get('/getWorkPackages/:id', async (req, res) => {
 router.get('/getPackagesInfo/:id', async (req, res) => {
   try {
     const childId = req.params.id;
-    // get all the packages assigned to the child
-    const previouslyAssignedPackage = await getWorkPackagesByChildId(childId);
-    // handle: when no packages assigned
-    if (previouslyAssignedPackage === null) {
-      return res.status(200).json({ message: 'No work packages assigned' });
-    }
-    // randomly pick one of the packages
-    const randomIndex = Math.floor(Math.random() * previouslyAssignedPackage.length);
-    const randomPackageId = previouslyAssignedPackage[randomIndex];
-    // get the package info
+    // get random package from array of packages except wp
+    const packages = await getPackagesByChildId(childId);
+    packages.forEach((package) => {
+      if (package.length === 26) {
+        // remove package from packages
+        const index = packages.indexOf(package);
+        if (index > -1) {
+          packages.splice(index, 1);
+        }
+      }
+    });
+    const randomIndex = Math.floor(Math.random() * packages.length);
+    const randomPackageId = packages[randomIndex];
+    // get this package info with its wp info
     const packageInfo = await getPackageByPackageId(randomPackageId);
     res.status(200).json(packageInfo);
   } catch (err) {
