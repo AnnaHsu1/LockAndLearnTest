@@ -12,6 +12,7 @@ import { Icon } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getItem } from '../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
 const DisplayStudyMaterial = ({ props }) => {
   const route = useRoute();
@@ -21,10 +22,7 @@ const DisplayStudyMaterial = ({ props }) => {
   const [selectedPackageId, setSelectedPackageId] = useState(null);
   const params = route.params;
   const childID = params?.child_ID;
-//   const { _id, name, grade } = params?.workPackage;
-  const _id = "6599f29af077ba0bb1dc2093"
-  const name = "Math"
-  const grade = 10
+  const { _id, name, grade } = params?.workPackage;
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.9;
 
@@ -37,46 +35,46 @@ const DisplayStudyMaterial = ({ props }) => {
   // function to get all study material info
   const fetchPackageInfo = async () => {
     try {
-        const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+      const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log('packageInfo: ', data);
+        console.log('materials: ', data.materials);
+        // get the url PDFs with material IDs
+        data.materials.forEach((material) => {
+          getPDFs(material);
         });
-        if (response.status === 200) {
-            const data = await response.json();
-            console.log("packageInfo: ", data)
-            console.log("materials: ", data.materials)
-            // get the url PDFs with material IDs
-            data.materials.forEach(material => {
-                getPDFs(material)
-            })
-            // detect if there is no package assigned to the child, don't display pdfs
-            if (data.message) {
-                console.log(data.message)
-            }
-            //todo:
-            /**
-             *  - display the packageInfo on the screen
-             *  - (data of packageInfo: 
-             *      package_id, name, grade, workPackageDescription,
-             *      packageDescription, subcategory, materials, quizzes)
-             *  - display the PDF on the screen (using material ID)
-             *  - if many PDF, display them one by one with a button to go to the next one/previous one
-             *  - end of the PDFs, display button to do the quiz
-             */
-        } else {
-            console.error('Error fetching study material');
+        // detect if there is no package assigned to the child, don't display pdfs
+        if (data.message) {
+          console.log(data.message);
         }
+        //todo:
+        /**
+         *  - display the packageInfo on the screen
+         *  - (data of packageInfo:
+         *      package_id, name, grade, workPackageDescription,
+         *      packageDescription, subcategory, materials, quizzes)
+         *  - display the PDF on the screen (using material ID)
+         *  - if many PDF, display them one by one with a button to go to the next one/previous one
+         *  - end of the PDFs, display button to do the quiz
+         */
+      } else {
+        console.error('Error fetching study material');
+      }
     } catch (error) {
-        console.error('Network error:', error);
+      console.error('Network error:', error);
     }
   };
-  
+
   // function to get url of PDF
   const getPDFs = async (materialID) => {
     try {
-      console.log("materialIDs: ", materialID)
+      console.log('materialIDs: ', materialID);
 
       const response = await fetch(`http://localhost:4000/files/uploadFilesById/${materialID}`, {
         method: 'GET',
@@ -84,7 +82,7 @@ const DisplayStudyMaterial = ({ props }) => {
       if (response.status === 200) {
         const fileBlob = await response.blob();
         const fileUrl = URL.createObjectURL(fileBlob);
-        console.log("PDFs: ", fileUrl)
+        console.log('PDFs: ', fileUrl);
       } else {
         console.error('Error fetching PDFs');
       }
@@ -126,10 +124,7 @@ const DisplayStudyMaterial = ({ props }) => {
   // function to display the work package information
   const renderPackage = (this_Package) => {
     return (
-      <View
-        key={this_Package._id}
-        style={styles.containerCard}
-      >
+      <View key={this_Package._id} style={styles.containerCard}>
         <View key={this_Package._id} style={styles.workPackageItemContainer}>
           <TouchableOpacity
             style={{ width: '75%' }}
@@ -262,7 +257,8 @@ const DisplayStudyMaterial = ({ props }) => {
     >
       <View style={styles.containerFile}>
         <Text style={styles.selectFiles}>
-          {name} - {grade}{getGradeSuffix(grade)} Grade
+          {name} - {grade}
+          {getGradeSuffix(grade)} Grade
         </Text>
         {/* Display all work packages from the user */}
         <FlatList
@@ -321,6 +317,22 @@ const DisplayStudyMaterial = ({ props }) => {
       </Modal>
     </ImageBackground>
   );
+};
+
+DisplayStudyMaterial.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child_ID: PropTypes.string, // Assuming child_ID is a string
+      // Define other expected parameters here. For example, if you expect a work package:
+      workPackage: PropTypes.shape({
+        _id: PropTypes.string,
+        name: PropTypes.string,
+        grade: PropTypes.number,
+        // Include other properties of workPackage if there are more
+      }),
+      // Add other params as needed
+    }),
+  }).isRequired,
 };
 
 const styles = StyleSheet.create({
