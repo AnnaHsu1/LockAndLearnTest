@@ -88,6 +88,41 @@ const ChildTimeframes = ({ route, navigation }) => {
     });
   };
 
+  // Save the edited timeframes
+  const saveEditTimeframes = async () => {
+    try {
+      console.log("save edit timeframes")
+      console.log("editStartHour", Object.values(editStartHour))
+      console.log("editStartMinute", Object.values(editStartMinute))
+      console.log("editEndHour", Object.values(editEndHour))
+      console.log("editEndMinute", Object.values(editEndMinute))
+      
+      const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
+        method: 'PUT',
+        credentials: 'include', // Include cookies in the request
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timeframeIds: Object.keys(editStartHour),
+          editStartHours: Object.values(editStartHour),
+          editStartMinutes: Object.values(editStartMinute),
+          editEndHours: Object.values(editEndHour),
+          editEndMinutes: Object.values(editEndMinute),
+        }),
+      });
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        console.log('Timeframe updated successfully!');
+        setEditMode(false);
+        getChildTimeframes();
+      }
+    } catch (error) {
+      console.log(error.msg);
+    }
+  };
 
   const getChildTimeframes = async () => {
     try {
