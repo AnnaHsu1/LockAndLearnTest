@@ -5,7 +5,6 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 
 const AdminReportCenter = ({ route, navigation }) => {
   const styles = useStyles();
-  const [isModalVisible, setModalVisible] = useState(false);
   const [reports, setReports] = useState([]);
   const [workPackages, setWorkPackages] = useState({});
 
@@ -28,26 +27,6 @@ const AdminReportCenter = ({ route, navigation }) => {
 
     fetchWorkPackages();
   }, [reports]);
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
-  const fetchUser = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
-      if (response.status === 200) {
-        const user = await response.json();
-        return user;
-      } else {
-        console.error('Error fetching user');
-        return null;
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-      return null;
-    }
-  };
 
   const fetchReports = async () => {
     try {
