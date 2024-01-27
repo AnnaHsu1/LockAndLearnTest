@@ -36,6 +36,58 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [periodDate, setPeriodDate] = useState('');
   const [timeframes, setTimeframes] = useState([]);
   const [error, setError] = useState('');
+  const [editStartHour, setEditStartHour] = useState({});
+  const [editStartMinute, setEditStartMinute] = useState({});
+  const [editEndHour, setEditEndHour] = useState({});
+  const [editEndMinute, setEditEndMinute] = useState({});
+
+  // Set the edit start hour/start minute/end hour/end minute states
+  const setEditTime = (timeframes) => {
+    Object.keys(timeframes).map((day) => {
+      const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
+      const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+      startTimes.forEach((time, index) => {
+        const startHourTime = {
+          [timeframes[day][index]._id]: time.substring(0, 2),
+        }
+        setEditStartHour((prevStartHour) => {
+          return {
+            ...prevStartHour,
+            ...startHourTime
+          };
+        });
+        const startMinuteTime = {
+          [timeframes[day][index]._id]: time.substring(3, 5),
+        }
+        setEditStartMinute((prevStartMinute) => {
+          return {
+            ...prevStartMinute,
+            ...startMinuteTime
+          };
+        });
+        const endHourTime = {
+          [timeframes[day][index]._id]: endTimes[index].substring(0, 2),
+        }
+        setEditEndHour((prevEndHour) => {
+          return {
+            ...prevEndHour,
+            ...endHourTime
+          };
+        });
+        const endMinuteTime = {
+          [timeframes[day][index]._id]: endTimes[index].substring(3, 5),
+        }
+        setEditEndMinute((prevEndMinute) => {
+          return {
+            ...prevEndMinute,
+            ...endMinuteTime
+          };
+        });
+      });
+
+    });
+  };
+
 
   const getChildTimeframes = async () => {
     try {
