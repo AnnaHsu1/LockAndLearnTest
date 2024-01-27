@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
-import Modal from 'react-native-modal';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
+import PropTypes from 'prop-types';
 
 const ChildSettings = ({ route, navigation }) => {
   const styles = useStyles();
@@ -67,6 +63,22 @@ const ChildSettings = ({ route, navigation }) => {
   );
 };
 
+ChildSettings.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.shape({
+        firstName: PropTypes.string,
+        lastName: PropTypes.string,
+        // Add other properties of 'child' object here with their respective types
+      }),
+    }).isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    // Add other navigation functions and properties if they are used in your component
+  }).isRequired,
+};
+
 const useStyles = CreateResponsiveStyle(
   {
     page: {
@@ -112,12 +124,6 @@ const useStyles = CreateResponsiveStyle(
       justifyContent: 'center',
       minWidth: 100,
     },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
     full_width: {
       minWidth: '100%',
     },
@@ -137,12 +143,6 @@ const useStyles = CreateResponsiveStyle(
       flex: 0.75,
       justifyContent: 'space-around',
       alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
     },
   },
   {
