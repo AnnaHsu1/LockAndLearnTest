@@ -8,6 +8,7 @@ import {
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import { loadStripe } from "@stripe/stripe-js";
+import { getItem } from '../../components/AsyncStorage';
 
 const Payment = ({ navigation, route }) => {
     const { totalPrice } = route.params || {};
@@ -18,6 +19,9 @@ const Payment = ({ navigation, route }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const token = await getItem('@token');
+                const user = JSON.parse(token);
+                const userId = user._id;
                 // Fetch publishable key
                 const configResponse = await fetch("http://localhost:4000/payment/config");
                 const { publishableKey } = await configResponse.json();
@@ -26,12 +30,14 @@ const Payment = ({ navigation, route }) => {
                 console.log("Stripe Promise set.");
 
                 // Fetch client secret
-                const orderResponse = await fetch("http://localhost:4000/payment/initOrderStripe", {
+                const orderResponse = await fetch(`http://localhost:4000/payment/initOrderStripe/${userId}`, {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ totalPrice: totalPrice }),
+                    body: JSON.stringify({
+                        totalPrice: totalPrice,
+                    }),
                 });
                 const { clientSecret } = await orderResponse.json();
                 console.log("Received CS:", clientSecret);
