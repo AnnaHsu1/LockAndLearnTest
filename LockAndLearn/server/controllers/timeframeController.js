@@ -113,4 +113,52 @@ router.delete('/deletetimeframe/:timeframeId', async (req, res) => {
   }
 });
 
+// Handle timeframe update for edit time periods
+router.put('/updateEditTimeframe', async (req, res) => {
+  const { timeframeIds, editStartHours, editStartMinutes, editEndHours, editEndMinutes } = req.body;
+
+  try {
+    for (let i = 0; i < timeframeIds.length; i++) {
+      const timeframeId = timeframeIds[i];
+      const editStartHour = editStartHours[i];
+      const editStartMinute = editStartMinutes[i];
+      const editEndHour = editEndHours[i];
+      const editEndMinute = editEndMinutes[i];
+
+    // Input validations
+    if (!timeframeId) {
+      return res.status(400).json({ msg: 'Timeframe ID must be provided.' });
+    }
+    if (!editStartHour || !editStartMinute || !editEndHour || !editEndMinute) {
+      return res.status(400).json({ msg: 'All fields must be filled.' });
+    }
+    if (editStartHour < 0 || editStartHour > 23 || editEndHour < 0 || editEndHour > 23) {
+      return res.status(400).json({ msg: 'Hour must be between 0 and 23.' });
+    }
+    if (editStartMinute < 0 || editStartMinute > 59 || editEndMinute < 0 || editEndMinute > 59) {
+      return res.status(400).json({ msg: 'Minute must be between 0 and 59.' });
+    }
+    if (editStartHour > editEndHour || (editStartHour === editEndHour && editStartMinute > editEndMinute)) {
+      return res.status(400).json({ msg: 'Start time must be before end time.' });
+    }
+
+    // Update the timeframe
+    await Timeframe.updateOne(
+      { _id: timeframeId },
+      {
+        startTime: `${editStartHour}:${editStartMinute}`,
+        endTime: `${editEndHour}:${editEndMinute}`,
+      }
+    );
+    }
+    // Respond with the updated timeframe
+    res.status(200).json({ message: 'Successfully updated timeframe' });
+
+  } catch (error) {
+    // Handle errors if createUser function fails
+    console.error('Error updating timeframe:', error);
+    res.status(500).json({ msg: 'Unable to update timeframe' });
+  }
+});
+
 module.exports = router;
