@@ -76,7 +76,8 @@ const HomeScreen = ({ navigation }) => {
     const userToken = await getUser();
     if (userToken.isParent) {
       navigation.navigate('ParentHomeScreen');
-      // navigation.navigate('ParentAccount');
+    } else if (userToken.email === 'admin@lockandlearn.ca') {
+      navigation.navigate('AdminMenu');
     } else {
       navigation.navigate('UserLandingPage');
     }
