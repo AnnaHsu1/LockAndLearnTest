@@ -4,108 +4,164 @@ import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 
 const AdminReportCenter = ({ route, navigation }) => {
-    const styles = useStyles();
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [reports, setReports] = useState([]);
-    const [workPackages, setWorkPackages] = useState({});
+  const styles = useStyles();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [workPackages, setWorkPackages] = useState({});
 
-    useEffect(() => {
-        fetchReports(); // Fetch reports when the component mounts
-    }, []);
+  useEffect(() => {
+    fetchReports(); // Fetch reports when the component mounts
+  }, []);
 
-    useEffect(() => {
-        // Fetch work packages when the component mounts or when reports change
-        const fetchWorkPackages = async () => {
-            const workPackagesData = {};
-            await Promise.all(reports.map(async (item) => {
-                const workPackage = await fetchWorkPackage(item.idOfWp);
-                workPackagesData[item.idOfWp] = workPackage;
-            }));
-            setWorkPackages(workPackagesData);
-        };
-
-        fetchWorkPackages();
-    }, [reports]);
-
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
+  useEffect(() => {
+    // Fetch work packages when the component mounts or when reports change
+    const fetchWorkPackages = async () => {
+      const workPackagesData = {};
+      await Promise.all(
+        reports.map(async (item) => {
+          const workPackage = await fetchWorkPackage(item.idOfWp);
+          workPackagesData[item.idOfWp] = workPackage;
+        })
+      );
+      setWorkPackages(workPackagesData);
     };
 
-    const fetchReports = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/reports/all-reports');
-            if (response.status === 200) {
-                const data = await response.json();
-                setReports(data);
-            } else {
-                console.error('Error fetching reports');
-            }
-        } catch (error) {
-            console.error('Network error:', error);
-        }
-    };
+    fetchWorkPackages();
+  }, [reports]);
 
-    const fetchWorkPackage = async (workPackageId) => {
-        try {
-            const response = await fetch(`http://localhost:4000/workPackages/fetchWorkPackageById/${workPackageId}`);
-            if (response.status === 200) {
-                const data = await response.json();
-                return data;
-            } else {
-                console.error('Error fetching work package');
-                return null;
-            }
-        } catch (error) {
-            console.error('Network error:', error);
-            return null;
-        }
-    };
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
-    const renderReportItems = () => (
-        <ScrollView>
-            {reports.map((item) => (
-                <View key={item._id} style={styles.reportItem}>
-                    <Text style={styles.text}>
-                        Report ID: {item._id}
-                        {'\n'}
-                        Work Package ID: {item.idOfWp}
-                        {'\n'}
-                        Time of Report: {item.timeOfReport}
-                        {'\n'}
-                        Reporter ID: {item.reporterId}
-                        {'\n'}
-                        Reason: {item.reason}
-                        {'\n'}
-                        {/* Display additional work package properties */}
-                        {workPackages[item.idOfWp] && (
-                            <>
-                                Work Package Name: {workPackages[item.idOfWp].name}
-                                {'\n'}
-                                Description: {workPackages[item.idOfWp].description}
-                                {'\n'}
-                                Price: {workPackages[item.idOfWp].price}
-                                {'\n'}
-                                Package Count: {workPackages[item.idOfWp].packageCount}
-                                {'\n'}
-                                Instructor ID: {workPackages[item.idOfWp].instructorID}
-                            </>
-                        )}
-                    </Text>
-                </View>
-            ))}
-        </ScrollView>
-    );
+  const fetchUser = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
+      if (response.status === 200) {
+        const user = await response.json();
+        return user;
+      } else {
+        console.error('Error fetching user');
+        return null;
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      return null;
+    }
+  };
 
-    return (
-        <View style={styles.page} testID="main-view">
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.title}>Report Center</Text>
-                </View>
-                {renderReportItems()}
-            </View>
+  const fetchReports = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/reports/all-reports');
+      if (response.status === 200) {
+        const data = await response.json();
+
+        // Update each report item with reporter information
+        const updatedReports = await Promise.all(
+          data.map(async (item) => {
+            const reporter = await fetchReporter(item.reporterId);
+            return { ...item, reporter };
+          })
+        );
+
+        setReports(updatedReports);
+      } else {
+        console.error('Error fetching reports');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  };
+
+  const fetchWorkPackage = async (workPackageId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/workPackages/fetchWorkPackageById/${workPackageId}`
+      );
+      if (response.status === 200) {
+        const data = await response.json();
+        return data;
+      } else {
+        console.error('Error fetching work package');
+        return null;
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      return null;
+    }
+  };
+
+  const fetchReporter = async (reporterId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/getUser/${reporterId}`);
+      if (response.status === 200) {
+        const reporter = await response.json();
+        return reporter;
+      } else {
+        console.error('Error fetching reporter');
+        return null;
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      return null;
+    }
+  };
+
+  const renderReportItems = () => (
+    <ScrollView>
+      {reports.map((item) => (
+        <View key={item._id} style={styles.reportItem}>
+          <Text style={styles.text}>
+            Report ID: {item._id}
+            {'\n'}
+            Work Package ID: {item.idOfWp}
+            {'\n'}
+            Time of Report: {item.timeOfReport}
+            {'\n'}
+            Reporter ID: {item.reporterId}
+            {'\n'}
+            Reason: {item.reason}
+            {'\n'}
+            {/* Display additional work package properties */}
+            {workPackages[item.idOfWp] && (
+              <>
+                Work Package Name: {workPackages[item.idOfWp].name}
+                {'\n'}
+                Description: {workPackages[item.idOfWp].description}
+                {'\n'}
+                Price: {workPackages[item.idOfWp].price}
+                {'\n'}
+                Package Count: {workPackages[item.idOfWp].packageCount}
+                {'\n'}
+                Instructor ID: {workPackages[item.idOfWp].instructorID}
+              </>
+            )}
+            {/* Display reporter information */}
+            {item.reporter && (
+              <>
+                First Name: {item.reporter.firstName}
+                {'\n'}
+                Last Name: {item.reporter.lastName}
+                {'\n'}
+                Email: {item.reporter.email}
+                {'\n'}
+              </>
+            )}
+          </Text>
         </View>
-    );
+      ))}
+    </ScrollView>
+  );
+
+  return (
+    <View style={styles.page} testID="main-view">
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Report Center</Text>
+        </View>
+        {renderReportItems()}
+      </View>
+    </View>
+  );
 };
 
 const useStyles = CreateResponsiveStyle(
