@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-} from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { Icon, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import PropTypes from 'prop-types';
 
 const DisplayStudyMaterial = ({}) => {
   const route = useRoute();
@@ -18,18 +14,17 @@ const DisplayStudyMaterial = ({}) => {
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
   const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
-  const [quiz, setQuiz]= useState([]);
-  const [quizLength, setQuizLength]= useState([]);
-  const [quizzesArray, setQuizzesArray]= useState([]);
-
+  const [quiz, setQuiz] = useState([]);
+  const [quizLength, setQuizLength] = useState([]);
+  const [quizzesArray, setQuizzesArray] = useState([]);
 
   const ProgressBar = ({ current, total }) => {
     const completionPercentage = (current / total) * 100;
-  
+
     return (
-        <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${completionPercentage}%` }]} />
-        </View>
+      <View style={styles.progressBarContainer}>
+        <View style={[styles.progressBar, { width: `${completionPercentage}%` }]} />
+      </View>
     );
   };
 
@@ -45,37 +40,37 @@ const DisplayStudyMaterial = ({}) => {
   // function to get all study material info
   const fetchPackageInfo = async () => {
     try {
-        const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+      const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        setQuizLength(data.quizzes.length);
+        setPackageInfo(data);
+        setQuizzesArray(data.quizzes);
+        // get the url PDFs with material IDs
+        data.materials.forEach((material) => {
+          getPDFs(material);
         });
-        if (response.status === 200) {
-            const data = await response.json();
-            setQuizLength(data.quizzes.length)
-            setPackageInfo(data);
-            setQuizzesArray(data.quizzes)
-            // get the url PDFs with material IDs
-            data.materials.forEach(material => {
-                getPDFs(material)
-            })
-            // detect if there is no package assigned to the child, don't display pdfs
-            // if (data.message) {
-            //     console.log(data.message)
-            // }
-        } else {
-            console.error('Error fetching study material');
-        }
+        // detect if there is no package assigned to the child, don't display pdfs
+        // if (data.message) {
+        //     console.log(data.message)
+        // }
+      } else {
+        console.error('Error fetching study material');
+      }
     } catch (error) {
-        console.error('Network error:', error);
+      console.error('Network error:', error);
     }
   };
-  
+
   // function to get url of PDF
   const getPDFs = async (materialID) => {
     try {
-      console.log("materialIDs: ", materialID)
+      console.log('materialIDs: ', materialID);
 
       const response = await fetch(`http://localhost:4000/files/uploadFilesById/${materialID}`, {
         method: 'GET',
@@ -83,11 +78,10 @@ const DisplayStudyMaterial = ({}) => {
       if (response.status === 200) {
         const fileBlob = await response.blob();
         const fileUrl = URL.createObjectURL(fileBlob);
-        setPdfUrls(prevUrls => {
+        setPdfUrls((prevUrls) => {
           const newUrls = [...prevUrls, fileUrl];
           return newUrls;
         });
-
       } else {
         console.error('Error fetching PDFs');
       }
@@ -97,7 +91,7 @@ const DisplayStudyMaterial = ({}) => {
   };
 
   const fetchQuizById = async (quizId) => {
-    console.log("Fetching Quiz with ID:", quizId);
+    console.log('Fetching Quiz with ID:', quizId);
     try {
       const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
         method: 'GET',
@@ -105,7 +99,7 @@ const DisplayStudyMaterial = ({}) => {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.status === 200) {
         const data = await response.json();
         setQuiz(data);
@@ -126,21 +120,17 @@ const DisplayStudyMaterial = ({}) => {
       quizLength: quiz.questions.length,
       questionIndex: 0,
     });
-
   };
-
 
   const handleNextPdf = (nextIndex, length) => {
-
-    if (nextIndex < length){
+    if (nextIndex < length) {
       setCurrentPdfIndex(nextIndex);
-    } 
+    }
   };
   const handlePrevPdf = (prevIndex, length) => {
-
-    if (prevIndex >= length){
+    if (prevIndex >= length) {
       setCurrentPdfIndex(prevIndex);
-    } 
+    }
   };
 
   // Function to determine the grade suffix
@@ -169,58 +159,74 @@ const DisplayStudyMaterial = ({}) => {
       resizeMode="cover"
       style={styles.container}
     >
-      <View style={styles.containerFile} >
-      {pdfUrls.length > 0 ? (
-          <View
-            style={styles.pdfViewContainer}
-          >
+      <View style={styles.containerFile}>
+        {pdfUrls.length > 0 ? (
+          <View style={styles.pdfViewContainer}>
             <Text style={styles.packageInfoText} testID="packageInfo">
               {packageInfo.name} - {packageInfo.grade} - {packageInfo.packageDescription}
             </Text>
             <View style={styles.pdfContainer}>
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
-              
                 <Viewer fileUrl={pdfUrls[currentPdfIndex]} plugins={[newPlugin]} defaultScale={1} />
-              
               </Worker>
             </View>
-            <Text style={styles.progressBarText}>Document {currentPdfIndex+1} out of {pdfUrls.length}</Text>
+            <Text style={styles.progressBarText}>
+              Document {currentPdfIndex + 1} out of {pdfUrls.length}
+            </Text>
             <ProgressBar current={currentPdfIndex + 1} total={pdfUrls.length} />
 
-            
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                {currentPdfIndex+1 > 1 ? (
-                  <Button
-                      style={styles.modalButtons}
-                      onPress={() => handlePrevPdf(currentPdfIndex-1, 0)}
-                  >
-                      <Text style = {styles.buttonText}>Previous</Text>
-                  </Button>):(<View></View>)}
-                {currentPdfIndex+1 < pdfUrls.length ? (
+              {currentPdfIndex + 1 > 1 ? (
                 <Button
-                    style={styles.modalButtons}
-                    onPress={() => handleNextPdf(currentPdfIndex+1, pdfUrls.length)}
+                  style={styles.modalButtons}
+                  onPress={() => handlePrevPdf(currentPdfIndex - 1, 0)}
                 >
-                    <Text style = {styles.buttonText}>Next</Text>
+                  <Text style={styles.buttonText}>Previous</Text>
                 </Button>
-                ):(
-                  <Button
+              ) : (
+                <View></View>
+              )}
+              {currentPdfIndex + 1 < pdfUrls.length ? (
+                <Button
+                  style={styles.modalButtons}
+                  onPress={() => handleNextPdf(currentPdfIndex + 1, pdfUrls.length)}
+                >
+                  <Text style={styles.buttonText}>Next</Text>
+                </Button>
+              ) : (
+                <Button
                   style={styles.takeQuizButton}
-                  onPress={() => handleTakeQuiz(quizzesArray[Math.floor(Math.random() * quizzesArray.length)])}
-                  >
-                      <Text style = {styles.buttonText}>Take Quiz</Text>
-                  </Button>
-                )}
+                  onPress={() =>
+                    handleTakeQuiz(quizzesArray[Math.floor(Math.random() * quizzesArray.length)])
+                  }
+                >
+                  <Text style={styles.buttonText}>Take Quiz</Text>
+                </Button>
+              )}
             </View>
           </View>
         ) : (
-            <Text>No assigned PDF material has been found.</Text> 
-          )}
-          
+          <Text>No assigned PDF material has been found.</Text>
+        )}
       </View>
-      
     </ImageBackground>
   );
+};
+
+DisplayStudyMaterial.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child_ID: PropTypes.string, // Assuming child_ID is a string
+      // Define other expected parameters here. For example, if you expect a work package:
+      workPackage: PropTypes.shape({
+        _id: PropTypes.string,
+        name: PropTypes.string,
+        grade: PropTypes.number,
+        // Include other properties of workPackage if there are more
+      }),
+      // Add other params as needed
+    }),
+  }).isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -256,7 +262,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "#FAFAFA"
+    backgroundColor: '#FAFAFA',
   },
   pdfContainer: {
     width: '60%',
@@ -298,7 +304,7 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     height: 10,
-    width: "50%",
+    width: '50%',
     backgroundColor: 'lightgrey',
     borderRadius: 10,
     overflow: 'hidden',
@@ -313,8 +319,8 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
   progressBarText: {
-    color: 'darkgrey', 
-    fontSize: 14, 
+    color: 'darkgrey',
+    fontSize: 14,
   },
 });
 
