@@ -19,19 +19,20 @@ import { getUser } from '../../components/AsyncStorage';
 import { ToastContainer, toast } from 'react-toastify';
 import * as DocumentPicker from 'expo-document-picker';
 import { Icon } from 'react-native-paper';
+import PropTypes from 'prop-types';
 
 const LandingPage = ({ navigation }) => {
   const [userId, setUserId] = useState(null);
   const [certificateStatus, setCertificateStatus] = useState('pending');
   const [fileName, setFileName] = useState([]);
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState('');
   const [refresh, setRefresh] = useState(false);
-  const [highestDegree, setHighestDegree] = useState("");
+  const [highestDegree, setHighestDegree] = useState('');
   const [files, setFiles] = useState([]);
   const [modalOverwriteFilesVisible, setModalOverwriteFilesVisible] = useState(false);
   const [duplicateFiles, setDuplicateFiles] = useState([]);
   const [dictionary, setDictionary] = useState([]); // [{key, value}]
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
   const dict = [];
   const maxTextWidth = width * 0.9;
   const { width } = Dimensions.get('window');
@@ -43,42 +44,48 @@ const LandingPage = ({ navigation }) => {
     }
   };
 
+  // Function to fetch user's certificates' status
   const getStatus = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/certificates/getCertificatesStatus/${userId}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `http://localhost:4000/certificates/getCertificatesStatus/${userId}`,
+        {
+          method: 'GET',
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         const certificateStatus = data.uploadedCertificates;
-        let returnedStatus = "rejected"
+        let returnedStatus = 'rejected';
         for (let i = 0; i < certificateStatus.length; i++) {
-          if (certificateStatus[i].metadata.status == "accepted") {
-            returnedStatus = "accepted";
+          // Look for accepted certificates
+          if (certificateStatus[i].metadata.status == 'accepted') {
+            returnedStatus = 'accepted';
             break;
           }
         }
-        
+
         for (let i = 0; i < certificateStatus.length; i++) {
-          if (certificateStatus[i].metadata.status == "pending") {
-            returnedStatus = "pending";
+          // Look for pending certificates
+          if (certificateStatus[i].metadata.status == 'pending') {
+            returnedStatus = 'pending';
             break;
           }
         }
         setStatus(returnedStatus);
-        if (returnedStatus == "pending") {
+        // Display appropriate notification based on the certificate status
+        if (returnedStatus == 'pending') {
           toast.info('Your certificate is under review. Please come back later.');
-        }
-        else if (certificateStatus.length != 0 && returnedStatus == "rejected") {
+        } else if (certificateStatus.length != 0 && returnedStatus == 'rejected') {
           toast.error('Your certificate has been rejected. Please upload a new certificate.');
         }
       }
-      
     } catch (error) {
-    console.error('An error occurred:', error);
+      console.error('An error occurred:', error);
     }
-  }
+  };
 
+  // Functionn to select certificate
   const certificateSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === 'web') {
@@ -148,13 +155,13 @@ const LandingPage = ({ navigation }) => {
           toast.success('Certificates uploaded successfully!');
           setFileName([]);
           setFiles([]);
-          setFullName("");
-          setHighestDegree("");
+          setFullName('');
+          setHighestDegree('');
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
-      setRefresh(true)
+      setRefresh(true);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -182,13 +189,13 @@ const LandingPage = ({ navigation }) => {
           //navigation.navigate('ViewUploads', { newFilesAdded: duplicateFiles });
           setFileName([]);
           setFiles([]);
-          setFullName("");
-          setHighestDegree("");
+          setFullName('');
+          setHighestDegree('');
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
-      setRefresh(true)
+      setRefresh(true);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -198,7 +205,8 @@ const LandingPage = ({ navigation }) => {
     setModalOverwriteFilesVisible(!modalOverwriteFilesVisible);
   };
 
-  const validateFields = fullName == "" || highestDegree == "" || files.length == 0 || status == "pending"
+  const validateFields =
+    fullName == '' || highestDegree == '' || files.length == 0 || status == 'pending';
 
   // function to render each row (which is uploaded file)
   const renderFile = (item, index) => {
@@ -353,13 +361,13 @@ const LandingPage = ({ navigation }) => {
               />
             </View>
             <View style={styles.item}>
-                <Text style={styles.field}>Highest Degree</Text>
-                <TextInput
-                  testID="highest-degree-input"
-                  style={[styles.textbox, styles.full_width]}
-                  value={highestDegree}
-                  onChangeText={(newText) => setHighestDegree(newText)}
-                />
+              <Text style={styles.field}>Highest Degree</Text>
+              <TextInput
+                testID="highest-degree-input"
+                style={[styles.textbox, styles.full_width]}
+                value={highestDegree}
+                onChangeText={(newText) => setHighestDegree(newText)}
+              />
             </View>
             <Text style={styles.uploadFiles}>Uploads - {fileName.length} certificates</Text>
             <Text style={[styles.supportedFormats, { marginTop: 2, marginBottom: 10 }]}>
@@ -373,11 +381,14 @@ const LandingPage = ({ navigation }) => {
               keyExtractor={(item, index) => index.toString()}
               style={{ width: '100%' }}
             />
-            {status && status == "pending" ? 
-            <View> 
-            <Text style={styles.selectCertificates}>You cannot upload new documents while your certificate is under review.</Text>
-          </View> : null  }
-                  
+            {status && status == 'pending' ? (
+              <View>
+                <Text style={styles.selectCertificates}>
+                  You cannot upload new documents while your certificate is under review.
+                </Text>
+              </View>
+            ) : null}
+
             {/* display button to confirm: uploading files */}
             <View style={{ alignItems: 'center' }}>
               <TouchableOpacity
@@ -440,6 +451,12 @@ const LandingPage = ({ navigation }) => {
       </Modal>
     </View>
   );
+};
+
+LandingPage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -516,7 +533,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '500',
     marginTop: '1%',
-    textAlign: "center",
+    textAlign: 'center',
   },
   uploadFiles: {
     color: '#696969',

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 
-const AdminCertificates = ({ route, navigation }) => {
+const AdminCertificates = () => {
   const styles = useStyles();
   const [certificates, setCertificates] = useState([]);
   const [certificateId, setCertificateId] = useState(null);
@@ -10,10 +10,12 @@ const AdminCertificates = ({ route, navigation }) => {
   const [isAcceptModalVisible, setIsAcceptModalVisible] = useState(false);
   const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
 
+  // Fetch pending certificates on component mount
   useEffect(() => {
     fetchAllPendingCertificates();
   }, []);
 
+  // Fetch all pending certificates from the server
   const fetchAllPendingCertificates = async () => {
     try {
       const response = await fetch('http://localhost:4000/certificates/uploadCertificates/pending');
@@ -28,6 +30,7 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
+  // Function to handle accepting a certificate
   const handleAcceptCertificate = async (userId) => {
     const response = await fetch(
       `http://localhost:4000/certificates/acceptUserCertificates/${userId}`,
@@ -37,6 +40,7 @@ const AdminCertificates = ({ route, navigation }) => {
     );
 
     if (response.ok) {
+      // Remove accepted certificates from the list
       const updatedCertificates = certificates.filter(
         (certificate) => certificate.metadata.userId !== userId
       );
@@ -47,6 +51,7 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
+  // Function to handle rejecting a certificate
   const handleRejectCertificate = async (certificateId) => {
     const response = await fetch(
       `http://localhost:4000/certificates/rejectCertificate/${certificateId}`,
@@ -56,6 +61,7 @@ const AdminCertificates = ({ route, navigation }) => {
     );
 
     if (response.ok) {
+      // Remove rejected certificate from the list
       const updatedCertificates = certificates.filter(
         (certificate) => certificate._id !== certificateId
       );
@@ -66,8 +72,8 @@ const AdminCertificates = ({ route, navigation }) => {
     }
   };
 
+  // Function to download certificate
   const downloadCertificate = async (fileName) => {
-    console.log(fileName);
     const response = await fetch(
       `http://localhost:4000/certificates/uploadCertificates/${fileName}`,
       {
@@ -76,29 +82,35 @@ const AdminCertificates = ({ route, navigation }) => {
     );
 
     if (response.ok) {
-      const test = await response.blob();
-      const url = URL.createObjectURL(test);
-      const a = document.createElement('a');
+      const test = await response.blob(); // Convert the response to a blob
+      const url = URL.createObjectURL(test); // Create a URL for the blob
+      const a = document.createElement('a'); // Create anchor element to trigger the download
       a.href = url;
       a.download = `${fileName}`;
       a.click();
+    } else {
+      console.error('Failed to download certificate: ', response.status);
     }
   };
 
+  // Function to open the reject modal
   const openRejectModal = (fileId) => {
     setCertificateId(fileId);
     setIsRejectModalVisible(true);
   };
 
+  // Function to open the accept modal
   const openAcceptModal = (userId) => {
     setUserId(userId);
     setIsAcceptModalVisible(true);
   };
 
+  // Function to close the reject modal
   const closeRejectModal = () => {
     setIsRejectModalVisible(false);
   };
 
+  // Function to close the accept modal
   const closeAcceptModal = () => {
     setIsAcceptModalVisible(false);
   };
@@ -163,6 +175,7 @@ const AdminCertificates = ({ route, navigation }) => {
             <Text style={styles.emptyCertificatesList}>No certificates to approve</Text>
           )}
         </ScrollView>
+        {/* Displaying the accept modal */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -189,6 +202,7 @@ const AdminCertificates = ({ route, navigation }) => {
             </View>
           </View>
         </Modal>
+        {/* Displaying the reject modal */}
         <Modal
           animationType="slide"
           transparent={true}
