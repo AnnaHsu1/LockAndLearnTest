@@ -36,6 +36,93 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [periodDate, setPeriodDate] = useState('');
   const [timeframes, setTimeframes] = useState([]);
   const [error, setError] = useState('');
+  const [editStartHour, setEditStartHour] = useState({});
+  const [editStartMinute, setEditStartMinute] = useState({});
+  const [editEndHour, setEditEndHour] = useState({});
+  const [editEndMinute, setEditEndMinute] = useState({});
+
+  // Set the edit start hour/start minute/end hour/end minute states
+  const setEditTime = (timeframes) => {
+    Object.keys(timeframes).map((day) => {
+      const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
+      const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+      startTimes.forEach((time, index) => {
+        const startHourTime = {
+          [timeframes[day][index]._id]: time.substring(0, 2),
+        }
+        setEditStartHour((prevStartHour) => {
+          return {
+            ...prevStartHour,
+            ...startHourTime
+          };
+        });
+        const startMinuteTime = {
+          [timeframes[day][index]._id]: time.substring(3, 5),
+        }
+        setEditStartMinute((prevStartMinute) => {
+          return {
+            ...prevStartMinute,
+            ...startMinuteTime
+          };
+        });
+        const endHourTime = {
+          [timeframes[day][index]._id]: endTimes[index].substring(0, 2),
+        }
+        setEditEndHour((prevEndHour) => {
+          return {
+            ...prevEndHour,
+            ...endHourTime
+          };
+        });
+        const endMinuteTime = {
+          [timeframes[day][index]._id]: endTimes[index].substring(3, 5),
+        }
+        setEditEndMinute((prevEndMinute) => {
+          return {
+            ...prevEndMinute,
+            ...endMinuteTime
+          };
+        });
+      });
+
+    });
+  };
+
+  // Save the edited timeframes
+  const saveEditTimeframes = async () => {
+    try {
+      console.log("save edit timeframes")
+      console.log("editStartHour", Object.values(editStartHour))
+      console.log("editStartMinute", Object.values(editStartMinute))
+      console.log("editEndHour", Object.values(editEndHour))
+      console.log("editEndMinute", Object.values(editEndMinute))
+      
+      const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
+        method: 'PUT',
+        credentials: 'include', // Include cookies in the request
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          timeframeIds: Object.keys(editStartHour),
+          editStartHours: Object.values(editStartHour),
+          editStartMinutes: Object.values(editStartMinute),
+          editEndHours: Object.values(editEndHour),
+          editEndMinutes: Object.values(editEndMinute),
+        }),
+      });
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        console.log('Timeframe updated successfully!');
+        setEditMode(false);
+        getChildTimeframes();
+      }
+    } catch (error) {
+      console.log(error.msg);
+    }
+  };
 
   const getChildTimeframes = async () => {
     try {
@@ -56,6 +143,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         const orderedTimeframes = orderSortTimeframes(data);
         // console.log('orderedTimeframes', orderedTimeframes);
         setTimeframes(orderedTimeframes);
+        setEditTime(orderedTimeframes);
       }
     } catch (error) {
       console.log(error);
@@ -263,7 +351,9 @@ const ChildTimeframes = ({ route, navigation }) => {
                   // if editMode is true and addMode is false
                   <View style={{ flexDirection: 'row', marginLeft: -40 }}>
                     <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
-                    <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
+                    <TouchableOpacity onPress={() => saveEditTimeframes()}>
+                      <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
+                    </TouchableOpacity>
                   </View>
                 )
               ) : (
@@ -424,7 +514,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (startTimes.length === 0 && day === 'Sunday') {
+                    if (startTimes.length === 0 && day === 'Monday' && day === 'Tuesday' && day === 'Monday' && day === 'Wednesday' && day === 'Thursday' && day === 'Friday' && day === 'Saturday' && day === 'Sunday') {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
@@ -500,7 +590,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (startTimes.length === 0 && day === 'Sunday') {
+                    if (startTimes.length === 0 && day === 'Monday' && day === 'Tuesday' && day === 'Monday' && day === 'Wednesday' && day === 'Thursday' && day === 'Friday' && day === 'Saturday' && day === 'Sunday') {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
@@ -529,27 +619,99 @@ const ChildTimeframes = ({ route, navigation }) => {
                       );
                     }
                     // display time periods for the day
+                    
                     startTimes.forEach((time, index) => {
-                      console.log('delete', day, time, endTimes[index]);
                       timePeriods.push(
-                        <View key={`${day}-${index}`} style={styles.timePeriod}>
-                          <Text style={{ fontSize: 15 }}>
-                            {time} - {endTimes[index]}
-                          </Text>
+                        <View key={`${day}-${index}`} style={styles.timePeriod}>                         
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginRight: 5,
+                              },
+                            ]}
+                            placeholder="HH"
+                            keyboardType="numeric"
+                            value={editStartHour[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditStartHour((prevStartHour) => {
+                                return {
+                                  ...prevStartHour,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
+                          <Text>:</Text>
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginLeft: 5,
+                              },
+                            ]}
+                            placeholder="MM"
+                            keyboardType="numeric"
+                            value={editStartMinute[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditStartMinute((prevStartMinute) => {
+                                return {
+                                  ...prevStartMinute,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
+                          <Text> - </Text>
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginRight: 5,
+                              },
+                            ]}
+                            placeholder="HH"
+                            keyboardType="numeric"
+                            value={editEndHour[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditEndHour((prevEndHour) => {
+                                return {
+                                  ...prevEndHour,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
+                          <Text>:</Text>
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginLeft: 5,
+                              },
+                            ]}
+                            placeholder="MM"
+                            keyboardType="numeric"
+                            value={editEndMinute[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditEndMinute((prevEndMinute) => {
+                                return {
+                                  ...prevEndMinute,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
                             }}
                           >
-                            <TouchableOpacity
-                              onPress={() => {
-                                console.log('edit', day, time, endTimes[index]);
-                                setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
-                              }}
-                            >
-                              <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-                            </TouchableOpacity>
                             <TouchableOpacity
                               onPress={() => {
                                 toggleDeleteModal();
