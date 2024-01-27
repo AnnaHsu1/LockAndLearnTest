@@ -53,6 +53,9 @@ import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
 import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
+import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial';
+import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
+import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 
 const Stack = createNativeStackNavigator();
 
@@ -311,6 +314,11 @@ const StackNavigation = () => {
         />
         <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
         <Stack.Screen
+          name="DisplayStudyMaterial"
+          component={DisplayStudyMaterial}
+          options={{ title: 'Display Study Material' }}
+        />
+        <Stack.Screen
           name="DisplayQuizzScreen"
           component={DisplayQuizzScreen}
           options={{ title: 'Display Quiz Screen' }}
@@ -344,6 +352,16 @@ const StackNavigation = () => {
             name="CheckoutForm"
             component={CheckoutForm}
             options={{ title: 'CheckoutForm' }}
+        />
+        <Stack.Screen
+            name="WorkPackagePreview"
+            component={WorkPackagePreview}
+            options={{ title: 'WorkPackagePreview' }}
+        />
+        <Stack.Screen
+            name="PackagePreview"
+            component={PackagePreview}
+            options={{ title: 'PackagePreview' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

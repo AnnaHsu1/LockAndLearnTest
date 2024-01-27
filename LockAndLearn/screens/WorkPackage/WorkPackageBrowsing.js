@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
-  Image,
-  FlatList,
   TouchableOpacity,
   Modal,
   ScrollView,
   StyleSheet,
   ImageBackground,
 } from 'react-native';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon, Checkbox } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
@@ -563,7 +561,16 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
                   <View style={styles.workPackageText}>
-                    <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                    
+                    <TouchableOpacity
+                      key={workPackage._id}
+                      onPress={() => {
+                        console.log(workPackage);
+                        navigation.navigate('WorkPackagePreview', { workPackage });
+                      }}
+                    >
+                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                    </TouchableOpacity>
 
                     <View style={styles.containerTag}>
                       <View style={styles.tagBox}>

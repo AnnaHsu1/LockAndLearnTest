@@ -1,4 +1,6 @@
 const Child = require('../schema/childSchema.js'); // Import the User model from UserSchema.js
+const WorkPackage2 = require('../schema/workPackage.js');
+const Package = require('../schema/packageSchema.js');
 
 // Function to create a user within DB
 exports.createChild = async function createChild(fdata) {
@@ -95,15 +97,26 @@ exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassin
 exports.updateChildMaterial = async function updateChildMaterial(childId, materialId) {
   try {
     assignedMaterials = [];
+    let packageIds = [];
+    // Get the existing child document
     const existingChild = await Child.findById(childId);
     if (!existingChild) {
       throw new Error('Child not found with the specified _id');
     } else {
-      if (existingChild.assignedMaterials) {
-        existingChild.assignedMaterials = materialId;
-      } else {
-        existingChild.assignedMaterials = [materialId];
-      }
+      // Get packageID(s) from workpackageID(s) and assign to assignedMaterials which is linked to child
+      const promises = materialId.map(async (material) => {
+        const packageId = await Package.find({workPackageID: material}); // find packageID(s) from workpackageID
+        // tmp fix for workpackage having 0 package
+        if (packageId == '') {
+          const wpId = 'wp' + material;
+          packageIds.push(wpId);
+        }
+        packageId.forEach((this_packageId) => {
+          packageIds.push(this_packageId._id);
+        });
+      });
+      await Promise.all(promises);
+      existingChild.assignedMaterials = packageIds;
     }
     // Update the existing document with the new data
     const editChild = await existingChild.save();
@@ -114,6 +127,7 @@ exports.updateChildMaterial = async function updateChildMaterial(childId, materi
   }
 };
 
+// Function to get subjectPassingGrades assigned to the child with childId
 exports.getPreviousPassingGrades = async function getPreviousPassingGrades(childId) {
   try {
     const child = await Child.findById(childId);
@@ -127,19 +141,76 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
     console.log('Error getting previous passing grades for child: ', err);
   }
 };
-    
-    
-  exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
+  
+// Function to get all workPackageIDs assigned to the child with packageIDs
+exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
   try {
     const child = await Child.findById(childId);
     if (child) {
-      const workPackages = child.assignedMaterials;
+      const workPackagesID = [];
+      const packages = child.assignedMaterials;
+      const promises = packages.map(async (package) => {
+        // if package has wp (length = 26), then it is a workpackageID
+        if (package.length == 26) {
+          // remove wp from package
+          const workPackageID = package.substring(2);
+          workPackagesID.push(workPackageID);
+          return;
+        }
+        const workPackageID = await Package.findById(package);
+        workPackagesID.push(workPackageID.workPackageID);
+      });
+      await Promise.all(promises);
+      // check if workpackageid has duplicates
+      const workPackages = [...new Set(workPackagesID)];
       return workPackages;
     } else {
       console.log('No child found');
     }
   } catch (err) {
     console.log('Error getting work packages for child: ', err);
+    throw err;
+  }
+};
+
+// Function to get all packagesInfo assigned to the child with packageId
+exports.getPackageByPackageId = async function getPackageByPackageId(packageId) {
+  try {
+    if (!packageId) {
+      return null;
+      // throw new Error('Package not found with the specified _id');
+    }
+    const package = await Package.findById(packageId);
+    const workPackage = await WorkPackage2.findById(package.workPackageID);  
+    const packagesInfo = {
+      package_id: package._id,
+      name: workPackage.name,
+      grade: workPackage.grade,
+      workPackageDescription: workPackage.description,
+      packageDescription: package.description,
+      subcategory: package.subcategory,
+      materials: package.materials,
+      quizzes: package.quizzes,
+    };
+    return packagesInfo;
+  } catch (err) {
+    console.log('Error getting work packages by id: ', err);
+    throw err;
+  }
+};  
+
+// Function to get all packages from child with childId
+exports.getPackagesByChildId = async function getPackagesByChildId(childId) {
+  try {
+    const child = await Child.findById(childId);
+    if (child) {
+      const packages = child.assignedMaterials;
+      return packages;
+    } else {
+      console.log('No child found');
+    }
+  } catch (err) {
+    console.log('Error getting packages for child: ', err);
     throw err;
   }
 };
