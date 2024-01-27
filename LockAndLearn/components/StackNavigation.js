@@ -53,6 +53,7 @@ import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
 import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
+import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial';
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 
@@ -312,6 +313,11 @@ const StackNavigation = () => {
           options={{ title: 'Edit work package' }}
         />
         <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
+        <Stack.Screen
+          name="DisplayStudyMaterial"
+          component={DisplayStudyMaterial}
+          options={{ title: 'Display Study Material' }}
+        />
         <Stack.Screen
           name="DisplayQuizzScreen"
           component={DisplayQuizzScreen}

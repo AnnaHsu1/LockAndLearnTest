@@ -7,6 +7,8 @@ const {
   getPreviousPassingGrades,
   updateChildMaterial,
   getWorkPackagesByChildId,
+  getPackageByPackageId,
+  getPackagesByChildId,
 } = require('../manager/childManager.js');
 const express = require('express');
 const router = express.Router();
@@ -17,7 +19,7 @@ router.post('/addchild', async (req, res) => {
     // Extract user data from the request body
     // console.log(req.body);
     const { FirstName, LastName, Grade, PassingGrade, ParentId, Preferences } = req.body;
-    console.log(FirstName, LastName, Grade, PassingGrade, ParentId, Preferences);
+    // console.log(FirstName, LastName, Grade, PassingGrade, ParentId, Preferences);
 
     // Input validations
     if (!FirstName || !LastName || !Grade || !ParentId) {
@@ -146,11 +148,38 @@ router.put('/addChildMaterial/:id', async (req, res) => {
   }
 });
 
+// Get all work packages assigned to the child
 router.get('/getWorkPackages/:id', async (req, res) => {
   try {
     const childId = req.params.id;
     const previouslyAssignedWorkPackage = await getWorkPackagesByChildId(childId);
     res.status(200).json(previouslyAssignedWorkPackage);
+  } catch (err) {
+    console.log('Error getting work packages for child: ', err);
+    res.status(500).json({ error: 'Unable to get work packages for child' });
+  }
+});
+
+// Get packages info (name, grade, description) by package Ids
+router.get('/getPackagesInfo/:id', async (req, res) => {
+  try {
+    const childId = req.params.id;
+    // get random package from array of packages except wp
+    const packages = await getPackagesByChildId(childId);
+    packages.forEach((package) => {
+      if (package.length === 26) {
+        // remove package from packages
+        const index = packages.indexOf(package);
+        if (index > -1) {
+          packages.splice(index, 1);
+        }
+      }
+    });
+    const randomIndex = Math.floor(Math.random() * packages.length);
+    const randomPackageId = packages[randomIndex];
+    // get this package info with its wp info
+    const packageInfo = await getPackageByPackageId(randomPackageId);
+    res.status(200).json(packageInfo);
   } catch (err) {
     console.log('Error getting work packages for child: ', err);
     res.status(500).json({ error: 'Unable to get work packages for child' });
