@@ -43,10 +43,13 @@ const AdminReportCenter = ({ route, navigation }) => {
             const instructorId = workPackage?.instructorID || null;
             console.log('Instructor ID:', instructorId);
 
-            const instructor = await fetchInstructor(instructorId);
+            const instructor = await fetchUser(instructorId);
             console.log('Fetched Instructor:', instructor);
 
-            return { ...item, instructor };
+            const reporter = await fetchUser(item.reporterId);
+            console.log('Fetched Reporter:', reporter);
+
+            return { ...item, instructor, reporter };
           })
         );
 
@@ -77,9 +80,9 @@ const AdminReportCenter = ({ route, navigation }) => {
     }
   };
 
-  const fetchInstructor = async (instructorId) => {
+  const fetchUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/getUser/${instructorId}`);
+      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
       if (response.status === 200) {
         const instructor = await response.json();
         return instructor;
@@ -154,6 +157,19 @@ const AdminReportCenter = ({ route, navigation }) => {
                 {'\n'}
               </>
             )}
+            {/* Display reporter information */}
+            {item.reporter && (
+              <>
+                Reporter:
+                {'\n'}
+                First Name: {item.reporter.firstName}
+                {'\n'}
+                Last Name: {item.reporter.lastName}
+                {'\n'}
+                Email: {item.reporter.email}
+                {'\n'}
+              </>
+            )}
           </Text>
         </TouchableOpacity>
       ))}
@@ -199,7 +215,7 @@ const useStyles = CreateResponsiveStyle(
     header: {
       alignItems: 'center',
       justifyContent: 'center',
-      minHeight: '20%',
+      paddingBottom: 10,
     },
     title: {
       color: '#ffffff',
