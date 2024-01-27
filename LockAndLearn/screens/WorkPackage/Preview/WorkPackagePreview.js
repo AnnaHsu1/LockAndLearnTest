@@ -25,9 +25,11 @@ const WorkPackagePreview = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
+    fetchUserData().then((id) => setUserId(id));
     fetchPackages();
   }, [params]);
 
@@ -109,7 +111,6 @@ const WorkPackagePreview = () => {
       }
     } catch (error) {
       console.error('Network error:', error);
-      
     }
   };
 
@@ -215,11 +216,13 @@ const WorkPackagePreview = () => {
           )}
         />
         {/* Display button to create a new work package */}
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity testID="reportButton" onPress={() => setModalVisible(true)}>
-            <Text style={styles.buttonReportText}>Report Work Package</Text>
-          </TouchableOpacity>
-        </View>
+        {userId !== '6565345612770405a2796cee' && (
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity testID="reportButton" onPress={() => setModalVisible(true)}>
+              <Text style={styles.buttonReportText}>Report Work Package</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <Modal
         isVisible={isModalVisible}
@@ -317,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-    color: '#696969', 
+    color: '#696969',
   },
 
   modalButton: {
