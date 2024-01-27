@@ -13,6 +13,7 @@ import {
 import { Button, Icon } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { Divider } from '@rneui/themed';
+import PropTypes from 'prop-types';
 
 const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
@@ -88,7 +89,7 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   // Save the edited timeframes
   const saveEditTimeframes = async () => {
-    try {      
+    try {
       const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
@@ -535,10 +536,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (
-                      startTimes.length === 0 &&
-                      day === 'Sunday'
-                    ) {
+                    if (startTimes.length === 0 && day === 'Sunday') {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
@@ -815,6 +813,21 @@ const ChildTimeframes = ({ route, navigation }) => {
       </ScrollView>
     </ImageBackground>
   );
+};
+
+ChildTimeframes.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        // Include other properties of the child object as needed
+      }),
+    }).isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    // Include other navigation properties and methods as needed
+  }).isRequired,
 };
 
 const styles = StyleSheet.create({
