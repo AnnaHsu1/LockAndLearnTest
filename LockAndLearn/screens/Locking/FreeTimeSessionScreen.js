@@ -4,7 +4,6 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 const Spacer = ({ height, width }) => <View style={{ height, width }} />;
 
 const FreeTimeSessionScreen = () => {
-
   return (
     <View style={styles.container}>
       <View style={styles.centeredContent}>
@@ -12,11 +11,11 @@ const FreeTimeSessionScreen = () => {
           FREE TIME!
         </Text>
         <Spacer height={20} />
-        <Image
+        {/* <Image
           source={require('../../assets/sessionbeginslogo.png')} // Placeholder image
           style={styles.logo}
           testID="sessionBeginsLogo"
-        />
+        /> */}
       </View>
     </View>
   );
