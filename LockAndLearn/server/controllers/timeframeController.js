@@ -6,11 +6,7 @@ const Timeframe = require('../schema/timeframeSchema.js');
 router.post('/addtimeframe', async (req, res) => {
   try {
     // Extract user data from the request body
-    // console.log(req.body);
     const { childId, day, startTime, endTime } = req.body;
-    // console.log(ChildId, Day, StartTime, EndTime);
-
-    // console.log(childId, day, startTime, endTime);
     startHour = startTime.substring(0, 2);
     startMin = startTime.substring(3, 5);
     endHour = endTime.substring(0, 2);   
@@ -22,15 +18,25 @@ router.post('/addtimeframe', async (req, res) => {
     }
 
     if (startHour < 0 || startHour > 23 || endHour < 0 || endHour > 23) {
-      return res.status(400).json({ msg: 'Hour must be between 0 and 23.' });
+      return res.status(400).json({ msg: 'Hour must be between 00 and 23.' });
     }
 
     if (startMin < 0 || startMin > 59 || endMin < 0 || endMin > 59) {
-      return res.status(400).json({ msg: 'Minute must be between 0 and 59.' });
+      return res.status(400).json({ msg: 'Minute must be between 00 and 59.' });
     }
 
     if (startHour > endHour || (startHour === endHour && startMin > endMin)) {
       return res.status(400).json({ msg: 'Start time must be before end time.' });
+    }
+
+    const integerHoursCheck = new RegExp('^[0-9]+$');
+    if (!integerHoursCheck.test(startHour) || !integerHoursCheck.test(endHour)) {
+      return res.status(400).json({ msg: 'Hour must be an integer between 00 and 23.' });
+    }
+
+    const integerMinsCheck = new RegExp('^[0-5][0-9]$');
+    if (!integerMinsCheck.test(startMin) || !integerMinsCheck.test(endMin)) {
+      return res.status(400).json({ msg: 'Minute must be an integer between 00 and 59.' });
     }
 
     const newTimeframe = new Timeframe({
