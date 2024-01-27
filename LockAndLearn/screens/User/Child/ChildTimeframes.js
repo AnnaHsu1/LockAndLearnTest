@@ -282,6 +282,19 @@ const ChildTimeframes = ({ route, navigation }) => {
       } else {
         console.log('Timeframe deleted successfully!');
         getChildTimeframes();
+        // when the timeframe is deleted, the edit fields of that timeframe are deleted
+        const editStartHourCopy = { ...editStartHour };
+        delete editStartHourCopy[timeframeId];
+        setEditStartHour(editStartHourCopy);
+        const editStartMinuteCopy = { ...editStartMinute };
+        delete editStartMinuteCopy[timeframeId];
+        setEditStartMinute(editStartMinuteCopy);
+        const editEndHourCopy = { ...editEndHour };
+        delete editEndHourCopy[timeframeId];
+        setEditEndHour(editEndHourCopy);
+        const editEndMinuteCopy = { ...editEndMinute };
+        delete editEndMinuteCopy[timeframeId];
+        setEditEndMinute(editEndMinuteCopy);
       }
     } catch (error) {
       console.log(error.msg);
