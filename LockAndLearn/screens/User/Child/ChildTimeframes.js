@@ -619,13 +619,93 @@ const ChildTimeframes = ({ route, navigation }) => {
                       );
                     }
                     // display time periods for the day
+                    
                     startTimes.forEach((time, index) => {
-                      console.log('delete', day, time, endTimes[index]);
                       timePeriods.push(
-                        <View key={`${day}-${index}`} style={styles.timePeriod}>
-                          <Text style={{ fontSize: 15 }}>
-                            {time} - {endTimes[index]}
-                          </Text>
+                        <View key={`${day}-${index}`} style={styles.timePeriod}>                         
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginRight: 5,
+                              },
+                            ]}
+                            placeholder="HH"
+                            keyboardType="numeric"
+                            value={editStartHour[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditStartHour((prevStartHour) => {
+                                return {
+                                  ...prevStartHour,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
+                          <Text>:</Text>
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginLeft: 5,
+                              },
+                            ]}
+                            placeholder="MM"
+                            keyboardType="numeric"
+                            value={editStartMinute[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditStartMinute((prevStartMinute) => {
+                                return {
+                                  ...prevStartMinute,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
+                          <Text> - </Text>
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginRight: 5,
+                              },
+                            ]}
+                            placeholder="HH"
+                            keyboardType="numeric"
+                            value={editEndHour[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditEndHour((prevEndHour) => {
+                                return {
+                                  ...prevEndHour,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
+                          <Text>:</Text>
+                          <TextInput
+                            style={[
+                              styles.timeframeInput,
+                              {
+                                marginLeft: 5,
+                              },
+                            ]}
+                            placeholder="MM"
+                            keyboardType="numeric"
+                            value={editEndMinute[timeframes[day][index]._id]}
+                            onChangeText={(text) => {
+                              setEditEndMinute((prevEndMinute) => {
+                                return {
+                                  ...prevEndMinute,
+                                  [timeframes[day][index]._id]: text
+                                };
+                              });
+                            }}
+                            maxLength={2}
+                          />
                           <View
                             style={{
                               flexDirection: 'row',
