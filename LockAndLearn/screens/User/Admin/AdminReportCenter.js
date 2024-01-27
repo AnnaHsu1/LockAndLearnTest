@@ -108,7 +108,7 @@ const AdminReportCenter = ({ route, navigation }) => {
   };
 
   const renderReportItems = () => (
-    <ScrollView>
+    <ScrollView style={styles.scrollViewContainer}>
       {reports.map((item) => (
         <TouchableOpacity
           key={item._id}
@@ -217,6 +217,7 @@ const useStyles = CreateResponsiveStyle(
       alignItems: 'center',
     },
     container: {
+      flex: 1,
       minWidth: '90%',
       minHeight: '65%',
       paddingLeft: 20,
@@ -225,6 +226,8 @@ const useStyles = CreateResponsiveStyle(
       marginTop: 20,
       borderRadius: 10,
       backgroundColor: '#4F85FF',
+      marginBottom: 15,
+      paddingBottom: 15,
     },
     header: {
       alignItems: 'center',
@@ -283,6 +286,11 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 12,
       textAlign: 'center',
       justifyContent: 'flex-end',
+    },
+    // Add a style for the ScrollView container
+    scrollViewContainer: {
+      flexGrow: 1,
+      paddingRight: 20,
     },
   },
   {

@@ -184,6 +184,7 @@ const useStyles = CreateResponsiveStyle(
       marginTop: 20,
       borderRadius: 10,
       backgroundColor: '#4F85FF',
+      paddingBottom: 15,
     },
     header: {
       alignItems: 'center',
