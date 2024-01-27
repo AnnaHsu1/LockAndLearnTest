@@ -22,14 +22,13 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [addMode, setAddMode] = useState(false);
   const [addedSuccessful, setAddedSuccessful] = useState(false);
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
   const [selectedDay, setSelectedDay] = useState('');
   const [starthour, setStartHour] = useState('');
   const [startminute, setStartMinute] = useState('');
   const [endhour, setEndHour] = useState('');
   const [endminute, setEndMinute] = useState('');
   const [deviceWidth, setDeviceWidth] = useState(0);
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [toggleSwitchItem, setToggleSwitchItem] = useState({});
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [timeframeId, setTimeframeId] = useState('');
@@ -89,13 +88,7 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   // Save the edited timeframes
   const saveEditTimeframes = async () => {
-    try {
-      console.log('save edit timeframes');
-      console.log('editStartHour', Object.values(editStartHour));
-      console.log('editStartMinute', Object.values(editStartMinute));
-      console.log('editEndHour', Object.values(editEndHour));
-      console.log('editEndMinute', Object.values(editEndMinute));
-
+    try {      
       const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
@@ -113,16 +106,19 @@ const ChildTimeframes = ({ route, navigation }) => {
       const data = await response.json();
       if (response.status != 200) {
         console.log(data.msg);
+        setError(data.msg);
       } else {
         console.log('Timeframe updated successfully!');
         setEditMode(false);
         getChildTimeframes();
+        setError('');
       }
     } catch (error) {
       console.log(error.msg);
     }
   };
 
+  // Retrieve timeframes from the database
   const getChildTimeframes = async () => {
     try {
       const response = await fetch(
@@ -178,6 +174,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     return orderedTimeframes;
   };
 
+  // Add a new timeframe
   const addTimeframe = async () => {
     try {
       const response = await fetch('http://localhost:4000/timeframes/addtimeframe', {
@@ -210,12 +207,14 @@ const ChildTimeframes = ({ route, navigation }) => {
         setAddMode(false);
         clearAddFields();
         setAddedSuccessful(true);
+        setError('');
       }
     } catch (error) {
       console.log(error.msg);
     }
   };
 
+  // Clear the add timeframe fields
   const clearAddFields = () => {
     setStartHour('');
     setStartMinute('');
@@ -224,7 +223,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     setSelectedDay('');
   };
 
-  // Function to toggle switch for timeframes based on timeframe id
+  // Toggle switch for timeframes based on timeframe id
   const toggleSwitch = async (timeframeId) => {
     setToggleSwitchItem((prevToggleSwitchItem) => ({
       ...prevToggleSwitchItem,
@@ -232,7 +231,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     }));
   };
 
-  // Function to update the database when a switch is toggled
+  // Update the database when a switch is toggled
   const updateSwitch = async () => {
     try {
       if (Object.keys(toggleSwitchItem).length === 0) {
@@ -260,12 +259,12 @@ const ChildTimeframes = ({ route, navigation }) => {
     }
   };
 
-  // Function to toggle pop up modal for deleting a timeframe
+  // Toggle pop up modal for deleting a timeframe
   const toggleDeleteModal = () => {
     setDeleteModalVisible(!isDeleteModalVisible);
   };
 
-  // Function to delete a timeframe
+  // Delete a timeframe
   const handleDeleteTimeframe = async (timeframeId) => {
     try {
       const response = await fetch(
@@ -278,6 +277,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       const data = await response.json();
       if (response.status != 200) {
         console.log(data.msg);
+        setError(data.msg);
       } else {
         console.log('Timeframe deleted successfully!');
         getChildTimeframes();
@@ -300,6 +300,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     }
   };
 
+  // Cancel adding a new timeframe
   const cancel = () => {
     setAddMode(!addMode);
     setError('');
@@ -311,10 +312,12 @@ const ChildTimeframes = ({ route, navigation }) => {
     getChildTimeframes();
   }, []);
 
+  // Update the database when a switch is toggled
   useEffect(() => {
     updateSwitch();
   }, [toggleSwitchItem]);
 
+  // Retrieve timeframes from the database
   useEffect(() => {
     getChildTimeframes();
     setAddedSuccessful(false);
@@ -832,7 +835,6 @@ const styles = StyleSheet.create({
   },
   containerFile: {
     flex: 1,
-    // backgroundColor: '#FAFAFA',
     backgroundColor: '#FAFAFA',
     alignItems: 'center',
     width: '90%',
@@ -916,16 +918,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 5,
-  },
-  buttonEdit: {
-    backgroundColor: '#407BFF',
-    width: 85,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    padding: 8,
-    // marginTop: 10,
-    alignSelf: 'center',
   },
   timeframeInput: {
     borderColor: '#407BFF',
