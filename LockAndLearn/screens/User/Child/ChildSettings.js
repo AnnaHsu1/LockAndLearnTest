@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View } from 'react-native';
-import Modal from 'react-native-modal';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
+import PropTypes from 'prop-types';
 
 const ChildSettings = ({ route, navigation }) => {
   const styles = useStyles();
@@ -18,43 +14,69 @@ const ChildSettings = ({ route, navigation }) => {
     setChild(childSelected);
   }, []);
 
-
   return (
     <View style={styles.page}>
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: 'space-between' }]}>
         <View style={styles.header}>
           <Icon source="account-circle" color="#fff" size={30} />
           <Text style={styles.title}>
             {child.firstName} {child.lastName}
           </Text>
         </View>
-        {/* Device Controls */}
-        <Button
-          testID="device-controls"
-          mode="contained"
-          onPress={() => {
-            console.log('See performance');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Device Controls</Text>
-        </Button>
-        {/* Passing Grade*/}
-        <Button
-          testID="passing-grade"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('ChildPassingGradePerSubject', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Passing Grade</Text>
-        </Button>
-
-     
+        <View style={[{ flex: 1, justifyContent: 'space-around' }]}>
+          {/* Device Controls */}
+          <Button
+            testID="device-controls"
+            mode="contained"
+            onPress={() => {
+              console.log('See performance');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Device Controls</Text>
+          </Button>
+          {/* Passing Grade*/}
+          <Button
+            testID="passing-grade"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('ChildPassingGradePerSubject', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Passing Grade</Text>
+          </Button>
+          {/* Scheduling */}
+          <Button
+            testID="scheduling"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('ChildTimeframes', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Scheduling</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );
+};
+
+ChildSettings.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.shape({
+        firstName: PropTypes.string,
+        lastName: PropTypes.string,
+        // Add other properties of 'child' object here with their respective types
+      }),
+    }).isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    // Add other navigation functions and properties if they are used in your component
+  }).isRequired,
 };
 
 const useStyles = CreateResponsiveStyle(
@@ -67,7 +89,7 @@ const useStyles = CreateResponsiveStyle(
     },
     container: {
       minWidth: '90%',
-      minHeight: '90%',
+      minHeight: '50%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -102,12 +124,6 @@ const useStyles = CreateResponsiveStyle(
       justifyContent: 'center',
       minWidth: 100,
     },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
     full_width: {
       minWidth: '100%',
     },
@@ -121,17 +137,12 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
+      padding: 10,
     },
     options: {
       flex: 0.75,
       justifyContent: 'space-around',
       alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
     },
   },
   {

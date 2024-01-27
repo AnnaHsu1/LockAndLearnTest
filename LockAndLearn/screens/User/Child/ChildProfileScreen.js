@@ -277,6 +277,7 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
+      padding: 5,
     },
     options: {
       flex: 0.75,
