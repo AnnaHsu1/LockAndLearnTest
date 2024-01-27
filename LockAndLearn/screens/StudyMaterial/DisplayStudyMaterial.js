@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { Icon, Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import Modal from 'react-native-modal';
-import { getItem } from '../../components/AsyncStorage';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import PropTypes from 'prop-types';
@@ -13,9 +11,6 @@ const DisplayStudyMaterial = ({}) => {
   const navigation = useNavigation();
   const params = route.params;
   const childID = params?.child_ID;
-  const { _id, name, grade } = params?.workPackage;
-  const { width } = Dimensions.get('window');
-  const maxTextWidth = width * 0.9;
   const [pdfUrls, setPdfUrls] = useState([]);
   const [packageInfo, setPackageInfo] = useState([]);
   const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
