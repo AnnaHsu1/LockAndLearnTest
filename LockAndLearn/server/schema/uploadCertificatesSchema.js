@@ -8,6 +8,9 @@ const uploadedCertificatesSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
   },
+  status: {
+    type: String,
+  },
 });
 
 const UploadCertificates = mongoose.model(

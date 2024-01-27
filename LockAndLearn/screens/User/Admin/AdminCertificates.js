@@ -1,27 +1,118 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 
-const AdminCertificates = ({ route, navigation }) => {
+const AdminCertificates = () => {
   const styles = useStyles();
   const [certificates, setCertificates] = useState([]);
+  const [certificateId, setCertificateId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [isAcceptModalVisible, setIsAcceptModalVisible] = useState(false);
+  const [isRejectModalVisible, setIsRejectModalVisible] = useState(false);
 
+  // Fetch pending certificates on component mount
   useEffect(() => {
-    fetchAllCertificates();
+    fetchAllPendingCertificates();
   }, []);
 
-  const fetchAllCertificates = async () => {
+  // Fetch all pending certificates from the server
+  const fetchAllPendingCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:4000/certificates/uploadCertificates');
+      const response = await fetch('http://localhost:4000/certificates/uploadCertificates/pending');
       if (response.ok) {
         const data = await response.json();
-        setCertificates(data.uploadedCertificates);
+        setCertificates(data.uploadedPendingCertificates);
       } else {
         console.error('Failed to fetch certificates:', response.status);
       }
     } catch (error) {
       console.error('Error fetching certificates:', error);
     }
+  };
+
+  // Function to handle accepting a certificate
+  const handleAcceptCertificate = async (userId) => {
+    const response = await fetch(
+      `http://localhost:4000/certificates/acceptUserCertificates/${userId}`,
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (response.ok) {
+      // Remove accepted certificates from the list
+      const updatedCertificates = certificates.filter(
+        (certificate) => certificate.metadata.userId !== userId
+      );
+      setCertificates(updatedCertificates);
+      closeAcceptModal();
+    } else {
+      console.error('Failed to delete certificate:', response.status);
+    }
+  };
+
+  // Function to handle rejecting a certificate
+  const handleRejectCertificate = async (certificateId) => {
+    const response = await fetch(
+      `http://localhost:4000/certificates/rejectCertificate/${certificateId}`,
+      {
+        method: 'PUT',
+      }
+    );
+
+    if (response.ok) {
+      // Remove rejected certificate from the list
+      const updatedCertificates = certificates.filter(
+        (certificate) => certificate._id !== certificateId
+      );
+      setCertificates(updatedCertificates);
+      closeRejectModal();
+    } else {
+      console.error('Failed to delete certificate:', response.status);
+    }
+  };
+
+  // Function to download certificate
+  const downloadCertificate = async (fileName) => {
+    const response = await fetch(
+      `http://localhost:4000/certificates/uploadCertificates/${fileName}`,
+      {
+        method: 'GET',
+      }
+    );
+
+    if (response.ok) {
+      const test = await response.blob(); // Convert the response to a blob
+      const url = URL.createObjectURL(test); // Create a URL for the blob
+      const a = document.createElement('a'); // Create anchor element to trigger the download
+      a.href = url;
+      a.download = `${fileName}`;
+      a.click();
+    } else {
+      console.error('Failed to download certificate: ', response.status);
+    }
+  };
+
+  // Function to open the reject modal
+  const openRejectModal = (fileId) => {
+    setCertificateId(fileId);
+    setIsRejectModalVisible(true);
+  };
+
+  // Function to open the accept modal
+  const openAcceptModal = (userId) => {
+    setUserId(userId);
+    setIsAcceptModalVisible(true);
+  };
+
+  // Function to close the reject modal
+  const closeRejectModal = () => {
+    setIsRejectModalVisible(false);
+  };
+
+  // Function to close the accept modal
+  const closeAcceptModal = () => {
+    setIsAcceptModalVisible(false);
   };
 
   return (
@@ -35,20 +126,46 @@ const AdminCertificates = ({ route, navigation }) => {
           {certificates.length > 0 ? (
             certificates.map((file, index) => (
               <View key={index} style={styles.fileContainer}>
-                <TouchableOpacity testID={`certificateContainerTest-${index}`}>
+                <TouchableOpacity
+                  testID={`certificateContainerTest-${index}`}
+                  onPress={() => downloadCertificate(file.filename)}
+                >
                   <Text style={styles.fileName}>{file.filename}</Text>
-                  <Text style={styles.fileDetail}>ID: {file._id}</Text>
+                  <Text style={styles.fileDetail}>Certificate ID: {file._id}</Text>
                   <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
                   {file.metadata && file.metadata.userId && (
-                    <Text style={styles.fileDetail}>Created by: {file.metadata.userId}</Text>
+                    <Text style={styles.fileDetail}>Tutor ID: {file.metadata.userId}</Text>
+                  )}
+                  {file.metadata && file.metadata.fullName && (
+                    <Text style={styles.fileDetail}>Name: {file.metadata.fullName}</Text>
+                  )}
+                  {file.metadata && file.metadata.highestDegree && (
+                    <Text style={styles.fileDetail}>
+                      Highest Degree: {file.metadata.highestDegree}
+                    </Text>
+                  )}
+                  {file.metadata && file.metadata.status && (
+                    <Text style={styles.fileStatusDetail}>
+                      Status: <Text style={styles.statusText}>{file.metadata.status}</Text>
+                    </Text>
                   )}
                 </TouchableOpacity>
                 <View style={styles.divider}></View>
                 <View style={styles.buttons}>
-                  <TouchableOpacity testID="acceptTest">
+                  <TouchableOpacity
+                    testID="acceptTest"
+                    onPress={() => {
+                      openAcceptModal(file.metadata.userId);
+                    }}
+                  >
                     <Text style={styles.acceptButton}>Accept</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity testID="rejectTest">
+                  <TouchableOpacity
+                    testID="rejectTest"
+                    onPress={() => {
+                      openRejectModal(file._id);
+                    }}
+                  >
                     <Text style={styles.rejectButton}>Reject</Text>
                   </TouchableOpacity>
                 </View>
@@ -58,6 +175,59 @@ const AdminCertificates = ({ route, navigation }) => {
             <Text style={styles.emptyCertificatesList}>No certificates to approve</Text>
           )}
         </ScrollView>
+        {/* Displaying the accept modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isAcceptModalVisible}
+          onRequestClose={closeAcceptModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to accept this application? This will accept all the user's
+                applications and allow the user to become a tutor.
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  onPress={() => handleAcceptCertificate(userId)}
+                  style={styles.confirmAcceptButton}
+                >
+                  <Text style={styles.confirmButtonText}>Accept</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeAcceptModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* Displaying the reject modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isRejectModalVisible}
+          onRequestClose={closeRejectModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you sure you want to reject this application?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  onPress={() => handleRejectCertificate(certificateId)}
+                  style={styles.confirmRejectButton}
+                >
+                  <Text style={styles.confirmButtonText}>Reject</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeRejectModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -95,15 +265,6 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       paddingTop: 15,
     },
-    button: {
-      color: '#4F85FF',
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 80,
-      justifyContent: 'center',
-      minWidth: 100,
-    },
     buttons: {
       flex: 1,
       flexDirection: 'row',
@@ -120,37 +281,6 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 18,
       textAlign: 'center',
       marginTop: 20,
-    },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
-    full_width: {
-      minWidth: '100%',
-    },
-    bottomCloud: {
-      display: 'flex',
-      justifyContent: 'flex-end',
-      width: '100%',
-      height: 250,
-      resizeMode: 'stretch',
-    },
-    text: {
-      color: '#4F85FF',
-      fontSize: 20,
-    },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
     },
     acceptButton: {
       fontWeight: 'bold',
@@ -172,10 +302,70 @@ const useStyles = CreateResponsiveStyle(
       color: 'grey',
       fontSize: 14,
     },
+    fileStatusDetail: {
+      color: 'grey',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
+    statusText: {
+      color: 'blue',
+      fontStyle: 'italic',
+    },
     divider: {
       borderBottomWidth: 1,
       borderBottomColor: 'grey',
       marginVertical: 5,
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      padding: 20,
+      width: '50%',
+      alignItems: 'center',
+    },
+    modalText: {
+      fontSize: 18,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      width: '100%',
+    },
+    confirmAcceptButton: {
+      backgroundColor: '#228B22',
+      padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
+    },
+    confirmRejectButton: {
+      backgroundColor: '#F24E1E',
+      padding: 10,
+      borderRadius: 10,
+      marginRight: 70,
+      justifyContent: 'center',
+    },
+    confirmButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
+    cancelButton: {
+      backgroundColor: '#407BFF',
+      padding: 10,
+      borderRadius: 10,
+      justifyContent: 'center',
+    },
+    cancelButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
     },
   },
   {
@@ -183,12 +373,6 @@ const useStyles = CreateResponsiveStyle(
       container: {
         minWidth: 500,
         width: 500,
-      },
-      bottomCloud: {
-        width: '100%',
-        height: 300,
-        resizeMode: 'stretch',
-        flex: 1,
       },
     },
   }

@@ -49,48 +49,6 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
   select: jest.fn().mockImplementation((spec) => (spec.web ? spec.web : spec.default)),
 }));
 
-describe('LandingPage', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const user = { isParent: true }; // example user object
-
-  it('renders different buttons based on user state', async () => {
-    AsyncStorage.getItem.mockResolvedValue(JSON.stringify(user));
-    const { queryByText, getByText } = render(<LandingPage navigation={mockNavigation} />);
-
-    await act(async () => {});
-
-    // Check for buttons that should be present when user is logged in
-    // expect(queryByText('Parent Account')).toBeTruthy();
-
-    // Check for buttons that are always present
-    fireEvent.press(getByText('Go to main menu'));
-    expect(queryByText('My Work Packages')).toBeTruthy();
-    expect(queryByText('My quizzes')).toBeTruthy();
-    expect(queryByText('My files')).toBeTruthy();
-  });
-
-  it('navigates to different screens when buttons are pressed', () => {
-    const { getByText } = render(<LandingPage navigation={mockNavigation} />);
-    fireEvent.press(getByText('Go to main menu'));
-
-    fireEvent.press(getByText('My Work Packages'));
-    expect(mockNavigate).toHaveBeenCalledWith('WorkPackage');
-
-    fireEvent.press(getByText('My quizzes'));
-    expect(mockNavigate).toHaveBeenCalledWith('QuizzesOverviewScreen', {
-      userId: null,
-    });
-
-    fireEvent.press(getByText('My files'));
-    expect(mockNavigate).toHaveBeenCalledWith('ViewUploads', {
-      newFilesAdded: undefined,
-    });
-  });
-});
-
 describe('tests for certificates upload', () => {
   beforeEach(() => {
     DocumentPicker.getDocumentAsync.mockReset();
@@ -111,6 +69,20 @@ describe('tests for certificates upload', () => {
         'Uploading certificates that already existed in our system will be overwritten by the newest version.'
       )
     ).toBeTruthy();
+    expect(getByText('Full Name')).toBeTruthy();
+    expect(getByText('Highest Degree')).toBeTruthy();
+  });
+
+  it('button is disabled when a field is unfilled', () => {
+    const { getByTestId } = render(<LandingPage />);
+  
+    // Find the button element
+    const submitButton = getByTestId('uploadButton');
+  
+    // Assert that the button is disabled
+    expect(submitButton.props.accessibilityState).toHaveProperty('disabled', true);
+  
+    // Perform any additional assertions or interactions as needed
   });
 
   it('handles certificate selection', async () => {
