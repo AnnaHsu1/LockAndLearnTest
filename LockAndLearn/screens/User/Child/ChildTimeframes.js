@@ -351,7 +351,9 @@ const ChildTimeframes = ({ route, navigation }) => {
                   // if editMode is true and addMode is false
                   <View style={{ flexDirection: 'row', marginLeft: -40 }}>
                     <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
-                    <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
+                    <TouchableOpacity onPress={() => saveEditTimeframes()}>
+                      <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
+                    </TouchableOpacity>
                   </View>
                 )
               ) : (
