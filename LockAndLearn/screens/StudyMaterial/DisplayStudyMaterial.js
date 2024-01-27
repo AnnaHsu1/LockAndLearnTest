@@ -11,7 +11,7 @@ import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
 
-const DisplayStudyMaterial = ({ props }) => {
+const DisplayStudyMaterial = ({}) => {
   const route = useRoute();
   const navigation = useNavigation();
   const params = route.params;
@@ -225,53 +225,6 @@ const DisplayStudyMaterial = ({ props }) => {
 };
 
 const styles = StyleSheet.create({
-  containerCard: {
-    flexDirection: 'column',
-    marginVertical: 5,
-    color: '#000000',
-    borderColor: '#407BFF',
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 15,
-    alignContent: 'center',
-    width: '90%',
-    alignSelf: 'center',
-  },
-  deleteConfirmationModal: {
-    width: '50%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmationText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  confirmationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  confirmButton: {
-    backgroundColor: '#F24E1E',
-    padding: 10,
-    borderRadius: 10,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 10,
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -288,37 +241,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginTop: '5%',
-  },
-  selectFiles: {
-    color: '#696969',
-    fontSize: 35,
-    fontWeight: '500',
-    marginTop: '1%',
-    marginBottom: '2%',
-    textAlign: 'center',
-    paddingHorizontal: 10,
-    paddingTop: 10,
-  },
-  workPackageItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  workPackageItem: {
-    fontSize: 16,
-    color: '#407BFF',
-  },
-  buttonUpload: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: '5%',
-    marginBottom: '5%',
   },
   buttonText: {
     color: '#FFFFFF', // White color for text

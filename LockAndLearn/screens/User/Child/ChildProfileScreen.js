@@ -125,7 +125,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
             }}
             style={[styles.button, styles.full_width]}
           >
-            <Text style={styles.text}>assign wp - child pov</Text>
+            <Text style={styles.text}>Study time</Text>
           </Button>
       </View>
       {/* Delete child link */}
@@ -216,7 +216,7 @@ const useStyles = CreateResponsiveStyle(
     },
     header: {
       alignItems: 'center',
-      height: 75,
+      height: 50,
       flexDirection: 'row',
       justifyContent: 'center',
     },
