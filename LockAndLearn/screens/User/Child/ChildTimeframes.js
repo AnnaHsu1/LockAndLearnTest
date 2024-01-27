@@ -49,54 +49,53 @@ const ChildTimeframes = ({ route, navigation }) => {
       startTimes.forEach((time, index) => {
         const startHourTime = {
           [timeframes[day][index]._id]: time.substring(0, 2),
-        }
+        };
         setEditStartHour((prevStartHour) => {
           return {
             ...prevStartHour,
-            ...startHourTime
+            ...startHourTime,
           };
         });
         const startMinuteTime = {
           [timeframes[day][index]._id]: time.substring(3, 5),
-        }
+        };
         setEditStartMinute((prevStartMinute) => {
           return {
             ...prevStartMinute,
-            ...startMinuteTime
+            ...startMinuteTime,
           };
         });
         const endHourTime = {
           [timeframes[day][index]._id]: endTimes[index].substring(0, 2),
-        }
+        };
         setEditEndHour((prevEndHour) => {
           return {
             ...prevEndHour,
-            ...endHourTime
+            ...endHourTime,
           };
         });
         const endMinuteTime = {
           [timeframes[day][index]._id]: endTimes[index].substring(3, 5),
-        }
+        };
         setEditEndMinute((prevEndMinute) => {
           return {
             ...prevEndMinute,
-            ...endMinuteTime
+            ...endMinuteTime,
           };
         });
       });
-
     });
   };
 
   // Save the edited timeframes
   const saveEditTimeframes = async () => {
     try {
-      console.log("save edit timeframes")
-      console.log("editStartHour", Object.values(editStartHour))
-      console.log("editStartMinute", Object.values(editStartMinute))
-      console.log("editEndHour", Object.values(editEndHour))
-      console.log("editEndMinute", Object.values(editEndMinute))
-      
+      console.log('save edit timeframes');
+      console.log('editStartHour', Object.values(editStartHour));
+      console.log('editStartMinute', Object.values(editStartMinute));
+      console.log('editEndHour', Object.values(editEndHour));
+      console.log('editEndMinute', Object.values(editEndMinute));
+
       const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
@@ -388,6 +387,7 @@ const ChildTimeframes = ({ route, navigation }) => {
             <View style={[{ width: '80%', margin: 20, borderColor: '#F24E1E', borderWidth: 1 }]}>
               <Text
                 style={{ color: '#F24E1E', fontSize: 14, textAlign: 'center', paddingVertical: 10 }}
+                testID="error-message"
               >
                 {error}
               </Text>
@@ -416,6 +416,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                       <TouchableOpacity
                         style={[{ alignItems: 'center', justifyContent: 'center', fontSize: 14 }]}
                         onPress={() => setSelectedDay(day)}
+                        testID={day}
                       >
                         <Text>{day}</Text>
                       </TouchableOpacity>
@@ -440,6 +441,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                         value={starthour}
                         onChangeText={setStartHour}
                         maxLength={2}
+                        testID="start-hour"
                       />
                       <Text>:</Text>
                       <TextInput
@@ -454,6 +456,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                         value={startminute}
                         onChangeText={setStartMinute}
                         maxLength={2}
+                        testID="start-minute"
                       />
                     </View>
                   </View>
@@ -472,6 +475,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                         value={endhour}
                         onChangeText={setEndHour}
                         maxLength={2}
+                        testID="end-hour"
                       />
                       <Text>:</Text>
                       <TextInput
@@ -486,6 +490,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                         value={endminute}
                         onChangeText={setEndMinute}
                         maxLength={2}
+                        testID="end-minute"
                       />
                     </View>
                   </View>
@@ -527,7 +532,17 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (startTimes.length === 0 && day === 'Monday' && day === 'Tuesday' && day === 'Monday' && day === 'Wednesday' && day === 'Thursday' && day === 'Friday' && day === 'Saturday' && day === 'Sunday') {
+                    if (
+                      startTimes.length === 0 &&
+                      day === 'Monday' &&
+                      day === 'Tuesday' &&
+                      day === 'Monday' &&
+                      day === 'Wednesday' &&
+                      day === 'Thursday' &&
+                      day === 'Friday' &&
+                      day === 'Saturday' &&
+                      day === 'Sunday'
+                    ) {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
@@ -603,7 +618,17 @@ const ChildTimeframes = ({ route, navigation }) => {
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
-                    if (startTimes.length === 0 && day === 'Monday' && day === 'Tuesday' && day === 'Monday' && day === 'Wednesday' && day === 'Thursday' && day === 'Friday' && day === 'Saturday' && day === 'Sunday') {
+                    if (
+                      startTimes.length === 0 &&
+                      day === 'Monday' &&
+                      day === 'Tuesday' &&
+                      day === 'Monday' &&
+                      day === 'Wednesday' &&
+                      day === 'Thursday' &&
+                      day === 'Friday' &&
+                      day === 'Saturday' &&
+                      day === 'Sunday'
+                    ) {
                       timePeriods.push(
                         <View
                           key={`${day}-empty`}
@@ -632,10 +657,10 @@ const ChildTimeframes = ({ route, navigation }) => {
                       );
                     }
                     // display time periods for the day
-                    
+
                     startTimes.forEach((time, index) => {
                       timePeriods.push(
-                        <View key={`${day}-${index}`} style={styles.timePeriod}>                         
+                        <View key={`${day}-${index}`} style={styles.timePeriod}>
                           <TextInput
                             style={[
                               styles.timeframeInput,
@@ -650,7 +675,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               setEditStartHour((prevStartHour) => {
                                 return {
                                   ...prevStartHour,
-                                  [timeframes[day][index]._id]: text
+                                  [timeframes[day][index]._id]: text,
                                 };
                               });
                             }}
@@ -671,7 +696,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               setEditStartMinute((prevStartMinute) => {
                                 return {
                                   ...prevStartMinute,
-                                  [timeframes[day][index]._id]: text
+                                  [timeframes[day][index]._id]: text,
                                 };
                               });
                             }}
@@ -692,7 +717,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               setEditEndHour((prevEndHour) => {
                                 return {
                                   ...prevEndHour,
-                                  [timeframes[day][index]._id]: text
+                                  [timeframes[day][index]._id]: text,
                                 };
                               });
                             }}
@@ -713,7 +738,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               setEditEndMinute((prevEndMinute) => {
                                 return {
                                   ...prevEndMinute,
-                                  [timeframes[day][index]._id]: text
+                                  [timeframes[day][index]._id]: text,
                                 };
                               });
                             }}
@@ -731,6 +756,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                                 setTimeframeId(timeframes[day][index]._id);
                                 setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
                               }}
+                              testID={`delete-${day}-${index}-${timeframes[day][index]._id}`}
                             >
                               <Icon source="delete-outline" size={20} color={'#F24E1E'} />
                             </TouchableOpacity>
