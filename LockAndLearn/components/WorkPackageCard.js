@@ -17,7 +17,7 @@ export const WorkPackageCard = ({ props }) => {
       const response = await fetch(
         'http://localhost:4000/workPackages/deleteWorkPackage/' + props._id,
         {
-          method: 'DELETE',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },

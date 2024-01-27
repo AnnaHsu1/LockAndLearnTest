@@ -101,7 +101,7 @@ const LoginScreen = ({ navigation }) => {
         // Store the user data in AsyncStorage
         await setUserTokenWithExpiry('@token', data.user);
         if (data.user.isParent) {
-          navigation.navigate('ParentAccount');
+          navigation.navigate('ParentHomeScreen');
         } else {
           navigation.navigate('UserLandingPage');
         }

@@ -28,8 +28,10 @@ const WorkPackage = ({ navigation, route }) => {
           },
         }
       );
-      const data = await response.json();
+      let data = await response.json();
       if (response.status === 200) {
+        // // if tutor deleted workpackage, don't display it
+        data = data.filter((workpackage) => !workpackage.deletedByTutor);
         setWorkPackages(data);
       }
     } catch (error) {
