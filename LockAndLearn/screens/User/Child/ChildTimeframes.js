@@ -537,13 +537,6 @@ const ChildTimeframes = ({ route, navigation }) => {
                     // display message if there are no time periods for the day
                     if (
                       startTimes.length === 0 &&
-                      day === 'Monday' &&
-                      day === 'Tuesday' &&
-                      day === 'Monday' &&
-                      day === 'Wednesday' &&
-                      day === 'Thursday' &&
-                      day === 'Friday' &&
-                      day === 'Saturday' &&
                       day === 'Sunday'
                     ) {
                       timePeriods.push(
