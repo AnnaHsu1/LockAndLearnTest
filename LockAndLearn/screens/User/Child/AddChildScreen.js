@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image } from 'react-native';
+import React, { useState} from 'react';
+import { Text, TextInput, View, Image } from 'react-native';
 import Modal from 'react-native-modal';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import { Button, Icon } from 'react-native-paper';
+import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
+import { Button } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
+import { Picker } from '@react-native-picker/picker';
+import PropTypes from 'prop-types';
 
 const AddChildScreen = ({ navigation, setToken }) => {
   const styles = useStyles();
-  const deviceSize = useDeviceSize();
-  const [text, setText] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
-  const [childAdded, setChildAdded] = useState(false);
   const [updatedChildrenData, setUpdatedChildrenData] = useState([]);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -24,7 +18,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
     FirstName: '',
     LastName: '',
     Grade: '',
-    PassingGrade: '',
+      PassingGrade: '',
     ParentId: '',
   });
 
@@ -44,7 +38,14 @@ const AddChildScreen = ({ navigation, setToken }) => {
     }
 
     console.log(fdata);
-
+      // Validation check for PassingGrade
+      if (fdata.PassingGrade !== '') {
+          const passingGradeNumber = parseInt(fdata.PassingGrade);
+          if (isNaN(passingGradeNumber) || passingGradeNumber < 1 || passingGradeNumber > 100) {
+              setErrors('Passing Grade must be a number between 1 and 100.');
+              return;
+          }
+      }
     // Package the user data into a JSON format and ship it to the backend
     try {
       const response = await fetch('http://localhost:4000/child/addchild', {
@@ -102,15 +103,23 @@ const AddChildScreen = ({ navigation, setToken }) => {
           </View>
         </View>
 
-        <View style={styles.input}>
-          <Text style={styles.field}>Grade</Text>
-          <TextInput
-            testID="grade-input"
-            style={[styles.textbox, styles.full_width]}
-            value={fdata.Grade}
-            onChangeText={(newText) => setFdata({ ...fdata, Grade: newText })}
-          />
-        </View>
+                      <View style={[styles.containerPicker, { marginTop: 10 }]}>
+                  <Text style={{ color: '#ADADAD' }}>Grade</Text>
+                  <Picker
+                      testID="grade-input"
+                      selectedValue={fdata.Grade}
+                      onValueChange={(newText) => {
+                          setFdata({ ...fdata, Grade: newText });
+                      }}
+                      style={styles.textbox}
+                  >
+                      <Picker.Item label="Choose a Grade" value="Choose a Grade" />
+                      {[...Array(12)].map((_, index) => (
+                          <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
+                      ))}
+                  </Picker>
+              </View>
+
         {/* Parent can set passing grade here */}
         <View style={styles.input}>
           <Text style={styles.field}>Passing Grade</Text>
@@ -166,6 +175,12 @@ const AddChildScreen = ({ navigation, setToken }) => {
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
   );
+};
+
+// PropTypes
+AddChildScreen.propTypes = {
+    navigation: PropTypes.object.isRequired,
+    setToken: PropTypes.func.isRequired,
 };
 
 const useStyles = CreateResponsiveStyle(

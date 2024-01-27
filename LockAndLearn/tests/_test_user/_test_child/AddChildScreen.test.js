@@ -30,12 +30,10 @@ describe('AddChildScreen', () => {
 
     fireEvent.changeText(getByTestId('first-name-input'), 'John');
     fireEvent.changeText(getByTestId('last-name-input'), 'Doe');
-    fireEvent.changeText(getByTestId('grade-input'), '3');
     fireEvent.changeText(getByTestId('passing-grade-input'), '60');
 
     expect(getByTestId('first-name-input').props.value).toEqual('John');
     expect(getByTestId('last-name-input').props.value).toEqual('Doe');
-    expect(getByTestId('grade-input').props.value).toEqual('3');
     expect(getByTestId('passing-grade-input').props.value).toEqual('60');
   });
 
@@ -44,7 +42,6 @@ describe('AddChildScreen', () => {
 
     fireEvent.changeText(getByTestId('first-name-input'), 'John');
     fireEvent.changeText(getByTestId('last-name-input'), 'Doe');
-    fireEvent.changeText(getByTestId('grade-input'), '3');
     fireEvent.changeText(getByTestId('passing-grade-input'), '60');
     fireEvent.press(getByTestId('signup-button'));
 
@@ -58,7 +55,7 @@ describe('AddChildScreen', () => {
         body: JSON.stringify({
           FirstName: 'John',
           LastName: 'Doe',
-          Grade: '3',
+          Grade:'',
           PassingGrade: '60',
           ParentId: 'parent123',
         }),

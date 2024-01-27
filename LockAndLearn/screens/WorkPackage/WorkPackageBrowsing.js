@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
   Text,
   View,
-  Image,
-  FlatList,
   TouchableOpacity,
   Modal,
   ScrollView,
   StyleSheet,
   ImageBackground,
 } from 'react-native';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
+import { DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon, Checkbox } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Carousel } from 'react-responsive-carousel';
+import '../../carousel.css'
 
 const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -556,7 +557,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           <View style={{ maxHeight: 600 }}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
               {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
-
               {workPackages.map((workPackage) => (
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
@@ -569,7 +569,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         navigation.navigate('WorkPackagePreview', { workPackage });
                       }}
                     >
-                      <Text style={styles.workPackageNameText}>{`${workPackage.name}` + 'x'}</Text>
+                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
                     </TouchableOpacity>
 
                     <View style={styles.containerTag}>
@@ -675,6 +675,97 @@ const WorkPackageBrowsingScreen = ({ route }) => {
               </Modal>
             </ScrollView>
           </View>
+          <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: 1,
+              marginTop:"50px",
+            }}
+          >
+            </View>
+          <View style={{marginTop:70, borderTopColor: 'black',
+              borderTopWidth: 1}}>
+            <ScrollView contentContainerStyle={styles.carouselScrollViewContent}>
+            <View style={styles.viewPreferences}>
+                {children.map((child, childIndex) => (
+                  
+                  <View style={styles.viewChildPreferences} key={child.id}>
+                    <Text style={styles.child}>
+                      Suggested Materials for {child.firstName} {child.lastName}
+                    </Text>
+                  <Carousel style={styles.carousel}>
+                    {suggestedWorkPackages.length !== 0 &&
+                      suggestedWorkPackages[childIndex].map((workPackage) => (
+                        
+                        <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
+                          <View style={styles.workPackageText}>
+                            <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+
+                            <View style={styles.containerTag}>
+                              <View style={styles.tagBox}>
+                                <Text
+                                  style={styles.tagText}
+                                  selectable={false}
+                                >{`${workPackage.grade}`}</Text>
+                              </View>
+                            </View>
+
+                            <Text style={styles.workPackageDescription}>
+                              {`${
+                                workPackage.description === undefined
+                                  ? ``
+                                  : `${workPackage.description} \n`
+                              }`}
+                            </Text>
+                            {workPackage.instructorDetails && (
+                              <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                                Made by{' '}
+                                <Text style={styles.boldText}>
+                                  {workPackage.instructorDetails.firstName}{' '}
+                                  {workPackage.instructorDetails.lastName}
+                                </Text>
+                              </Text>
+                            )}
+                          </View>
+                          <View style={styles.priceAndButton}>
+                            <Text style={styles.priceWP}>
+                              {workPackage.price && workPackage.price !== 0
+                                ? `$${workPackage.price} CAD`
+                                : 'Free'}
+                            </Text>
+
+                            <Button
+                              key={workPackage._id}
+                              testID="addButton-wp1"
+                              mode="contained"
+                              contentStyle={{
+                                minWidth: '50%',
+                                maxWidth: '100%',
+                                minHeight: 20,
+                                justifyContent: 'center',
+                                backgroundColor: isInUserCart(workPackage._id)
+                                  ? '#25B346'
+                                  : undefined,
+                                flexWrap: 'wrap',
+                              }}
+                              style={[styles.button]}
+                              onPress={() => {
+                                selectWorkPackage(workPackage);
+                              }}
+                              labelStyle={{ ...styles.cart, color: 'white' }}
+                              disabled={isInUserCart(workPackage._id)}
+                            >
+                              {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
+                            </Button>
+                          </View>
+                        </View>
+                      ))}
+                      </Carousel>
+                  </View>
+                ))}
+            </View>
+          </ScrollView>
+          </View>
           <TouchableOpacity
             testID="viewCartButton"
             style={styles.viewCartButton}
@@ -700,22 +791,25 @@ const styles = StyleSheet.create(
       borderTopLeftRadius: 40,
       borderTopRightRadius: 40,
     },
+    carousel: {
+      maxWidth:"100%",
+      autoWidth: false,
+    },
     viewPreferences: {
       flex: 1,
       maxHeight: 300,
       flexDirection: 'column',
-      borderBottomWidth: 1,
     },
     viewChildPreferences: {
       display: 'flex',
-      borderBottomWidth: 1,
-      borderBottomColor: 'lightgray',
     },
     child: {
       fontSize: 20,
       marginBottom: 10,
-      marginTop: 10,
+      marginTop: 50,
       color: '#696969',
+      fontWeight:"bold",
+      fontSize:"x-large"
     },
     TitleName: {
       fontSize: 25,
@@ -753,7 +847,15 @@ const styles = StyleSheet.create(
       textAlign: 'center',
       paddingBottom: 20,
     },
+    carouselScrollViewContent: {
+      borderRadius: "25px",
+
+      Height: '100%',
+      width: '100%',
+      paddingHorizontal: 80,
+    },
     scrollViewContent: {
+      borderRadius: "25px",
       flexGrow: 1,
       position: 'relative',
       Height: '10%',
@@ -857,15 +959,26 @@ const styles = StyleSheet.create(
       paddingHorizontal: 10,
       borderWidth: 1,
     },
+    carouselWorkPackageBox: {
+      flexDirection: 'row', // Make the box a row container
+      maxHeight: 200,
+      justifyContent: 'space-between', // Align elements horizontally with space between
+      alignItems: 'center', // Center vertically
+      borderWidth: 1,
+      borderColor: '#4F85FF', // Change the border color to fit your design
+      borderRadius: 8,
+      padding: 10,
+      //marginBottom: 10,
+      width: '60%', // Set width as a percentage
+      alignSelf: 'center',
+    },
     workPackageBox: {
       flexDirection: 'row', // Make the box a row container
       maxHeight: 200,
       justifyContent: 'space-between', // Align elements horizontally with space between
       alignItems: 'center', // Center vertically
-
       borderWidth: 1,
       borderColor: '#4F85FF', // Change the border color to fit your design
-
       borderRadius: 8,
       padding: 10,
       marginBottom: 10,

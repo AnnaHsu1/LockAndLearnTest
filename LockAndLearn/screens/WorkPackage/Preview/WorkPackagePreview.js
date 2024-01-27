@@ -12,8 +12,9 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getItem } from '../../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
-const WorkPackagePreview = ({ props }) => {
+const WorkPackagePreview = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [packages, setPackages] = useState([]);
@@ -108,6 +109,7 @@ const WorkPackagePreview = ({ props }) => {
       }
     } catch (error) {
       console.error('Network error:', error);
+      
     }
   };
 
@@ -160,7 +162,7 @@ const WorkPackagePreview = ({ props }) => {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={{ color: '#696969', fontSize: 12 }}>
-            {this_Package.quizzes.length} Quizz(es)
+            {this_Package.quizzes.length} Quiz(zes)
           </Text>
         </View>
       </View>
@@ -273,6 +275,18 @@ const WorkPackagePreview = ({ props }) => {
   );
 };
 
+WorkPackagePreview.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      workPackage: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        grade: PropTypes.number.isRequired,
+      }),
+    }),
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
@@ -329,28 +343,6 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
-  deleteConfirmationModal: {
-    width: '50%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmationText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  confirmationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  confirmButton: {
-    backgroundColor: '#F24E1E',
-    padding: 10,
-    borderRadius: 10,
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -387,17 +379,6 @@ const styles = StyleSheet.create({
   workPackageItem: {
     fontSize: 16,
     color: '#407BFF',
-  },
-  buttonUpload: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: '5%',
-    marginBottom: '5%',
   },
   buttonReportText: {
     color: '#F24E1E',

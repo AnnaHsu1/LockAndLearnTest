@@ -9,6 +9,7 @@ import UploadScreen from '../screens/StudyMaterial/UploadScreen';
 import SignupScreen from '../screens/User/SignupScreen';
 import LockingSessionBeginsScreen from '../screens/Locking/LockingSessionBeginsScreen';
 import LockingSchedulePresentation from '../screens/Locking/LockingSchedulePresentation';
+import FreeTimeSession from '../screens/Locking/FreeTimeSessionScreen';
 import StudyMaterial from '../screens/StudyMaterial/StudyMaterial';
 import LandingPage from '../screens/User/LandingPage';
 import CreateQuiz from '../screens/QuizMaterial/CreateQuiz';
@@ -17,6 +18,7 @@ import QuizzesOverviewScreen from '../screens/QuizMaterial/QuizzesOverviewScreen
 import CreateQuestion from '../screens/QuizMaterial/CreateQuestion';
 import EditQuestion from '../screens/QuizMaterial/EditQuestion';
 import ParentAccount from '../screens/User/Child/ParentAccountScreen';
+import ParentHomeScreen from '../screens/User/ParentHomeScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
@@ -54,6 +56,8 @@ import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
 import Payment from '../screens/WorkPackage/Payment';
 import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
+import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial';
+import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 
@@ -107,6 +111,11 @@ const StackNavigation = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="FreeTimeSession"
+          component={FreeTimeSession}
+          options={{ title: 'FreeTimeSession', headerShown: false }}
+        />
+        <Stack.Screen
           name="StudyMaterial"
           component={StudyMaterial}
           options={{ headerShown: false }}
@@ -138,6 +147,14 @@ const StackNavigation = () => {
           })}
         />
         <Stack.Screen
+          name="ParentHomeScreen"
+          component={ParentHomeScreen}
+          options={({ navigation }) => ({
+            title: 'Lock And Learn',
+            headerLeft: () => null,
+          })}
+        />
+        <Stack.Screen
           name="AddChild"
           component={AddChild}
           options={{ title: 'Add Child Account' }}
@@ -157,11 +174,11 @@ const StackNavigation = () => {
           name="QuestionsOverviewScreen"
           component={QuestionsOverviewScreen}
           options={{ title: 'Questions' }}
-              />
+        />
         <Stack.Screen
-            name="PurchaseSuccessPage"
-            component={PurchaseSuccessPage}
-            options={{ headerShown: false }}
+          name="PurchaseSuccessPage"
+          component={PurchaseSuccessPage}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="CreateQuestion"
@@ -320,6 +337,11 @@ const StackNavigation = () => {
         />
         <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
         <Stack.Screen
+          name="DisplayStudyMaterial"
+          component={DisplayStudyMaterial}
+          options={{ title: 'Display Study Material' }}
+        />
+        <Stack.Screen
           name="DisplayQuizzScreen"
           component={DisplayQuizzScreen}
           options={{ title: 'Display Quiz Screen' }}
@@ -344,15 +366,11 @@ const StackNavigation = () => {
           component={ChildPassingGradePerSubject}
           options={{ title: 'Passing Grade Per Subject' }}
         />
+        <Stack.Screen name="Payment" component={Payment} options={{ title: 'Payment' }} />
         <Stack.Screen
-            name="Payment"
-            component={Payment}
-            options={{ title: 'Payment' }}
-        />
-        <Stack.Screen
-            name="CheckoutForm"
-            component={CheckoutForm}
-            options={{ title: 'CheckoutForm' }}
+          name="CheckoutForm"
+          component={CheckoutForm}
+          options={{ title: 'CheckoutForm' }}
         />
         <Stack.Screen
             name="WorkPackagePreview"
@@ -363,6 +381,11 @@ const StackNavigation = () => {
             name="PackagePreview"
             component={PackagePreview}
             options={{ title: 'PackagePreview' }}
+        />
+        <Stack.Screen
+          name="ChildTimeframes"
+          component={ChildTimeframes}
+          options={{ title: `List Child's Timeframes` }}
         />
       </Stack.Navigator>
     </NavigationContainer>

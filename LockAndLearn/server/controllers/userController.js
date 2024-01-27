@@ -1,5 +1,5 @@
 const express = require('express');
-const { parseISO, isBefore } = require('date-fns');
+const { parseISO, isBefore, differenceInYears, startOfDay } = require('date-fns');
 const bcrypt = require('bcrypt');
 const User = require('../schema/userSchema.js');
 const { createUser, getUserByEmail } = require('../manager/userManager.js');
@@ -57,6 +57,12 @@ router.post('/signup', async (req, res) => {
     // Input validations
     if (!FirstName || !LastName || !Email || !Password || !CPassword || !DOB || !isParent) {
       return res.status(400).json({ msg: 'All fields must be filled.' });
+      }
+
+    // Validate FirstName and LastName with regular expressions
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!nameRegex.test(FirstName) || !nameRegex.test(LastName)) {
+        return res.status(400).json({ msg: 'First and Last names can only contain letters.' });
     }
     if (!(Email.includes('@') && Email.includes('.'))) {
       return res.status(400).json({ msg: 'Invalid email format.' });
@@ -73,16 +79,42 @@ router.post('/signup', async (req, res) => {
 
     if (Password !== CPassword) {
       return res.status(400).json({ msg: 'Passwords must match.' });
-    }
+      }
+      const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!DOB || !dobRegex.test(DOB)) {
+          return res.status(400).json({ msg: 'Invalid date format. Please use YYYY-MM-DD.' });
+      }
 
-    // Parse the date of birth and the current date
-    const dob = parseISO(DOB);
-    const currentDate = new Date();
-    const isValid = isBefore(dob, currentDate);
 
-    if (!isValid) {
-      return res.status(400).json({ msg: 'Invalid date of birth.' });
-    }
+      // Attempt to parse the date of birth
+      let dob;
+      try {
+          dob = parseISO(DOB);
+      } catch (error) {
+          return res.status(400).json({ msg: 'Invalid date. Please provide a valid date in the format YYYY-MM-DD.' });
+      }
+
+      // Parse the current date
+      const currentDate = new Date();
+
+      // Check if the date of birth is a day before the current day
+      const isBeforeCurrentDay = isBefore(dob, startOfDay(currentDate));
+
+      if (!isBeforeCurrentDay) {
+          return res.status(400).json({ msg: 'Invalid date of birth. It should be a day before the current day.' });
+      }
+
+      // Check if the user is older than 18
+      const isOlderThan18 = differenceInYears(currentDate, dob) >= 18;
+
+      if (!isOlderThan18) {
+          return res.status(400).json({ msg: 'You must be at least 18 years old to register.' });
+      }
+      // Ensure that the first name and last name start with a capital letter
+      const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+      const capitalizedFirstName = capitalizeFirstLetter(FirstName);
+      const capitalizedLastName = capitalizeFirstLetter(LastName);
 
     //Encrypt the input password
     const salt = await bcrypt.genSalt();
@@ -92,8 +124,8 @@ router.post('/signup', async (req, res) => {
 
     // Call the createUser function to create a new user
     const user = await createUser({
-      FirstName,
-      LastName,
+      FirstName: capitalizedFirstName,
+      LastName: capitalizedLastName,
       Email,
       isParent,
       passwordHash,
@@ -215,6 +247,55 @@ router.delete('/deleteUser/:id', async (req, res) => {
   }
 });
 
+router.post('/createPIN/:id', async (req, res) => {
+  const userId = req.params.id;
+  const pin = req.body.pin;
 
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    //Encrypt the input password
+    const salt = await bcrypt.genSalt();
+    const pinEncrypted = await bcrypt.hash(pin, salt);
+    console.log(pinEncrypted);
+
+    user.parentalAccessPIN = pinEncrypted;
+
+    await user.save();
+
+    res.status(200).json({ message: 'PIN created successfully', user: user });
+  } catch (error) {
+    console.error('Error creating PIN:', error);
+    res.status(500).json({ error: 'An error occurred while creating the PIN.' });
+  }
+});
+
+router.post('/getPIN/:id', async (req, res) => {
+  const userId = req.params.id;
+  const pin = req.body.pin;
+  console.log(pin);
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Password check with the input using bcrypt
+    const isMatch = await bcrypt.compare(pin, user.parentalAccessPIN);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Invalid PIN.' });
+    }
+
+    res.status(200).json({ message: 'PIN retrieved successfully', user: user });
+  } catch (error) {
+    console.error('Error getting PIN:', error);
+    res.status(500).json({ error: 'An error occurred while getting the PIN.' });
+  }
+});
 
 module.exports = router;

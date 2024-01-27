@@ -118,6 +118,15 @@ router.get('/uploadFiles/:filename', async (req, res) => {
   downloadStream.pipe(res);
 });
 
+// get uploaded file to download by fileId
+router.get('/uploadFilesById/:id', async (req, res) => {
+  const requestFileId = req.params.id;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadFiles' }); //bucketName = collection name in db
+  const downloadStream = bucket.openDownloadStream(new mongoose.Types.ObjectId(requestFileId));
+  downloadStream.pipe(res);
+});
+
 // get uploaded file by userId
 router.get('/specificUploadFiles/:userId', async (req, res) => {
   const requestUserId = req.params.userId;

@@ -6,7 +6,6 @@ import {
     Text,
     View,
     TouchableOpacity,
-    Button,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
@@ -17,8 +16,15 @@ const CheckoutForm = ({ navigation, route }) => {
 
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+
+  /**
+   * Handles the form submission for the checkout process.
+   * @param {Event} e - The form submission event.
+   * @returns {Promise<void>} - A promise that resolves when the submission is complete.
+   */
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     const token = await getItem('@token');
     const user = JSON.parse(token);
     const userId = user._id;
@@ -44,9 +50,8 @@ const CheckoutForm = ({ navigation, route }) => {
         setMessage('An unexpected error occurred.');
       }
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      // Payment succeeded, you can navigate to the success screen
       setMessage('Payment successful!');
-      transferToPurchasedWorkPackage(userId);
+      transferToPurchasedWorkPackage(userId, paymentIntent.id, paymentIntent.amount);
       navigation1.navigate('PurchaseSuccessPage'); // Replace 'SuccessScreen' with your screen name
     } else {
       console.log('Payment failed');
@@ -54,9 +59,19 @@ const CheckoutForm = ({ navigation, route }) => {
 
     setIsProcessing(false);
   };
-  const transferToPurchasedWorkPackage = async (userId) => {
+
+  
+  /**
+   * Transfers work package information to the backend, where it will be stored in the purchasedWorkPackage collection of the user.
+   * 
+   * @param {string} userId - The ID of the buyer.
+   * @param {string} stripeId - The ID of the Stripe payment.
+   * @param {string} stripeSale - The sale price from Stripe.
+   * @returns {Promise<void>} - A promise that resolves when the transfer is successful or rejects with an error.
+   */
+  const transferToPurchasedWorkPackage = async (userId, stripeId, stripeSale) => {
     try {
-      const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}`, {
+      const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}/${stripeId}/${stripeSale}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,14 +91,14 @@ const CheckoutForm = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <View id="payment-form">
-        <PaymentElement id="payment-element" />
+      <View testID="payment-form">
+        <PaymentElement testID="payment-element" />
         <TouchableOpacity
           disabled={isProcessing || !stripe || !elements}
           style={styles.buttonBox}
           onPress={handleSubmit} 
         >
-          <Text style={styles.buttonText}>{isProcessing ? 'Processing ... ' : 'Pay now'}</Text>
+          <Text testID="button-text" style={styles.buttonText}>{isProcessing ? 'Processing ... ' : 'Pay now'}</Text>
         </TouchableOpacity>
         {/* Show any error or success messages */}
         {message && <View id="payment-message">{message}</View>}
@@ -93,14 +108,6 @@ const CheckoutForm = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-    page: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100%',
-    },
     container: {
         flex: 1,
         backgroundColor: '#fff',

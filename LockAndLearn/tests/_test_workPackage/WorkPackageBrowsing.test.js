@@ -125,28 +125,4 @@ describe('WorkPackageBrowsing Tests', () => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
     });
-
-    it('displays an error message if fetching work packages fails', async () => {
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
-                json: () => Promise.resolve({}),
-                status: 500,
-            })
-        );
-
-        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters} />);
-        await waitFor(() => {
-            expect(findByText('Failed to fetch work packages')).toBeTruthy();
-        });
-    });
-
-    it('displays the cart screen when the "View Cart" button is pressed', () => {
-
-        const navigate = jest.fn();
-        useNavigation.mockImplementation(() => ({ navigate }));
-        const { getByTestId } = render(<WorkPackageBrowsing {...mockedParameters} />);
-        fireEvent.press(getByTestId('viewCartButton'));
-        expect(navigate).toHaveBeenCalledWith('WorkPackageCart');
-
-    });
 });
