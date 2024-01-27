@@ -110,7 +110,7 @@ const CreateWorkPackage = (route) => {
         if (Array.isArray(data)) {
           // Check if data is an array
           const subjectNames = data.map((subject) => subject.name);
-          setSubjects(['Choose a Subject', ...subjectNames]);
+          setSubjects([ ...subjectNames]);
         } else {
           console.error('Invalid data format for subjects');
         }
