@@ -129,11 +129,13 @@ const AdminReportCenter = ({ route, navigation }) => {
                   {workPackages[item.idOfWp].name} - {workPackages[item.idOfWp].grade}
                 </Text>
                 {'\n'}
-                {workPackages[item.idOfWp].description}
-                {'\n'}${workPackages[item.idOfWp].price}
-                {'\n'}
-                {workPackages[item.idOfWp].packageCount} {'package(s)'}
-                {'\n'}
+                <Text style={styles.subText}>
+                  {workPackages[item.idOfWp].description}
+                  {'\n'}${workPackages[item.idOfWp].price}
+                  {'\n'}
+                  {workPackages[item.idOfWp].packageCount} {'package(s)'}
+                  {'\n'}
+                </Text>
               </>
             )}
             {/* Display instructor information */}
@@ -141,10 +143,12 @@ const AdminReportCenter = ({ route, navigation }) => {
               <>
                 <Text style={styles.subTitle}>Instructor</Text>
                 {'\n'}
-                {item.instructor.firstName} {item.instructor.lastName}
-                {'\n'}
-                {item.instructor.email}
-                {'\n'}
+                <Text style={styles.subText}>
+                  {item.instructor.firstName} {item.instructor.lastName}
+                  {'\n'}
+                  {item.instructor.email}
+                  {'\n'}
+                </Text>
               </>
             )}
             {/* Display reporter information */}
@@ -152,18 +156,22 @@ const AdminReportCenter = ({ route, navigation }) => {
               <>
                 <Text style={styles.subTitle}>Reporter</Text>
                 {'\n'}
-                {item.reporter.firstName} {item.reporter.lastName}
-                {'\n'}
-                {item.reporter.email}
-                {'\n'}
+                <Text style={styles.subText}>
+                  {item.reporter.firstName} {item.reporter.lastName}
+                  {'\n'}
+                  {item.reporter.email}
+                  {'\n'}
+                </Text>
               </>
             )}
             <Text style={styles.subTitle}>Reason</Text>
             {'\n'}
-            {item.reason}
-            {'\n'}
-            {item.timeOfReport}
-            {'\n'}
+            <Text style={styles.subText}>
+              {item.reason}
+              {'\n'}
+              {item.timeOfReport}
+              {'\n'}
+            </Text>
           </Text>
         </TouchableOpacity>
       ))}
@@ -184,6 +192,10 @@ const AdminReportCenter = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    subText: {
+      fontSize: 18,
+      color: '#696969',
+    },
     subTitle: {
       fontSize: 20,
       fontWeight: 'bold',
