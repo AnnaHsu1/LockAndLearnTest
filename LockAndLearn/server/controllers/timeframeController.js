@@ -11,10 +11,11 @@ router.post('/addtimeframe', async (req, res) => {
     // console.log(ChildId, Day, StartTime, EndTime);
 
     // console.log(childId, day, startTime, endTime);
+
     startHour = parseInt(startTime.substring(0, 2));
-    startMin = startTime.substring(3, 5);
-    endHour = parseInt(endTime.substring(0, 2));   
-    endMin = endTime.substring(3, 5);
+    startMin = parseInt(startTime.substring(3, 5));
+    endHour = parseInt(endTime.substring(0, 2));
+    endMin = parseInt(endTime.substring(3, 5));
 
     // Input validations
     if (!childId || !day || !startHour || !startMin || !endHour || !endMin) {
