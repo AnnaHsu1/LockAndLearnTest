@@ -9,6 +9,7 @@ import {
   FlatList,
   Dimensions,
   Modal,
+  TextInput,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -18,15 +19,20 @@ import { getUser } from '../../components/AsyncStorage';
 import { ToastContainer, toast } from 'react-toastify';
 import * as DocumentPicker from 'expo-document-picker';
 import { Icon } from 'react-native-paper';
+import PropTypes from 'prop-types';
 
 const LandingPage = ({ navigation }) => {
   const [userId, setUserId] = useState(null);
+  const [certificateStatus, setCertificateStatus] = useState('pending');
   const [fileName, setFileName] = useState([]);
+  const [fullName, setFullName] = useState('');
+  const [refresh, setRefresh] = useState(false);
+  const [highestDegree, setHighestDegree] = useState('');
   const [files, setFiles] = useState([]);
   const [modalOverwriteFilesVisible, setModalOverwriteFilesVisible] = useState(false);
   const [duplicateFiles, setDuplicateFiles] = useState([]);
   const [dictionary, setDictionary] = useState([]); // [{key, value}]
-  const [status, setStatus] = useState('rejected');
+  const [status, setStatus] = useState('');
   const dict = [];
   const maxTextWidth = width * 0.9;
   const { width } = Dimensions.get('window');
@@ -38,6 +44,48 @@ const LandingPage = ({ navigation }) => {
     }
   };
 
+  // Function to fetch user's certificates' status
+  const getStatus = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/certificates/getCertificatesStatus/${userId}`,
+        {
+          method: 'GET',
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const certificateStatus = data.uploadedCertificates;
+        let returnedStatus = 'rejected';
+        for (let i = 0; i < certificateStatus.length; i++) {
+          // Look for accepted certificates
+          if (certificateStatus[i].metadata.status == 'accepted') {
+            returnedStatus = 'accepted';
+            break;
+          }
+        }
+
+        for (let i = 0; i < certificateStatus.length; i++) {
+          // Look for pending certificates
+          if (certificateStatus[i].metadata.status == 'pending') {
+            returnedStatus = 'pending';
+            break;
+          }
+        }
+        setStatus(returnedStatus);
+        // Display appropriate notification based on the certificate status
+        if (returnedStatus == 'pending') {
+          toast.info('Your certificate is under review. Please come back later.');
+        } else if (certificateStatus.length != 0 && returnedStatus == 'rejected') {
+          toast.error('Your certificate has been rejected. Please upload a new certificate.');
+        }
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
+
+  // Functionn to select certificate
   const certificateSelectedHandler = async () => {
     let result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (Platform.OS === 'web') {
@@ -83,9 +131,12 @@ const LandingPage = ({ navigation }) => {
 
     const fileData = new FormData();
     fileData.append('userId', userId);
+    fileData.append('status', certificateStatus);
     files.forEach((file) => {
       fileData.append('certificates', file);
     });
+    fileData.append('fullName', fullName);
+    fileData.append('highestDegree', highestDegree);
 
     try {
       const response = await fetch('http://localhost:4000/certificates/uploadCertificates', {
@@ -102,13 +153,15 @@ const LandingPage = ({ navigation }) => {
         // no duplicated files - save files to db
         else if (data.message == 'Certificate uploaded successfully') {
           toast.success('Certificates uploaded successfully!');
-          //navigation.navigate('ViewUploads', { newFilesAdded: fileName });
           setFileName([]);
           setFiles([]);
+          setFullName('');
+          setHighestDegree('');
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
+      setRefresh(true);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -123,6 +176,8 @@ const LandingPage = ({ navigation }) => {
     files.forEach((file) => {
       fileData.append('certificates', file);
     });
+    fileData.append('fullName', fullName);
+    fileData.append('highestDegree', highestDegree);
     try {
       const response = await fetch('http://localhost:4000/certificates/overwriteCertificates', {
         method: 'PUT',
@@ -134,10 +189,13 @@ const LandingPage = ({ navigation }) => {
           //navigation.navigate('ViewUploads', { newFilesAdded: duplicateFiles });
           setFileName([]);
           setFiles([]);
+          setFullName('');
+          setHighestDegree('');
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
+      setRefresh(true);
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -146,6 +204,9 @@ const LandingPage = ({ navigation }) => {
   const toggleModalOverwriteFiles = () => {
     setModalOverwriteFilesVisible(!modalOverwriteFilesVisible);
   };
+
+  const validateFields =
+    fullName == '' || highestDegree == '' || files.length == 0 || status == 'pending';
 
   // function to render each row (which is uploaded file)
   const renderFile = (item, index) => {
@@ -202,12 +263,6 @@ const LandingPage = ({ navigation }) => {
     setDictionary(filteredDictionary);
   };
 
-  const mainMenuNavigation = () => {
-    console.log(status);
-    setStatus('accepted');
-    console.log(status);
-  };
-
   const renderDuplicateCertificates = (item, index) => {
     return (
       <View key={index}>
@@ -231,6 +286,10 @@ const LandingPage = ({ navigation }) => {
     getUserToken();
   }, []);
 
+  useEffect(() => {
+    getStatus();
+  }, [userId, refresh]);
+
   return (
     <View style={styles.page}>
       {status == 'accepted' ? (
@@ -253,12 +312,6 @@ const LandingPage = ({ navigation }) => {
           >
             <Text style={styles.text}>My files</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-        style={styles.content}
-        onPress={() => navigation.navigate('ParentAccount')}
-      >
-        <Text style={styles.text}>Parent Account</Text>
-      </TouchableOpacity> */}
         </View>
       ) : (
         <View style={styles.containerFile}>
@@ -268,6 +321,7 @@ const LandingPage = ({ navigation }) => {
             closeOnClick
             theme="dark"
             style={{ marginTop: '70px' }}
+            autoClose={7000}
           />
           <Text style={styles.certificateTitle}>
             Please upload your professional certificates to proceed further
@@ -291,6 +345,24 @@ const LandingPage = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.containerUploaded}>
+            <View style={styles.item}>
+              <Text style={styles.field}>Full Name</Text>
+              <TextInput
+                testID="full-name-input"
+                style={[styles.textbox, styles.full_width]}
+                value={fullName}
+                onChangeText={(newText) => setFullName(newText)}
+              />
+            </View>
+            <View style={styles.item}>
+              <Text style={styles.field}>Highest Degree</Text>
+              <TextInput
+                testID="highest-degree-input"
+                style={[styles.textbox, styles.full_width]}
+                value={highestDegree}
+                onChangeText={(newText) => setHighestDegree(newText)}
+              />
+            </View>
             <Text style={styles.uploadFiles}>Uploads - {fileName.length} certificates</Text>
             <Text style={[styles.supportedFormats, { marginTop: 2, marginBottom: 10 }]}>
               Uploading certificates that already existed in our system will be overwritten by the
@@ -303,19 +375,25 @@ const LandingPage = ({ navigation }) => {
               keyExtractor={(item, index) => index.toString()}
               style={{ width: '100%' }}
             />
+            {status && status == 'pending' ? (
+              <View>
+                <Text style={styles.selectCertificates}>
+                  You cannot upload new documents while your certificate is under review.
+                </Text>
+              </View>
+            ) : null}
+
             {/* display button to confirm: uploading files */}
             <View style={{ alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={uploadCertificatesHandler}
-                style={styles.buttonUpload}
+                style={[styles.buttonUpload, validateFields && styles.disabledButton]}
                 testID="uploadButton"
+                disabled={validateFields}
               >
                 <Text style={styles.buttonText}>Upload</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={mainMenuNavigation}>
-              <Text>Go to main menu</Text>
-            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -329,7 +407,7 @@ const LandingPage = ({ navigation }) => {
         <View style={styles.containerModalOverwriteFiles}>
           <View style={styles.containerModalOverwriteFilesContent}>
             {/* display title of modal */}
-            <View style={styles.containerTextModal}>
+            <View>
               <Text style={[{ fontSize: 20 }, styles.textDuplicateFiles]}>Duplicated File(s)</Text>
               <Text style={[{ fontSize: 12 }, styles.textDuplicateFiles]}>
                 Are you sure you want to overwrite these following files?
@@ -369,12 +447,42 @@ const LandingPage = ({ navigation }) => {
   );
 };
 
+LandingPage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   page: {
     backgroundColor: '#ffffff',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+  },
+  item: {
+    display: 'flex',
+    width: '100%',
+    paddingVertical: 10,
+  },
+  field: {
+    color: '#ADADAD',
+  },
+  textbox: {
+    display: 'flex',
+    minHeight: 30,
+    borderRadius: 10,
+    borderColor: '#407BFF',
+    borderStyle: 'solid',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+  },
+  full_width: {
+    minWidth: '100%',
   },
   duplicateRow: {
     marginBottom: '1%',
@@ -419,6 +527,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '500',
     marginTop: '1%',
+    textAlign: 'center',
   },
   uploadFiles: {
     color: '#696969',
