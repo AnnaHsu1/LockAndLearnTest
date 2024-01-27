@@ -16,6 +16,13 @@ const CheckoutForm = ({ navigation, route }) => {
 
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+
+  /**
+   * Handles the form submission for the checkout process.
+   * @param {Event} e - The form submission event.
+   * @returns {Promise<void>} - A promise that resolves when the submission is complete.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = await getItem('@token');
@@ -54,6 +61,14 @@ const CheckoutForm = ({ navigation, route }) => {
   };
 
   
+  /**
+   * Transfers work package information to the backend, where it will be stored in the purchasedWorkPackage collection of the user.
+   * 
+   * @param {string} userId - The ID of the buyer.
+   * @param {string} stripeId - The ID of the Stripe payment.
+   * @param {string} stripeSale - The sale price from Stripe.
+   * @returns {Promise<void>} - A promise that resolves when the transfer is successful or rejects with an error.
+   */
   const transferToPurchasedWorkPackage = async (userId, stripeId, stripeSale) => {
     try {
       const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}/${stripeId}/${stripeSale}`, {
@@ -93,14 +108,6 @@ const CheckoutForm = ({ navigation, route }) => {
 };
 
 const styles = StyleSheet.create({
-    page: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100%',
-    },
     container: {
         flex: 1,
         backgroundColor: '#fff',

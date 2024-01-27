@@ -22,6 +22,10 @@ const AdminFinances = ({ route, navigation }) => {
     fetchBalance();
   }, []);
 
+  /**
+   * Sends a request to the backend to fetch a set number of recently completed transactions from Stripe.
+   * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
+   */
   const fetchAllTransactions = async () => {
     try {
       const response = await fetch('http://localhost:4000/payment/transactions');
@@ -40,6 +44,11 @@ const AdminFinances = ({ route, navigation }) => {
       setLoading(false); // Set loading to false when the request completes
     }
   };
+
+  /**
+   * Fetches the total balance from all the transactions.
+   * @returns {Promise<void>} A promise that resolves when the balance is fetched successfully.
+   */
   const fetchBalance = async () => {
     try {
       const response = await fetch('http://localhost:4000/payment/balanceAdmin');
@@ -65,7 +74,12 @@ const AdminFinances = ({ route, navigation }) => {
     }
   };
 
-  // Fetch more information about the transaction from a selected transaction
+ 
+  /**
+   * Fetches more transaction information from the server.
+   * @param {string} stripePurchaseId - The ID of the Stripe purchase that we wish to fetch more information about.
+   * @returns {Promise<void>} - A promise that resolves when the transaction information is fetched.
+   */
   const fetchMoreTransactionInfo = async (stripePurchaseId) => {
     try {
       const response = await fetch(
@@ -229,12 +243,6 @@ const useStyles = CreateResponsiveStyle(
       marginVertical: 10,
       padding: 10,
     },
-    balanceContainer: {
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      padding: 10,
-    },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -263,31 +271,6 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 15,
       marginBottom: 5,
     },
-    button: {
-      color: '#4F85FF',
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 80,
-      justifyContent: 'center',
-      minWidth: 100,
-    },
-    modalButtons: {
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 50,
-      justifyContent: 'center',
-      minWidth: 100,
-    },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
-    full_width: {
-      minWidth: '100%',
-    },
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -299,30 +282,8 @@ const useStyles = CreateResponsiveStyle(
       color: 'grey',
       fontSize: 13,
     },
-
-    noUsersText: {
-      color: '#ffffff',
-      fontSize: 18,
-      textAlign: 'center',
-      marginTop: 20,
-    },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
-    },
     transactionListContainer: {
       paddingRight: 20,
-    },
-    modal: {
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     modalCard: {
       backgroundColor: '#fff',
