@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
+import PropTypes from 'prop-types'
 
 const ChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -30,7 +31,9 @@ const ChildProfileScreen = ({ route, navigation }) => {
           updatedChildren: null,
         });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error deleting child:', error);
+    }
   };
 
   return (
@@ -116,7 +119,20 @@ const ChildProfileScreen = ({ route, navigation }) => {
           >
             <Text style={styles.text}>Settings</Text>
           </Button>
+          {/* to be removed (tmp): quick tmp way to access page */}
           <Button
+            testID="settings"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('DisplayStudyMaterial', { child_ID: child._id });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Study time</Text>
+          </Button>
+      </View>
+      {/* Delete child link */}
+      <Button
             testID="delete-child-link"
             style={styles.link}
             onPress={() => {
@@ -124,10 +140,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
             }}
           >
             <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
-          </Button>
-
-          {/* Delete child link */}
-      </View>
+      </Button>
 
       {/* Modal to confirm the deletion of a child */}
       <Modal
@@ -182,6 +195,15 @@ const ChildProfileScreen = ({ route, navigation }) => {
   );
 };
 
+ChildProfileScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.object.isRequired,
+    }),
+  }).isRequired,
+  navigation: PropTypes.object.isRequired,
+};
+
 const useStyles = CreateResponsiveStyle(
   {
     page: {
@@ -196,6 +218,7 @@ const useStyles = CreateResponsiveStyle(
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 10,
+      paddingBottom: 20, // Added bottom padding
       marginTop: "3%",
       marginBottom: 10,
       borderRadius: 10,
@@ -205,7 +228,7 @@ const useStyles = CreateResponsiveStyle(
     },
     header: {
       alignItems: 'center',
-      height: 75,
+      height: 50,
       flexDirection: 'row',
       justifyContent: 'center',
     },
@@ -220,7 +243,7 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       backgroundColor: '#ffffff',
       borderRadius: 10,
-      marginVertical: 5,
+      marginVertical: 3,
       minHeight: 50,
       justifyContent: 'center',
       minWidth: 100,
@@ -254,6 +277,7 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
+      padding: 5,
     },
     options: {
       flex: 0.75,
@@ -267,6 +291,7 @@ const useStyles = CreateResponsiveStyle(
       minWidth: 100,
       fontSize: 12,
       textAlign: 'center',
+      backgroundColor: 'white',
     },
     linkText: {
       color: 'red',

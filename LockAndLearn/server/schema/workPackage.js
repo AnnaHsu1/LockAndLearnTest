@@ -49,6 +49,15 @@ const WorkPackage = mongoose.model('WorkPackage', new mongoose.Schema({
         type: [ratingsSchema],
         default: [],
     },
+    deletedByTutor: {
+        type: Boolean,
+    },
+    stripePurchaseId: {
+        type: [String],
+        default: [],
+        required: true,
+    }, //Unique purchase ID from Stripe
+
 }), collectionName);
 
 module.exports = WorkPackage;

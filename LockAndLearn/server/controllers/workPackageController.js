@@ -37,15 +37,22 @@ router.get('/getWorkPackages/:instructorId', async (req, res) => {
   }
 });
 
-// Fetch and delete a specific work package by ID
-router.delete('/deleteWorkPackage/:workpackageID', async (req, res) => {
+// Fetch and add delete tag (from tutor) to a specific work package by ID 
+router.put('/deleteWorkPackage/:workpackageID', async (req, res) => {
   try {
     const workPackageId = req.params.workpackageID;
-    const deletedWorkPackage = await WorkPackage2.findByIdAndDelete(workPackageId);
-    if (!deletedWorkPackage) {
-      return res.status(404).json({ error: 'Work package not found' });
+    // add field in workpackage to indicate that tutor deleted the workpackage
+    const existingWorkPackage = await WorkPackage2.findById(workPackageId);
+
+    // input validation
+    if (!existingWorkPackage) {
+      throw new Error('Work package not found with the specified _id');
     }
-    res.status(200).json(deletedWorkPackage);
+    else {
+      existingWorkPackage.deletedByTutor = true;
+      const deletedWorkPackage = await existingWorkPackage.save();
+      res.status(200).json(deletedWorkPackage);
+    }    
   } catch (error) {
     console.error('Error deleting work package:', error);
     res.status(500).json({ error: 'An error occurred while deleting the work package.' });
@@ -154,7 +161,7 @@ router.get('/allWorkPackages', async (req, res) => {
 // Fetch work packages of a specific parent user (owned or unowned)
 router.get('/fetchWorkpackagesParent/:id', async (req, res) => {
   const parentId = req.params.id;
-  console.log('query type:' + req.query.displayOwned);
+  // console.log('query type:' + req.query.displayOwned);
   const displayOwned = req.query.displayOwned === 'true';
 
   try {
@@ -167,18 +174,33 @@ router.get('/fetchWorkpackagesParent/:id', async (req, res) => {
       return res.status(404).json({ error: 'Parent user not found' });
     }
 
-    console.log('Parent found' + parentUser);
+    // console.log('Parent found' + parentUser);
 
     // Handle empty or undefined purchasedWorkPackages
     const purchasedWorkPackages = parentUser.purchasedWorkPackages || [];
-
     let workPackagesQuery = {};
+
     if (displayOwned) {
       // Fetch owned work packages if query param indicates to display owned
-      workPackagesQuery = { _id: { $in: purchasedWorkPackages } };
+      //workPackagesQuery = { _id: { $in: purchasedWorkPackages.workPackageIds } };
+
+      workPackagesQuery = { _id: { $in: [] } }; // Initialize with an empty array
+
+      // Iterate through each purchasedWorkPackage and accumulate workPackageIds
+      purchasedWorkPackages.forEach((package) => {
+        workPackagesQuery._id.$in.push(...package.workPackageIds);
+      });
+
     } else {
       // Fetch unowned work packages if query param indicates to display unowned
-      workPackagesQuery = { _id: { $nin: purchasedWorkPackages } };
+      //workPackagesQuery = { _id: { $nin: purchasedWorkPackages.workPackageIds } };
+
+      workPackagesQuery = { _id: { $nin: [] } }; // Initialize with an empty array
+
+      // Iterate through each purchasedWorkPackage and accumulate workPackageIds
+      purchasedWorkPackages.forEach((package) => {
+        workPackagesQuery._id.$nin.push(...package.workPackageIds);
+      });
     }
 
     // Retrieve work packages based on the constructed query
@@ -253,7 +275,7 @@ router.get('/fetchWorkpackagesCart/:id', async (req, res) => {
             return res.status(404).json({ error: 'Parent user not found' });
         }
 
-        console.log('Parent found' + parentUser);
+        // console.log('Parent found' + parentUser);
 
         // Handle empty or undefined cartWorkPackages
         const cartWorkPackages = parentUser.CartWorkPackages || [];
@@ -328,7 +350,7 @@ router.put('/addToCart/:userId', async (req, res) => {
         const workPackageId = req.body.CartWorkPackages;
         
 
-        console.log(workPackageId);
+        // console.log(workPackageId);
         // Find the user by ID
         const user = await User.findById(userId);
         if (!user) {
@@ -446,14 +468,14 @@ router.put('/acquireWorkPackage/:userId/:workPackageId', async (req, res) => {
     }
 
     // Check if the work package is already in the user's purchasedWorkPackages
-    const isAlreadyPurchased = user.purchasedWorkPackages.includes(workPackageId);
+    const isAlreadyPurchased = user.purchasedWorkPackages[0].workPackageIds.includes(workPackageId);
 
     if (isAlreadyPurchased) {
       return res.status(400).json({ error: 'This work package has already been acquired' });
     }
 
     // Add the work package ID to the user's purchasedWorkPackages array
-    user.purchasedWorkPackages.push(workPackageId);
+    user.purchasedWorkPackages[0].workPackageIds.push(workPackageId);
 
     // Save the updated user
     await user.save();

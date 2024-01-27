@@ -83,7 +83,7 @@ const GoogleSignUpScreen = ({ route, navigation }) => {
         //Add redirect
         {
           data?.user.isParent
-            ? navigation.navigate('ParentAccount')
+            ? navigation.navigate('ParentHomeScreen')
             : navigation.navigate('UserLandingPage');
         }
       } else {
