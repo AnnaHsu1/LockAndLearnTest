@@ -13,20 +13,20 @@ const AdminReportCenter = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    // Fetch work packages when the component mounts or when reports change
-    const fetchWorkPackages = async () => {
-      const workPackagesData = {};
-      await Promise.all(
-        reports.map(async (item) => {
-          const workPackage = await fetchWorkPackage(item.idOfWp);
-          workPackagesData[item.idOfWp] = workPackage;
-        })
-      );
-      setWorkPackages(workPackagesData);
-    };
-
     fetchWorkPackages();
   }, [reports]);
+
+  // Fetch work packages when the component mounts or when reports change
+  const fetchWorkPackages = async () => {
+    const workPackagesData = {};
+    await Promise.all(
+      reports.map(async (item) => {
+        const workPackage = await fetchWorkPackage(item.idOfWp);
+        workPackagesData[item.idOfWp] = workPackage;
+      })
+    );
+    setWorkPackages(workPackagesData);
+  };
 
   const fetchReports = async () => {
     try {
@@ -122,20 +122,10 @@ const AdminReportCenter = ({ route, navigation }) => {
           }
         >
           <Text style={styles.text}>
-            Report ID: {item._id}
-            {'\n'}
-            Work Package ID: {item.idOfWp}
-            {'\n'}
-            Time of Report: {item.timeOfReport}
-            {'\n'}
-            Reporter ID: {item.reporterId}
-            {'\n'}
-            Reason: {item.reason}
-            {'\n'}
             {/* Display additional work package properties */}
             {workPackages[item.idOfWp] && (
               <>
-                Work Package Name: {workPackages[item.idOfWp].name}
+                {workPackages[item.idOfWp].name} - {workPackages[item.idOfWp].grade} 
                 {'\n'}
                 Description: {workPackages[item.idOfWp].description}
                 {'\n'}
@@ -143,12 +133,17 @@ const AdminReportCenter = ({ route, navigation }) => {
                 {'\n'}
                 Package Count: {workPackages[item.idOfWp].packageCount}
                 {'\n'}
-                Instructor ID: {workPackages[item.idOfWp].instructorID}
               </>
             )}
+            Time of Report: {item.timeOfReport}
+            {'\n'}
+            Reason: {item.reason}
+            {'\n'}
             {/* Display instructor information */}
             {item.instructor && (
               <>
+                Instructor:
+                {'\n'}
                 First Name: {item.instructor.firstName}
                 {'\n'}
                 Last Name: {item.instructor.lastName}
