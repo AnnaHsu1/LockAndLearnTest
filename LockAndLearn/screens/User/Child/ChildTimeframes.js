@@ -714,14 +714,6 @@ const ChildTimeframes = ({ route, navigation }) => {
                           >
                             <TouchableOpacity
                               onPress={() => {
-                                console.log('edit', day, time, endTimes[index]);
-                                setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
-                              }}
-                            >
-                              <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                              onPress={() => {
                                 toggleDeleteModal();
                                 setTimeframeId(timeframes[day][index]._id);
                                 setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
