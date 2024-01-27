@@ -35,12 +35,23 @@ const User = mongoose.model(
       birthDate: {
         type: String,
         required: true,
-      },
-      purchasedWorkPackages: {
-        type: [mongoose.Schema.Types.ObjectId], // Array of WorkPackage IDs
-        default: [], // Initialize as an empty array by default
-      },
-      CartWorkPackages: {
+    },
+    revenue: {
+        type: Number,
+        default: 0,
+        required: false
+    },
+    purchasedWorkPackages: {
+        type: [
+            {
+                stripePurchaseId: { type: String, required: true }, //Unique purchase ID from Stripe
+                totalSale: { type: Number, required: true }, //Total price of the purchase
+                workPackageIds: [{ type: mongoose.Schema.Types.ObjectId, required: true }] //List of WorkPackage IDs   
+            }
+        ],
+        default: [] // Initialize as an empty array by default
+    },
+    CartWorkPackages: {
         type: [mongoose.Schema.Types.ObjectId], // Array of WorkPackage IDs
         default: [], // Initialize as an empty array by default
       },

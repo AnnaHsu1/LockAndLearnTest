@@ -41,6 +41,7 @@ const WorkPackageCart = () => {
             const totalPrice = calculateTotalPrice(); // Calculate the total price
             console.log('total', totalPrice);
 
+            //If the cart only has free items
             if (userId && totalPrice === '0.00' && workPackages.length > 0) {
                 await transferToPurchasedWorkPackage(userId);
                 // Display a message that the payment was bypassed as the total price is 0
