@@ -7,10 +7,25 @@ const AdminReportCenter = ({ route, navigation }) => {
     const styles = useStyles();
     const [isModalVisible, setModalVisible] = useState(false);
     const [reports, setReports] = useState([]);
+    const [workPackages, setWorkPackages] = useState({});
 
     useEffect(() => {
         fetchReports(); // Fetch reports when the component mounts
     }, []);
+
+    useEffect(() => {
+        // Fetch work packages when the component mounts or when reports change
+        const fetchWorkPackages = async () => {
+            const workPackagesData = {};
+            await Promise.all(reports.map(async (item) => {
+                const workPackage = await fetchWorkPackage(item.idOfWp);
+                workPackagesData[item.idOfWp] = workPackage;
+            }));
+            setWorkPackages(workPackagesData);
+        };
+
+        fetchWorkPackages();
+    }, [reports]);
 
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
@@ -30,6 +45,22 @@ const AdminReportCenter = ({ route, navigation }) => {
         }
     };
 
+    const fetchWorkPackage = async (workPackageId) => {
+        try {
+            const response = await fetch(`http://localhost:4000/workPackages/fetchWorkPackageById/${workPackageId}`);
+            if (response.status === 200) {
+                const data = await response.json();
+                return data;
+            } else {
+                console.error('Error fetching work package');
+                return null;
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            return null;
+        }
+    };
+
     const renderReportItems = () => (
         <ScrollView>
             {reports.map((item) => (
@@ -44,6 +75,21 @@ const AdminReportCenter = ({ route, navigation }) => {
                         Reporter ID: {item.reporterId}
                         {'\n'}
                         Reason: {item.reason}
+                        {'\n'}
+                        {/* Display additional work package properties */}
+                        {workPackages[item.idOfWp] && (
+                            <>
+                                Work Package Name: {workPackages[item.idOfWp].name}
+                                {'\n'}
+                                Description: {workPackages[item.idOfWp].description}
+                                {'\n'}
+                                Price: {workPackages[item.idOfWp].price}
+                                {'\n'}
+                                Package Count: {workPackages[item.idOfWp].packageCount}
+                                {'\n'}
+                                Instructor ID: {workPackages[item.idOfWp].instructorID}
+                            </>
+                        )}
                     </Text>
                 </View>
             ))}
@@ -65,10 +111,10 @@ const AdminReportCenter = ({ route, navigation }) => {
 const useStyles = CreateResponsiveStyle(
   {
     reportItem: {
-        backgroundColor: '#ffffff',
-        borderRadius: 10,
-        marginVertical: 10,
-        padding: 15,
+      backgroundColor: '#ffffff',
+      borderRadius: 10,
+      marginVertical: 10,
+      padding: 15,
     },
     page: {
       backgroundColor: '#ffffff',
