@@ -93,10 +93,15 @@ const AdminReportCenter = ({ route, navigation }) => {
     }
   };
 
-  const handleReportItemClick = (workPackageId) => {
+  const handleReportItemClick = (workPackageId, workPackageName, workPackageGrade) => {
+    navigation.navigate('WorkPackagePreview', {
+      workPackage: {
         _id: workPackageId,
+        name: workPackageName,
+        grade: workPackageGrade,
+      },
+    });
     console.log('Clicked on Report with Work Package ID:', workPackageId);
-    navigation.navigate('WorkPackagePreview', { workPackageId });
   };
 
   const renderReportItems = () => (
@@ -105,7 +110,13 @@ const AdminReportCenter = ({ route, navigation }) => {
         <TouchableOpacity
           key={item._id}
           style={styles.reportItem}
-          onPress={() => handleReportItemClick(item.idOfWp)}
+          onPress={() =>
+            handleReportItemClick(
+              item.idOfWp,
+              workPackages[item.idOfWp]?.name,
+              workPackages[item.idOfWp]?.grade
+            )
+          }
         >
           <Text style={styles.text}>
             Report ID: {item._id}
