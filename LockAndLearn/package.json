@@ -16,7 +16,7 @@
     ],
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|rn-responsive-styles|pdfjs-dist)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|rn-responsive-styles|pdfjs-dist|@rneui)"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"
@@ -93,6 +93,7 @@
     "@babel/core": "^7.20.0",
     "@babel/plugin-transform-flow-strip-types": "^7.23.3",
     "@babel/plugin-transform-private-methods": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
     "@testing-library/jest-dom": "^6.1.3",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^12.3.0",
@@ -110,7 +111,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
     "node-fetch": "^3.3.2",
-    "prettier": "3.0.3"
+    "prettier": "3.0.3",
+    "ts-jest": "^29.1.2"
   },
   "private": true
 }

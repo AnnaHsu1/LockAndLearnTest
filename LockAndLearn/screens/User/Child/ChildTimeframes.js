@@ -16,7 +16,7 @@ import { Divider } from '@rneui/themed';
 
 const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
-  const childSelected = route.params.child;
+  const childSelected = route?.params?.child;
   const [isEnabled, setIsEnabled] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
@@ -245,6 +245,7 @@ const ChildTimeframes = ({ route, navigation }) => {
               onPress={() => setEditMode(addMode ? null : !editMode)}
               disabled={addMode}
               style={{ opacity: addMode ? 0.5 : 1 }}
+              testID="edit-timeframe"
             >
               {editMode ? (
                 addMode ? (
@@ -272,7 +273,7 @@ const ChildTimeframes = ({ route, navigation }) => {
             </TouchableOpacity>
             <Text style={[styles.title]}>Timeframes</Text>
             {/* if editMode is true,  addMode is also true */}
-            <TouchableOpacity onPress={cancel}>
+            <TouchableOpacity onPress={cancel} testID="add-timeframe">
               {addMode ? (
                 <Text style={{ fontSize: 15, color: '#F24E1E' }}>Cancel</Text> // if addMode is true
               ) : (
