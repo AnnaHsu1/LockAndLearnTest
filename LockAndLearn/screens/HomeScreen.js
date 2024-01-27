@@ -75,7 +75,8 @@ const HomeScreen = ({ navigation }) => {
   const goToHomePage = async () => {
     const userToken = await getUser();
     if (userToken.isParent) {
-      navigation.navigate('ParentAccount');
+      navigation.navigate('ParentHomeScreen');
+      // navigation.navigate('ParentAccount');
     } else {
       navigation.navigate('UserLandingPage');
     }

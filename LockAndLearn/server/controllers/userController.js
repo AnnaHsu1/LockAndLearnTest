@@ -247,6 +247,55 @@ router.delete('/deleteUser/:id', async (req, res) => {
   }
 });
 
+router.post('/createPIN/:id', async (req, res) => {
+  const userId = req.params.id;
+  const pin = req.body.pin;
 
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    //Encrypt the input password
+    const salt = await bcrypt.genSalt();
+    const pinEncrypted = await bcrypt.hash(pin, salt);
+    console.log(pinEncrypted);
+
+    user.parentalAccessPIN = pinEncrypted;
+
+    await user.save();
+
+    res.status(200).json({ message: 'PIN created successfully', user: user });
+  } catch (error) {
+    console.error('Error creating PIN:', error);
+    res.status(500).json({ error: 'An error occurred while creating the PIN.' });
+  }
+});
+
+router.post('/getPIN/:id', async (req, res) => {
+  const userId = req.params.id;
+  const pin = req.body.pin;
+  console.log(pin);
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Password check with the input using bcrypt
+    const isMatch = await bcrypt.compare(pin, user.parentalAccessPIN);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Invalid PIN.' });
+    }
+
+    res.status(200).json({ message: 'PIN retrieved successfully', user: user });
+  } catch (error) {
+    console.error('Error getting PIN:', error);
+    res.status(500).json({ error: 'An error occurred while getting the PIN.' });
+  }
+});
 
 module.exports = router;
