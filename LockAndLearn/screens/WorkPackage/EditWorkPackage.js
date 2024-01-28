@@ -125,8 +125,8 @@ const EditWorkPackage = ({ route }) => {
               style={styles.workPackageTypePicker}
             >
               <Picker.Item label="Choose a Grade" value="Choose a Grade" />
-              {workPackageGrades.map((type, index) => (
-                <Picker.Item key={index} label={type} value={type} />
+              {[...Array(12)].map((_, index) => (
+                <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
               ))}
             </Picker>
           </View>
