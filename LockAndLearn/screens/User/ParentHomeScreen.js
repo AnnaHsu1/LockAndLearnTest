@@ -21,10 +21,10 @@ const ParentHomeScreen = ({ navigation }) => {
   // Select a child and navigate to see if it is time to lock or free time
   const selectChild = async (child) => {
     if (child) {
-      // (await isLockingTime(child))
-      //   ? navigation.navigate('Locking')
-      //   : navigation.navigate('FreeTimeSession');
-      console.log(await isLockingTime(child));
+      (await isLockingTime(child))
+        ? navigation.navigate('Locking')
+        : navigation.navigate('FreeTimeSession');
+      // console.log(await isLockingTime(child));
     }
   };
 
