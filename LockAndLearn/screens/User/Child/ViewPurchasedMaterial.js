@@ -99,7 +99,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     // function to display the work package information
     const RenderWorkPackage = ({workPackage}) => {
 
-        const index = workPackage.ratings ? workPackage.ratings.findIndex((ratings) => ratings.user === userId) : -1;
+        const index = workPackage.ratings.user ? workPackage.ratings.findIndex((ratings) => ratings.user === userId) : -1;
         const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
         const [rating, setRating] = useState(index !== -1 ? workPackage.ratings[index].stars : 0);
         const [comment, setComment] = useState(index !== -1 ? workPackage.ratings[index].comment : '');
@@ -108,7 +108,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
         const handleClick = () => {
             setIsReviewModalVisible(!isReviewModalVisible);
         };
-
+        
         const RenderStarRatings =() => {
     
             return (
