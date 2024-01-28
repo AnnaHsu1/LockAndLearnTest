@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import EditWorkPackage from '../../../screens/WorkPackage/EditWorkPackage';
+import EditWorkPackage from '../../screens/WorkPackage/EditWorkPackage';
 import { NavigationContainer } from '@react-navigation/native'; // Import NavigationContainer
 
 // Mock the NavigationContainer to provide the navigation context
