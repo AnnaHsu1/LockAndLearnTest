@@ -12,6 +12,7 @@ const EditWorkPackage = ({ route }) => {
   const [workPackageDescription, setWorkPackageDescription] = useState(workpackage?.description);
   const [workPackagePrice, setWorkPackagePrice] = useState(workpackage?.price);
   const [isValidPrice, setIsValidPrice] = useState(true);
+  const [subjects, setSubjects] = useState([]);
 
   // Disable the create button if the user has not selected a subject and a grade
   const isCreateButtonDisabled =
@@ -20,6 +21,26 @@ const EditWorkPackage = ({ route }) => {
     workPackageDescription === '' ||
     workPackagePrice === '' ||
     !isValidPrice;
+
+  // Extracted common function for fetching subjects
+  const fetchSubjects = async (setSubjects) => {
+    try {
+      const response = await fetch('http://localhost:4000/subcategories/allSubjects');
+      if (response.status === 200 || 201) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          const subjectNames = data.map((subject) => subject.name);
+          setSubjects([...subjectNames]);
+        } else {
+          console.error('Invalid data format for subjects');
+        }
+      } else {
+        console.error('Error fetching subjects:', response.status);
+      }
+    } catch (error) {
+      console.error('Network error while fetching subjects:', error);
+    }
+  };
 
   // Function to create a work package
   const handleEditWorkPackage = async () => {
@@ -64,6 +85,10 @@ const EditWorkPackage = ({ route }) => {
     setWorkPackagePrice(input);
   };
 
+  useEffect(() => {
+    fetchSubjects(setSubjects);
+  }, []);
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -72,7 +97,6 @@ const EditWorkPackage = ({ route }) => {
     >
       <View style={styles.containerFile}>
         <Text style={styles.header}>Edit work package</Text>
-        {/* Display picker for subject */}
         <View style={styles.containerInput}>
           <View style={styles.containerPicker}>
             <Text style={{ color: '#ADADAD', fontSize: 20 }}>Subject</Text>
@@ -85,12 +109,11 @@ const EditWorkPackage = ({ route }) => {
               style={styles.workPackageTypePicker}
             >
               <Picker.Item label="Choose a Subject" value="Choose a Subject" />
-              {workPackageNames.map((name, index) => (
+              {subjects.map((name, index) => (
                 <Picker.Item key={index} label={name} value={name} />
               ))}
             </Picker>
           </View>
-          {/* Display picker for grade */}
           <View style={[styles.containerPicker, { marginTop: 10 }]}>
             <Text style={{ color: '#ADADAD', fontSize: 20 }}>School Grade</Text>
             <Picker
@@ -107,16 +130,13 @@ const EditWorkPackage = ({ route }) => {
               ))}
             </Picker>
           </View>
-          {/* Display description */}
           <View style={[styles.containerPicker, { marginTop: 10 }]}>
             <Text style={{ color: '#ADADAD', fontSize: 20 }}>Description</Text>
             <TextInput
               multiline={true}
-              // numberOfLines={4}
               value={workPackageDescription}
               onChangeText={setWorkPackageDescription}
               style={styles.workPackageInputText}
-              // placeholder="Enter your description"
             />
           </View>
           <View style={[styles.containerPicker, { marginTop: 10 }]}>
@@ -133,7 +153,6 @@ const EditWorkPackage = ({ route }) => {
             )}
           </View>
         </View>
-        {/* Display button to create work package */}
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
             testID="createWorkPackageButton"
