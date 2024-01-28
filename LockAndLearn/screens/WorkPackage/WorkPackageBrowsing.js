@@ -31,18 +31,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const [suggestedWorkPackages, setSuggestedWorkPackages] = useState([]);
 
   //Checkboxes states for each grade, default is unchecked
-  const [checkedGrade1, setCheckedGrade1] = useState(false);
-  const [checkedGrade2, setCheckedGrade2] = useState(false);
-  const [checkedGrade3, setCheckedGrade3] = useState(false);
-  const [checkedGrade4, setCheckedGrade4] = useState(false);
-  const [checkedGrade5, setCheckedGrade5] = useState(false);
-  const [checkedGrade6, setCheckedGrade6] = useState(false);
-  const [checkedGrade7, setCheckedGrade7] = useState(false);
-  const [checkedGrade8, setCheckedGrade8] = useState(false);
-  const [checkedGrade9, setCheckedGrade9] = useState(false);
-  const [checkedGrade10, setCheckedGrade10] = useState(false);
-  const [checkedGrade11, setCheckedGrade11] = useState(false);
-  const [checkedGrade12, setCheckedGrade12] = useState(false);
+  const [checkedGrade, setCheckedGrade] = useState([]);
+
 
   // Function to handle selecting a work package
   const selectWorkPackage = (workPackage) => {
@@ -61,9 +51,11 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   };
 
   useEffect(() => {
+    initializeCheckedGrade();
     fetchWorkPackages();
     fetchCartWorkPackages();
     //console.log('Cart Work Packages Updated:', cartWorkPackages);
+    
   }, []);
 
   useEffect(() => {
@@ -198,40 +190,40 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           const data = await response.json();
           const workPackageArray = data.slice(0, numberOfWorkPackagesToLoad);
           for (let x in workPackageArray) {
-            if (workPackageArray[x].grade === '1st Grade' && checkedGrade1 === true) {
+            if ((workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade ==='1') && checkedGrade[0] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '2nd Grade' && checkedGrade2 === true) {
+            if ((workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade ==='2') && checkedGrade[1] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '3rd Grade' && checkedGrade3 === true) {
+            if ((workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade ==='3') && checkedGrade[2] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '4th Grade' && checkedGrade4 === true) {
+            if ((workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade ==='4') && checkedGrade[3] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '5th Grade' && checkedGrade5 === true) {
+            if ((workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade ==='5') && checkedGrade[4] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '6th Grade' && checkedGrade6 === true) {
+            if ((workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade ==='6') && checkedGrade[5] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '7th Grade' && checkedGrade7 === true) {
+            if ((workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade ==='7') && checkedGrade[6] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '8th Grade' && checkedGrade8 === true) {
+            if ((workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade ==='8') && checkedGrade[7] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '9th Grade' && checkedGrade9 === true) {
+            if ((workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade ==='9') && checkedGrade[8] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '10th Grade' && checkedGrade10 === true) {
+            if ((workPackageArray[x].grade === '10th Grade' || workPackageArray[x].grade ==='10') && checkedGrade[9] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '11th Grade' && checkedGrade11 === true) {
+            if ((workPackageArray[x].grade === '11th Grade' || workPackageArray[x].grade ==='11') && checkedGrade[10] === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '12th Grade' && checkedGrade12 === true) {
+            if ((workPackageArray[x].grade === '12th Grade' || workPackageArray[x].grade ==='12') && checkedGrade[11] === true) {
               filteredResults.push(workPackageArray[x]);
             }
           }
@@ -328,66 +320,73 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
   }, [route.params?.removedWP]);
 
+  // Function to handle the checkbox state
   const handleCheckbox = (grade) => {
+
+    const tempArray = [...checkedGrade];
+
     switch (grade) {
       case 1:
-        setCheckedGrade1(!checkedGrade1);
+        tempArray[0] = !tempArray[0];
         break;
       case 2:
-        setCheckedGrade2(!checkedGrade2);
+        tempArray[1] = !tempArray[1];
         break;
       case 3:
-        setCheckedGrade3(!checkedGrade3);
+        tempArray[2] = !tempArray[2];
         break;
       case 4:
-        setCheckedGrade4(!checkedGrade4);
+        tempArray[3] = !tempArray[3];
         break;
       case 5:
-        setCheckedGrade5(!checkedGrade5);
+        tempArray[4] = !tempArray[4];
         break;
       case 6:
-        setCheckedGrade6(!checkedGrade6);
+        tempArray[5] = !tempArray[5];
         break;
       case 7:
-        setCheckedGrade7(!checkedGrade7);
+        tempArray[6] = !tempArray[6];
         break;
       case 8:
-        setCheckedGrade8(!checkedGrade8);
+        tempArray[7] = !tempArray[7];
         break;
       case 9:
-        setCheckedGrade9(!checkedGrade9);
+        tempArray[8] = !tempArray[8];
         break;
       case 10:
-        setCheckedGrade10(!checkedGrade10);
+        tempArray[9] = !tempArray[9];
         break;
       case 11:
-        setCheckedGrade11(!checkedGrade11);
+        tempArray[10] = !tempArray[10];
         break;
       case 12:
-        setCheckedGrade12(!checkedGrade12);
+        tempArray[11] = !tempArray[11];
         break;
       default:
         break;
     }
+    setCheckedGrade(tempArray);
   };
 
   const clearFilter = () => {
-    setCheckedGrade1(false);
-    setCheckedGrade2(false);
-    setCheckedGrade3(false);
-    setCheckedGrade4(false);
-    setCheckedGrade5(false);
-    setCheckedGrade6(false);
-    setCheckedGrade7(false);
-    setCheckedGrade8(false);
-    setCheckedGrade9(false);
-    setCheckedGrade10(false);
-    setCheckedGrade11(false);
-    setCheckedGrade12(false);
-
+    
+    initializeCheckedGrade();
     document.getElementById('Search').value = '';
-
     fetchWorkPackages();
+
+  };
+
+  // Function to initialize the checkedGrade array to false
+  const initializeCheckedGrade = () => {
+
+    const tempArray = [];
+
+    for (let i = 0; i < 12; i++) {
+      tempArray.push(false);
+    }
+
+    setCheckedGrade(tempArray);
+
   };
 
   const CheckboxComponent = ({ label, checked, onChange }) => {
@@ -445,28 +444,28 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             <View style={styles.checkboxGroupStyle}>
               <CheckboxComponent
                 label="1st"
-                checked={checkedGrade1}
+                checked={checkedGrade[0]}
                 onChange={() => {
                   handleCheckbox(1);
                 }}
               />
               <CheckboxComponent
                 label="2nd"
-                checked={checkedGrade2}
+                checked={checkedGrade[1]}
                 onChange={() => {
                   handleCheckbox(2);
                 }}
               />
               <CheckboxComponent
                 label="3rd"
-                checked={checkedGrade3}
+                checked={checkedGrade[2]}
                 onChange={() => {
                   handleCheckbox(3);
                 }}
               />
               <CheckboxComponent
                 label="4th"
-                checked={checkedGrade4}
+                checked={checkedGrade[3]}
                 onChange={() => {
                   handleCheckbox(4);
                 }}
@@ -475,28 +474,28 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             <View style={styles.checkboxGroupStyle}>
               <CheckboxComponent
                 label="5th"
-                checked={checkedGrade5}
+                checked={checkedGrade[4]}
                 onChange={() => {
                   handleCheckbox(5);
                 }}
               />
               <CheckboxComponent
                 label="6th"
-                checked={checkedGrade6}
+                checked={checkedGrade[5]}
                 onChange={() => {
                   handleCheckbox(6);
                 }}
               />
               <CheckboxComponent
                 label="7th"
-                checked={checkedGrade7}
+                checked={checkedGrade[6]}
                 onChange={() => {
                   handleCheckbox(7);
                 }}
               />
               <CheckboxComponent
                 label="8th"
-                checked={checkedGrade8}
+                checked={checkedGrade[7]}
                 onChange={() => {
                   handleCheckbox(8);
                 }}
@@ -505,28 +504,28 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             <View style={styles.checkboxGroupStyle}>
               <CheckboxComponent
                 label="9th"
-                checked={checkedGrade9}
+                checked={checkedGrade[8]}
                 onChange={() => {
                   handleCheckbox(9);
                 }}
               />
               <CheckboxComponent
                 label="10th"
-                checked={checkedGrade10}
+                checked={checkedGrade[9]}
                 onChange={() => {
                   handleCheckbox(10);
                 }}
               />
               <CheckboxComponent
                 label="11th"
-                checked={checkedGrade11}
+                checked={checkedGrade[10]}
                 onChange={() => {
                   handleCheckbox(11);
                 }}
               />
               <CheckboxComponent
                 label="12th"
-                checked={checkedGrade12}
+                checked={checkedGrade[11]}
                 onChange={() => {
                   handleCheckbox(12);
                 }}
