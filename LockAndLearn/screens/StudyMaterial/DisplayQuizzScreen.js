@@ -7,6 +7,7 @@ const DisplayQuizzScreen = ({ route }) => {
     const quizId = route.params.quizId;
     const questionIndex = route.params.questionIndex;
     const quizLength = route.params.quizLength;
+    const [questions, setQuestions] = useState(route.params.questions || []);
 
     const [questionText, setQuestionText] = useState('');
     const [questionType, setQuestionType] = useState('Short Answer');
@@ -20,7 +21,7 @@ const DisplayQuizzScreen = ({ route }) => {
     const [answers, setAnswers] = useState(Array(quizLength).fill(null));
     console.log("ANSWERS ARRAY ",answers);
 
-    // array to record all answers child takes during the quiz
+    // array to record all solutions to questions
     const [solutions, setSolutions] = useState(Array(quizLength).fill(null));
 
     // will be needed for CORRECTION OF QUIZ
@@ -52,7 +53,7 @@ const DisplayQuizzScreen = ({ route }) => {
         let counter = 0;
         const length = quizLength;
         for (let i = 0; i < length; i++) {
-            if (Array.isArray(answersArray[i]) && Array.isArray(answersArray[i])) {
+            if (Array.isArray(answersArray[i]) && Array.isArray(solutionsArray[i])) {
             // Compare arrays of strings
                 if (answersArray[i].length === solutionsArray[i].length && answersArray[i].every((val, idx) => val === solutionsArray[i][idx])) {
                     counter++;
@@ -124,6 +125,9 @@ const DisplayQuizzScreen = ({ route }) => {
 
             if (response.status === 200) {
                 const question = await response.json();
+                console.log("Question:", question);
+                setQuestions(questions => [...questions, question])
+                console.log("QUESTIONS ARRAY",questions);
                 let ans= '';
                 // console.log("ANSWERRRRRRRRRRAAAAAAAAAAA",question.answer);
                 setQuestionText(question.questionText || ''); // Ensuring a string is always set
@@ -291,6 +295,9 @@ const DisplayQuizzScreen = ({ route }) => {
                             quizId: quizId,
                             numOfCorrectAnswers: handleGrade(answers, solutions),
                             quizLength: quizLength,
+                            answers: answers,
+                            solutions: solutions,
+                            questions: questions,
                         });
                     }}
                 >
