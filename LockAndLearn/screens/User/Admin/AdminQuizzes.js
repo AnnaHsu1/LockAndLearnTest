@@ -10,6 +10,7 @@ const AdminQuizzes = ({ route, navigation }) => {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
+  //fetching quizzes to be able to view
   const fetchQuizzes = async () => {
     try {
       const response = await fetch('http://localhost:4000/quizzes/allQuizzes');
@@ -52,7 +53,7 @@ const AdminQuizzes = ({ route, navigation }) => {
     setPassword('');
     setPasswordError('');
   };
-  
+
 
   const handleDeletePress = async () => {
     try {
@@ -64,9 +65,9 @@ const AdminQuizzes = ({ route, navigation }) => {
         },
         body: JSON.stringify({ password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         // Admin login successful, proceed with quiz deletion
         deleteQuiz(selectedQuiz);
@@ -79,8 +80,8 @@ const AdminQuizzes = ({ route, navigation }) => {
       setPasswordError('Error checking password. Please try again.');
     }
   };
-   
-  
+
+
 
   useEffect(() => {
     fetchQuizzes();
@@ -268,7 +269,7 @@ const useStyles = CreateResponsiveStyle(
       fontWeight: 'bold',
     },
     scrollView: {
-      paddingRight:20,
+      paddingRight: 20,
     }
   },
   {

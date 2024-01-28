@@ -15,20 +15,20 @@ const AdminAccount = ({ route, navigation }) => {
   }, []);
 
   const fetchAllUsers = async () => {
-  try {
-    const response = await fetch('http://localhost:4000/users/allUsers');
-    if (response.ok) {
-      const data = await response.json();
-      // Filter out the admin account
-      const nonAdminUsers = data.filter(user => user.email !== 'admin@lockandlearn.ca');
-      setUsers(nonAdminUsers);
-    } else {
-      console.error('Failed to fetch users:', response.status);
+    try {
+      const response = await fetch('http://localhost:4000/users/allUsers');
+      if (response.ok) {
+        const data = await response.json();
+        // Filter out the admin account
+        const nonAdminUsers = data.filter(user => user.email !== 'admin@lockandlearn.ca');
+        setUsers(nonAdminUsers);
+      } else {
+        console.error('Failed to fetch users:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
-};
+  };
 
 
   const deleteUser = async (userId) => {
@@ -50,9 +50,9 @@ const AdminAccount = ({ route, navigation }) => {
 
   const openModal = (userId) => {
     setSelectedUser(userId);
-    console.log("xxxxx"+userId);
+    console.log("xxxxx" + userId);
     setIsModalVisible(true);
-  };  
+  };
 
   const closeModal = () => {
     setSelectedUser(null);
@@ -71,9 +71,9 @@ const AdminAccount = ({ route, navigation }) => {
         },
         body: JSON.stringify({ password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         // Admin password check successful, proceed with user deletion
         deleteUser(selectedUser);
@@ -86,7 +86,7 @@ const AdminAccount = ({ route, navigation }) => {
       setPasswordError('Error checking password. Please try again.');
     }
   };
-  
+
 
   return (
     <View style={styles.page}>
@@ -136,7 +136,7 @@ const AdminAccount = ({ route, navigation }) => {
               />
               {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
               <View style={styles.modalButtons}>
-                <TouchableOpacity onPress={handleDeletePress}  style={styles.confirmButton}>
+                <TouchableOpacity onPress={handleDeletePress} style={styles.confirmButton}>
                   <Text style={styles.confirmButtonText}>Delete</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={closeModal} style={styles.cancelButton}>
@@ -233,15 +233,6 @@ const useStyles = CreateResponsiveStyle(
       justifyContent: 'center',
       minWidth: 100,
     },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
-    full_width: {
-      minWidth: '100%',
-    },
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -252,17 +243,6 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
-    },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
     },
     modalContainer: {
       flex: 1,

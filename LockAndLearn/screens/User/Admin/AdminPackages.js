@@ -153,7 +153,7 @@ const AdminPackages = ({ route, navigation }) => {
                   )}
                 </View>
                 <TouchableOpacity onPress={() => openModal(packageInfo._id)}>
-                  <Text style={styles.deleteButton}>Delete</Text>
+                  <Text style={styles.deleteButton} testID='delete'>Delete</Text>
                 </TouchableOpacity>
               </View>
             ))
@@ -167,6 +167,7 @@ const AdminPackages = ({ route, navigation }) => {
           transparent={true}
           visible={isModalVisible}
           onRequestClose={closeModal}
+          testID="modal-container" // Add a testID to the modal container
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -276,9 +277,6 @@ const useStyles = CreateResponsiveStyle(
     instructorInfoContainer: {
       marginTop: 1,
     },
-    greyText: {
-      color: 'grey',
-    },
     page: {
       backgroundColor: '#ffffff',
       maxWidth: '100%',
@@ -323,15 +321,6 @@ const useStyles = CreateResponsiveStyle(
       justifyContent: 'center',
       minWidth: 100,
     },
-    bgRed: {
-      backgroundColor: '#FF0000',
-    },
-    bgWhite: {
-      backgroundColor: '#ffffff',
-    },
-    full_width: {
-      minWidth: '100%',
-    },
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -342,17 +331,6 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
-    },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#ffffff',
-      fontSize: 12,
-      textAlign: 'center',
-      justifyContent: 'flex-end',
     },
     workPackageContainer: {
       backgroundColor: '#ffffff',
