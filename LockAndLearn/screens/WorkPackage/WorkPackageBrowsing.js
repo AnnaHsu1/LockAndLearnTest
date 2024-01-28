@@ -189,48 +189,53 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         if (response.status === 200) {
           const data = await response.json();
           const workPackageArray = data.slice(0, numberOfWorkPackagesToLoad);
-          for (let x in workPackageArray) {
-            if ((workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade ==='1') && checkedGrade[0] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade ==='2') && checkedGrade[1] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade ==='3') && checkedGrade[2] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade ==='4') && checkedGrade[3] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade ==='5') && checkedGrade[4] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade ==='6') && checkedGrade[5] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade ==='7') && checkedGrade[6] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade ==='8') && checkedGrade[7] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade ==='9') && checkedGrade[8] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '10th Grade' || workPackageArray[x].grade ==='10') && checkedGrade[9] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '11th Grade' || workPackageArray[x].grade ==='11') && checkedGrade[10] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
-            if ((workPackageArray[x].grade === '12th Grade' || workPackageArray[x].grade ==='12') && checkedGrade[11] === true) {
-              filteredResults.push(workPackageArray[x]);
-            }
+          if (checkedGrade.every((val) => val === false)) {
+            filterWorkPackagesByText((displayOwned = false), workPackageArray);
           }
-          if (document.getElementById('Search').value != '') {
-            filterWorkPackagesByText((displayOwned = false), filteredResults);
-          } else {
-            setWorkPackages(filteredResults);
+          else{
+            for (let x in workPackageArray) {
+              if ((workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade ==='1') && checkedGrade[0] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade ==='2') && checkedGrade[1] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade ==='3') && checkedGrade[2] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade ==='4') && checkedGrade[3] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade ==='5') && checkedGrade[4] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade ==='6') && checkedGrade[5] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade ==='7') && checkedGrade[6] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade ==='8') && checkedGrade[7] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade ==='9') && checkedGrade[8] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '10th Grade' || workPackageArray[x].grade ==='10') && checkedGrade[9] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '11th Grade' || workPackageArray[x].grade ==='11') && checkedGrade[10] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+              if ((workPackageArray[x].grade === '12th Grade' || workPackageArray[x].grade ==='12') && checkedGrade[11] === true) {
+                filteredResults.push(workPackageArray[x]);
+              }
+            }
+            if (document.getElementById('Search').value != '') {
+              filterWorkPackagesByText((displayOwned = false), filteredResults);
+            } else {
+              setWorkPackages(filteredResults);
+            }
           }
         } else {
           console.error('Error fetching workPackagesBrowse');
