@@ -94,48 +94,69 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     setUserId(userId);
   };
 
-    // function to display the work package information
-    const RenderWorkPackage = ({workPackage}) => {
+  // function to display the work package information
+  const RenderWorkPackage = ({ workPackage }) => {
+    const index = workPackage.ratings.user
+      ? workPackage.ratings.findIndex((ratings) => ratings.user === userId)
+      : -1;
+    const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+    const [rating, setRating] = useState(index !== -1 ? workPackage.ratings[index].stars : 0);
+    const [comment, setComment] = useState(index !== -1 ? workPackage.ratings[index].comment : '');
+    const [hover, setHover] = useState(null);
 
-        const index = workPackage.ratings.user ? workPackage.ratings.findIndex((ratings) => ratings.user === userId) : -1;
-        const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
-        const [rating, setRating] = useState(index !== -1 ? workPackage.ratings[index].stars : 0);
-        const [comment, setComment] = useState(index !== -1 ? workPackage.ratings[index].comment : '');
-        const [hover, setHover] = useState(null);
+    const handleClick = () => {
+      setIsReviewModalVisible(!isReviewModalVisible);
+    };
 
-        const handleClick = () => {
-            setIsReviewModalVisible(!isReviewModalVisible);
-        };
-        
-        const RenderStarRatings =() => {
-    
+    const RenderStarRatings = () => {
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          {[...Array(5)].map((star, i) => {
+            const ratingValue = i + 1;
             return (
-                <View style={{ flexDirection: 'row' }}>
-                    {[...Array(5)].map((star, i) => {
-                        const ratingValue = i + 1;
-                        return (
-                            <View key={i}>
-                                <IoMdStar 
-                                    style={styles.buttonStarRating}
-                                    size={30} 
-                                    className="star"
-                                    color={ratingValue <= (hover || rating) ? "#4f85ff" : "#e4e5e9"}
-                                    onMouseEnter={() => setHover(ratingValue)}
-                                    onMouseLeave={() => setHover(rating)}
-                                    onClick={() => setRating(ratingValue)} // Set the rating to the key when clicking the star
-                                />
-                            </View>
-                        );
-                    })}
-                </View>
+              <View key={i}>
+                <IoMdStar
+                  style={styles.buttonStarRating}
+                  size={30}
+                  className="star"
+                  color={ratingValue <= (hover || rating) ? '#4f85ff' : '#e4e5e9'}
+                  onMouseEnter={() => setHover(ratingValue)}
+                  onMouseLeave={() => setHover(rating)}
+                  onClick={() => setRating(ratingValue)} // Set the rating to the key when clicking the star
+                />
+              </View>
             );
-        };
+          })}
+        </View>
+      );
+    };
+
+    // Function to determine the grade suffix
+    const getGradeSuffix = (grade) => {
+      if (grade >= 11 && grade <= 13) {
+        return 'th';
+      }
+
+      const lastDigit = grade % 10;
+
+      switch (lastDigit) {
+        case 1:
+          return 'st';
+        case 2:
+          return 'nd';
+        case 3:
+          return 'rd';
+        default:
+          return 'th';
+      }
+    };
 
     return (
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
         <View style={{ width: '80%' }}>
           <Text style={styles.workPackageItem}>
-            {workPackage.name} - {workPackage.grade}{getGradeSuffix(workPackage.grade)} grade -{' '}
+            {workPackage.name} - {workPackage.grade}
+            {getGradeSuffix(workPackage.grade)} grade -{' '}
             {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
           </Text>
           <Text style={styles.workPackageItem}>{workPackage.description}</Text>
