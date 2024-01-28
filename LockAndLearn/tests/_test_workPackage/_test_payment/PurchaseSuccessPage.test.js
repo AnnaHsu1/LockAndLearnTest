@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import '@testing-library/jest-native/extend-expect'; // Extend Jest expect with custom matchers
-import PurchaseSuccessPage from '../../screens/WorkPackage/Payment/PurchaseSuccessPage';
+import PurchaseSuccessPage from '../../../screens/WorkPackage/Payment/PurchaseSuccessPage';
 
 // Mock the navigation and AsyncStorage
 const mockNavigate = jest.fn();

@@ -65,13 +65,6 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 40,
         marginTop: '5%',
     },
-    header: {
-        color: '#696969',
-        fontSize: 24,
-        fontWeight: '450',
-        paddingVertical: '3%',
-        textAlign: 'center',
-    },
     button: {
         width: 250,
         height: 50,
@@ -85,17 +78,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontWeight: '500',
-    },
-    viewCartButton: {
-        backgroundColor: '#4F85FF',
-        alignItems: 'center',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        position: 'relative',
-        bottom: 0,
-        width: '50%',
-        borderRadius: 8,
-        verticalAlign: 'bottom',
     },
     returnDashboardButton: {
         backgroundColor: '#4F85FF',

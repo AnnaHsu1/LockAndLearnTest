@@ -1,4 +1,4 @@
-import WorkPackageCart from '../../screens/WorkPackage/Payment/WorkPackageCart';
+import WorkPackageCart from '../../../screens/WorkPackage/Payment/WorkPackageCart';
 import React from 'react';
 import { render, fireEvent, waitFor, } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
