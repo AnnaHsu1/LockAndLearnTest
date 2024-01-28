@@ -30,7 +30,7 @@ const ParentHomeScreen = ({ navigation }) => {
   // Check if it is locking time with timeframes that are returned
   const isLockingTime = async (child) => {
     try {
-      console.log(child);
+      // console.log(child);
       const response = await fetch('http://localhost:4000/timeframes/gettimeframes/' + child._id, {
         method: 'GET',
         credentials: 'include',
@@ -38,7 +38,7 @@ const ParentHomeScreen = ({ navigation }) => {
 
       // Array of timeframes
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       if (response.status != 200) {
         // Error with request
@@ -59,28 +59,24 @@ const ParentHomeScreen = ({ navigation }) => {
           const date = new Date();
           // Get the current day, hour, and minute
           const day = date.toString().substring(0, 3);
-          // console.log(day);
           const hour = date.getHours();
-          // console.log(hour);
           const min = date.getMinutes();
 
-          timeframes.some((timeframe) => {
+          timeframes.forEach((timeframe) => {
             // 1. Check day
             if (timeframe.day.substring(0, 3) == day) {
               console.log('Good day');
               // 2. Check active
               if (timeframe.isActive) {
-                console.log('Good active');
                 // 3. Check time
                 if (
-                  timeframe.startTime.substring(0, 2) <= hour && // needs to be greater than start hour
-                  timeframe.endTime.substring(0, 2) >= hour // needs to be less than end hour
+                  timeframe.startTime.substring(0, 2) < hour && // needs to be greater than start hour
+                  timeframe.endTime.substring(0, 2) > hour // needs to be less than end hour
                 ) {
-                  console.log('Good hour');
                   isLockingTime = true;
                 } else if (
                   timeframe.startTime.substring(0, 2) == hour && // same start hour
-                  timeframe.endTime.substring(0, 2) <= hour // needs to be less than end hour
+                  timeframe.endTime.substring(0, 2) > hour // needs to be less than end hour
                 ) {
                   // check same start hour
                   if (timeframe.startTime.substring(3, 5) <= min) {
@@ -89,7 +85,7 @@ const ParentHomeScreen = ({ navigation }) => {
                   }
                 } else if (
                   timeframe.endTime.substring(0, 2) == hour && // same end hour
-                  timeframe.startTime.substring(0, 2) >= hour // needs to be greater than start hour
+                  timeframe.startTime.substring(0, 2) < hour // needs to be greater than start hour
                 ) {
                   // check same end hour
                   if (timeframe.endTime.substring(3, 5) >= min) {
