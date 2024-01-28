@@ -694,25 +694,6 @@ const styles = StyleSheet.create({
     marginRight: '3%',
     paddingBottom: 5,
   },
-  descriptionText: {
-    borderTopWidth: 1,
-    borderTopColor: '#696969',
-    paddingTop: 15,
-    paddingLeft: 5,
-    marginRight: '3%',
-    paddingBottom: 5,
-  },
-  descriptionField: {
-    height: 100,
-    textAlignVertical: 'top',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingTop: 5,
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingBottom: 5,
-    marginRight: 45,
-  },
   containerDeleteModal: {
     flex: 1,
     justifyContent: 'center',
@@ -790,12 +771,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 10,
   },
-  workPackageTitle: {
-    color: '#696969',
-    fontSize: 24,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
   workPackageInfo: {
     color: '#696969',
     fontSize: 23,
@@ -843,12 +818,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  buttonCloseModal: {
-    position: 'absolute',
-    top: '26.5%',
-    right: '27%',
-    zIndex: 1,
   },
   containerMaterial: {
     width: 230,
