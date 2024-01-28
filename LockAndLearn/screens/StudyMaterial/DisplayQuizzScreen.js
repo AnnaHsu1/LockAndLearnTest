@@ -1,6 +1,7 @@
 import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
+import PropTypes from 'prop-types';
 
 const DisplayQuizzScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -309,6 +310,18 @@ const DisplayQuizzScreen = ({ route }) => {
         </ImageBackground>
     );
 };
+
+DisplayQuizzScreen.propTypes = {
+    route: PropTypes.shape({
+      params: PropTypes.shape({
+        quizId: PropTypes.string.isRequired,
+        questionIndex: PropTypes.number.isRequired,
+        quizLength: PropTypes.number.isRequired,
+        questions: PropTypes.array // Add more specific type details if possible
+      }).isRequired
+    }).isRequired
+  };
+  
 
 const styles = StyleSheet.create({
     container: {

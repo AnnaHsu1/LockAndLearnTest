@@ -47,14 +47,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#FFFFFF',
   },
-  endSessionButton: {
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    borderRadius: 5,
-  },
-  endSessionText: {
-    color: '#3E5CAA',
-  },
   studyContent: {
     flex: 1,
     alignItems: 'center',
@@ -78,46 +70,6 @@ const styles = StyleSheet.create({
   takeQuizText: {
     color: '#3E5CAA',
     fontSize: 18,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 30,
-    width: '80%',
-    height: '40%',
-    borderRadius: 10,
-    justifyContent: 'center',
-  },
-  modalText: {
-    marginBottom: 10,
-    color: '#3E5CAA',
-  },
-  modalInput: {
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#407BFF',
-    borderRadius: 5,
-    padding: 10,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  modalButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    textAlign: 'center',
   },
 });
 
