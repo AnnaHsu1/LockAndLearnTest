@@ -1,4 +1,4 @@
-import Payment from '../../screens/WorkPackage/Payment';
+import Payment from '../../screens/WorkPackage/Payment/Payment';
 import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
