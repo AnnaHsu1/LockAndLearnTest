@@ -2,6 +2,7 @@ import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, Touchabl
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from '@react-native-picker/picker';
+import PropTypes from 'prop-types';
 
 const EditQuestion = ({ route }) => {
     const navigation = useNavigation();
@@ -80,12 +81,12 @@ const EditQuestion = ({ route }) => {
         if (questionType === 'Multiple Choice Question') {
             const allOptionsFilled = options.every(option => option.text.trim() !== '');
             const isAnswerChosen = options.some(option => option.isCorrect);
-    
+
             if (!allOptionsFilled) {
                 alert('Please fill in all option texts.');
                 return;
             }
-    
+
             if (!isAnswerChosen) {
                 alert('Please select a correct answer.');
                 return;
@@ -173,19 +174,19 @@ const EditQuestion = ({ route }) => {
     // Define a function to check if the form is valid
     const isFormValid = () => {
         if (questionType === 'Short Answer') {
-        return questionText.trim() !== '' && answer.trim() !== '';
+            return questionText.trim() !== '' && answer.trim() !== '';
         } else if (questionType === 'Multiple Choice Question') {
-        const allOptionsFilled = options.every((option) => option.text.trim() !== '');
-        const isAnswerChosen = options.some((option) => option.isCorrect);
+            const allOptionsFilled = options.every((option) => option.text.trim() !== '');
+            const isAnswerChosen = options.some((option) => option.isCorrect);
 
-        return questionText.trim() !== '' && allOptionsFilled && isAnswerChosen;
+            return questionText.trim() !== '' && allOptionsFilled && isAnswerChosen;
         } else if (questionType === 'True or False') {
-        return questionText.trim() !== '' && (isTrue || !isTrue);
+            return questionText.trim() !== '' && (isTrue || !isTrue);
         } else if (questionType === 'Fill In The Blanks') {
-        return (
-            questionText.trim() !== '' &&
-            inputs.every((input) => input.trim() !== '')
-        );
+            return (
+                questionText.trim() !== '' &&
+                inputs.every((input) => input.trim() !== '')
+            );
         }
 
         // For other types, consider them valid if questionText is not empty
@@ -303,37 +304,46 @@ const EditQuestion = ({ route }) => {
                     />
                 )}
                 <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    style={styles.cancelButton}
-                    onPress={() => {
-                    navigation.navigate('QuestionsOverviewScreen', {
-                        quizId: quizId,
-                    });
-                    }}
-                >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[
-                    styles.saveQuestionButton,
-                    isFormValid()
-                        ? styles.saveQuestionButtonEnabled
-                        : styles.saveQuestionButtonDisabled,
-                    ]}
-                    onPress={() => {
-                    handleSaveQuestion(); // Call the function to save the question
-                    navigation.navigate('QuestionsOverviewScreen', {
-                        quizId: quizId,
-                    });
-                    }}
-                    disabled={!isFormValid()} // Disable the button if the form is not valid
-                >
-                    <Text style={styles.saveQuestionButtonText} testID='save-button'>Save</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.cancelButton}
+                        onPress={() => {
+                            navigation.navigate('QuestionsOverviewScreen', {
+                                quizId: quizId,
+                            });
+                        }}
+                    >
+                        <Text style={styles.cancelButtonText}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[
+                            styles.saveQuestionButton,
+                            isFormValid()
+                                ? styles.saveQuestionButtonEnabled
+                                : styles.saveQuestionButtonDisabled,
+                        ]}
+                        onPress={() => {
+                            handleSaveQuestion(); // Call the function to save the question
+                            navigation.navigate('QuestionsOverviewScreen', {
+                                quizId: quizId,
+                            });
+                        }}
+                        disabled={!isFormValid()} // Disable the button if the form is not valid
+                    >
+                        <Text style={styles.saveQuestionButtonText} testID='save-button'>Save</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </ImageBackground>
     );
+};
+
+EditQuestion.propTypes = {
+    route: PropTypes.shape({
+        params: PropTypes.shape({
+            quizId: PropTypes.string.isRequired,
+            questionIndex: PropTypes.number.isRequired
+        }).isRequired
+    }).isRequired
 };
 
 const styles = StyleSheet.create({
@@ -347,18 +357,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         marginHorizontal: 10,
-      },
-      saveQuestionButtonEnabled: {
+    },
+    saveQuestionButtonEnabled: {
         backgroundColor: '#407BFF', // Keep the original color when enabled
-      },
-      saveQuestionButtonDisabled: {
+    },
+    saveQuestionButtonDisabled: {
         backgroundColor: '#D3D3D3', // Set a light grey color when disabled
-      },
-      saveQuestionButtonText: {
+    },
+    saveQuestionButtonText: {
         color: '#FFFFFF',
         fontSize: 20,
         fontWeight: 'bold',
-      },
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
