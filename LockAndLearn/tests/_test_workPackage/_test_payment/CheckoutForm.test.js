@@ -14,7 +14,7 @@ jest.mock('@stripe/react-stripe-js', () => ({
   PaymentElement: jest.fn(),
 }));
 
-jest.mock('../../components/AsyncStorage', () => ({
+jest.mock('../../../components/AsyncStorage', () => ({
   getItem: jest.fn(),
 }));
 

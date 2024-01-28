@@ -9,7 +9,7 @@ const mockNavigation = { navigate: mockNavigate };
 jest.mock('@react-navigation/native', () => ({
     useNavigation: () => mockNavigation,
 }));
-jest.mock('../../components/AsyncStorage', () => ({
+jest.mock('../../../components/AsyncStorage', () => ({
     getItem: jest.fn(),
     removeItem: jest.fn(),
     getUser: jest.fn(),
