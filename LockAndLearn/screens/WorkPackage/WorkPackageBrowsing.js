@@ -701,7 +701,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             }}
           ></View>
           <View style={{ marginTop: 70, borderTopColor: 'black', borderTopWidth: 1 }}>
-            <View contentContainerStyle={styles.carouselScrollViewContent}>
+            <ScrollView contentContainerStyle={styles.carouselScrollViewContent}>
               <View style={styles.viewPreferences}>
                 {children.map((child, childIndex) => (
                   <View style={styles.viewChildPreferences} key={child.id}>
@@ -780,7 +780,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                   </View>
                 ))}
               </View>
-            </View>
+            </ScrollView>
           </View>
           <TouchableOpacity
             testID="viewCartButton"
