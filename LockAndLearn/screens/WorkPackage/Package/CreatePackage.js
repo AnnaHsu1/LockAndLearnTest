@@ -12,6 +12,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
 const CreatePackage = ({ route }) => {
   const navigation = useNavigation();
@@ -189,7 +190,7 @@ const CreatePackage = ({ route }) => {
                 value={packageDescription}
                 onChangeText={setPackageDescription}
                 style={styles.workPackageInputText}
-                // placeholder="Enter your description"
+              // placeholder="Enter your description"
               />
             </View>
           </View>
@@ -276,6 +277,21 @@ const CreatePackage = ({ route }) => {
   );
 };
 
+CreatePackage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      workPackage: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        grade: PropTypes.string.isRequired,
+      }),
+    }),
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -356,12 +372,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  buttonCloseModal: {
-    position: 'absolute',
-    top: '26.5%',
-    right: '27%',
-    zIndex: 1,
   },
   containerMaterial: {
     width: 230,
