@@ -21,9 +21,10 @@ const ParentHomeScreen = ({ navigation }) => {
   // Select a child and navigate to see if it is time to lock or free time
   const selectChild = async (child) => {
     if (child) {
-      (await isLockingTime(child))
-        ? navigation.navigate('Locking')
-        : navigation.navigate('FreeTimeSession');
+      // (await isLockingTime(child))
+      //   ? navigation.navigate('Locking')
+      //   : navigation.navigate('FreeTimeSession');
+      console.log(await isLockingTime(child));
     }
   };
 
@@ -65,33 +66,14 @@ const ParentHomeScreen = ({ navigation }) => {
           timeframes.forEach((timeframe) => {
             // 1. Check day
             if (timeframe.day.substring(0, 3) == day) {
-              console.log('Good day');
               // 2. Check active
               if (timeframe.isActive) {
                 // 3. Check time
                 if (
-                  timeframe.startTime.substring(0, 2) < hour && // needs to be greater than start hour
-                  timeframe.endTime.substring(0, 2) > hour // needs to be less than end hour
+                  hour + ':' + min >= timeframe.startTime &&
+                  hour + ':' + min <= timeframe.endTime
                 ) {
                   isLockingTime = true;
-                } else if (
-                  timeframe.startTime.substring(0, 2) == hour && // same start hour
-                  timeframe.endTime.substring(0, 2) > hour // needs to be less than end hour
-                ) {
-                  // check same start hour
-                  if (timeframe.startTime.substring(3, 5) <= min) {
-                    // current min needs to be greater than start min
-                    isLockingTime = true;
-                  }
-                } else if (
-                  timeframe.endTime.substring(0, 2) == hour && // same end hour
-                  timeframe.startTime.substring(0, 2) < hour // needs to be greater than start hour
-                ) {
-                  // check same end hour
-                  if (timeframe.endTime.substring(3, 5) >= min) {
-                    // current min needs to be less than end min
-                    isLockingTime = true;
-                  }
                 }
               }
             }
