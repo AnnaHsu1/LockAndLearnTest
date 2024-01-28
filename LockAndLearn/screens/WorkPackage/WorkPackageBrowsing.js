@@ -20,7 +20,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
   const [workPackages, setWorkPackages] = useState([]);
   const [cartWorkPackages, setCartWorkPackages] = useState([]);
-  const numberOfWorkPackagesToLoad = 40;
+  const numberOfWorkPackagesToLoad = 100;
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [workPackageName, setWorkPackageName] = useState('');
   const [selectedWorkPackageID, setSelectedWorkPackageID] = useState(null);
