@@ -5,7 +5,6 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 const AdminWorkPackages = ({ route, navigation }) => {
   const styles = useStyles();
   const [workPackages, setWorkPackages] = useState([]);
-  const [instructors, setInstructors] = useState({});
   const [quizzes, setQuizzes] = useState({});
   const [selectedWorkPackage, setSelectedWorkPackage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,23 +27,6 @@ const AdminWorkPackages = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching work packages:', error);
-    }
-  };
-
-  const fetchQuizById = async (quizId) => {
-    try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setQuizzes((prevQuizzes) => ({ ...prevQuizzes, [quizId]: data }));
-        return data;
-      } else {
-        console.error(`Failed to fetch quiz for ID ${quizId}:`, response.status);
-        return null;
-      }
-    } catch (error) {
-      console.error(`Error fetching quiz for ID ${quizId}:`, error);
-      return null;
     }
   };
 
