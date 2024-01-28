@@ -48,12 +48,6 @@ const CreateQuestion = ({ route }) => {
         questionType === 'Multiple Choice Question' ? options.map((option) => option.text) : [], // Set options for multiple-choice questions or an empty array
     };
 
-    // Assign properties to the question object based on the question type
-    // if (questionType === 'Multiple Choice Question') {
-    //   // For multiple choice, include options and the answer indicating the correct option
-    //   newQuestion.options = options.map((option) => option.text);
-    //   newQuestion.answer = options.find((option) => option.isCorrect)?.text || '';
-    // } 
     if (questionType === 'Multiple Choice Question') {
       // Ensure all options are filled and one is marked as correct
       const allOptionsFilled = options.every(option => option.text.trim() !== '');
