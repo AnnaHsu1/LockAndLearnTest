@@ -39,36 +39,36 @@ const ChildProfileScreen = ({ route, navigation }) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-          <View style={styles.header}>
-            <Icon source="account-circle" color="#fff" size={30} />
-            <Text style={styles.title}>
-              {child.firstName} {child.lastName}
-            </Text>
-          </View>
-          {/* Start session */}
-          <Button
-            testID="start-session"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('Locking');
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Start session</Text>
-          </Button>
-          {/* Add Material */}
-          <Button
-            testID="add-child-material"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('AddChildMaterial', { child: child });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Add material</Text>
-          </Button>
-          {/* Edit profile */}
-          {/* <Button
+        <View style={styles.header}>
+          <Icon source="account-circle" color="#fff" size={30} />
+          <Text style={styles.title}>
+            {child.firstName} {child.lastName}
+          </Text>
+        </View>
+        {/* Start session */}
+        <Button
+          testID="start-session"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('Locking');
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Start session</Text>
+        </Button>
+        {/* Add Material */}
+        <Button
+          testID="add-child-material"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('AddChildMaterial', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Add material</Text>
+        </Button>
+        {/* Edit profile */}
+        {/* <Button
           testID="purchased-material"
           mode="contained"
           onPress={() => {
@@ -78,68 +78,68 @@ const ChildProfileScreen = ({ route, navigation }) => {
         >
             <Text style={styles.text}>View purchased material</Text>
         </Button> */}
-          {/* Edit profile */}
-          <Button
-            testID="edit-profile"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('EditChild', { child: child });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Edit profile</Text>
-          </Button>
-          <Button
-            testID="see-performance"
-            mode="contained"
-            onPress={() => {
-              console.log('See performance');
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>See performance</Text>
-          </Button>
-          <Button
-            testID="preferences"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('StudyMaterialPreferences', { child: child });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Set Preferences</Text>
-          </Button>
-          <Button
-            testID="settings"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('ChildSettings', { child: child });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Settings</Text>
-          </Button>
-          {/* to be removed (tmp): quick tmp way to access page */}
-          <Button
-            testID="settings"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('DisplayStudyMaterial', { child_ID: child._id });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Study time</Text>
-          </Button>
+        {/* Edit profile */}
+        <Button
+          testID="edit-profile"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('EditChild', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Edit profile</Text>
+        </Button>
+        <Button
+          testID="see-performance"
+          mode="contained"
+          onPress={() => {
+            console.log('See performance');
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>See performance</Text>
+        </Button>
+        <Button
+          testID="preferences"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('StudyMaterialPreferences', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Set Preferences</Text>
+        </Button>
+        <Button
+          testID="settings"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('ChildSettings', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Settings</Text>
+        </Button>
+        {/* to be removed (tmp): quick tmp way to access page */}
+        <Button
+          testID="settings"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('DisplayStudyMaterial', { child_ID: child._id });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Study time</Text>
+        </Button>
       </View>
       {/* Delete child link */}
       <Button
-            testID="delete-child-link"
-            style={styles.link}
-            onPress={() => {
-              toggleModal();
-            }}
-          >
-            <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
+        testID="delete-child-link"
+        style={styles.link}
+        onPress={() => {
+          toggleModal();
+        }}
+      >
+        <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
       </Button>
 
       {/* Modal to confirm the deletion of a child */}
@@ -278,11 +278,6 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       fontSize: 20,
       padding: 5,
-    },
-    options: {
-      flex: 0.75,
-      justifyContent: 'space-around',
-      alignItems: 'center',
     },
     link: {
       borderRadius: 10,

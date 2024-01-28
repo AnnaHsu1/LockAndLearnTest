@@ -229,41 +229,6 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  deleteConfirmationModal: {
-    width: '50%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmationText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  confirmationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  confirmButton: {
-    backgroundColor: '#F24E1E',
-    padding: 10,
-    borderRadius: 10,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 10,
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -305,30 +270,6 @@ const styles = StyleSheet.create({
   workPackageItem: {
     fontSize: 16,
     marginVertical: 10,
-  },
-  deleteButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(242, 78, 30, 0.13)',
-    borderRadius: 100,
-    padding: 5,
-  },
-  buttonUpload: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: '5%',
-    marginBottom: '5%',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    alignItems: 'center',
-    fontSize: 15,
-    fontWeight: '500',
   },
   buttonReview: {
     backgroundColor: '#4f85ff',

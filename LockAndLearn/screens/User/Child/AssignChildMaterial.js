@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, FlatList } f
 import { Checkbox } from 'react-native-paper';
 import { getUser } from '../../../components/AsyncStorage';
 import { useWindowDimensions } from 'react-native';
+import PropTypes from 'prop-types';
 
 const AssignChildMaterial = ({ route, navigation }) => {
   const [workPackages, setWorkPackages] = useState([]);
@@ -180,6 +181,17 @@ const AssignChildMaterial = ({ route, navigation }) => {
   );
 };
 
+AssignChildMaterial.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.object.isRequired, // or more specific shape if you know the structure
+    }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   buttonAddMaterial: {
     backgroundColor: '#407BFF',
@@ -194,41 +206,6 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     backgroundColor: '#ccc',
-  },
-  deleteConfirmationModal: {
-    width: '50%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  confirmationText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  confirmationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  confirmButton: {
-    backgroundColor: '#F24E1E',
-    padding: 10,
-    borderRadius: 10,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 10,
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
   },
   container: {
     flex: 1,
@@ -283,13 +260,6 @@ const styles = StyleSheet.create({
   workPackageText: {
     fontSize: 14,
     color: '#696969',
-  },
-  deleteButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(242, 78, 30, 0.13)',
-    borderRadius: 100,
-    padding: 5,
   },
   buttonUpload: {
     backgroundColor: '#407BFF',
