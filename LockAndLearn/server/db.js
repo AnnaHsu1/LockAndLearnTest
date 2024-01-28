@@ -73,7 +73,7 @@ const userRoutes = require('./controllers/userController');
 
 app.use('/users', userRoutes);
 app.use('/files', require('./controllers/filesController'));
-app.use('/quizzes', require('./quizController'));
+app.use('/quizzes', require('./controllers/quizController'));
 app.use('/child', require('./controllers/childController'));
 app.use('/workPackages', require('./controllers/workPackageController'));
 app.use('/packages', require('./controllers/packageController'));

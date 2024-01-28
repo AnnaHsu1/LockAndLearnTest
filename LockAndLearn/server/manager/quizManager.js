@@ -1,4 +1,4 @@
-const Quiz = require('./quizSchema');
+const Quiz = require('../schema/quizSchema');
 
 // Create a new quiz
 const createQuiz = async (quizData) => {
