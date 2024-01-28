@@ -68,11 +68,18 @@ const ParentHomeScreen = ({ navigation }) => {
             if (timeframe.day.substring(0, 3) == day) {
               // 2. Check active
               if (timeframe.isActive) {
+                const startTime = timeframe.startTime.split(':');
+                const endTime = timeframe.endTime.split(':');
+                const startHour = parseInt(startTime[0]);
+                const startMin = parseInt(startTime[1]);
+                const endHour = parseInt(endTime[0]);
+                const endMin = parseInt(endTime[1]);
                 // 3. Check time
                 if (
-                  hour + ':' + min >= timeframe.startTime &&
-                  hour + ':' + min <= timeframe.endTime
+                  (hour > startHour || (hour === startHour && min >= startMin)) &&
+                  (hour < endHour || (hour === endHour && min <= endMin))
                 ) {
+                  console.log('Locking time');
                   isLockingTime = true;
                 }
               }
