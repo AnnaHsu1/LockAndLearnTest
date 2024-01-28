@@ -1,8 +1,8 @@
-import SelectQuizToAdd from '../../screens/WorkPackage/Package/SelectQuizToAdd';
+import SelectQuizToAdd from '../../../screens/WorkPackage/Package/SelectQuizToAdd';
 import React from 'react';
 import { render, fireEvent, waitFor, debug } from '@testing-library/react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { getUser } from '../../components/AsyncStorage';
+import { getUser } from '../../../components/AsyncStorage';
 
 // Mocking the navigation and route
 jest.mock('@react-navigation/native', () => ({

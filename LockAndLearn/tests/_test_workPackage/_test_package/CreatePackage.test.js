@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import CreatePackage from '../../screens/WorkPackage/Package/CreatePackage';
+import CreatePackage from '../../../screens/WorkPackage/Package/CreatePackage';
 
 // Mocks
 jest.mock('@react-navigation/native', () => ({

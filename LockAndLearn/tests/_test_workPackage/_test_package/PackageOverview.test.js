@@ -1,4 +1,4 @@
-import PackageOverview from "../../screens/WorkPackage/Package/PackageOverview";
+import PackageOverview from "../../../screens/WorkPackage/Package/PackageOverview";
 import React from 'react';
 import { render, waitFor, fireEvent} from '@testing-library/react-native';
 import { act } from 'react-test-renderer';
