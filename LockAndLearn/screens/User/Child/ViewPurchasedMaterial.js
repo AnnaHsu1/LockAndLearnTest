@@ -96,7 +96,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
 
   // function to display the work package information
   const RenderWorkPackage = ({ workPackage }) => {
-    const index = workPackage.ratings
+    const index = workPackage.ratings.user
       ? workPackage.ratings.findIndex((ratings) => ratings.user === userId)
       : -1;
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
@@ -155,7 +155,8 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
         <View style={{ width: '80%' }}>
           <Text style={styles.workPackageItem}>
-            {workPackage.name} - {workPackage.grade}{getGradeSuffix(workPackage.grade)} grade -{' '}
+            {workPackage.name} - {workPackage.grade}
+            {getGradeSuffix(workPackage.grade)} grade -{' '}
             {workPackage.price && workPackage.price !== 0 ? `$${workPackage.price}` : 'Free'}
           </Text>
           <Text style={styles.workPackageItem}>{workPackage.description}</Text>
