@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
-import CheckoutForm from '../../screens/WorkPackage/CheckoutForm';
+import CheckoutForm from '../../screens/WorkPackage/Payment/CheckoutForm';
 
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),

@@ -73,13 +73,14 @@ const userRoutes = require('./controllers/userController');
 
 app.use('/users', userRoutes);
 app.use('/files', require('./controllers/filesController'));
-app.use('/quizzes', require('./quizController'));
+app.use('/quizzes', require('./controllers/quizController'));
 app.use('/child', require('./controllers/childController'));
 app.use('/workPackages', require('./controllers/workPackageController'));
 app.use('/packages', require('./controllers/packageController'));
 app.use('/subcategories', require('./controllers/subcategoriesController'));
 app.use('/payment', require('./controllers/paymentController'));
 app.use('/certificates', require('./controllers/certificatesController'));
+app.use('/reports', require('./controllers/reportController'));
 app.use('/timeframes', require('./controllers/timeframeController'));
 
 app.listen(port, () => console.log('Backend server listening on port 4000.'));

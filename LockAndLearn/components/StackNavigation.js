@@ -22,8 +22,8 @@ import ParentHomeScreen from '../screens/User/ParentHomeScreen';
 import AddChild from '../screens/User/Child/AddChildScreen';
 import ViewUploadedFilesScreen from '../screens/StudyMaterial/ViewUploadedFilesScreen';
 import CreateWorkPackage from '../screens/WorkPackage/CreateWorkPackage';
-import SelectQuizToAdd from '../screens/WorkPackage/Quiz/SelectQuizToAdd';
-import SelectStudyMaterialToAdd from '../screens/WorkPackage/StudyMaterial/SelectStudyMaterialToAdd';
+import SelectQuizToAdd from '../screens/WorkPackage/Package/SelectQuizToAdd';
+import SelectStudyMaterialToAdd from '../screens/WorkPackage/Package/SelectStudyMaterialToAdd';
 import ChildProfileScreen from '../screens/User/Child/ChildProfileScreen';
 import EditChildScreen from '../screens/User/Child/EditChildProfileScreen';
 import GoogleSignUpScreen from '../screens/User/GoogleSignUpScreen';
@@ -41,24 +41,26 @@ import AdminFiles from '../screens/User/Admin/AdminFiles';
 import AdminQuizzes from '../screens/User/Admin/AdminQuizzes';
 import AdminSubcategories from '../screens/User/Admin/AdminSubcategories';
 import AddChildMaterial from '../screens/User/Child/AssignChildMaterial';
+import AdminReportCenter from '../screens/User/Admin/AdminReportCenter';
 import PurchasedMaterial from '../screens/User/Child/ViewPurchasedMaterial';
 import WorkPackageBrowsing from '../screens/WorkPackage/WorkPackageBrowsing';
-import WorkPackageCart from '../screens/WorkPackage/WorkPackageCart';
-import TakeQuiz from '../screens/StudyMaterial/TakeQuiz';
+import WorkPackageCart from '../screens/WorkPackage/Payment/WorkPackageCart';
+import TakeQuiz from '../screens/User/Child/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
 import StudyMaterialPreferences from '../screens/User/Child/StudyMaterialPreferences';
 import ChildSettings from '../screens/User/Child/ChildSettings';
 import ChildPassingGradePerSubject from '../screens/User/Child/ChildPassingGradePerSubject';
-import PurchaseSuccessPage from '../screens/WorkPackage/PurchaseSuccessPage';
-import Payment from '../screens/WorkPackage/Payment';
-import CheckoutForm from '../screens/WorkPackage/CheckoutForm';
+import PurchaseSuccessPage from '../screens/WorkPackage/Payment/PurchaseSuccessPage';
+import Payment from '../screens/WorkPackage/Payment/Payment';
+import CheckoutForm from '../screens/WorkPackage/Payment/CheckoutForm';
 import AdminCertificates from '../screens/User/Admin/AdminCertificates';
 import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial';
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -260,6 +262,11 @@ const StackNavigation = () => {
           name="AdminFinances"
           component={AdminFinances}
           options={{ title: 'AdminFinances' }}
+        />
+        <Stack.Screen
+          name="AdminReportCenter"
+          component={AdminReportCenter}
+          options={{ title: 'AdminReportCenter' }}
         />
         <Stack.Screen
           name="AdminWorkPackages"

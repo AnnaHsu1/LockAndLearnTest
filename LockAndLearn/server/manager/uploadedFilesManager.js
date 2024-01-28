@@ -1,4 +1,4 @@
-const UploadFiles = require("./uploadedFilesSchema"); // Import the uploadFile model from uploadedFilesSchema.js
+const UploadFiles = require("../schema/uploadedFilesSchema"); // Import the uploadFile model from uploadedFilesSchema.js
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 

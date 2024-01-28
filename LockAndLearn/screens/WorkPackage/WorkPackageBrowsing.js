@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../components/AsyncStorage';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
-import '../../carousel.css'
+import '../../carousel.css';
 
 const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -198,40 +198,40 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           const data = await response.json();
           const workPackageArray = data.slice(0, numberOfWorkPackagesToLoad);
           for (let x in workPackageArray) {
-            if (workPackageArray[x].grade === '1st Grade' && checkedGrade1 === true) {
+            if (workPackageArray[x].grade === '1' && checkedGrade1 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '2nd Grade' && checkedGrade2 === true) {
+            if (workPackageArray[x].grade === '2' && checkedGrade2 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '3rd Grade' && checkedGrade3 === true) {
+            if (workPackageArray[x].grade === '3' && checkedGrade3 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '4th Grade' && checkedGrade4 === true) {
+            if (workPackageArray[x].grade === '4' && checkedGrade4 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '5th Grade' && checkedGrade5 === true) {
+            if (workPackageArray[x].grade === '5' && checkedGrade5 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '6th Grade' && checkedGrade6 === true) {
+            if (workPackageArray[x].grade === '6' && checkedGrade6 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '7th Grade' && checkedGrade7 === true) {
+            if (workPackageArray[x].grade === '7' && checkedGrade7 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '8th Grade' && checkedGrade8 === true) {
+            if (workPackageArray[x].grade === '8' && checkedGrade8 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '9th Grade' && checkedGrade9 === true) {
+            if (workPackageArray[x].grade === '9' && checkedGrade9 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '10th Grade' && checkedGrade10 === true) {
+            if (workPackageArray[x].grade === '10' && checkedGrade10 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '11th Grade' && checkedGrade11 === true) {
+            if (workPackageArray[x].grade === '11' && checkedGrade11 === true) {
               filteredResults.push(workPackageArray[x]);
             }
-            if (workPackageArray[x].grade === '12th Grade' && checkedGrade12 === true) {
+            if (workPackageArray[x].grade === '12' && checkedGrade12 === true) {
               filteredResults.push(workPackageArray[x]);
             }
           }
@@ -420,6 +420,26 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     );
   };
 
+  // Function to determine the grade suffix
+  const getGradeSuffix = (grade) => {
+    if (grade >= 11 && grade <= 13) {
+      return 'th';
+    }
+
+    const lastDigit = grade % 10;
+
+    switch (lastDigit) {
+      case 1:
+        return 'st';
+      case 2:
+        return 'nd';
+      case 3:
+        return 'rd';
+      default:
+        return 'th';
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -561,7 +581,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
                   <View style={styles.workPackageText}>
-                    
                     <TouchableOpacity
                       key={workPackage._id}
                       onPress={() => {
@@ -574,10 +593,9 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
                     <View style={styles.containerTag}>
                       <View style={styles.tagBox}>
-                        <Text
-                          style={styles.tagText}
-                          selectable={false}
-                        >{`${workPackage.grade}`}</Text>
+                        <Text style={styles.tagText} selectable={false}>
+                          {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`} grade
+                        </Text>
                       </View>
                     </View>
 
@@ -679,92 +697,90 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             style={{
               borderBottomColor: 'black',
               borderBottomWidth: 1,
-              marginTop:"50px",
+              marginTop: '50px',
             }}
-          >
-            </View>
-          <View style={{marginTop:70, borderTopColor: 'black',
-              borderTopWidth: 1}}>
+          ></View>
+          <View style={{ marginTop: 70, borderTopColor: 'black', borderTopWidth: 1 }}>
             <ScrollView contentContainerStyle={styles.carouselScrollViewContent}>
-            <View style={styles.viewPreferences}>
+              <View style={styles.viewPreferences}>
                 {children.map((child, childIndex) => (
-                  
                   <View style={styles.viewChildPreferences} key={child.id}>
                     <Text style={styles.child}>
                       Suggested Materials for {child.firstName} {child.lastName}
                     </Text>
-                  <Carousel style={styles.carousel}>
-                    {suggestedWorkPackages.length !== 0 &&
-                      suggestedWorkPackages[childIndex].map((workPackage) => (
-                        
-                        <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
-                          <View style={styles.workPackageText}>
-                            <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                    <Carousel style={styles.carousel}>
+                      {suggestedWorkPackages.length !== 0 &&
+                        suggestedWorkPackages[childIndex].map((workPackage) => (
+                          <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
+                            <View style={styles.workPackageText}>
+                              <Text
+                                style={styles.workPackageNameText}
+                              >{`${workPackage.name}`}</Text>
 
-                            <View style={styles.containerTag}>
-                              <View style={styles.tagBox}>
-                                <Text
-                                  style={styles.tagText}
-                                  selectable={false}
-                                >{`${workPackage.grade}`}</Text>
+                              <View style={styles.containerTag}>
+                                <View style={styles.tagBox}>
+                                  <Text style={styles.tagText} selectable={false}>
+                                    {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`}{' '}
+                                    grade
+                                  </Text>
+                                </View>
                               </View>
-                            </View>
 
-                            <Text style={styles.workPackageDescription}>
-                              {`${
-                                workPackage.description === undefined
-                                  ? ``
-                                  : `${workPackage.description} \n`
-                              }`}
-                            </Text>
-                            {workPackage.instructorDetails && (
-                              <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
-                                Made by{' '}
-                                <Text style={styles.boldText}>
-                                  {workPackage.instructorDetails.firstName}{' '}
-                                  {workPackage.instructorDetails.lastName}
-                                </Text>
+                              <Text style={styles.workPackageDescription}>
+                                {`${
+                                  workPackage.description === undefined
+                                    ? ``
+                                    : `${workPackage.description} \n`
+                                }`}
                               </Text>
-                            )}
-                          </View>
-                          <View style={styles.priceAndButton}>
-                            <Text style={styles.priceWP}>
-                              {workPackage.price && workPackage.price !== 0
-                                ? `$${workPackage.price} CAD`
-                                : 'Free'}
-                            </Text>
+                              {workPackage.instructorDetails && (
+                                <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                                  Made by{' '}
+                                  <Text style={styles.boldText}>
+                                    {workPackage.instructorDetails.firstName}{' '}
+                                    {workPackage.instructorDetails.lastName}
+                                  </Text>
+                                </Text>
+                              )}
+                            </View>
+                            <View style={styles.priceAndButton}>
+                              <Text style={styles.priceWP}>
+                                {workPackage.price && workPackage.price !== 0
+                                  ? `$${workPackage.price} CAD`
+                                  : 'Free'}
+                              </Text>
 
-                            <Button
-                              key={workPackage._id}
-                              testID="addButton-wp1"
-                              mode="contained"
-                              contentStyle={{
-                                minWidth: '50%',
-                                maxWidth: '100%',
-                                minHeight: 20,
-                                justifyContent: 'center',
-                                backgroundColor: isInUserCart(workPackage._id)
-                                  ? '#25B346'
-                                  : undefined,
-                                flexWrap: 'wrap',
-                              }}
-                              style={[styles.button]}
-                              onPress={() => {
-                                selectWorkPackage(workPackage);
-                              }}
-                              labelStyle={{ ...styles.cart, color: 'white' }}
-                              disabled={isInUserCart(workPackage._id)}
-                            >
-                              {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
-                            </Button>
+                              <Button
+                                key={workPackage._id}
+                                testID="addButton-wp1"
+                                mode="contained"
+                                contentStyle={{
+                                  minWidth: '50%',
+                                  maxWidth: '100%',
+                                  minHeight: 20,
+                                  justifyContent: 'center',
+                                  backgroundColor: isInUserCart(workPackage._id)
+                                    ? '#25B346'
+                                    : undefined,
+                                  flexWrap: 'wrap',
+                                }}
+                                style={[styles.button]}
+                                onPress={() => {
+                                  selectWorkPackage(workPackage);
+                                }}
+                                labelStyle={{ ...styles.cart, color: 'white' }}
+                                disabled={isInUserCart(workPackage._id)}
+                              >
+                                {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
+                              </Button>
+                            </View>
                           </View>
-                        </View>
-                      ))}
-                      </Carousel>
+                        ))}
+                    </Carousel>
                   </View>
                 ))}
-            </View>
-          </ScrollView>
+              </View>
+            </ScrollView>
           </View>
           <TouchableOpacity
             testID="viewCartButton"
@@ -792,7 +808,7 @@ const styles = StyleSheet.create(
       borderTopRightRadius: 40,
     },
     carousel: {
-      maxWidth:"100%",
+      maxWidth: '100%',
       autoWidth: false,
     },
     viewPreferences: {
@@ -808,8 +824,8 @@ const styles = StyleSheet.create(
       marginBottom: 10,
       marginTop: 50,
       color: '#696969',
-      fontWeight:"bold",
-      fontSize:"x-large"
+      fontWeight: 'bold',
+      fontSize: 'x-large',
     },
     TitleName: {
       fontSize: 25,
@@ -848,14 +864,14 @@ const styles = StyleSheet.create(
       paddingBottom: 20,
     },
     carouselScrollViewContent: {
-      borderRadius: "25px",
+      borderRadius: '25px',
 
       Height: '100%',
       width: '100%',
       paddingHorizontal: 80,
     },
     scrollViewContent: {
-      borderRadius: "25px",
+      borderRadius: '25px',
       flexGrow: 1,
       position: 'relative',
       Height: '10%',

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Quiz = require('../server/quizSchema.js');
+const Quiz = require('../schema/quizSchema.js');
 
 // Create a new quiz
 router.post('/create', async (req, res) => {

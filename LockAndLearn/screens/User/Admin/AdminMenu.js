@@ -103,6 +103,17 @@ const AdminMenu = ({ route, navigation }) => {
           >
             <Text style={styles.text}>Certificates to Review</Text>
           </Button>
+          {/* Report Center */}
+          <Button
+            testID="admin-reportcenter"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AdminReportCenter');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Report Center</Text>
+          </Button>
         </ScrollView>
       </View>
 
@@ -173,6 +184,7 @@ const useStyles = CreateResponsiveStyle(
       marginTop: 20,
       borderRadius: 10,
       backgroundColor: '#4F85FF',
+      paddingBottom: 15,
     },
     header: {
       alignItems: 'center',

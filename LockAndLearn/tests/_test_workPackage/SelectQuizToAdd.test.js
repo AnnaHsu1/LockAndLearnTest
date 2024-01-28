@@ -1,4 +1,4 @@
-import SelectQuizToAdd from '../../screens/WorkPackage/Quiz/SelectQuizToAdd';
+import SelectQuizToAdd from '../../screens/WorkPackage/Package/SelectQuizToAdd';
 import React from 'react';
 import { render, fireEvent, waitFor, debug } from '@testing-library/react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';

@@ -4,7 +4,7 @@ const Package = require('../schema/packageSchema.js');
 const Workpackage = require('../schema/workPackage.js');
 const { default: mongoose } = require('mongoose');
 const { GridFSBucket } = require('mongodb');
-const Quiz = require('../quizSchema.js');
+const Quiz = require('../schema/quizSchema.js');
 
 // Create a new package
 router.post('/create', async (req, res) => {

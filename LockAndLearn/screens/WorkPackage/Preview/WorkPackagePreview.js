@@ -7,8 +7,11 @@ import {
   ImageBackground,
   FlatList,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Modal from 'react-native-modal';
+import { getItem } from '../../../components/AsyncStorage';
 import PropTypes from 'prop-types';
 
 const WorkPackagePreview = () => {
@@ -19,11 +22,77 @@ const WorkPackagePreview = () => {
   const { _id, name, grade } = params?.workPackage;
   const { width } = Dimensions.get('window');
   const maxTextWidth = width * 0.9;
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
+    fetchUserData().then((id) => setUserId(id));
     fetchPackages();
   }, [params]);
+
+  const fetchUserData = async () => {
+    try {
+      const token = await getItem('@token');
+      const user = JSON.parse(token);
+      const userId = user._id;
+
+      console.log('User ID:', userId);
+      return userId;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const createReport = async (workPackageId, reason) => {
+    try {
+      const userId = await fetchUserData();
+      console.log('User ID:', userId);
+
+      if (userId) {
+        const currentTime = new Date().toISOString();
+
+        console.log(
+          'Creating Report with the following data:',
+          '\nworkPackageId:',
+          workPackageId,
+          '\ntimeOfReport:',
+          currentTime,
+          '\nreporterId:',
+          userId,
+          '\nreason:',
+          reason
+        );
+
+        const response = await fetch('http://localhost:4000/reports/create-report', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            idOfWp: workPackageId,
+            timeOfReport: currentTime,
+            reporterId: userId,
+            reason: reason,
+          }),
+        });
+
+        if (response.status === 200 || response.status === 201) {
+          console.log('Report created successfully');
+          fetchPackages();
+          setSuccessModalVisible(true);
+        } else {
+          console.error('Error creating report:', response.status);
+        }
+      } else {
+        console.log('Must be logged in to create a report');
+      }
+    } catch (error) {
+      console.error('Network error while creating report:', error);
+    }
+  };
 
   // function to get work package information
   const fetchPackages = async () => {
@@ -42,17 +111,13 @@ const WorkPackagePreview = () => {
       }
     } catch (error) {
       console.error('Network error:', error);
-      
     }
   };
 
   // function to display the work package information
   const renderPackage = (this_Package) => {
     return (
-      <View
-        key={this_Package._id}
-        style={styles.containerCard}
-      >
+      <View key={this_Package._id} style={styles.containerCard}>
         <View key={this_Package._id} style={styles.workPackageItemContainer}>
           <TouchableOpacity
             style={{ width: '75%' }}
@@ -80,8 +145,7 @@ const WorkPackagePreview = () => {
               flexDirection: 'row',
               alignItems: 'center',
             }}
-          >
-          </View>
+          ></View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
           <Text
@@ -134,7 +198,8 @@ const WorkPackagePreview = () => {
     >
       <View style={styles.containerFile}>
         <Text style={styles.selectFiles}>
-          {name} - {grade}{getGradeSuffix(grade)} Grade
+          {name} - {grade}
+          {getGradeSuffix(grade)} Grade
         </Text>
         {/* Display all work packages from the user */}
         <FlatList
@@ -151,14 +216,64 @@ const WorkPackagePreview = () => {
           )}
         />
         {/* Display button to create a new work package */}
-        <View style={{ alignItems: 'center' }}>
+        {userId !== '6565345612770405a2796cee' && (
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity testID="reportButton" onPress={() => setModalVisible(true)}>
+              <Text style={styles.buttonReportText}>Report Work Package</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        backdropOpacity={0.5}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Report this Work Package</Text>
+          <TextInput
+            style={styles.modalInput}
+            multiline={true}
+            placeholder="Enter Reason of Report"
+            value={reportReason}
+            onChangeText={(text) => setReportReason(text)}
+          />
           <TouchableOpacity
-            testID="reportButton"
+            onPress={() => {
+              if (reportReason.trim() !== '') {
+                createReport(_id, reportReason);
+                console.log('params passed in createReport', _id, reportReason);
+                setModalVisible(false);
+              } else {
+                console.log('Reason for reporting is required.');
+              }
+            }}
+            style={[styles.modalButton, reportReason.trim() === '' && styles.disabledModalButton]}
+            disabled={reportReason.trim() === ''}
           >
-            <Text style={styles.buttonReportText}>Report Work Package</Text>
+            <Text style={styles.modalButtonText}>Submit Report</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Modal>
+      <Modal
+        isVisible={isSuccessModalVisible}
+        onBackdropPress={() => setSuccessModalVisible(false)}
+        backdropOpacity={0.5}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Report Sent</Text>
+          <Text style={styles.modalText}>Your report has been sent successfully.</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setSuccessModalVisible(false);
+              // Add any additional actions you want to perform after the user acknowledges the success
+            }}
+            style={styles.modalButton}
+          >
+            <Text style={styles.modalButtonText}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </ImageBackground>
   );
 };
@@ -176,6 +291,49 @@ WorkPackagePreview.propTypes = {
 };
 
 const styles = StyleSheet.create({
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#696969',
+  },
+  disabledModalButton: {
+    backgroundColor: '#ccc',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '65%',
+    alignSelf: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#4F85FF',
+  },
+
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#4F85FF',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    color: '#696969',
+  },
+
+  modalButton: {
+    backgroundColor: '#4F85FF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
   containerCard: {
     flexDirection: 'column',
     marginVertical: 5,
@@ -235,7 +393,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     marginBottom: 40,
-  }
+  },
 });
 
 export default WorkPackagePreview;

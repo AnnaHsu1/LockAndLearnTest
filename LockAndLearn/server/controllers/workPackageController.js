@@ -25,6 +25,24 @@ router.post('/createWorkPackage', async (req, res) => {
   }
 });
 
+// Fetch a specific work package by ID
+router.get('/fetchWorkPackageById/:workPackageId', async (req, res) => {
+  try {
+    const workPackageId = req.params.workPackageId;
+    // Use Mongoose's findById to fetch the work package by its ID
+    const workPackage = await WorkPackage2.findById(workPackageId);
+
+    if (!workPackage) {
+      return res.status(404).json({ error: 'Work package not found' });
+    }
+
+    res.status(200).json(workPackage);
+  } catch (error) {
+    console.error('Error fetching work package by ID:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the work package.' });
+  }
+});
+
 // Fetch all work packages for that instructor
 router.get('/getWorkPackages/:instructorId', async (req, res) => {
   try {

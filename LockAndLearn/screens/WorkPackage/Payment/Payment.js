@@ -8,7 +8,7 @@ import {
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import { loadStripe } from "@stripe/stripe-js";
-import { getItem } from '../../components/AsyncStorage';
+import { getItem } from '../../../components/AsyncStorage';
 
 const Payment = ({ navigation, route }) => {
     const { totalPrice } = route.params || {};
@@ -55,7 +55,7 @@ const Payment = ({ navigation, route }) => {
 
     return (
         <ImageBackground
-            source={require('../../assets/backgroundCloudyBlobsFull.png')}
+            source={require('../../../assets/backgroundCloudyBlobsFull.png')}
             resizeMode="cover"
             style={styles.page}
         >

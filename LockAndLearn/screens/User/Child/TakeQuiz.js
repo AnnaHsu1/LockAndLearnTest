@@ -41,7 +41,7 @@ const TakeQuiz = ({ route }) => {
 
   return (
     <ImageBackground
-      source={require('../../assets/backgroundCloudyBlobsFull.png')}
+      source={require('../../../assets/backgroundCloudyBlobsFull.png')}
       resizeMode="cover"
       style={styles.container}
     >

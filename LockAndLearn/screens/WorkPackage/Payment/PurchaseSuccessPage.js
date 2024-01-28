@@ -13,7 +13,7 @@ const PurchaseSuccessPage = ({ navigation, route }) => {
 
     return (
         <ImageBackground
-            source={require('../../assets/backgroundCloudyBlobsFull.png')}
+            source={require('../../../assets/backgroundCloudyBlobsFull.png')}
             resizeMode="cover"
             style={styles.page}
         >
@@ -22,7 +22,7 @@ const PurchaseSuccessPage = ({ navigation, route }) => {
                 <View style={styles.cardContainer}>
 
                 <Image
-                    source={require('../../assets/check.png')}
+                    source={require('../../../assets/check.png')}
                     style={styles.image}
                     testID="checkImage"
                 />
