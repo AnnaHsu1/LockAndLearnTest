@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { getItem } from '../../components/AsyncStorage';
+import { getItem } from '../../../components/AsyncStorage';
 import WebView from 'react-native-webview';
 
 const WorkPackageCart = () => {
@@ -323,7 +323,7 @@ const WorkPackageCart = () => {
 
   return (
     <ImageBackground
-      source={require('../../assets/backgroundCloudyBlobsFull.png')}
+      source={require('../../../assets/backgroundCloudyBlobsFull.png')}
       resizeMode="cover"
       style={styles.container}
     >

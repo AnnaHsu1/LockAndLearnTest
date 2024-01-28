@@ -124,14 +124,17 @@ const LoginScreen = ({ navigation }) => {
         },
         body: JSON.stringify(loginData),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.status === 201) {
         setErrorMsg(null);
         console.log('Admin successfully logged in!', data);
         setDisplayMsg('Admin login successful.');
-        navigation.navigate('AdminMenu'); 
+
+        // Store the user data in AsyncStorage
+        await setUserTokenWithExpiry('@token', data.user);
+        navigation.navigate('AdminMenu');
       } else {
         setErrorMsg(data.msg);
       }
@@ -139,10 +142,10 @@ const LoginScreen = ({ navigation }) => {
       console.error('Error logging admin:', error);
     }
   };
-  
+
   const handleSubmit = async () => {
     const isValid = validate();
-  
+
     if (isValid) {
       if (fdata.email === 'admin@lockandlearn.ca') {
         // Send login data for admin
@@ -153,7 +156,6 @@ const LoginScreen = ({ navigation }) => {
       }
     }
   };
-  
 
   const handleGoogleLogin = async () => {
     // if token does not exist get google user info

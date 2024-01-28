@@ -15,18 +15,21 @@ const AdminAccount = ({ route, navigation }) => {
   }, []);
 
   const fetchAllUsers = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/users/allUsers');
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
-      } else {
-        console.error('Failed to fetch users:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error);
+  try {
+    const response = await fetch('http://localhost:4000/users/allUsers');
+    if (response.ok) {
+      const data = await response.json();
+      // Filter out the admin account
+      const nonAdminUsers = data.filter(user => user.email !== 'admin@lockandlearn.ca');
+      setUsers(nonAdminUsers);
+    } else {
+      console.error('Failed to fetch users:', response.status);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+};
+
 
   const deleteUser = async (userId) => {
     try {
@@ -34,7 +37,8 @@ const AdminAccount = ({ route, navigation }) => {
         method: 'DELETE',
       });
       if (response.ok) {
-        setUsers(users.filter((user) => user.id !== userId));
+        const updatedUsers = users.filter((user) => user._id !== userId);
+        setUsers(updatedUsers);
         closeModal();
       } else {
         console.error('Failed to delete user:', response.status);
@@ -169,13 +173,6 @@ const useStyles = CreateResponsiveStyle(
 
     userNameTutor: {
       fontWeight: 'bold',
-    },
-
-    userContainerTutor: {
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      padding: 10,
     },
 
     userContainerTutor: {

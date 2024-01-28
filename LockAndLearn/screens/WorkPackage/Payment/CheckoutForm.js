@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { getItem } from '../../components/AsyncStorage';
+import { getItem } from '../../../components/AsyncStorage';
 const CheckoutForm = ({ navigation, route }) => {
   const navigation1 = useNavigation();
   const stripe = useStripe();
