@@ -10,7 +10,7 @@ jest.mock('@react-navigation/native', () => ({
     useNavigation: jest.fn(),
 }));
 
-jest.mock('../../components/AsyncStorage', () => ({
+jest.mock('../../../components/AsyncStorage', () => ({
     getItem: jest.fn(() => Promise.resolve(JSON.stringify({ _id: '123' }))),
 }));
 

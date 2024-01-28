@@ -11,7 +11,7 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 // Mocking AsyncStorage
-jest.mock('../../components/AsyncStorage', () => ({
+jest.mock('../../../components/AsyncStorage', () => ({
   getUser: jest.fn(),
 }));
 
