@@ -79,41 +79,41 @@ const QuizzesOverviewScreen = ({ route }) => {
       style={styles.container}
     >
       <View style={styles.containerFile}>
-          <Text style={styles.selectFiles}>Quizzes</Text>
-          <ScrollView style={styles.scrollContainer}>
-            <View style={styles.quizList}>
-              {quizzes.map((quiz) => (
-                <View key={quiz._id} style={styles.quizItemContainer}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate('QuestionsOverviewScreen', {
-                        quizId: quiz._id,
-                      });
-                    }}
-                    style={{ flex: 1 }}
-                  >
-                    <Text style={styles.quizItem}>{quiz.name}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => deleteQuiz(quiz._id)}
-                    // style={styles.deleteButton}
-                  >
-                    <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-          </ScrollView>
-          <View style={styles.createQuizButtonContainer}>
-            <TouchableOpacity
-              style={styles.createQuizButton}
-              onPress={() => {
-                navigation.navigate('CreateQuiz');
-              }}
-            >
-              <Text style={styles.createQuizButtonText}>Create New Quiz</Text>
-            </TouchableOpacity>
+        <Text style={styles.selectFiles}>Quizzes</Text>
+        <ScrollView style={styles.scrollContainer}>
+          <View style={styles.quizList}>
+            {quizzes.map((quiz) => (
+              <View key={quiz._id} style={styles.quizItemContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('QuestionsOverviewScreen', {
+                      quizId: quiz._id,
+                    });
+                  }}
+                  style={{ flex: 1 }}
+                >
+                  <Text style={styles.quizItem}>{quiz.name}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => deleteQuiz(quiz._id)}
+                // style={styles.deleteButton}
+                >
+                  <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
+        </ScrollView>
+        <View style={styles.createQuizButtonContainer}>
+          <TouchableOpacity
+            style={styles.createQuizButton}
+            onPress={() => {
+              navigation.navigate('CreateQuiz');
+            }}
+          >
+            <Text style={styles.createQuizButtonText}>Create New Quiz</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Modal
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: 'center',
-  },  
+  },
   confirmationButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -248,11 +248,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  deleteButtonText: {
-    color: 'white',
-    fontSize: 15,
-    fontWeight: 'bold',
   },
   createQuizButtonContainer: {
     marginTop: 20,
