@@ -98,9 +98,9 @@ const ViewUploadedFilesScreen = () => {
         setDataFile(prevDataFile => [
           ...prevDataFile,
           ...files.uploadedFiles.map((file, index) => ({
-              id: 1 + index,
-              originalname: file.filename,
-              description: file.metadata.description,
+            id: 1 + index,
+            originalname: file.filename,
+            description: file.metadata.description,
           }))
         ]);
       }
@@ -225,7 +225,7 @@ const ViewUploadedFilesScreen = () => {
 
   // function to render each row (which is a file)
   const renderFile = (file, index, totalItems) => (
-    
+
     <TouchableOpacity
       key={index.toString()}
       style={styles.card}
@@ -244,7 +244,7 @@ const ViewUploadedFilesScreen = () => {
                   setFileId(file.id);
                   setFileName(file.originalname);
                 }}
-                // style={{justifyContent: 'center'}} //to add if want to center the delete button with title text
+              // style={{justifyContent: 'center'}} //to add if want to center the delete button with title text
               >
                 <View>
                   <Icon source="delete-outline" size={20} color={'#F24E1E'} />
@@ -252,7 +252,7 @@ const ViewUploadedFilesScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.carText, {maxWidth: maxDescriptionTextWidth, paddingTop: 10}]}>{file.description}</Text>
+          <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.carText, { maxWidth: maxDescriptionTextWidth, paddingTop: 10 }]}>{file.description}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -303,14 +303,14 @@ const ViewUploadedFilesScreen = () => {
           )}
         />
         {/* display button to upload files */}
-          <TouchableOpacity
-            style={styles.buttonUploadFiles}
-            onPress={() => {
-              navigation.navigate('Upload');
-            }}
-          >
-            <Text style={styles.textUploadFiles}>Upload files</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonUploadFiles}
+          onPress={() => {
+            navigation.navigate('Upload');
+          }}
+        >
+          <Text style={styles.textUploadFiles}>Upload files</Text>
+        </TouchableOpacity>
         {/* display the preview file */}
         {pdf && (
           <View
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: '1%',
-    color: '#696969', 
+    color: '#696969',
     fontSize: 35,
     fontWeight: '500',
     // flex: 1,
@@ -575,14 +575,6 @@ const styles = StyleSheet.create({
   filename: {
     flex: 1,
     paddingVertical: 8,
-  },
-  buttonDelete: {
-    padding: 8,
-  },
-  deleteButtonBackground: {
-    backgroundColor: 'rgba(242, 78, 30, 0.13)',
-    borderRadius: 100,
-    padding: 5,
   },
   modalView: {
     flexDirection: 'row',
@@ -654,10 +646,6 @@ const styles = StyleSheet.create({
     width: 250,
     height: 200,
   },
-  modalComponent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   pdfViewContainer: {
     flex: 1,
     position: 'absolute',
@@ -677,10 +665,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     paddingTop: 20,
-  },
-  fileDescriptionText: {
-    color: '#696969',
-     marginBottom: 5
   },
 });
 

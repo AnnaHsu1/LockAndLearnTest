@@ -1,8 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import PropTypes from 'prop-types';
 
+// Define a functional component called Spacer, which adds empty space with a specified height and width.
 const Spacer = ({ height, width }) => <View style={{ height, width }} />;
 
+Spacer.propTypes = {
+  height: PropTypes.number.isRequired, // Ensure height is a number and is required
+  width: PropTypes.number.isRequired,  // Ensure width is a number and is required
+};
+
+// Define the FreeTimeSessionScreen component
 const FreeTimeSessionScreen = () => {
   return (
     <View style={styles.container}>

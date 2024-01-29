@@ -12,7 +12,7 @@ const AdminMenu = ({ route, navigation }) => {
   const styles = useStyles();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);

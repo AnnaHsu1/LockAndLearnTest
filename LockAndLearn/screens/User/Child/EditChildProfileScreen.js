@@ -9,6 +9,8 @@ import {
 } from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
+import PropTypes from 'prop-types';
+
 
 const EditChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -160,6 +162,24 @@ const EditChildProfileScreen = ({ route, navigation }) => {
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
   );
+};
+
+EditChildProfileScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.shape({
+        firstName: PropTypes.string.isRequired,
+        lastName: PropTypes.string.isRequired,
+        grade: PropTypes.string.isRequired,
+        passingGrade: PropTypes.string,
+        parentId: PropTypes.string,
+        _id: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const useStyles = CreateResponsiveStyle(

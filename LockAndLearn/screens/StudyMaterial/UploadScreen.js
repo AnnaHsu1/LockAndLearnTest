@@ -101,7 +101,7 @@ const UploadScreen = () => {
     if (noDescription.length > 0) {
       toast.error('Please add description for all files.');
       return false;
-    }  
+    }
 
     const fileData = new FormData();
     const user = await getUserId();
@@ -122,9 +122,9 @@ const UploadScreen = () => {
         body: fileData,
       });
       // detected duplicated files from server
-      if(response.status == 201) {
+      if (response.status == 201) {
         const data = await response.json();
-        if(data.duplicatedFiles) {
+        if (data.duplicatedFiles) {
           setDuplicateFiles(data.duplicatedFiles);
           toggleModalOverwriteFiles();
         }
@@ -135,7 +135,7 @@ const UploadScreen = () => {
           setFileName([]);
           setFiles([]);
         }
-        else {  
+        else {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
@@ -161,14 +161,14 @@ const UploadScreen = () => {
         method: 'PUT',
         body: fileData,
       });
-      if(response.status == 201) {
+      if (response.status == 201) {
         if (response.ok) {
           toast.success('Files uploaded successfully!');
           navigation.navigate('ViewUploads', { newFilesAdded: duplicateFiles });
           setFileName([]);
           setFiles([]);
         }
-        else {  
+        else {
           console.error('Request failed:', response.status, response.statusText);
         }
       }
@@ -189,7 +189,7 @@ const UploadScreen = () => {
           style={[fileType == 'pdf' ? styles.successRowUpload : styles.errorRowUpload]}
         >
           <View style={styles.rowUpload} key={index}>
-            <Text numberOfLines={1} ellipsizeMode='middle' style={[ {maxWidth: maxTextWidth, paddingLeft: 10}, styles.errorTextbox ]} >{item}</Text>
+            <Text numberOfLines={1} ellipsizeMode='middle' style={[{ maxWidth: maxTextWidth, paddingLeft: 10 }, styles.errorTextbox]} >{item}</Text>
             <TouchableOpacity
               testID={`deleteButton-${index}`} // Unique testID for each button
               style={styles.buttonDelete}
@@ -280,13 +280,13 @@ const UploadScreen = () => {
               style={styles.imageUpload}
               source={require('../../assets/UploadDashedZoneH.png')}
             >
-              <Text style={[styles.supportedFormats, {marginTop: '40%', textAlign: 'center'}]}>Supported format:{'\n'}PDF</Text>
+              <Text style={[styles.supportedFormats, { marginTop: '40%', textAlign: 'center' }]}>Supported format:{'\n'}PDF</Text>
             </ImageBackground>
           </TouchableOpacity>
         </View>
         <View style={styles.containerUploaded}>
           <Text style={styles.uploadFiles}>Uploads - {fileName.length} files</Text>
-          <Text style={[styles.supportedFormats, {marginTop: 2, marginBottom: 10}]}>Uploading files that already existed in our system will be overwritten by the newest version.</Text>
+          <Text style={[styles.supportedFormats, { marginTop: 2, marginBottom: 10 }]}>Uploading files that already existed in our system will be overwritten by the newest version.</Text>
           {/* display rows for each uploaded file */}
           <FlatList
             data={fileName}
@@ -325,10 +325,10 @@ const UploadScreen = () => {
               data={duplicateFiles}
               renderItem={({ item, index }) => renderDuplicateFiles(item, index)}
               keyExtractor={(item, index) => index.toString()}
-              style={{ width: '100%'}}
+              style={{ width: '100%' }}
             />
             {/* display buttons */}
-            <View 
+            <View
               style={styles.buttonOverwriteFiles}>
               <TouchableOpacity
                 onPress={() => {
@@ -442,11 +442,6 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
   },
-  duplicatedFileTextbox: {
-    marginLeft: 5,
-    flex: 0.9,
-    outlineStyle: 'none',
-  },
   errorTextbox: {
     flex: 0.9,
     outlineStyle: 'none',
@@ -456,7 +451,7 @@ const styles = StyleSheet.create({
     outlineStyle: 'none',
     backgroundColor: '#EBEBEB',
     borderRadius: 10,
-    padding: 10,    
+    padding: 10,
   },
   buttonDelete: {
     flex: 0.1,
@@ -499,7 +494,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
     marginTop: '2%',
-    marginBottom: '3%' 
+    marginBottom: '3%'
   },
   buttonConfirmText: {
     color: '#FFFFFF',
@@ -514,8 +509,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   buttonOverwriteFiles: {
-    alignItems: 'center', 
-    paddingVertical: 10,   
+    alignItems: 'center',
+    paddingVertical: 10,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -554,7 +549,7 @@ const styles = StyleSheet.create({
   },
   buttonUploadFiles: {
     alignItems: 'center',
-     marginTop: '0.5%'
+    marginTop: '0.5%'
   },
   duplicateRow: {
     marginBottom: '1%',
@@ -563,11 +558,6 @@ const styles = StyleSheet.create({
   close: {
     color: 'white',
     textAlign: 'center',
-  },
-  containerModalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
   button: {
     color: '#ffffff',

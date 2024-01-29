@@ -99,7 +99,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
           {workPackages.length > 0 ? (
             workPackages.map((workPackage, index) => (
               <View key={index} style={styles.workPackageContainer}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={index.toString()}
                   onPress={() => navigation.navigate('AdminPackages', { workPackageId: workPackage._id })}
                 >
@@ -220,7 +220,7 @@ const useStyles = CreateResponsiveStyle(
     modalText: {
       fontSize: 23,
       marginBottom: 20,
-      textAlign: 'center', 
+      textAlign: 'center',
     },
     modalButtons: {
       flexDirection: 'row',
@@ -364,7 +364,7 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       marginTop: 20,
     },
-    scrollView : {
+    scrollView: {
       paddingRight: 20.
     }
   },

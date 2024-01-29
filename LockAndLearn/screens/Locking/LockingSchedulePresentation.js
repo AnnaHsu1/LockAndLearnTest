@@ -138,52 +138,6 @@ const styles = StyleSheet.create({
     width: 250,
     height: 250,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 30,
-    width: '80%',
-    height: '40%',
-    borderRadius: 10,
-    justifyContent: 'center',
-  },
-  modalTitle: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#3E5CAA',
-    marginBottom: 20,
-  },
-  modalText: {
-    marginBottom: 10,
-    color: '#3E5CAA',
-  },
-  modalInput: {
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#407BFF',
-    borderRadius: 5,
-    padding: 10,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  modalButton: {
-    backgroundColor: '#407BFF',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    textAlign: 'center',
-  },
 });
 
 export default LockingSchedulePresentation;

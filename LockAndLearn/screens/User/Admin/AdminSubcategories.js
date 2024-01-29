@@ -295,8 +295,8 @@ const AdminSubcategories = ({ navigation }) => {
 
                 {/* Displaying the list of grades for the subcategory */}
                 {visibleGrades[subcategory._id] &&
-                typeof subcategory.grades === 'object' &&
-                Object.keys(subcategory.grades).length > 0 ? (
+                  typeof subcategory.grades === 'object' &&
+                  Object.keys(subcategory.grades).length > 0 ? (
                   Object.entries(subcategory.grades).map(([grade, value], gradeIndex) => (
                     <View key={gradeIndex} style={styles.gradeContainer}>
                       <View style={styles.gradeContent}>

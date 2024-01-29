@@ -48,27 +48,21 @@ const CreateQuestion = ({ route }) => {
         questionType === 'Multiple Choice Question' ? options.map((option) => option.text) : [], // Set options for multiple-choice questions or an empty array
     };
 
-    // Assign properties to the question object based on the question type
-    // if (questionType === 'Multiple Choice Question') {
-    //   // For multiple choice, include options and the answer indicating the correct option
-    //   newQuestion.options = options.map((option) => option.text);
-    //   newQuestion.answer = options.find((option) => option.isCorrect)?.text || '';
-    // } 
     if (questionType === 'Multiple Choice Question') {
       // Ensure all options are filled and one is marked as correct
       const allOptionsFilled = options.every(option => option.text.trim() !== '');
       const isAnswerChosen = options.some(option => option.isCorrect);
-  
+
       if (!allOptionsFilled) {
         alert('Please fill in all option texts.');
         return;
       }
-  
+
       if (!isAnswerChosen) {
         alert('Please select a correct answer.');
         return;
       }
-  
+
       // Set the answer to the text of the selected correct option
       newQuestion.answer = options.find(option => option.isCorrect).text;
     } else if (questionType === 'True or False') {
@@ -289,35 +283,35 @@ const CreateQuestion = ({ route }) => {
               onChangeText={(text) => setAnswer(text)}
             />
           )}
-      <TouchableOpacity
-        style={styles.cancelButton}
-        onPress={() => {
-          navigation.navigate('QuestionsOverviewScreen', {
-            quizId: quizId,
-          });
-        }}
-      >
-        <Text style={styles.cancelButtonText}>Cancel</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.createQuestionButton,
-          isFormValid()
-            ? styles.createQuestionButtonEnabled
-            : styles.createQuestionButtonDisabled,
-        ]}
-        onPress={() => {
-          handleCreateQuestion(); // Call the function to create the question
-          navigation.navigate('QuestionsOverviewScreen', {
-            quizId: quizId,
-          });
-        }}
-        disabled={!isFormValid()} // Disable the button if the form is not valid
-      >
-        <Text style={styles.createQuestionButtonText} testID="create-question">
-          Create Question
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => {
+            navigation.navigate('QuestionsOverviewScreen', {
+              quizId: quizId,
+            });
+          }}
+        >
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.createQuestionButton,
+            isFormValid()
+              ? styles.createQuestionButtonEnabled
+              : styles.createQuestionButtonDisabled,
+          ]}
+          onPress={() => {
+            handleCreateQuestion(); // Call the function to create the question
+            navigation.navigate('QuestionsOverviewScreen', {
+              quizId: quizId,
+            });
+          }}
+          disabled={!isFormValid()} // Disable the button if the form is not valid
+        >
+          <Text style={styles.createQuestionButtonText} testID="create-question">
+            Create Question
+          </Text>
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );

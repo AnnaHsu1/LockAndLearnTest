@@ -1,6 +1,7 @@
 import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
+import PropTypes from 'prop-types';
 
 const DisplayQuizzScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -19,7 +20,7 @@ const DisplayQuizzScreen = ({ route }) => {
 
     // array to record all answers child takes during the quiz
     const [answers, setAnswers] = useState(Array(quizLength).fill(null));
-    console.log("ANSWERS ARRAY ",answers);
+    console.log("ANSWERS ARRAY ", answers);
 
     // array to record all solutions to questions
     const [solutions, setSolutions] = useState(Array(quizLength).fill(null));
@@ -45,7 +46,7 @@ const DisplayQuizzScreen = ({ route }) => {
     // console.log(quizId + "CreateQuestions1");
     const questionTypes = ["Short Answer", "Multiple Choice Question", "True or False", "Fill In The Blanks", "Another Type"];
 
-
+    // Function to grade the quiz
     const handleGrade = (answersArray, solutionsArray) => {
         console.log("ANSWERS FROM HANDLEGRADE ", answersArray);
         console.log("SOLUTIONS FROM HANDLEGRADE ", solutionsArray);
@@ -54,16 +55,16 @@ const DisplayQuizzScreen = ({ route }) => {
         const length = quizLength;
         for (let i = 0; i < length; i++) {
             if (Array.isArray(answersArray[i]) && Array.isArray(solutionsArray[i])) {
-            // Compare arrays of strings
+                // Compare arrays of strings
                 if (answersArray[i].length === solutionsArray[i].length && answersArray[i].every((val, idx) => val === solutionsArray[i][idx])) {
                     counter++;
                 }
             } else if (answersArray[i] === solutionsArray[i]) {
-            // Compare strings
-            counter++;
+                // Compare strings
+                counter++;
             }
         };
-        console.log("COUNTERRRRRRRRR",counter);
+        console.log("COUNTERRRRRRRRR", counter);
         return counter;
 
     };
@@ -73,8 +74,8 @@ const DisplayQuizzScreen = ({ route }) => {
         setAnswer(newValue ? "True" : "False");
 
         // SAVES CORRECT ANSWER FOR MCQ QUESTIONS IN ANSWERS ARRAY
-        const newArray = [...answers]; 
-        newArray[questionIndex] = newValue ? "True" : "False"; 
+        const newArray = [...answers];
+        newArray[questionIndex] = newValue ? "True" : "False";
         setAnswers(newArray);
 
     };
@@ -82,8 +83,8 @@ const DisplayQuizzScreen = ({ route }) => {
     const handleSetAnswer = (text, questionIndex) => {
         // SAVES CORRECT ANSWER FOR MCQ QUESTIONS IN ANSWERS ARRAY
         setAnswer(text);
-        const newArray = [...answers]; 
-        newArray[questionIndex] = text; 
+        const newArray = [...answers];
+        newArray[questionIndex] = text;
         setAnswers(newArray);
     };
 
@@ -96,8 +97,8 @@ const DisplayQuizzScreen = ({ route }) => {
         setAnswer(updatedOptions[index].text); // Assuming you want to store the correct answer's text
 
         // SAVES CORRECT ANSWER FOR MCQ QUESTIONS IN ANSWERS ARRAY
-        const newArray = [...answers]; 
-        newArray[questionIndex] = textAnswer; 
+        const newArray = [...answers];
+        newArray[questionIndex] = textAnswer;
         setAnswers(newArray);
     };
 
@@ -108,11 +109,11 @@ const DisplayQuizzScreen = ({ route }) => {
         setInputsAns(updatedInputs);
 
         // SAVES CORRECT ANSWER FOR FILL IN THE BLANKS QUESTIONS IN ANSWERS ARRAY
-        const newArray = [...answers]; 
-        newArray[questionIndex] = inputs; 
+        const newArray = [...answers];
+        newArray[questionIndex] = inputs;
         setAnswers(newArray);
     };
-
+    // Fetch the current question from the server
     const fetchQuestion = async () => {
         try {
             const response = await fetch(`http://localhost:4000/quizzes/getQuestion/${quizId}/${questionIndex}`, {
@@ -127,8 +128,8 @@ const DisplayQuizzScreen = ({ route }) => {
                 const question = await response.json();
                 console.log("Question:", question);
                 setQuestions(questions => [...questions, question])
-                console.log("QUESTIONS ARRAY",questions);
-                let ans= '';
+                console.log("QUESTIONS ARRAY", questions);
+                let ans = '';
                 // console.log("ANSWERRRRRRRRRRAAAAAAAAAAA",question.answer);
                 setQuestionText(question.questionText || ''); // Ensuring a string is always set
                 setQuestionType(question.questionType || '');
@@ -144,27 +145,27 @@ const DisplayQuizzScreen = ({ route }) => {
                         isCorrect: question.answer === option,
                     }));
                     setOptionsAnswer(newOptions);
-                    ans=question.answer;
+                    ans = question.answer;
                 } if (question.questionType === "True or False") {
                     setIsTrueAnswer(question.answer === "True"); // Assuming 'answer' is the field where true/false is stored
                     // setAnswer(question.answer); // The answer should already be "True" or "False"
-                    ans=question.answer;
+                    ans = question.answer;
                 } if (question.questionType === "Short Answer") {
                     // setAnswer(question.answer || ''); // Assuming 'answer' contains the short answer text
-                    ans=question.answer
+                    ans = question.answer
                 }
                 else if (question.questionType === "Fill In The Blanks") {
                     console.log("INPUTS", question.inputs);
                     setInputs(question.inputs || ['']); // Make sure you receive an array of strings for blanks
                     // setAnswer(question.inputs || ['']);
-                    ans=question.inputs || [''];
+                    ans = question.inputs || [''];
                     // console.log("THIRD FILL IN BLANKS ANSWERRAAAAAA",answer);          
                 }
                 console.log("ANSWER FOR THIS QUESTION->", ans);
                 const newArray = [...solutions]; // Create a copy of the array
                 newArray[questionIndex] = ans;      // Insert the item at the specified index
                 setSolutions(newArray);
-                console.log("SOLUTIONS ARRAY",solutions);                
+                console.log("SOLUTIONS ARRAY", solutions);
             } else {
                 console.error("Error fetching question. Status:", response.status);
                 // It's a good practice to handle different statuses to give more context to errors
@@ -188,7 +189,7 @@ const DisplayQuizzScreen = ({ route }) => {
         >
             <View style={styles.containerFile}>
                 <View style={styles.contentContainer}>
-                    <Text style={styles.selectFiles}>Question {questionIndex +1}</Text>
+                    <Text style={styles.selectFiles}>Question {questionIndex + 1}</Text>
                     <Text style={styles.questionText}>{questionText}</Text>
                     {questionType === "True or False" && (
                         <View style={styles.checkboxContainer}>
@@ -215,7 +216,7 @@ const DisplayQuizzScreen = ({ route }) => {
                         <View style={styles.multipleChoiceContainer}>
                             {optionsAnswer.map((option, index) => (
                                 <View key={option.id} style={styles.multipleChoiceRow}>
-                                <Text 
+                                    <Text
                                         style={styles.multipleChoiceText}
                                         testID={`option-text-${option.id}`}
                                     >
@@ -240,7 +241,7 @@ const DisplayQuizzScreen = ({ route }) => {
                                         style={styles.answerInput}
                                         placeholder="Enter Word"
                                         value={inputsAns[index]}
-                                        onChangeText={(text) => 
+                                        onChangeText={(text) =>
                                             handleInputTextChange(text, index, questionIndex)}
                                     />
                                 </View>
@@ -257,58 +258,70 @@ const DisplayQuizzScreen = ({ route }) => {
                     )}
                 </View>
                 <View style={styles.buttonContainer}>
-                {questionIndex >= 1 && (
-                    <TouchableOpacity
-                        style={styles.previousButton}
-                        onPress={() => {
-                            navigation.navigate('DisplayQuizzScreen', {
-                                quizId: quizId,
-                                quizLength: quizLength,
-                                questionIndex: questionIndex - 1,
-                            });
-                        }}
-                    >
-                        <Text style={styles.previousButtonText}>Previous</Text>
-                    </TouchableOpacity>
+                    {questionIndex >= 1 && (
+                        <TouchableOpacity
+                            style={styles.previousButton}
+                            onPress={() => {
+                                navigation.navigate('DisplayQuizzScreen', {
+                                    quizId: quizId,
+                                    quizLength: quizLength,
+                                    questionIndex: questionIndex - 1,
+                                });
+                            }}
+                        >
+                            <Text style={styles.previousButtonText}>Previous</Text>
+                        </TouchableOpacity>
                     )}
-                {questionIndex <= quizLength-2 && (
-                <TouchableOpacity
-                    style={styles.nextButton}
-                    onPress={() => {
-                        navigation.navigate('DisplayQuizzScreen', {
-                            quizId: quizId,
-                            quizLength: quizLength,
-                            questionIndex: questionIndex+1,
-                        });
-                    }}
-                >
-                    <Text style={styles.nextButtonText} testID='save-button'>Next</Text>
-                </TouchableOpacity>
-                )}
-                {questionIndex === quizLength-1 && (
-                <TouchableOpacity
-                    style={styles.finishQuizButton}
-                    onPress={() => {
-                        fetchQuestion();
-                        // const grade = handleGrade(answers, solutions);
-                        navigation.navigate('QuizGradeScreen', {
-                            quizId: quizId,
-                            numOfCorrectAnswers: handleGrade(answers, solutions),
-                            quizLength: quizLength,
-                            answers: answers,
-                            solutions: solutions,
-                            questions: questions,
-                        });
-                    }}
-                >
-                    <Text style={styles.finishQuizButtonText} testID='save-button'>Finish Quiz</Text>
-                </TouchableOpacity>
-                )}
+                    {questionIndex <= quizLength - 2 && (
+                        <TouchableOpacity
+                            style={styles.nextButton}
+                            onPress={() => {
+                                navigation.navigate('DisplayQuizzScreen', {
+                                    quizId: quizId,
+                                    quizLength: quizLength,
+                                    questionIndex: questionIndex + 1,
+                                });
+                            }}
+                        >
+                            <Text style={styles.nextButtonText} testID='save-button'>Next</Text>
+                        </TouchableOpacity>
+                    )}
+                    {questionIndex === quizLength - 1 && (
+                        <TouchableOpacity
+                            style={styles.finishQuizButton}
+                            onPress={() => {
+                                fetchQuestion();
+                                // const grade = handleGrade(answers, solutions);
+                                navigation.navigate('QuizGradeScreen', {
+                                    quizId: quizId,
+                                    numOfCorrectAnswers: handleGrade(answers, solutions),
+                                    quizLength: quizLength,
+                                    answers: answers,
+                                    solutions: solutions,
+                                    questions: questions,
+                                });
+                            }}
+                        >
+                            <Text style={styles.finishQuizButtonText} testID='save-button'>Finish Quiz</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
         </ImageBackground>
     );
 };
+
+DisplayQuizzScreen.propTypes = {
+    route: PropTypes.shape({
+      params: PropTypes.shape({
+        quizId: PropTypes.string.isRequired,
+        questionIndex: PropTypes.number.isRequired,
+        quizLength: PropTypes.number.isRequired,
+        questions: PropTypes.array // Add more specific type details if possible
+      }).isRequired
+    }).isRequired
+  };
+  
 
 const styles = StyleSheet.create({
     container: {
@@ -337,20 +350,11 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         marginTop: '1%',
     },
-    questionTypePicker: {
-        width: '80%',
-        height: 50,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        margin: 20,
-    },
-    questionText:{
-        fontSize: 24,      
-        color: '#333',    
-        textAlign: 'left', 
-        marginTop: 50, 
+    questionText: {
+        fontSize: 24,
+        color: '#333',
+        textAlign: 'left',
+        marginTop: 50,
     },
     multipleChoiceContainer: {
         width: '80%',
@@ -364,24 +368,15 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc', // Set the color of the border to gray
         paddingBottom: 10, // Add some padding at the bottom
     },
-    multipleChoiceText:{
+    multipleChoiceText: {
         flex: 1,
         height: 40,
         padding: 10,
         marginRight: 10,
         flexDirection: 'row',
-        fontSize: 20,      
+        fontSize: 20,
         alignItems: 'center',
         marginVertical: 8,
-    },
-    multipleChoiceInput: {
-        flex: 1,
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        marginRight: 10,
     },
     trueNfalseText: {
         fontSize: 18, // Larger font size
@@ -391,7 +386,7 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         marginVertical: 20, // Add vertical space around the whole container
     },
-      checkboxRow: {
+    checkboxRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -416,7 +411,7 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1, // Takes up all available space
         width: '100%',
-        alignItems: 'center',       
+        alignItems: 'center',
     },
     nextButton: {
         backgroundColor: '#407BFF',

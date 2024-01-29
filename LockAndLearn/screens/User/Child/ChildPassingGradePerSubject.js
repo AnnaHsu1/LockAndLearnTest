@@ -6,6 +6,7 @@ import Modal from 'react-native-modal';
 import { getItem } from '../../../components/AsyncStorage';
 import { Button } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import PropTypes from 'prop-types';
 
 const ChildPassingGradePerSubject = ({ route, navigation }) => {
     const [child, setChild] = useState({});
@@ -213,6 +214,17 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
     );
 };
 
+ChildPassingGradePerSubject.propTypes = {
+    route: PropTypes.shape({
+      params: PropTypes.shape({
+        child: PropTypes.object.isRequired, // Define the shape further if needed
+      }),
+    }).isRequired,
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired,
+    }).isRequired,
+  };
+  
 const styles = StyleSheet.create({
     container: {
         flex: 1,

@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View, ImageBackground, FlatList, TouchableOpacity } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { ToastContainer, toast } from 'react-toastify';
+import PropTypes from 'prop-types';
 
 const StudyMaterialPreferences = ({ route, navigation }) => {
   const childInfo = route.params.child;
@@ -142,6 +143,17 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
       </View>
     </ImageBackground>
   );
+};
+
+StudyMaterialPreferences.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      child: PropTypes.object.isRequired,
+    }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const styles = StyleSheet.create({

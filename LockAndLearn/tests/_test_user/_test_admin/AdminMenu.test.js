@@ -23,8 +23,48 @@ describe('AdminMenu', () => {
     const { getByTestId } = render(<AdminMenu {...props} />);
     fireEvent.press(getByTestId('admin-accounts'));
     expect(mockNavigate).toHaveBeenCalledWith('AdminAccount');
-    // Continue for other navigation buttons
   });
 
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-finance'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminFinances');
+  });
+
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-workpackages'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminWorkPackages');
+  });
+
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-files'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminFiles');
+  });
+
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-quizzes'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminQuizzes');
+  });
+
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-subcategories'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminSubcategories');
+  });
+
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-certificates'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminCertificates');
+  });
+
+  it('navigates on button press', () => {
+    const { getByTestId } = render(<AdminMenu {...props} />);
+    fireEvent.press(getByTestId('admin-reportcenter'));
+    expect(mockNavigate).toHaveBeenCalledWith('AdminReportCenter');
+  });
 
 });

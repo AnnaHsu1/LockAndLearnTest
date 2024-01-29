@@ -8,9 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Modal from 'react-native-modal';
-import { getUser } from '../../components/AsyncStorage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import PropTypes from 'prop-types';
 
 
 const QuestionsOverviewScreen = ({ route }) => {
@@ -112,8 +111,8 @@ const QuestionsOverviewScreen = ({ route }) => {
           >
             <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
-        
-        
+
+
           <View style={styles.addQuestionButtonContainer}>
             <TouchableOpacity
               style={styles.addQuestionButton}
@@ -133,6 +132,16 @@ const QuestionsOverviewScreen = ({ route }) => {
   );
 };
 
+QuestionsOverviewScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      quizId: PropTypes.string.isRequired,
+      newQuestion: PropTypes.object, // or a more specific shape if you have a defined structure for a question
+      userId: PropTypes.string // assuming userId is a string, and not required
+    }).isRequired
+  }).isRequired
+};
+
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -140,10 +149,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backButton: {
-    backgroundColor: 'gray', 
+    backgroundColor: 'gray',
     width: 190,
     height: 45,
-    borderRadius: 15, 
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -232,10 +241,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addQuestionButton: {
-    backgroundColor: '#407BFF', 
+    backgroundColor: '#407BFF',
     width: 190,
     height: 45,
-    borderRadius: 15, 
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

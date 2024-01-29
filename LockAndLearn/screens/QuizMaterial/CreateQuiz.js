@@ -154,22 +154,22 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   enterQuizName: {
-    fontSize: 40, 
+    fontSize: 40,
     marginBottom: 25,
     color: '#696969',
-    alignSelf: 'center', 
+    alignSelf: 'center',
     marginTop: 100,
   },
   input: {
     height: 60,
-    width: '40%', 
+    width: '40%',
     borderColor: '#407BFF', // Change to a blue color
     backgroundColor: '#E6F0FF', // Optional: Light blue background
     borderWidth: 1,
     padding: 10,
     marginBottom: 20,
     alignSelf: 'center', // Center align the input
-    borderRadius: 10, 
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,

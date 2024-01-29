@@ -1,4 +1,4 @@
-import WorkPackageCart from '../../screens/WorkPackage/Payment/WorkPackageCart';
+import WorkPackageCart from '../../../screens/WorkPackage/Payment/WorkPackageCart';
 import React from 'react';
 import { render, fireEvent, waitFor, } from '@testing-library/react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,7 +10,7 @@ jest.mock('@react-navigation/native', () => ({
     useNavigation: jest.fn(),
 }));
 
-jest.mock('../../components/AsyncStorage', () => ({
+jest.mock('../../../components/AsyncStorage', () => ({
     getItem: jest.fn(() => Promise.resolve(JSON.stringify({ _id: '123' }))),
 }));
 
