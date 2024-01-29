@@ -156,7 +156,6 @@ router.get('/uploadCertificates/:filename', async (req, res) => {
 router.put('/acceptUserCertificates/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
-  //const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
   const updateStatus = await conn.db
     .collection('UploadCertificates.files')
     .updateMany({ 'metadata.userId': requestUserId }, { $set: { 'metadata.status': 'accepted' } });
@@ -182,34 +181,11 @@ router.put('/rejectCertificate/:id', async (req, res) => {
   res.status(200).json({ message: 'REJECTED STATUS UPDATED' });
 });
 
-// delete certificate from database
-router.delete('/deleteCertificate/:id', (req, res) => {
-  console.log('CERTIFICATE BE: ' + req.params.id);
-  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
-  bucket.delete(new mongoose.Types.ObjectId(req.params.id), (err, data) => {
-    if (err) return res.status(404).json({ err: err.message });
-  });
-});
-
-// // get at least one accepted status of user
-// router.get('/getCertificatesStatus/:userId', async (req, res) => {
-//   console.log(req.params.userId);
-//   const requestUserId = req.params.userId;
-//   const conn = mongoose.connection;
-//   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
-//   const uploadedCertificates = await bucket
-//     .find({ 'metadata.userId': requestUserId, 'metadata.status': 'accepted' })
-//     .toArray();
-//   const firstCertificate = uploadedCertificates[0];
-//   console.log(firstCertificate)
-//   res.status(201).json({ firstCertificate });
-// });
-
 // get status of user 
 router.get('/getCertificatesStatus/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
-  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' }); //bucketName = collection name in db
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
   const uploadedCertificates = await bucket.find({ "metadata.userId": requestUserId }).toArray();
   res.status(201).json({ uploadedCertificates });
 });

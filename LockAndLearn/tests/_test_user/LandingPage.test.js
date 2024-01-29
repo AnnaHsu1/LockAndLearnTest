@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, fireEvent, act, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import LandingPage from '../../screens/User/LandingPage';
 import * as DocumentPicker from 'expo-document-picker';
-import * as AsyncStorage from '../../components/AsyncStorage';
 
 const mockNavigate = jest.fn();
 jest.mock('@react-navigation/native', () => ({
@@ -50,6 +49,7 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 }));
 
 describe('tests for certificates upload', () => {
+  // Mock return value of Document Picker
   beforeEach(() => {
     DocumentPicker.getDocumentAsync.mockReset();
     DocumentPicker.getDocumentAsync.mockResolvedValue({
@@ -75,14 +75,9 @@ describe('tests for certificates upload', () => {
 
   it('button is disabled when a field is unfilled', () => {
     const { getByTestId } = render(<LandingPage />);
-  
-    // Find the button element
     const submitButton = getByTestId('uploadButton');
-  
-    // Assert that the button is disabled
+    // upload button should be disabled if there are fields left unfilled
     expect(submitButton.props.accessibilityState).toHaveProperty('disabled', true);
-  
-    // Perform any additional assertions or interactions as needed
   });
 
   it('handles certificate selection', async () => {
@@ -93,7 +88,7 @@ describe('tests for certificates upload', () => {
 
     const { getByTestId } = render(<LandingPage />);
     fireEvent.press(getByTestId('selectButton'));
-
+    // file explorer should be opened when clicking on select button
     await waitFor(() => {
       expect(DocumentPicker.getDocumentAsync).toHaveBeenCalled();
     });

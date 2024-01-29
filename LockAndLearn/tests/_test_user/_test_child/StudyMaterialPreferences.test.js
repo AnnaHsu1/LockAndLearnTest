@@ -34,7 +34,7 @@ Promise.resolve({
     status: 200,
 })
 );
-//Tests
+
 describe('StudyMaterialPreferences tests', () => {
 
     afterEach(() => {
@@ -43,34 +43,21 @@ describe('StudyMaterialPreferences tests', () => {
 
     it('renders correctly', () => {
         const { getByText } = render(<StudyMaterialPreferences navigation={mockNavigation} route={mockRoute}/>);
-        
-        // Assert that the component renders the learning subject title
         expect(getByText('Learning Subject Preferences')).toBeTruthy();
-        
-        // Assert that the component renders the save preferences button
         expect(getByText('Save Preferences')).toBeTruthy();
     });
     
-    it('triggers savePreferences function when save preferences button is pressed', () => {
-        
+    it('triggers savePreferences function when save preferences button is pressed', () => {       
         const { getByTestId } = render(<StudyMaterialPreferences navigation={mockNavigation} route={mockRoute}/>);
-        
         const savePreferencesMock = getByTestId('savePreferencesButton');
-
         expect(savePreferencesMock).toBeTruthy();
-
-        // Simulate button press
         fireEvent.press(savePreferencesMock);
 
     });
     it('Updates the state of the checkbox when the checkbox is pressed', () => {
-        const { getByTestId } = render(<StudyMaterialPreferences navigation={mockNavigation} route={mockRoute}/>);
-        
+        const { getByTestId } = render(<StudyMaterialPreferences navigation={mockNavigation} route={mockRoute}/>);       
         const checkboxMock = getByTestId('checkbox-1');
-
         expect(checkboxMock).toBeTruthy();
-
-        // Simulate button press
         fireEvent.press(checkboxMock);
 
     });

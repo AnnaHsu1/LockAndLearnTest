@@ -186,7 +186,6 @@ const LandingPage = ({ navigation }) => {
       if (response.status == 201) {
         if (response.ok) {
           toast.success('Certificates uploaded successfully!');
-          //navigation.navigate('ViewUploads', { newFilesAdded: duplicateFiles });
           setFileName([]);
           setFiles([]);
           setFullName('');
@@ -227,7 +226,7 @@ const LandingPage = ({ navigation }) => {
               {item}
             </Text>
             <TouchableOpacity
-              testID={`deleteButton-${index}`} // Unique testID for each button
+              testID={`deleteButton-${index}`}
               style={styles.buttonDelete}
               onPress={() => deleteFile(index)}
             >
@@ -238,7 +237,6 @@ const LandingPage = ({ navigation }) => {
               )}
             </TouchableOpacity>
           </View>
-          {/* add a description field and display in lightgrey */}
           {fileType == 'pdf' ? <View style={styles.rowDescription}></View> : null}
         </View>
         {fileType == 'pdf' ? null : (
@@ -328,7 +326,6 @@ const LandingPage = ({ navigation }) => {
           </Text>
           <Text style={styles.selectCertificates}>Select certificates</Text>
           <View style={styles.buttonUploadFiles}>
-            {/* display button to upload file */}
             <TouchableOpacity
               testID="selectButton"
               onPress={certificateSelectedHandler}
@@ -368,7 +365,6 @@ const LandingPage = ({ navigation }) => {
               Uploading certificates that already existed in our system will be overwritten by the
               newest version.
             </Text>
-            {/* display rows for each uploaded file */}
             <FlatList
               data={fileName}
               renderItem={({ item, index }) => renderFile(item, index)}
@@ -406,21 +402,18 @@ const LandingPage = ({ navigation }) => {
       >
         <View style={styles.containerModalOverwriteFiles}>
           <View style={styles.containerModalOverwriteFilesContent}>
-            {/* display title of modal */}
             <View>
               <Text style={[{ fontSize: 20 }, styles.textDuplicateFiles]}>Duplicated File(s)</Text>
               <Text style={[{ fontSize: 12 }, styles.textDuplicateFiles]}>
                 Are you sure you want to overwrite these following files?
               </Text>
             </View>
-            {/* display each row with filename */}
             <FlatList
               data={duplicateFiles}
               renderItem={({ item, index }) => renderDuplicateCertificates(item, index)}
               keyExtractor={(item, index) => index.toString()}
               style={{ width: '100%' }}
             />
-            {/* display buttons */}
             <View style={styles.buttonOverwriteFiles}>
               <TouchableOpacity
                 onPress={() => {
