@@ -26,11 +26,9 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const [selectedWorkPackageID, setSelectedWorkPackageID] = useState(null);
   const [selectedWorkPackage, setSelectedWorkPackage] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [user, setUser] = useState(null); // State to track authentication
+  const [user, setUser] = useState(null);
   const [children, setChildren] = useState([]);
   const [suggestedWorkPackages, setSuggestedWorkPackages] = useState([]);
-
-  //Checkboxes states for each grade, default is unchecked
   const [checkedGrade, setCheckedGrade] = useState([]);
 
 
@@ -39,7 +37,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     console.log(workPackage);
     setSelectedWorkPackage(workPackage);
     setSelectedWorkPackageID(workPackage._id);
-    setWorkPackageName(workPackage.name); // Set the work package name for the modal display
+    setWorkPackageName(workPackage.name);
     toggleModalAdd();
   };
   // Function to set the error message and clear it after a specified duration
@@ -53,9 +51,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   useEffect(() => {
     initializeCheckedGrade();
     fetchWorkPackages();
-    fetchCartWorkPackages();
-    //console.log('Cart Work Packages Updated:', cartWorkPackages);
-    
+    fetchCartWorkPackages();  
   }, []);
 
   useEffect(() => {
@@ -72,7 +68,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           setUser(user);
           setChildren(data);
         } else {
-          // Handle the case where user is undefined (not found in AsyncStorage)
           console.log('User not found in AsyncStorage');
         }
       } catch (error) {
@@ -88,9 +83,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
     for (let childKey in children) {
       let child = children[childKey];
-
       let updatedSuggestedWorkPackages = [];
-
       let childPreferences = child.preferences;
 
       for (let workPackageKey in workPackages) {
@@ -143,7 +136,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     const userId = user._id;
     if (userId) {
       try {
-        // Fetch user's cart work packages
         const response = await fetch(
           `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
           {
@@ -283,10 +275,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
       });
       const data = await response.json();
       if (response.ok) {
-        // Work package added successfully
         console.log('Work package added to cart');
       } else {
-        // Handle error response
         setTemporaryErrorMessage(data.error);
         console.error(data.error);
       }
@@ -374,7 +364,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   };
 
   const clearFilter = () => {
-    
     initializeCheckedGrade();
     document.getElementById('Search').value = '';
     fetchWorkPackages();
@@ -383,15 +372,11 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
   // Function to initialize the checkedGrade array to false
   const initializeCheckedGrade = () => {
-
     const tempArray = [];
-
     for (let i = 0; i < 12; i++) {
       tempArray.push(false);
     }
-
     setCheckedGrade(tempArray);
-
   };
 
   const CheckboxComponent = ({ label, checked, onChange }) => {
@@ -407,7 +392,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         <Checkbox
           status={checked ? 'checked' : 'unchecked'}
           onPress={onChange}
-          color="blue" // Custom color when checked
+          color="blue"
         />
         <Text
           style={{
@@ -980,29 +965,27 @@ const styles = StyleSheet.create(
       borderWidth: 1,
     },
     carouselWorkPackageBox: {
-      flexDirection: 'row', // Make the box a row container
+      flexDirection: 'row',
       maxHeight: 200,
-      justifyContent: 'space-between', // Align elements horizontally with space between
-      alignItems: 'center', // Center vertically
+      justifyContent: 'space-between',
+      alignItems: 'center',
       borderWidth: 1,
-      borderColor: '#4F85FF', // Change the border color to fit your design
+      borderColor: '#4F85FF',
       borderRadius: 8,
       padding: 10,
-      //marginBottom: 10,
-      width: '60%', // Set width as a percentage
+      width: '60%',
       alignSelf: 'center',
     },
     workPackageBox: {
-      flexDirection: 'row', // Make the box a row container
+      flexDirection: 'row',
       maxHeight: 200,
-      justifyContent: 'space-between', // Align elements horizontally with space between
-      alignItems: 'center', // Center vertically
-      borderWidth: 1,
-      borderColor: '#4F85FF', // Change the border color to fit your design
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderColor: '#4F85FF',
       borderRadius: 8,
       padding: 10,
       marginBottom: 10,
-      width: '50vw', // Set width as a percentage
+      width: '50vw',
       alignSelf: 'center',
     },
     containerDeleteModal: {

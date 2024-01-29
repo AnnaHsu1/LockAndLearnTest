@@ -103,8 +103,6 @@ describe('WorkPackageBrowsing Tests', () => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
         fireEvent.press(getByTestId('addButton-wp1'));
-        //fireEvent.press(getByTestId('addButtonConfirm'));
-
     });
 
     it('navigates to cart screen on button press', () => {
@@ -115,12 +113,8 @@ describe('WorkPackageBrowsing Tests', () => {
         expect(navigate).toHaveBeenCalledWith('WorkPackageCart');
     });
 
-    
-
     it('renders the work package item correctly', async () => {
-
-        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters} />);
-    
+        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters} />);  
         await waitFor(() => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });

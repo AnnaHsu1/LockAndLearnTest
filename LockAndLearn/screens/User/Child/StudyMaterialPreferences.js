@@ -62,9 +62,6 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
 
     setSelectedLabels(labels);
   };
-  console.log(checkedboxItems);
-  // console.log(selectedNumber);
-  console.log(selectedLabels);
 
   const savePreferencesHandler = async () => {
     try {
@@ -72,8 +69,6 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
         ...fdata,
         Preferences: selectedLabels,
       };
-      console.log(updatedFdata);
-
       await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
         method: 'PUT',
         headers: {
@@ -87,7 +82,6 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
         navigation.navigate('ParentAccount');
       }, 1000);
     } catch (error) {
-      console.log(error);
       toast.error('Failed to save preferences.');
     }
   };
