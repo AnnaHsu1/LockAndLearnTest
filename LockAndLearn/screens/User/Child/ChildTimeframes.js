@@ -307,6 +307,12 @@ const ChildTimeframes = ({ route, navigation }) => {
     setError('');
   };
 
+  // Cancel editing a new timeframe
+  const cancelEdit = () => {
+    setEditMode(!editMode);
+    setError('');
+  };
+
   useEffect(() => {
     setDeviceWidth(width);
     setChild(childSelected);
