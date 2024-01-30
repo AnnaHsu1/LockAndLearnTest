@@ -1,16 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Animated,
-  LayoutAnimation,
-  navigation,
-  ImageBackground,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import { Text, View, Image, ImageBackground, Dimensions, TouchableOpacity } from 'react-native';
 import {
   CreateResponsiveStyle,
   DEVICE_SIZES,
@@ -22,10 +11,15 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { Button } from 'react-native-paper';
-import { getItem, removeItem, setUserTokenWithExpiry } from '../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
-import { getUser, handleLogout } from '../components/AsyncStorage';
+import {
+  getItem,
+  removeItem,
+  setUserTokenWithExpiry,
+  getUser,
+  handleLogout,
+} from '../components/AsyncStorage';
+import { FcGoogle } from 'react-icons/fc';
 
 const HomeScreen = ({ navigation }) => {
   const styles = useStyles();
@@ -45,7 +39,7 @@ const HomeScreen = ({ navigation }) => {
     } else {
       isUserStillAuthenticated();
     }
-  }, [route.params]);
+  }, [route.params, isAuthenticated]);
 
   const isUserStillAuthenticated = async () => {
     try {
@@ -55,13 +49,12 @@ const HomeScreen = ({ navigation }) => {
         if (token?.tokenExpiration < currentTime) {
           console.log('Token expired', currentTime, token?.tokenExpiration);
           await removeItem('@token');
+          setIsAuthenticated(false);
         } else {
-          // console.log(token);
-          // console.log('Token valid', currentTime, token?.tokenExpiration);
           // If token is not expired, update the token expiration time
           await setUserTokenWithExpiry('@token', token);
+          setIsAuthenticated(true);
         }
-        setIsAuthenticated(true);
       }
     } catch (error) {
       console.log(error);
@@ -267,7 +260,7 @@ const useStyles = CreateResponsiveStyle(
       marginBottom: 25,
     },
     button: {
-      borderRadius: 20,
+      borderRadius: 10,
       fontSize: 20,
       fontStyle: 'normal',
       fontWeight: 600,
