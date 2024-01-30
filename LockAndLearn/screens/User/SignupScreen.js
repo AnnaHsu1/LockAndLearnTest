@@ -2,17 +2,16 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { Text, TextInput, View, Image } from 'react-native';
+import { Text, TextInput, View, Image, TouchableOpacity } from 'react-native';
 import { RadioButton, Button } from 'react-native-paper';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
-import {
-  setUserTokenWithExpiry,
-} from '../../components/AsyncStorage';
+import { setUserTokenWithExpiry } from '../../components/AsyncStorage';
 import PropTypes from 'prop-types';
+import { FcGoogle } from 'react-icons/fc';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -115,55 +114,56 @@ const SignupScreen = ({ navigation }) => {
           DOB: '',
           Other: '',
         });
-          if (data.msg === 'All fields must be filled.') {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  Fields: data.msg,
-              }));
-          } else if (
-              data.msg === 'Invalid email format.' ||
-              data.msg === 'Email is already in use.' ||
-              data.msg === 'Email is already in use.'
-          ) {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  Email: data.msg,
-              }));
-          } else if (data.msg === 'Password must be at least 6 characters long.') {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  Password: data.msg,
-              }));
-          } else if (data.msg === 'Passwords must match.') {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  CPassword: data.msg,
-              }));
-          } else if (data.msg === 'First and Last names can only contain letters.') {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  Name: data.msg,
-              }));
-          } else if (data.msg === 'Invalid date format. Please use YYYY-MM-DD.' ||
-              'Invalid date of birth. It should be a day before the current day.' ||
-              'You must be at least 18 years old to register.' ||
-              'Invalid date. Please provide a valid date in the format YYYY-MM-DD.'
-            ) {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  DOB: data.msg,
-              }));
-          } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  DOB: data.msg,
-              }));
-          } else if (checked === null) {
-              setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  Other: 'Please select your account type.',
-              }));
-          }
+        if (data.msg === 'All fields must be filled.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Fields: data.msg,
+          }));
+        } else if (
+          data.msg === 'Invalid email format.' ||
+          data.msg === 'Email is already in use.' ||
+          data.msg === 'Email is already in use.'
+        ) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Email: data.msg,
+          }));
+        } else if (data.msg === 'Password must be at least 6 characters long.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Password: data.msg,
+          }));
+        } else if (data.msg === 'Passwords must match.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            CPassword: data.msg,
+          }));
+        } else if (data.msg === 'First and Last names can only contain letters.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Name: data.msg,
+          }));
+        } else if (
+          data.msg === 'Invalid date format. Please use YYYY-MM-DD.' ||
+          'Invalid date of birth. It should be a day before the current day.' ||
+          'You must be at least 18 years old to register.' ||
+          'Invalid date. Please provide a valid date in the format YYYY-MM-DD.'
+        ) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            DOB: data.msg,
+          }));
+        } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            DOB: data.msg,
+          }));
+        } else if (checked === null) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            Other: 'Please select your account type.',
+          }));
+        }
       }
     } catch (error) {
       console.error('Submitting error when creating user:', error);
@@ -175,7 +175,6 @@ const SignupScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.title}>Create your account</Text>
         {errors.Fields ? <Text style={styles.box}>{errors.Fields}</Text> : null}
-             
         {/* Email */}
         <View style={styles.item}>
           <Text style={styles.field}>Email</Text>
@@ -208,8 +207,7 @@ const SignupScreen = ({ navigation }) => {
               value={fdata.LastName}
               onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
             />
-                  </View>
-                  
+          </View>
         </View>
         {errors.Name ? <Text style={{ color: 'red' }}>{errors.Name}</Text> : null}
         {/* Account type */}
@@ -276,28 +274,44 @@ const SignupScreen = ({ navigation }) => {
           {errors.CPassword ? <Text style={{ color: 'red' }}>{errors.CPassword}</Text> : null}
         </View>
 
-        <Button
-          testID="signup-button"
-          mode="contained"
-          onPress={() => {
-            handleSubmit();
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          Sign up
-        </Button>
+        <View style={[{ gap: 10 }]}>
+          <Button
+            testID="signup-button"
+            mode="contained"
+            onPress={() => {
+              handleSubmit();
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            Sign up
+          </Button>
+          <TouchableOpacity
+            testID="google-login-button"
+            mode="contained"
+            onPress={() => promptAsync()}
+            style={[
+              {
+                borderColor: '#407BFF',
+                borderWidth: 1,
+                borderRadius: 10,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingVertical: 10,
+              },
+              styles.full_width,
+            ]}
+          >
+            <FcGoogle fontSize={24} />
+            <Text style={{ color: '#407BFF', textAlign: 'center', paddingLeft: 5 }}>
+              Create an account with Google
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <Text testID="login-link" style={styles.link} onPress={() => navigation.navigate('Login')}>
           Already have an account? Sign in
         </Text>
-        <Button
-          mode="contained"
-          style={[styles.button, { marginTop: 10 }]}
-          textColor="#fff"
-          onPress={() => promptAsync()}
-        >
-          Create an account with Google
-        </Button>
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
@@ -306,7 +320,7 @@ const SignupScreen = ({ navigation }) => {
 };
 
 SignupScreen.propTypes = {
-    navigation: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 const useStyles = CreateResponsiveStyle(
   {

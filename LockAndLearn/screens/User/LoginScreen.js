@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image } from 'react-native';
+import { Text, TextInput, View, navigation, Image, TouchableOpacity } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
   widthPercentageToDP as wp,
@@ -16,6 +16,7 @@ import {
   removeItem,
   setUserTokenWithExpiry,
 } from '../../components/AsyncStorage';
+import { FcGoogle } from 'react-icons/fc';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -232,28 +233,43 @@ const LoginScreen = ({ navigation }) => {
           {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
         </View>
 
-        <Button
-          testID="login-button"
-          mode="contained"
-          onPress={() => {
-            handleSubmit();
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          Log in
-        </Button>
-
-        <Text style={styles.link}>Forgot password?</Text>
-        {!googleUser ? (
+        <View style={[{ gap: 10 }]}>
           <Button
-            testID="google-login-button"
+            testID="login-button"
             mode="contained"
-            onPress={() => promptAsync()}
+            onPress={() => {
+              handleSubmit();
+            }}
             style={[styles.button, styles.full_width]}
           >
-            Login with Google
+            Login
           </Button>
-        ) : null}
+          {!googleUser ? (
+            <TouchableOpacity
+              testID="google-login-button"
+              mode="contained"
+              onPress={() => promptAsync()}
+              style={[
+                {
+                  borderColor: '#407BFF',
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingVertical: 10,
+                },
+                styles.full_width,
+              ]}
+            >
+              <FcGoogle fontSize={24} />
+              <Text style={{ color: '#407BFF', textAlign: 'center', paddingLeft: 5 }}>
+                Login with Google
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+        <Text style={styles.link}>Forgot password?</Text>
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
