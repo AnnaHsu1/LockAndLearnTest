@@ -31,7 +31,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const [suggestedWorkPackages, setSuggestedWorkPackages] = useState([]);
   const [checkedGrade, setCheckedGrade] = useState([]);
 
-
   // Function to handle selecting a work package
   const selectWorkPackage = (workPackage) => {
     console.log(workPackage);
@@ -51,7 +50,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   useEffect(() => {
     initializeCheckedGrade();
     fetchWorkPackages();
-    fetchCartWorkPackages();  
+    fetchCartWorkPackages();
   }, []);
 
   useEffect(() => {
@@ -78,22 +77,33 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     fetchData();
   }, []);
 
+  const getRandomWorkPackages = (childPreferences, allWorkPackages) => {
+    let updatedSuggestedWorkPackages = [];
+    let filteredWorkPackages = allWorkPackages.filter((workPackage) =>
+      childPreferences.includes(workPackage.name)
+    );
+
+    if (filteredWorkPackages.length > 5) {
+      for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * filteredWorkPackages.length);
+        updatedSuggestedWorkPackages.push(filteredWorkPackages[randomIndex]);
+        filteredWorkPackages.splice(randomIndex, 1);
+      }
+    } else {
+      updatedSuggestedWorkPackages = filteredWorkPackages;
+    }
+
+    return updatedSuggestedWorkPackages;
+  };
+
   useEffect(() => {
-    let childSuggestedWorkPackages = [];
+    let childSuggestedWorkPackages = {};
 
     for (let childKey in children) {
       let child = children[childKey];
-      let updatedSuggestedWorkPackages = [];
       let childPreferences = child.preferences;
 
-      for (let workPackageKey in workPackages) {
-        let workPackage = workPackages[workPackageKey];
-
-        if (childPreferences.includes(workPackage.name)) {
-          updatedSuggestedWorkPackages.push(workPackage);
-        }
-      }
-      childSuggestedWorkPackages[childKey] = updatedSuggestedWorkPackages;
+      childSuggestedWorkPackages[childKey] = getRandomWorkPackages(childPreferences, workPackages);
     }
 
     setSuggestedWorkPackages(childSuggestedWorkPackages);
@@ -183,43 +193,81 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           const workPackageArray = data.slice(0, numberOfWorkPackagesToLoad);
           if (checkedGrade.every((val) => val === false)) {
             filterWorkPackagesByText((displayOwned = false), workPackageArray);
-          }
-          else{
+          } else {
             for (let x in workPackageArray) {
-              if ((workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade ==='1') && checkedGrade[0] === true) {
+              if (
+                (workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade === '1') &&
+                checkedGrade[0] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade ==='2') && checkedGrade[1] === true) {
+              if (
+                (workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade === '2') &&
+                checkedGrade[1] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade ==='3') && checkedGrade[2] === true) {
+              if (
+                (workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade === '3') &&
+                checkedGrade[2] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade ==='4') && checkedGrade[3] === true) {
+              if (
+                (workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade === '4') &&
+                checkedGrade[3] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade ==='5') && checkedGrade[4] === true) {
+              if (
+                (workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade === '5') &&
+                checkedGrade[4] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade ==='6') && checkedGrade[5] === true) {
+              if (
+                (workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade === '6') &&
+                checkedGrade[5] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade ==='7') && checkedGrade[6] === true) {
+              if (
+                (workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade === '7') &&
+                checkedGrade[6] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade ==='8') && checkedGrade[7] === true) {
+              if (
+                (workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade === '8') &&
+                checkedGrade[7] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade ==='9') && checkedGrade[8] === true) {
+              if (
+                (workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade === '9') &&
+                checkedGrade[8] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '10th Grade' || workPackageArray[x].grade ==='10') && checkedGrade[9] === true) {
+              if (
+                (workPackageArray[x].grade === '10th Grade' ||
+                  workPackageArray[x].grade === '10') &&
+                checkedGrade[9] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '11th Grade' || workPackageArray[x].grade ==='11') && checkedGrade[10] === true) {
+              if (
+                (workPackageArray[x].grade === '11th Grade' ||
+                  workPackageArray[x].grade === '11') &&
+                checkedGrade[10] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if ((workPackageArray[x].grade === '12th Grade' || workPackageArray[x].grade ==='12') && checkedGrade[11] === true) {
+              if (
+                (workPackageArray[x].grade === '12th Grade' ||
+                  workPackageArray[x].grade === '12') &&
+                checkedGrade[11] === true
+              ) {
                 filteredResults.push(workPackageArray[x]);
               }
             }
@@ -317,7 +365,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
   // Function to handle the checkbox state
   const handleCheckbox = (grade) => {
-
     const tempArray = [...checkedGrade];
 
     switch (grade) {
@@ -367,7 +414,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     initializeCheckedGrade();
     document.getElementById('Search').value = '';
     fetchWorkPackages();
-
   };
 
   // Function to initialize the checkedGrade array to false
@@ -389,11 +435,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           marginHorizontal: 8,
         }}
       >
-        <Checkbox
-          status={checked ? 'checked' : 'unchecked'}
-          onPress={onChange}
-          color="blue"
-        />
+        <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={onChange} color="blue" />
         <Text
           style={{
             fontWeight: 'none',
@@ -698,7 +740,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                       Suggested Materials for {child.firstName} {child.lastName}
                     </Text>
                     <Carousel style={styles.carousel}>
-                      {suggestedWorkPackages.length !== 0 &&
+                      {Array.isArray(suggestedWorkPackages[childIndex]) &&
                         suggestedWorkPackages[childIndex].map((workPackage) => (
                           <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
                             <View style={styles.workPackageText}>
