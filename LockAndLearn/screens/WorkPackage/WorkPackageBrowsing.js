@@ -607,6 +607,87 @@ const WorkPackageBrowsingScreen = ({ route }) => {
           </View>
           <View style={{ maxHeight: 600 }}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
+              <View>
+                {children.map((child, childIndex) => (
+                  <View style={styles.viewChildPreferences} key={child.id}>
+                    <Text style={styles.child}>
+                      Suggested Work Packages for {child.firstName} {child.lastName}
+                    </Text>
+                    <Carousel style={styles.carousel}>
+                      {Array.isArray(suggestedWorkPackages[childIndex]) &&
+                        suggestedWorkPackages[childIndex].map((workPackage) => (
+                          <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
+                            <View style={styles.workPackageText}>
+                              <Text
+                                style={styles.workPackageNameText}
+                              >{`${workPackage.name}`}</Text>
+
+                              <View style={styles.containerTag}>
+                                <View style={styles.tagBox}>
+                                  <Text style={styles.tagText} selectable={false}>
+                                    {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`}{' '}
+                                    grade
+                                  </Text>
+                                </View>
+                              </View>
+
+                              <Text style={styles.workPackageDescription}>
+                                {`${
+                                  workPackage.description === undefined
+                                    ? ``
+                                    : `${workPackage.description} \n`
+                                }`}
+                              </Text>
+                              {workPackage.instructorDetails && (
+                                <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                                  Made by{' '}
+                                  <Text style={styles.boldText}>
+                                    {workPackage.instructorDetails.firstName}{' '}
+                                    {workPackage.instructorDetails.lastName}
+                                  </Text>
+                                </Text>
+                              )}
+                            </View>
+                            <View style={styles.priceAndButton}>
+                              <Text style={styles.priceWP}>
+                                {workPackage.price && workPackage.price !== 0
+                                  ? `$${workPackage.price} CAD`
+                                  : 'Free'}
+                              </Text>
+
+                              <Button
+                                key={workPackage._id}
+                                testID="addButton-wp1"
+                                mode="contained"
+                                contentStyle={{
+                                  minWidth: '50%',
+                                  maxWidth: '100%',
+                                  minHeight: 20,
+                                  justifyContent: 'center',
+                                  backgroundColor: isInUserCart(workPackage._id)
+                                    ? '#25B346'
+                                    : undefined,
+                                  flexWrap: 'wrap',
+                                }}
+                                style={[styles.button]}
+                                onPress={() => {
+                                  selectWorkPackage(workPackage);
+                                }}
+                                labelStyle={{ ...styles.cart, color: 'white' }}
+                                disabled={isInUserCart(workPackage._id)}
+                              >
+                                {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
+                              </Button>
+                            </View>
+                          </View>
+                        ))}
+                    </Carousel>
+                  </View>
+                ))}
+              </View>
+              <Text style={styles.child}>
+                      Explore Work Packages
+                    </Text>
               {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
               {workPackages.map((workPackage) => (
                 // Display the work package details
@@ -724,95 +805,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
               </Modal>
             </ScrollView>
           </View>
-          <View
-            style={{
-              borderBottomColor: 'black',
-              borderBottomWidth: 1,
-              marginTop: '50px',
-            }}
-          ></View>
-          <View style={{ marginTop: 70, borderTopColor: 'black', borderTopWidth: 1 }}>
-            <ScrollView contentContainerStyle={styles.carouselScrollViewContent}>
-              <View style={styles.viewPreferences}>
-                {children.map((child, childIndex) => (
-                  <View style={styles.viewChildPreferences} key={child.id}>
-                    <Text style={styles.child}>
-                      Suggested Materials for {child.firstName} {child.lastName}
-                    </Text>
-                    <Carousel style={styles.carousel}>
-                      {Array.isArray(suggestedWorkPackages[childIndex]) &&
-                        suggestedWorkPackages[childIndex].map((workPackage) => (
-                          <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
-                            <View style={styles.workPackageText}>
-                              <Text
-                                style={styles.workPackageNameText}
-                              >{`${workPackage.name}`}</Text>
-
-                              <View style={styles.containerTag}>
-                                <View style={styles.tagBox}>
-                                  <Text style={styles.tagText} selectable={false}>
-                                    {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`}{' '}
-                                    grade
-                                  </Text>
-                                </View>
-                              </View>
-
-                              <Text style={styles.workPackageDescription}>
-                                {`${
-                                  workPackage.description === undefined
-                                    ? ``
-                                    : `${workPackage.description} \n`
-                                }`}
-                              </Text>
-                              {workPackage.instructorDetails && (
-                                <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
-                                  Made by{' '}
-                                  <Text style={styles.boldText}>
-                                    {workPackage.instructorDetails.firstName}{' '}
-                                    {workPackage.instructorDetails.lastName}
-                                  </Text>
-                                </Text>
-                              )}
-                            </View>
-                            <View style={styles.priceAndButton}>
-                              <Text style={styles.priceWP}>
-                                {workPackage.price && workPackage.price !== 0
-                                  ? `$${workPackage.price} CAD`
-                                  : 'Free'}
-                              </Text>
-
-                              <Button
-                                key={workPackage._id}
-                                testID="addButton-wp1"
-                                mode="contained"
-                                contentStyle={{
-                                  minWidth: '50%',
-                                  maxWidth: '100%',
-                                  minHeight: 20,
-                                  justifyContent: 'center',
-                                  backgroundColor: isInUserCart(workPackage._id)
-                                    ? '#25B346'
-                                    : undefined,
-                                  flexWrap: 'wrap',
-                                }}
-                                style={[styles.button]}
-                                onPress={() => {
-                                  selectWorkPackage(workPackage);
-                                }}
-                                labelStyle={{ ...styles.cart, color: 'white' }}
-                                disabled={isInUserCart(workPackage._id)}
-                              >
-                                {isInUserCart(workPackage._id) ? 'Added to Cart' : 'Add to Cart'}
-                              </Button>
-                            </View>
-                          </View>
-                        ))}
-                    </Carousel>
-                  </View>
-                ))}
-              </View>
-            </ScrollView>
-          </View>
           <TouchableOpacity
             testID="viewCartButton"
             style={styles.viewCartButton}
@@ -849,6 +841,7 @@ const styles = StyleSheet.create(
     },
     viewChildPreferences: {
       display: 'flex',
+      maxHeight: 200,
     },
     child: {
       fontSize: 20,
