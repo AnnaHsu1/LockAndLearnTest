@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image, TouchableOpacity } from 'react-native';
+import {
+  Text,
+  TextInput,
+  View,
+  navigation,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
   widthPercentageToDP as wp,
@@ -21,7 +29,6 @@ import { FcGoogle } from 'react-icons/fc';
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = ({ navigation }) => {
-  const styles = useStyles();
   const deviceSize = useDeviceSize();
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
@@ -277,17 +284,18 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-const useStyles = CreateResponsiveStyle(
+const styles = StyleSheet.create(
   {
     page: {
       backgroundColor: '#ffffff',
-      maxWidth: wp('100%'),
+      maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
-      minWidth: wp('90%'),
-      minHeight: hp('65%'),
+      width: '100%',
+      maxWidth: 500,
+      minHeight: '65%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -338,8 +346,9 @@ const useStyles = CreateResponsiveStyle(
     },
     bottomCloud: {
       display: 'flex',
+      flex: 1,
       justifyContent: 'flex-end',
-      width: wp('100%'),
+      width: '100%',
       height: 250,
       resizeMode: 'stretch',
     },
@@ -351,7 +360,7 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       bottomCloud: {
-        width: wp('100%'),
+        width: '100%',
         height: 300,
         resizeMode: 'stretch',
         flex: 1,
@@ -359,5 +368,4 @@ const useStyles = CreateResponsiveStyle(
     },
   }
 );
-
 export default LoginScreen;

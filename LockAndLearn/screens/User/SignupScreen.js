@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { Text, TextInput, View, Image, TouchableOpacity } from 'react-native';
+import { Text, TextInput, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { RadioButton, Button } from 'react-native-paper';
 import {
   widthPercentageToDP as wp,
@@ -16,7 +16,6 @@ import { FcGoogle } from 'react-icons/fc';
 WebBrowser.maybeCompleteAuthSession();
 
 const SignupScreen = ({ navigation }) => {
-  const styles = useStyles();
   const [googleUserInfo, setGoogleUserInfo] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
@@ -203,7 +202,7 @@ const SignupScreen = ({ navigation }) => {
             <Text style={styles.field}>Last Name</Text>
             <TextInput
               testID="last-name-input"
-              style={[styles.textbox, styles.half_width]}
+              style={[styles.textbox]}
               value={fdata.LastName}
               onChangeText={(newText) => setFdata({ ...fdata, LastName: newText })}
             />
@@ -322,18 +321,19 @@ const SignupScreen = ({ navigation }) => {
 SignupScreen.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
-const useStyles = CreateResponsiveStyle(
+const styles = StyleSheet.create(
   {
     page: {
       backgroundColor: '#ffffff',
-      maxWidth: wp('100%'),
+      maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
-      minWidth: wp('90%'),
-      paddingLeft: 20,
-      paddingRight: 20,
+      width: '100%',
+      maxWidth: 500,
+      marginHorizontal: 20,
+      paddingHorizontal: 20,
       paddingTop: 20,
     },
     item: {
@@ -397,25 +397,26 @@ const useStyles = CreateResponsiveStyle(
       minWidth: '100%',
     },
     half_width: {
-      width: wp('40%'),
+      width: '40%',
     },
     bottomCloud: {
-      width: wp('100%'),
+      width: '100%',
       height: 250,
       resizeMode: 'stretch',
+      flex: 1,
     },
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
       container: {
-        minWidth: 500,
-        width: 500,
+        maxWidth: 400,
+        width: 400,
       },
       half_width: {
         width: 225,
       },
       bottomCloud: {
-        width: wp('100%'),
+        width: '100%',
         height: 300,
         resizeMode: 'stretch',
         flex: 1,
