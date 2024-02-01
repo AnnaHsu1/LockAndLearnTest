@@ -334,7 +334,7 @@ const styles = StyleSheet.create(
       maxWidth: 500,
       marginHorizontal: 20,
       paddingHorizontal: 20,
-      paddingTop: 20,
+      paddingVertical: 20,
     },
     item: {
       display: 'flex',
