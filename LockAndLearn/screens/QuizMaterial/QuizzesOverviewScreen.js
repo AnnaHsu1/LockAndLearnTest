@@ -20,6 +20,8 @@ const QuizzesOverviewScreen = ({ route }) => {
   const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
   const [selectedQuizId, setSelectedQuizId] = useState(null);
 
+  const [aiResponse, setAIResponse] = useState('');
+
   const fetchQuizzes = async () => {
     const user = await getUser();
     try {
@@ -68,6 +70,34 @@ const QuizzesOverviewScreen = ({ route }) => {
     }
   };
 
+  const fetchAIResponse = async () => {
+    const url =
+      'https://gpts4u.p.rapidapi.com/chatbase?role=user&content=Tell%20me%20a%20creative%20joke';
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': '5933339a3bmshb94ea9f04d12ecep1bf05cjsnfeaeca742c45',
+        'X-RapidAPI-Host': 'gpts4u.p.rapidapi.com',
+      },
+      body: JSON.stringify([
+        {
+          role: 'user',
+          content: 'Hello, tell me about beethoven',
+        },
+      ]),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const result = await response.text();
+      console.log('AI Response:', result); // Log the AI response
+      setAIResponse(result);
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+    }
+  };
+
   useEffect(() => {
     fetchQuizzes();
   }, [user]);
@@ -94,7 +124,7 @@ const QuizzesOverviewScreen = ({ route }) => {
                 >
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={fetchAIResponse}>
                   <MaterialIcons name="published-with-changes" size={40} color="orange" />
                 </TouchableOpacity>
                 <TouchableOpacity
