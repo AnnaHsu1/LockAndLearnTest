@@ -267,7 +267,7 @@ const useStyles = CreateResponsiveStyle(
       marginBottom: 25,
     },
     button: {
-      borderRadius: 20,
+      borderRadius: 10,
       fontSize: 20,
       fontStyle: 'normal',
       fontWeight: 600,

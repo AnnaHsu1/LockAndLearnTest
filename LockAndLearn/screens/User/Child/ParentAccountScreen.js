@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, Image } from 'react-native';
+import { Text, View, Image, TouchableOpacity } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
 import { Button, Icon } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
+import { Divider } from '@rneui/themed';
+import { IoIosBrowsers } from 'react-icons/io';
+import { GiPayMoney } from 'react-icons/gi';
+import { IoPersonAdd } from 'react-icons/io5';
+import { color } from '@rneui/themed/dist/config';
 
 const ParentAccountScreen = ({ navigation }) => {
   const styles = useStyles();
@@ -64,7 +65,32 @@ const ParentAccountScreen = ({ navigation }) => {
         ) : (
           <Text style={styles.title}>Welcome back</Text>
         )}
-        {children ? <Text style={styles.text}>Select a child </Text> : null}
+        <View
+          style={[{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}
+        >
+          {children ? <Text style={styles.text}>Select a child </Text> : null}
+          <TouchableOpacity
+            style={[
+              styles.text,
+              {
+                textAlign: 'center',
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderBlockColor: '#4F85FF',
+                borderRadius: 5,
+                borderWidth: 1,
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+              },
+            ]}
+            onPress={() => navigation.navigate('AddChild')}
+          >
+            <IoPersonAdd size={16} style={{ color: '#4F85FF' }} />
+            <Text style={[styles.child, { color: '#4F85FF', paddingLeft: 10, fontSize: 16 }]}>
+              Add Child
+            </Text>
+          </TouchableOpacity>
+        </View>
         {children.map((child) => (
           <Button
             key={child._id}
@@ -73,7 +99,7 @@ const ParentAccountScreen = ({ navigation }) => {
             contentStyle={{
               minWidth: '90%',
               maxWidth: '90%',
-              minHeight: 78,
+              minHeight: 80,
               justifyContent: 'flex-start',
             }}
             onPress={() => {
@@ -86,36 +112,50 @@ const ParentAccountScreen = ({ navigation }) => {
           </Button>
         ))}
         <StatusBar style="auto" />
-        <Text
-          style={[styles.text, { color: '#4F85FF', textAlign: 'center', paddingTop: 20 }]}
-          onPress={() => navigation.navigate('AddChild')}
-        >
-          + Add Child
-        </Text>
-        <Button
-          style={[styles.button, styles.full_width]}
-          contentStyle={{
-            minWidth: '90%',
-            maxWidth: '90%',
-            minHeight: 78,
-            justifyContent: 'flex-start',
-          }}
-          onPress={() => navigation.navigate('WorkPackageBrowsing')}
-        >
-          <Text style={[styles.child, { color: '#ffffff' }]}>Browse for Work Packages</Text>
-        </Button>
-        <Button
-          style={[styles.button, styles.full_width]}
-          contentStyle={{
-            minWidth: '90%',
-            maxWidth: '90%',
-            minHeight: 78,
-            justifyContent: 'flex-start',
-          }}
-          onPress={() => navigation.navigate('PurchasedMaterial')}
-        >
-          <Text style={[styles.child, { color: '#ffffff' }]}>View Purchased Material</Text>
-        </Button>
+        <Divider style={{ marginTop: 20, marginBottom: 20 }} />
+        <Text style={styles.text}>Work Packages</Text>
+        <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
+          <TouchableOpacity
+            style={[
+              {
+                borderColor: '#4F85FF',
+                borderRadius: 5,
+                borderWidth: 1,
+                width: 'auto',
+                flex: 0.5,
+                marginVertical: 10,
+                marginHorizontal: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 80,
+              },
+            ]}
+            onPress={() => navigation.navigate('WorkPackageBrowsing')}
+          >
+            <IoIosBrowsers size={30} color="#4F85FF" />
+            <Text style={[styles.child, { color: '#4F85FF', paddingLeft: 0 }]}>Browse</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              {
+                borderColor: '#4F85FF',
+                borderRadius: 5,
+                borderWidth: 1,
+                width: 'auto',
+                flex: 0.5,
+                marginVertical: 10,
+                marginHorizontal: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 80,
+              },
+            ]}
+            onPress={() => navigation.navigate('PurchasedMaterial')}
+          >
+            <GiPayMoney size={30} color="#4F85FF" />
+            <Text style={[styles.child, { color: '#4F85FF', paddingLeft: 0 }]}>Purchased</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
