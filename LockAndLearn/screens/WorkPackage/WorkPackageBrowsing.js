@@ -654,7 +654,26 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                                   ? `$${workPackage.price} CAD`
                                   : 'Free'}
                               </Text>
-                                  
+                              <Button
+                                key={workPackage._id}
+                                mode="contained"
+                                contentStyle={{
+                                  minWidth: '50%',
+                                  maxWidth: '100%',
+                                  minHeight: 20,
+                                  justifyContent: 'center',
+                                  flexWrap: 'wrap',
+                                }}
+                                style={[styles.previewButton]}
+                                onPress={() => {
+                                  console.log('Previewing '+workPackage);
+                                  navigation.navigate('WorkPackagePreview', { workPackage });
+                                }}
+                                labelStyle={{ ...styles.cart, color: 'white' }}
+                                disabled={isInUserCart(workPackage._id)}
+                              >
+                                Preview
+                              </Button>
                               <Button
                                 key={workPackage._id}
                                 testID="addButton-wp1"
@@ -685,9 +704,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                   </View>
                 ))}
               </View>
-              <Text style={styles.child}>
-                      Explore Work Packages
-                    </Text>
+              <Text style={styles.child}>Explore Work Packages</Text>
               {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
               {workPackages.map((workPackage) => (
                 // Display the work package details
@@ -696,7 +713,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                     <TouchableOpacity
                       key={workPackage._id}
                       onPress={() => {
-                        console.log(workPackage);
+                        console.log('Previewing '+workPackage);
                         navigation.navigate('WorkPackagePreview', { workPackage });
                       }}
                     >
@@ -733,7 +750,26 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         ? `$${workPackage.price} CAD`
                         : 'Free'}
                     </Text>
-
+                    <Button
+                      key={workPackage._id}
+                      mode="contained"
+                      contentStyle={{
+                        minWidth: '50%',
+                        maxWidth: '100%',
+                        minHeight: 20,
+                        justifyContent: 'center',
+                        flexWrap: 'wrap',
+                      }}
+                      style={[styles.previewButton]}
+                      onPress={() => {
+                        console.log(workPackage);
+                        navigation.navigate('WorkPackagePreview', { workPackage });
+                      }}
+                      labelStyle={{ ...styles.cart, color: 'white' }}
+                      disabled={isInUserCart(workPackage._id)}
+                    >
+                      Preview
+                    </Button>
                     <Button
                       key={workPackage._id}
                       testID="addButton-wp1"
@@ -940,7 +976,14 @@ const styles = StyleSheet.create(
       height: 40,
       flexWrap: 'wrap',
     },
-
+    previewButton: {
+      color: '#ffffff',
+      backgroundColor: '#96B6FD',
+      borderRadius: 10,
+      marginTop: 10,
+      height: 40,
+      flexWrap: 'wrap',
+    },
     cart: {
       paddingLeft: 0,
       textAlign: 'center',
