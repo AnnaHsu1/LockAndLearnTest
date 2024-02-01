@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 const ChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -45,17 +45,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
             {child.firstName} {child.lastName}
           </Text>
         </View>
-        {/* Start session */}
-        <Button
-          testID="start-session"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('Locking');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Start session</Text>
-        </Button>
         {/* Add Material */}
         <Button
           testID="add-child-material"
@@ -65,19 +54,8 @@ const ChildProfileScreen = ({ route, navigation }) => {
           }}
           style={[styles.button, styles.full_width]}
         >
-          <Text style={styles.text}>Add material</Text>
+          <Text style={styles.text}>Assign material</Text>
         </Button>
-        {/* Edit profile */}
-        {/* <Button
-          testID="purchased-material"
-          mode="contained"
-          onPress={() => {
-             navigation.navigate('PurchasedMaterial', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-            <Text style={styles.text}>View purchased material</Text>
-        </Button> */}
         {/* Edit profile */}
         <Button
           testID="edit-profile"
@@ -109,16 +87,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
         >
           <Text style={styles.text}>Set Preferences</Text>
         </Button>
-        <Button
-          testID="settings"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('ChildSettings', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Settings</Text>
-        </Button>
+
         {/* to be removed (tmp): quick tmp way to access page */}
         <Button
           testID="settings"
@@ -129,6 +98,16 @@ const ChildProfileScreen = ({ route, navigation }) => {
           style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>Study time</Text>
+        </Button>
+        <Button
+          testID="settings"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('ChildSettings', { child: child });
+          }}
+          style={[styles.button, styles.full_width]}
+        >
+          <Text style={styles.text}>Settings</Text>
         </Button>
       </View>
       {/* Delete child link */}
@@ -219,7 +198,7 @@ const useStyles = CreateResponsiveStyle(
       paddingRight: 20,
       paddingTop: 10,
       paddingBottom: 20, // Added bottom padding
-      marginTop: "3%",
+      marginTop: '3%',
       marginBottom: 10,
       borderRadius: 10,
       backgroundColor: '#4F85FF',
