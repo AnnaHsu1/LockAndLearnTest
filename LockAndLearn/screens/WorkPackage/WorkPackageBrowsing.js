@@ -654,7 +654,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                                   ? `$${workPackage.price} CAD`
                                   : 'Free'}
                               </Text>
-
+                                  
                               <Button
                                 key={workPackage._id}
                                 testID="addButton-wp1"
@@ -877,9 +877,9 @@ const styles = StyleSheet.create(
     },
     priceWP: {
       fontWeight: '700',
-      marginRight: 10,
       fontSize: '120%',
       color: '#696969',
+      textAlign: 'right',
     },
     title: {
       color: '#4F85FF',
