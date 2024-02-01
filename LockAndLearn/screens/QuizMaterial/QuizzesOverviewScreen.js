@@ -94,9 +94,12 @@ const QuizzesOverviewScreen = ({ route }) => {
                 >
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity>
+                  <MaterialIcons name="published-with-changes" size={40} color="orange" />
+                </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => deleteQuiz(quiz._id)}
-                // style={styles.deleteButton}
+                  // style={styles.deleteButton}
                 >
                   <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
                 </TouchableOpacity>
@@ -123,12 +126,10 @@ const QuizzesOverviewScreen = ({ route }) => {
         style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
       >
         <View style={styles.deleteConfirmationModal}>
-          <Text style={styles.confirmationText}>
-            Are you sure you want to delete this quiz?
-          </Text>
+          <Text style={styles.confirmationText}>Are you sure you want to delete this quiz?</Text>
           <View style={styles.confirmationButtons}>
             <TouchableOpacity
-              testID='deleteConfirmationModal'
+              testID="deleteConfirmationModal"
               onPress={() => {
                 confirmDelete();
                 setDeleteConfirmationModalVisible(false);
