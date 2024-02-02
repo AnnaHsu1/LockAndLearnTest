@@ -20,7 +20,7 @@ const AdminAccount = ({ route, navigation }) => {
       if (response.ok) {
         const data = await response.json();
         // Filter out the admin account
-        const nonAdminUsers = data.filter(user => user.email !== 'admin@lockandlearn.ca');
+        const nonAdminUsers = data.filter((user) => user.email !== 'admin@lockandlearn.ca');
         setUsers(nonAdminUsers);
       } else {
         console.error('Failed to fetch users:', response.status);
@@ -29,7 +29,6 @@ const AdminAccount = ({ route, navigation }) => {
       console.error('Error fetching users:', error);
     }
   };
-
 
   const deleteUser = async (userId) => {
     try {
@@ -50,7 +49,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const openModal = (userId) => {
     setSelectedUser(userId);
-    console.log("xxxxx" + userId);
+    console.log('xxxxx' + userId);
     setIsModalVisible(true);
   };
 
@@ -87,6 +86,10 @@ const AdminAccount = ({ route, navigation }) => {
     }
   };
 
+  const handleUserProfileNavigation = (userId) => {
+    // Navigate to AdminViewUserProfile and pass user._id
+    navigation.navigate('AdminViewUserProfile', { userId });
+  };
 
   return (
     <View style={styles.page}>
@@ -102,9 +105,11 @@ const AdminAccount = ({ route, navigation }) => {
                 key={index}
                 style={user.isParent ? styles.userContainerTutor : styles.userContainerTutor}
               >
-                <Text style={[styles.userName, !user.isParent && styles.userNameTutor]}>
-                  {user.firstName} {user.lastName}
-                </Text>
+                <TouchableOpacity onPress={() => handleUserProfileNavigation(user._id)}>
+                  <Text style={[styles.userName, !user.isParent && styles.userNameTutor]}>
+                    {user.firstName} {user.lastName}
+                  </Text>
+                </TouchableOpacity>
                 <Text style={styles.userDetails}>Email: {user.email}</Text>
                 <Text style={styles.userDetails}>Birthday: {user.birthDate}</Text>
                 <TouchableOpacity onPress={() => openModal(user._id)}>
@@ -169,10 +174,12 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       fontSize: 18,
       marginBottom: 5,
+      textDecorationLine: 'underline',
     },
 
     userNameTutor: {
       fontWeight: 'bold',
+      textDecorationLine: 'underline',
     },
 
     userContainerTutor: {
