@@ -60,7 +60,7 @@ import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial'
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
-
+import AdminViewUserProfile from '../screens/User/Admin/AdminViewUserProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -373,19 +373,24 @@ const StackNavigation = () => {
           options={{ title: 'CheckoutForm' }}
         />
         <Stack.Screen
-            name="WorkPackagePreview"
-            component={WorkPackagePreview}
-            options={{ title: 'WorkPackagePreview' }}
+          name="WorkPackagePreview"
+          component={WorkPackagePreview}
+          options={{ title: 'WorkPackagePreview' }}
         />
         <Stack.Screen
-            name="PackagePreview"
-            component={PackagePreview}
-            options={{ title: 'PackagePreview' }}
+          name="PackagePreview"
+          component={PackagePreview}
+          options={{ title: 'PackagePreview' }}
         />
         <Stack.Screen
           name="ChildTimeframes"
           component={ChildTimeframes}
           options={{ title: `List Child's Timeframes` }}
+        />
+        <Stack.Screen
+          name="AdminViewUserProfile"
+          component={AdminViewUserProfile}
+          options={{ title: `AdminViewUserProfile` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
