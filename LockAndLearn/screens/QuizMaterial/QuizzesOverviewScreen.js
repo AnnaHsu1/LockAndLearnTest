@@ -70,9 +70,17 @@ const QuizzesOverviewScreen = ({ route }) => {
     }
   };
 
-  const fetchAIResponse = async () => {
-    const url =
-      'https://gpts4u.p.rapidapi.com/chatbase?role=user&content=Tell%20me%20a%20creative%20joke';
+  const fetchAIResponse = async (quiz) => {
+    const url = 'https://gpts4u.p.rapidapi.com/chatbase';
+
+    // Call the getAllQuizContent function and log its result
+    const allQuizContent = getAllQuizContent(quiz);
+    console.log('All Quiz Content:', allQuizContent);
+
+    const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.
+
+    Quiz Content:`;
+
     const options = {
       method: 'POST',
       headers: {
@@ -83,7 +91,7 @@ const QuizzesOverviewScreen = ({ route }) => {
       body: JSON.stringify([
         {
           role: 'user',
-          content: 'Hello, tell me about beethoven',
+          content: introText + allQuizContent,
         },
       ]),
     };
@@ -91,11 +99,40 @@ const QuizzesOverviewScreen = ({ route }) => {
     try {
       const response = await fetch(url, options);
       const result = await response.text();
-      console.log('AI Response:', result); // Log the AI response
+      console.log('AI Response:', result);
       setAIResponse(result);
     } catch (error) {
       console.error('Error fetching AI response:', error);
     }
+  };
+
+  const getAllQuizContent = (quiz) => {
+    const contentArray = [];
+
+    // Add quiz name to the content
+    contentArray.push(`Quiz Name: ${quiz.name}`);
+
+    // Add questions and their details to the content
+    quiz.questions.forEach((question, index) => {
+      contentArray.push(`\nQuestion ${index + 1}: ${question.questionText}`);
+      contentArray.push(`Answer: ${question.answer}`);
+
+      // Add options array to the content
+      contentArray.push('Options:');
+      question.options.forEach((option, optionIndex) => {
+        contentArray.push(`- Option ${optionIndex + 1}: ${option}`);
+      });
+
+      // Add inputs array to the content
+      contentArray.push('Inputs:');
+      question.inputs.forEach((input, inputIndex) => {
+        contentArray.push(`- Input ${inputIndex + 1}: ${input}`);
+      });
+    });
+
+    // Concatenate all content into a single string
+    const allQuizContent = contentArray.join('\n');
+    return allQuizContent;
   };
 
   useEffect(() => {
@@ -124,7 +161,7 @@ const QuizzesOverviewScreen = ({ route }) => {
                 >
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={fetchAIResponse}>
+                <TouchableOpacity onPress={() => fetchAIResponse(quiz)}>
                   <MaterialIcons name="published-with-changes" size={40} color="orange" />
                 </TouchableOpacity>
                 <TouchableOpacity
