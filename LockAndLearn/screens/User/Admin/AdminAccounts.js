@@ -87,8 +87,8 @@ const AdminAccount = ({ route, navigation }) => {
   };
 
   const handleUserProfileNavigation = (userId) => {
-    // Navigate to AdminViewUserProfile and pass user._id
-    navigation.navigate('AdminViewUserProfile', { userId });
+    // Navigate to AdminViewTeacherProfile and pass user._id
+    navigation.navigate('AdminViewTeacherProfile', { userId });
   };
 
   return (

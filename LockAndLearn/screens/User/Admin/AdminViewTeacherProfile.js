@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 
-const AdminViewUserProfile = ({ route, navigation }) => {
+const AdminViewTeacherProfile = ({ route, navigation }) => {
   const styles = useStyles();
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -199,4 +199,4 @@ const useStyles = CreateResponsiveStyle(
   }
 );
 
-export default AdminViewUserProfile;
+export default AdminViewTeacherProfile;

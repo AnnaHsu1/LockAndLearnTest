@@ -60,7 +60,7 @@ import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial'
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
-import AdminViewUserProfile from '../screens/User/Admin/AdminViewUserProfile';
+import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -388,9 +388,9 @@ const StackNavigation = () => {
           options={{ title: `List Child's Timeframes` }}
         />
         <Stack.Screen
-          name="AdminViewUserProfile"
-          component={AdminViewUserProfile}
-          options={{ title: `AdminViewUserProfile` }}
+          name="AdminViewTeacherProfile"
+          component={AdminViewTeacherProfile}
+          options={{ title: `AdminViewTeacherProfile` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
