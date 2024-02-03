@@ -79,7 +79,7 @@ const QuizzesOverviewScreen = ({ route }) => {
         'X-RapidAPI-Host': 'nsfw-text-detection.p.rapidapi.com',
       },
     };
-  
+
     try {
       const response = await fetch(url + encodeURIComponent(contentToCheck), options);
       return await response.text();
@@ -88,13 +88,13 @@ const QuizzesOverviewScreen = ({ route }) => {
       return '';
     }
   };
-  
+
   const fetchBadWordFilter = async (contentToCheck) => {
     const url = 'https://neutrinoapi-bad-word-filter.p.rapidapi.com/bad-word-filter';
     const encodedParams = new URLSearchParams();
     encodedParams.set('content', contentToCheck);
     encodedParams.set('censor-character', '*');
-  
+
     const options = {
       method: 'POST',
       headers: {
@@ -104,7 +104,7 @@ const QuizzesOverviewScreen = ({ route }) => {
       },
       body: encodedParams,
     };
-  
+
     try {
       const response = await fetch(url, options);
       return await response.text();
@@ -113,41 +113,64 @@ const QuizzesOverviewScreen = ({ route }) => {
       return '';
     }
   };
-  
+
   const fetchAIResponse = async (quiz) => {
     const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.`;
-  
+
     const allQuizContent = getAllQuizContent(quiz);
     console.log('All Quiz Content:', allQuizContent);
-  
+
     const contentToCheck = `${introText} Quiz Content: ${allQuizContent}`;
-  
+
     try {
       const detectionResult = await fetchNSFWTextDetection(contentToCheck);
       console.log('Text Detection Result:', detectionResult);
-  
+
       const badWordFilterResult = await fetchBadWordFilter(allQuizContent);
       console.log('Bad Word Filter Result:', badWordFilterResult);
-  
+
       // Check if neither AI response contains "true" (ignoring case)
       const isApproved =
         !detectionResult.toLowerCase().includes('true') &&
         !badWordFilterResult.toLowerCase().includes('true');
-  
-      // Update the quiz's approved status
+      console.log('isApproved: '+isApproved)
+
+      // Update the quiz's approved status in the backend
+      await updateQuizApproval(quiz._id, isApproved);
+
+      // Update the quiz's approved status in the state
       const updatedQuizzes = quizzes.map((q) =>
         q._id === quiz._id ? { ...q, approved: isApproved } : q
       );
       setQuizzes(updatedQuizzes);
-  
+
       setAIResponse(detectionResult);
     } catch (error) {
       console.error('Error fetching AI response:', error);
     }
   };
+
+  const updateQuizApproval = async (quizId, approved) => {
+    const url = `http://localhost:4000/quizzes/${quizId}`;
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ approved: approved }),
+    };
   
-   
-  
+    try {
+      const response = await fetch(url, options);
+      if (response.status === 200) {
+        console.log('Quiz Approval Updated');
+      } else {
+        console.error('Error updating quiz approval');
+      }
+    } catch (error) {
+      console.error('Network error during quiz approval update:', error);
+    }
+  };  
 
   const getAllQuizContent = (quiz) => {
     const contentArray = [];
