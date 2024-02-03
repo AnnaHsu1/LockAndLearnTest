@@ -71,50 +71,44 @@ const QuizzesOverviewScreen = ({ route }) => {
   };
 
   const fetchAIResponse = async (quiz) => {
-    const url = 'https://gpts4u.p.rapidapi.com/chatbase';
-
-    // Call the getAllQuizContent function and log its result
+    const detectionUrl = 'https://nsfw-text-detection.p.rapidapi.com/nsfw?text=';
+  
+    const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.`;
+  
     const allQuizContent = getAllQuizContent(quiz);
     console.log('All Quiz Content:', allQuizContent);
-
-    const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.
-
-    Quiz Content:`;
-
-    const options = {
-      method: 'POST',
+  
+    const contentToCheck = `${introText} Quiz Content: ${allQuizContent}`;
+  
+    const detectionOptions = {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         'X-RapidAPI-Key': '5933339a3bmshb94ea9f04d12ecep1bf05cjsnfeaeca742c45',
-        'X-RapidAPI-Host': 'gpts4u.p.rapidapi.com',
+        'X-RapidAPI-Host': 'nsfw-text-detection.p.rapidapi.com',
       },
-      body: JSON.stringify([
-        {
-          role: 'user',
-          content: introText + allQuizContent,
-        },
-      ]),
     };
-
+  
     try {
-      const response = await fetch(url, options);
-      const result = await response.text();
-      console.log('AI Response:', result);
-
-      // Check if AI response contains "false" (ignoring case)
-      const isApproved = !result.toLowerCase().includes('false');
-
+      const detectionResponse = await fetch(detectionUrl + encodeURIComponent(contentToCheck), detectionOptions);
+      const detectionResult = await detectionResponse.text();
+      console.log('Text Detection Result:', detectionResult);
+  
+      // Check if detection result does not contain "true" (ignoring case)
+      const isApproved = !detectionResult.toLowerCase().includes('true');
+      console.log('isApproved:', isApproved);
+  
       // Update the quiz's approved status
       const updatedQuizzes = quizzes.map((q) =>
         q._id === quiz._id ? { ...q, approved: isApproved } : q
       );
       setQuizzes(updatedQuizzes);
-
-      setAIResponse(result);
+  
+      setAIResponse(detectionResult);
     } catch (error) {
       console.error('Error fetching AI response:', error);
     }
-  };
+  };  
+  
 
   const getAllQuizContent = (quiz) => {
     const contentArray = [];
