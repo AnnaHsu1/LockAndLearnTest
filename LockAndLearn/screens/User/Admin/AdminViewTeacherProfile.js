@@ -4,14 +4,36 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 
 const AdminViewTeacherProfile = ({ route, navigation }) => {
   const styles = useStyles();
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [workPackages, setWorkPackages] = useState([]);
+
+  // Existing states and effects
+
+  const getWorkPackages = async () => {
+    try {
+      const userToken = await getUser();
+      const response = await fetch(
+        'http://localhost:4000/workPackages/getWorkPackages/' + userToken._id,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      let data = await response.json();
+      if (response.status === 200) {
+        // // if tutor deleted workpackage, don't display it
+        data = data.filter((workpackage) => !workpackage.deletedByTutor);
+        setWorkPackages(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-  }, []);
+    getWorkPackages();
+  }, []); // Dependency array is empty, so this runs once on mount
 
 
   return (
@@ -21,8 +43,9 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
           <Text style={styles.title}>Profile of </Text>
         </View>
         <ScrollView style={styles.userListContainer}>
-
-
+        {workPackages.map((workpackage) => (
+            <WorkPackageCard key={workpackage._id} props={workpackage} />
+          ))}
         </ScrollView>
       </View>
     </View>
@@ -31,46 +54,6 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
-    passwordInput: {
-      height: 40,
-      borderColor: 'gray',
-      borderWidth: 1,
-      marginBottom: 15,
-      paddingHorizontal: 10,
-    },
-    errorText: {
-      color: 'red',
-      fontSize: 14,
-      marginBottom: 10,
-    },
-    userName: {
-      color: '#4F85FF',
-      fontSize: 18,
-      marginBottom: 5,
-    },
-
-    userNameTutor: {
-      fontWeight: 'bold',
-    },
-
-    userContainerTutor: {
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      padding: 10,
-    },
-
-    userDetails: {
-      color: 'grey',
-      fontSize: 16,
-    },
-
-    noUsersText: {
-      color: '#ffffff',
-      fontSize: 18,
-      textAlign: 'center',
-      marginTop: 20,
-    },
     page: {
       backgroundColor: '#ffffff',
       maxWidth: '100%',
@@ -121,63 +104,6 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
-    },
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
-    },
-    modalContent: {
-      backgroundColor: '#fff',
-      borderRadius: 10,
-      padding: 20,
-      width: '50%',
-      alignItems: 'center',
-    },
-    modalText: {
-      fontSize: 23,
-      marginBottom: 20,
-      textAlign: 'center',
-    },
-    modalTextConfirm: {
-      fontSize: 14,
-      marginBottom: 20,
-    },
-    modalButtons: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      width: '100%',
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 50,
-      justifyContent: 'center',
-      minWidth: 100,
-    },
-    confirmButton: {
-      backgroundColor: '#F24E1E',
-      padding: 10,
-      borderRadius: 10,
-      marginRight: 70,
-      justifyContent: 'center',
-    },
-    confirmButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-    },
-    cancelButton: {
-      backgroundColor: '#407BFF',
-      padding: 10,
-      borderRadius: 10,
-      justifyContent: 'center',
-    },
-    cancelButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-    },
-    deleteButton: {
-      color: 'red',
-      marginTop: 10,
     },
     userListContainer: {
       paddingRight: 20,
