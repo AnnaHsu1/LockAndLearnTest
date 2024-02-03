@@ -70,17 +70,9 @@ const QuizzesOverviewScreen = ({ route }) => {
     }
   };
 
-  const fetchAIResponse = async (quiz) => {
-    const detectionUrl = 'https://nsfw-text-detection.p.rapidapi.com/nsfw?text=';
-  
-    const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.`;
-  
-    const allQuizContent = getAllQuizContent(quiz);
-    console.log('All Quiz Content:', allQuizContent);
-  
-    const contentToCheck = `${introText} Quiz Content: ${allQuizContent}`;
-  
-    const detectionOptions = {
+  const fetchNSFWTextDetection = async (contentToCheck) => {
+    const url = 'https://nsfw-text-detection.p.rapidapi.com/nsfw?text=';
+    const options = {
       method: 'GET',
       headers: {
         'X-RapidAPI-Key': '5933339a3bmshb94ea9f04d12ecep1bf05cjsnfeaeca742c45',
@@ -89,13 +81,58 @@ const QuizzesOverviewScreen = ({ route }) => {
     };
   
     try {
-      const detectionResponse = await fetch(detectionUrl + encodeURIComponent(contentToCheck), detectionOptions);
-      const detectionResult = await detectionResponse.text();
+      const response = await fetch(url + encodeURIComponent(contentToCheck), options);
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching NSFW text detection response:', error);
+      return '';
+    }
+  };
+  
+  const fetchBadWordFilter = async (contentToCheck) => {
+    const url = 'https://neutrinoapi-bad-word-filter.p.rapidapi.com/bad-word-filter';
+    const encodedParams = new URLSearchParams();
+    encodedParams.set('content', contentToCheck);
+    encodedParams.set('censor-character', '*');
+  
+    const options = {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        'X-RapidAPI-Key': '5933339a3bmshb94ea9f04d12ecep1bf05cjsnfeaeca742c45',
+        'X-RapidAPI-Host': 'neutrinoapi-bad-word-filter.p.rapidapi.com',
+      },
+      body: encodedParams,
+    };
+  
+    try {
+      const response = await fetch(url, options);
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching bad word filter response:', error);
+      return '';
+    }
+  };
+  
+  const fetchAIResponse = async (quiz) => {
+    const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.`;
+  
+    const allQuizContent = getAllQuizContent(quiz);
+    console.log('All Quiz Content:', allQuizContent);
+  
+    const contentToCheck = `${introText} Quiz Content: ${allQuizContent}`;
+  
+    try {
+      const detectionResult = await fetchNSFWTextDetection(contentToCheck);
       console.log('Text Detection Result:', detectionResult);
   
-      // Check if detection result does not contain "true" (ignoring case)
-      const isApproved = !detectionResult.toLowerCase().includes('true');
-      console.log('isApproved:', isApproved);
+      const badWordFilterResult = await fetchBadWordFilter(allQuizContent);
+      console.log('Bad Word Filter Result:', badWordFilterResult);
+  
+      // Check if neither AI response contains "true" (ignoring case)
+      const isApproved =
+        !detectionResult.toLowerCase().includes('true') &&
+        !badWordFilterResult.toLowerCase().includes('true');
   
       // Update the quiz's approved status
       const updatedQuizzes = quizzes.map((q) =>
@@ -107,7 +144,9 @@ const QuizzesOverviewScreen = ({ route }) => {
     } catch (error) {
       console.error('Error fetching AI response:', error);
     }
-  };  
+  };
+  
+   
   
 
   const getAllQuizContent = (quiz) => {
