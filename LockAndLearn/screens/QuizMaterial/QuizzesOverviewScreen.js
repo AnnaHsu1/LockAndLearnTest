@@ -100,6 +100,16 @@ const QuizzesOverviewScreen = ({ route }) => {
       const response = await fetch(url, options);
       const result = await response.text();
       console.log('AI Response:', result);
+
+      // Check if AI response contains "false" (ignoring case)
+      const isApproved = !result.toLowerCase().includes('false');
+
+      // Update the quiz's approved status
+      const updatedQuizzes = quizzes.map((q) =>
+        q._id === quiz._id ? { ...q, approved: isApproved } : q
+      );
+      setQuizzes(updatedQuizzes);
+
       setAIResponse(result);
     } catch (error) {
       console.error('Error fetching AI response:', error);
@@ -163,7 +173,7 @@ const QuizzesOverviewScreen = ({ route }) => {
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => fetchAIResponse(quiz)}>
-                  {aiResponse.toLowerCase().includes('false') ? (
+                  {quiz.approved ? (
                     <MaterialIcons name="check-circle" size={40} color="green" />
                   ) : (
                     <MaterialIcons name="published-with-changes" size={40} color="orange" />
