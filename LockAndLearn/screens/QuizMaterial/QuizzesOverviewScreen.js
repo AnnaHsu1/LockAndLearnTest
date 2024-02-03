@@ -114,6 +114,7 @@ const QuizzesOverviewScreen = ({ route }) => {
 
     // Add questions and their details to the content
     quiz.questions.forEach((question, index) => {
+      contentArray.push(`\n${quiz.name}`);
       contentArray.push(`\nQuestion ${index + 1}: ${question.questionText}`);
       contentArray.push(`Answer: ${question.answer}`);
 
