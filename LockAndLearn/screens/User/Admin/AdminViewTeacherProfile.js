@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
-import { useRoute } from '@react-navigation/native';
-import { WorkPackageCard } from '../../../components/WorkPackageCard';
+import { Button } from 'react-native-paper';
 
 const AdminViewTeacherProfile = ({ route, navigation }) => {
   const styles = useStyles();
   const [workPackages, setWorkPackages] = useState([]);
   const userId = route.params?.userId;
-
-  // Existing states and effects
 
   const getWorkPackages = async () => {
     try {
@@ -60,51 +57,64 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
           <Text style={styles.title}>Profile of </Text>
         </View>
         <ScrollView style={styles.userListContainer}>
-          {workPackages.map((workPackage) => (
-            // Display the work package details
-            <View key={workPackage._id} style={styles.workPackageBox}>
-              <View style={styles.workPackageText}>
-                <TouchableOpacity
-                  key={workPackage._id}
-                  onPress={() => {
-                    console.log(workPackage);
-                    navigation.navigate('WorkPackagePreview', { workPackage });
-                  }}
-                >
-                  <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
-                </TouchableOpacity>
+        {workPackages.map((workPackage) => (
+                // Display the work package details
+                <View key={workPackage._id} style={styles.workPackageBox}>
+                  <View style={styles.workPackageText}>
+                    <TouchableOpacity
+                      key={workPackage._id}
+                      onPress={() => {
+                        console.log('Previewing '+workPackage);
+                        navigation.navigate('WorkPackagePreview', { workPackage });
+                      }}
+                    >
+                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                    </TouchableOpacity>
 
-                <View style={styles.containerTag}>
-                  <View style={styles.tagBox}>
-                    <Text style={styles.tagText} selectable={false}>
-                      {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`} grade
+                    <View style={styles.containerTag}>
+                      <View style={styles.tagBox}>
+                        <Text style={styles.tagText} selectable={false}>
+                          {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`} grade
+                        </Text>
+                      </View>
+                    </View>
+
+                    <Text style={styles.workPackageDescription}>
+                      {`${
+                        workPackage.description === undefined ? `` : `${workPackage.description}`
+                      }`}
                     </Text>
+
+                    {workPackage.instructorDetails && (
+                      <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                        Made by{' '}
+                        <Text style={styles.boldText}>
+                          {workPackage.instructorDetails.firstName}{' '}
+                          {workPackage.instructorDetails.lastName}
+                        </Text>
+                      </Text>
+                    )}
+                  </View>
+                  <View>
+                    <Text style={styles.priceWP}>
+                      {workPackage.price && workPackage.price !== 0
+                        ? `$${workPackage.price} CAD`
+                        : 'Free'}
+                    </Text>
+                    <Button
+                      key={workPackage._id}
+                      mode="contained"
+                      style={[styles.previewButton]}
+                      onPress={() => {
+                        console.log(workPackage);
+                        navigation.navigate('WorkPackagePreview', { workPackage });
+                      }}
+                    >
+                      Preview
+                    </Button>
                   </View>
                 </View>
-
-                <Text style={styles.workPackageDescription}>
-                  {`${workPackage.description === undefined ? `` : `${workPackage.description}`}`}
-                </Text>
-
-                {workPackage.instructorDetails && (
-                  <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
-                    Made by{' '}
-                    <Text style={styles.boldText}>
-                      {workPackage.instructorDetails.firstName}{' '}
-                      {workPackage.instructorDetails.lastName}
-                    </Text>
-                  </Text>
-                )}
-              </View>
-              <View style={styles.priceAndButton}>
-                <Text style={styles.priceWP}>
-                  {workPackage.price && workPackage.price !== 0
-                    ? `$${workPackage.price} CAD`
-                    : 'Free'}
-                </Text>
-              </View>
-            </View>
-          ))}
+              ))} 
         </ScrollView>
       </View>
     </View>
@@ -121,16 +131,11 @@ const useStyles = CreateResponsiveStyle(
       flex: 1, // Allow text to wrap within the available space
     },
     workPackageBox: {
-      flexDirection: 'row',
-      maxHeight: 200,
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      borderColor: '#4F85FF',
+      backgroundColor: '#fff',
+      padding: 15,
+      marginBottom: 15,
       borderRadius: 8,
-      padding: 10,
-      marginBottom: 10,
-      width: '50vw',
-      alignSelf: 'center',
+      elevation: 2,
     },
     workPackageItem: {
       fontSize: 16,
@@ -176,7 +181,6 @@ const useStyles = CreateResponsiveStyle(
     },
     priceWP: {
       fontWeight: '700',
-      marginRight: 10,
       fontSize: '120%',
       color: '#696969',
     },
@@ -217,15 +221,6 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       paddingTop: 15,
     },
-    button: {
-      color: '#4F85FF',
-      backgroundColor: '#ffffff',
-      borderRadius: 10,
-      marginVertical: 10,
-      height: 80,
-      justifyContent: 'center',
-      minWidth: 100,
-    },
     bottomCloud: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -240,6 +235,39 @@ const useStyles = CreateResponsiveStyle(
     userListContainer: {
       paddingRight: 20,
     },
+    tagBox: {
+      backgroundColor: '#7393B3',
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderTopRightRadius: 70,
+      borderBottomRightRadius: 70,
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      marginTop: 6,
+      marginBottom: 6,
+    },
+    tagText: {
+      textAlign: 'center',
+      color: 'white',
+    },
+    containerTag: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
+    boldText: {
+      fontWeight: 'bold', // Make the instructor's name bold
+    },
+    workPackageDescription: {
+      fontSize: '110%',
+      color: '#696969',
+    },
+    instructorDetails: {
+      fontSize: '80%',
+      color: '#696969',
+    },
+    previewButton:{
+      maxWidth: 130,
+    }
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
