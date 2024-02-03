@@ -162,12 +162,13 @@ const QuizzesOverviewScreen = ({ route }) => {
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => fetchAIResponse(quiz)}>
-                  <MaterialIcons name="published-with-changes" size={40} color="orange" />
+                  {aiResponse.toLowerCase().includes('false') ? (
+                    <MaterialIcons name="check-circle" size={40} color="green" />
+                  ) : (
+                    <MaterialIcons name="published-with-changes" size={40} color="orange" />
+                  )}
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => deleteQuiz(quiz._id)}
-                  // style={styles.deleteButton}
-                >
+                <TouchableOpacity onPress={() => deleteQuiz(quiz._id)}>
                   <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
                 </TouchableOpacity>
               </View>
