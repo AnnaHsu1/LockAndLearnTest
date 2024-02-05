@@ -6,11 +6,12 @@ import { useNavigation } from '@react-navigation/native';
 
 const Spacer = ({ height, width }) => <View style={{ height, width }} />;
 
-const LockingSessionBeginsScreen = () => {
+const LockingSessionBeginsScreen = ({route}) => {
   const navigation = useNavigation(); // Get the navigation object
   const [modalVisible, setModalVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordBorderColor, setPasswordBorderColor] = useState('#407BFF'); // Initialize border color
+  const child_ID= route.params.child_ID;
 
   const closeSession = () => {
     if (password === '1234') {
@@ -22,18 +23,18 @@ const LockingSessionBeginsScreen = () => {
     }
   };
 
-  // useEffect(() => {
-  //   // Use useEffect to run the navigation code after a delay
-  //   const delay = 2000; // 2 seconds in milliseconds
+  useEffect(() => {
+    // Use useEffect to run the navigation code after a delay
+    const delay = 2000; // 2 seconds in milliseconds
 
-  //   const timer = setTimeout(() => {
-  //     // Navigate to the "LockingSchedulePresentation" screen after the delay
-  //     navigation.navigate('LockingSchedulePresentation');
-  //   }, delay);
+    const timer = setTimeout(() => {
+      // Navigate to the "LockingSchedulePresentation" screen after the delay
+      navigation.navigate('DisplayStudyMaterial', { child_ID: child_ID});
+    }, delay);
 
-  //   // Clean up the timer when the component unmounts
-  //   return () => clearTimeout(timer);
-  // }, []);
+    // Clean up the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <View style={styles.container}>

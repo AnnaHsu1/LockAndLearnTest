@@ -50,7 +50,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
           testID="start-session"
           mode="contained"
           onPress={() => {
-            navigation.navigate('Locking');
+            navigation.navigate('Locking',{ child_ID: child._id });
           }}
           style={[styles.button, styles.full_width]}
         >
@@ -118,17 +118,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
           style={[styles.button, styles.full_width]}
         >
           <Text style={styles.text}>Settings</Text>
-        </Button>
-        {/* to be removed (tmp): quick tmp way to access page */}
-        <Button
-          testID="settings"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('DisplayStudyMaterial', { child_ID: child._id });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Study time</Text>
         </Button>
       </View>
       {/* Delete child link */}
