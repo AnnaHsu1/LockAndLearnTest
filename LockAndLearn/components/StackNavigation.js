@@ -60,6 +60,7 @@ import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial'
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
+import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
 
 
 const Stack = createNativeStackNavigator();
@@ -308,6 +309,11 @@ const StackNavigation = () => {
           name="WorkPackageBrowsing"
           component={WorkPackageBrowsing}
           options={{ title: 'Work Package Browsing' }}
+              />
+        <Stack.Screen
+            name="FinanceInstructor"
+            component={FinanceInstructor}
+            options={{ title: 'Finance Instructor' }}
         />
         <Stack.Screen
           name="WorkPackageCart"

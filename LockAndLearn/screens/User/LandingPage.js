@@ -309,7 +309,13 @@ const LandingPage = ({ navigation }) => {
             onPress={() => navigation.navigate('ViewUploads', { newFilesAdded: undefined })}
           >
             <Text style={styles.text}>My files</Text>
-          </TouchableOpacity>
+                  </TouchableOpacity>
+        <TouchableOpacity
+            style={styles.content}
+            onPress={() => navigation.navigate('FinanceInstructor')}
+        >
+            <Text style={styles.text}>My finance</Text>
+        </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.containerFile}>
