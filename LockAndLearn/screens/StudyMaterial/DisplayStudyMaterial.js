@@ -119,6 +119,8 @@ const DisplayStudyMaterial = ({}) => {
       quizId: quiz._id,
       quizLength: quiz.questions.length,
       questionIndex: 0,
+      child_ID: childID,
+      subject: packageInfo.name,
     });
   };
 
