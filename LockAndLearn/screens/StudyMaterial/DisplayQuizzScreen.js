@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 
 const DisplayQuizzScreen = ({ route }) => {
     const navigation = useNavigation();
+    const childID = route.params.child_ID;
     const quizId = route.params.quizId;
     const questionIndex = route.params.questionIndex;
     const quizLength = route.params.quizLength;
+    const subject = route.params.subject;
     const [questions, setQuestions] = useState(route.params.questions || []);
 
     const [questionText, setQuestionText] = useState('');
@@ -177,7 +179,61 @@ const DisplayQuizzScreen = ({ route }) => {
         }
     }
 
+
+    const fetchThreshold = async () => {
+        // add part fetching threshold
+        const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        });
+        const data = await response.json();
+        console.log("DATAAAAAAA", data);
+
+        const threshold = data.find(sub => sub.name === subject).grade;
+
+        return threshold;
+    }
+
+    const saveQuizResult = async (numOfCorrectAnswers) => {
+        const threshold = await fetchThreshold();
+        const grade = (numOfCorrectAnswers/quizLength) * 100;
+        const status = (threshold >= grade) ? "failed" : "passed";
+        try {
+            const newChildQuizResult = {
+                childID: childID,
+                quizID: quizId,
+                answers: answers,
+                score: grade,
+                status: status,
+                date: Date.now(),
+            }
+            console.log("NEW QUIZ RESULT OBJECT", newChildQuizResult);
+
+            const response = await fetch('http://localhost:4000/childQuizResults/addChildQuizResults', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newChildQuizResult),
+            });
+            
+            if (response.status === 201 || response.status === 200) {
+            console.log("newChildQuizResult successfully saved in database!")
+            }
+
+        } catch (error) {
+            console.error('Error creating newChildQuizResult:', error);
+            // Handle network errors or server issues
+        } finally {
+            setLoading(false);
+        }
+
+    }
+
     useEffect(() => {
+        fetchThreshold();
         fetchQuestion();
     }, [questionIndex]);
 
@@ -266,6 +322,8 @@ const DisplayQuizzScreen = ({ route }) => {
                                     quizId: quizId,
                                     quizLength: quizLength,
                                     questionIndex: questionIndex - 1,
+                                    child_ID: childID,
+                                    subject: subject,
                                 });
                             }}
                         >
@@ -280,6 +338,8 @@ const DisplayQuizzScreen = ({ route }) => {
                                     quizId: quizId,
                                     quizLength: quizLength,
                                     questionIndex: questionIndex + 1,
+                                    child_ID: childID,
+                                    subject: subject,
                                 });
                             }}
                         >
@@ -291,15 +351,16 @@ const DisplayQuizzScreen = ({ route }) => {
                             style={styles.finishQuizButton}
                             onPress={() => {
                                 fetchQuestion();
+                                saveQuizResult(handleGrade(answers, solutions));
                                 // const grade = handleGrade(answers, solutions);
-                                navigation.navigate('QuizGradeScreen', {
-                                    quizId: quizId,
-                                    numOfCorrectAnswers: handleGrade(answers, solutions),
-                                    quizLength: quizLength,
-                                    answers: answers,
-                                    solutions: solutions,
-                                    questions: questions,
-                                });
+                                // navigation.navigate('QuizGradeScreen', {
+                                //     quizId: quizId,
+                                //     numOfCorrectAnswers: handleGrade(answers, solutions),
+                                //     quizLength: quizLength,
+                                //     answers: answers,
+                                //     solutions: solutions,
+                                //     questions: questions,
+                                // });
                             }}
                         >
                             <Text style={styles.finishQuizButtonText} testID='save-button'>Finish Quiz</Text>
