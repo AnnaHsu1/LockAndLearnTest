@@ -11,10 +11,6 @@ const childQuizResultsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  packageID: { // needed to get wpID (to get subject passing grade)
-    type: String,
-    default: [],
-  },
   childAnswers: {
     type: Array,
     default: [],
@@ -23,9 +19,8 @@ const childQuizResultsSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  hasPassed: {
-    type: Array,
-    default: Boolean,
+  status: {
+    type: String,
   },
   Date: {
     type: Date,
