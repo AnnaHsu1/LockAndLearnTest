@@ -70,6 +70,7 @@ const ParentAccountScreen = ({ navigation }) => {
         >
           {children ? <Text style={styles.text}>Select a child </Text> : null}
           <TouchableOpacity
+            testID="add-child-button"
             style={[
               styles.text,
               {
