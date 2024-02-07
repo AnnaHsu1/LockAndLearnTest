@@ -31,5 +31,27 @@ router.post('/addChildQuizResults', async (req, res) => {
     }
   });
 
+// get status for a quiz based on childId and quizId
+router.get('/getStatusForQuiz', async (req, res) => {
+    try {
+        // Use query parameters for GET requests
+        const { childID, quizID } = req.query;
+
+        // Use findOne to retrieve a single document that matches the criteria
+        const quizResult = await ChildQuizResults.findOne({ childID: childID, quizID: quizID });
+
+        if (!quizResult) {
+            return res.status(404).json({ error: 'Quiz result not found' });
+        }
+
+        const status = quizResult.status;
+
+        res.json({ status: status });
+    } catch (error) {
+        console.error('Error getting childQuizResults status:', error);
+        res.status(500).json({ error: 'Unable to get childQuizResults status' });
+    }
+});
+
 
 module.exports = router;
