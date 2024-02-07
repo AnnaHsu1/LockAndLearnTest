@@ -105,11 +105,29 @@ const AdminAccount = ({ route, navigation }) => {
                 key={index}
                 style={user.isParent ? styles.userContainerTutor : styles.userContainerTutor}
               >
-                <TouchableOpacity onPress={() => handleUserProfileNavigation(user._id)}>
-                  <Text style={[styles.userName, !user.isParent && styles.userNameTutor]}>
+                {!user.isParent ? (
+                  <TouchableOpacity onPress={() => handleUserProfileNavigation(user._id)}>
+                    <Text
+                      style={[
+                        styles.userName,
+                        !user.isParent && styles.underline,
+                        !user.isParent && styles.userNameTutor,
+                      ]}
+                    >
+                      {user.firstName} {user.lastName}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text
+                    style={[
+                      styles.userName,
+                      !user.isParent && styles.underline,
+                      !user.isParent && styles.userNameTutor,
+                    ]}
+                  >
                     {user.firstName} {user.lastName}
                   </Text>
-                </TouchableOpacity>
+                )}
                 <Text style={styles.userDetails}>Email: {user.email}</Text>
                 <Text style={styles.userDetails}>Birthday: {user.birthDate}</Text>
                 <TouchableOpacity onPress={() => openModal(user._id)}>
@@ -158,6 +176,9 @@ const AdminAccount = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    underline: {
+      textDecorationLine: 'underline',
+    },
     passwordInput: {
       height: 40,
       borderColor: 'gray',
@@ -174,9 +195,7 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       fontSize: 18,
       marginBottom: 5,
-      textDecorationLine: 'underline',
     },
-
     userNameTutor: {
       fontWeight: 'bold',
       textDecorationLine: 'underline',
