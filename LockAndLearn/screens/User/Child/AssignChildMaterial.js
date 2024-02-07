@@ -24,6 +24,78 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const data = await response.json();
     setPreviouslyAssigned(data);
   };
+  // const [workPackageData, setWorkPackageData] =  useState([])
+  // [
+  //   workpackageID: {packageID, status}, {packageID...},
+  //   workpackageID: {status},
+  //   workpackageID: {}
+  //  ]
+  
+  
+  const fetchPackagesForAWorkPackage = async (async workPackageId => {
+    // call backend to get all package related to wpID
+    try {
+      const response = await fetch(
+        `http://localhost:4000/packages/fetchPackages/${workPackageId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      if (response.status === 200) {
+        const packages = await response.json();
+        const packagesStatus = [];
+        packages.forEach((pckg) => {
+          if (pckg.quizzes) {
+            quizzesStatus = []
+            // for each quizid fetch the quiz status pass/fail with given childid
+            let packageStatus = "pass";
+            pckg.quizzes.forEach(async (quizId)=>{
+              try{
+                const response = await fetch(
+                  `http://localhost:4000/childQuizResults/fetchQuizStatus/${childId}/${quizId}`,
+                  {
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  }
+                );
+                if (response.status === 200 || response.status === 201) {
+                  const quizStatus = await response.json();
+                  if ( quizStatus === 'fail'){
+                    packageStatus = "fail"
+                  }
+                }
+  
+              } catch (error) {
+                console.error('Network error:', error);
+              }
+            })
+            if (packageStatus === 'pass') {
+              packagesStatus[pckg._id] = 'pass';
+            }
+            else {
+              packagesStatus[pckg._id] = 'fail';
+              return 'fail'
+            }
+          } 
+        })
+      } else {
+        console.error('Error fetching workPackages');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+    // and get packageid and status
+
+    // [..., setWorkPackageData]
+
+    // set status of workpackage
+
+  })
 
   // function to get all owned work packages from the user
   const fetchWorkPackages = async (displayOwned = false) => {
@@ -41,8 +113,15 @@ const AssignChildMaterial = ({ route, navigation }) => {
         );
         if (response.status === 200) {
           const data = await response.json();
+
+          // create a function to get all package for each wp
+          // inside each package, get their status
+          // sort wp and package to get right status
+          // display status for each wp
+
           setWorkPackages(data);
           data.forEach((workPackage) => {
+            fetchPackagesForAWorkPackage(workPackage._id);
             setCheckedboxItems((prevCheckedboxItems) => ({
               ...prevCheckedboxItems,
               [workPackage._id]: previouslyAssigned.includes(workPackage._id),
