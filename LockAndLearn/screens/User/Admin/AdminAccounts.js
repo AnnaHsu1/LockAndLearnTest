@@ -165,7 +165,10 @@ const AdminAccount = ({ route, navigation }) => {
             users.map((user, index) => (
               <View
                 key={index}
-                style={user.isParent ? styles.userContainerTutor : styles.userContainerTutor}
+                style={[
+                  user.isParent ? styles.userContainerTutor : styles.userContainerTutor,
+                  user.suspended ? styles.suspendedUserContainer : null,
+                ]}
               >
                 {!user.isParent ? (
                   <TouchableOpacity onPress={() => handleUserProfileNavigation(user._id)}>
@@ -273,6 +276,9 @@ const AdminAccount = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    suspendedUserContainer: {
+      backgroundColor: '#c2c2c2',
+    },
     underline: {
       textDecorationLine: 'underline',
     },
