@@ -50,25 +50,23 @@ router.put('/addChildQuizResults', async (req, res) => {
 
 
 // get status for a quiz based on childId and quizId
-router.get('/getStatusForQuiz', async (req, res) => {
-    try {
-        // Use query parameters for GET requests
-        const { childID, quizID } = req.query;
+router.get('/getStatusForQuiz/:id/:quizId', async (req, res) => {
+  try {
+      // Use query parameters for GET requests
+      const childID = req.params.id;
+      const quizID = req.params.quizId;
+      // Use findOne to retrieve a single document that matches the criteria
+      const quizResult = await ChildQuizResults.findOne({ childID: childID, quizID: quizID });
+      if (!quizResult) {
+          return res.status(404).json({ error: 'Quiz result not found' });
+      }
 
-        // Use findOne to retrieve a single document that matches the criteria
-        const quizResult = await ChildQuizResults.findOne({ childID: childID, quizID: quizID });
-
-        if (!quizResult) {
-            return res.status(404).json({ error: 'Quiz result not found' });
-        }
-
-        const status = quizResult.status;
-
-        res.json({ status: status });
-    } catch (error) {
-        console.error('Error getting childQuizResults status:', error);
-        res.status(500).json({ error: 'Unable to get childQuizResults status' });
-    }
+      const status = quizResult.status;
+      res.status(201).json({ quizResultStatus: status });
+  } catch (error) {
+      console.error('Error getting childQuizResults status:', error);
+      res.status(500).json({ error: 'Unable to get childQuizResults status' });
+  }
 });
 
 
