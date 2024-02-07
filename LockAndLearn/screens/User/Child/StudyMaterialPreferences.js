@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import { StyleSheet, Text, View, ImageBackground, FlatList, TouchableOpacity } from 'react-native';
 import { Checkbox } from 'react-native-paper';
@@ -14,31 +14,29 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
     ParentId: childInfo.parentId,
     Preferences: childInfo.preferences,
   });
+  const [subcategories, setSubcategories] = useState([]);
 
-  const [dataFilter, setDataFilter] = useState([
-    { id: 1, label: 'French' },
-    { id: 2, label: 'Math' },
-    { id: 3, label: 'Science' },
-    { id: 4, label: 'History' },
-    { id: 5, label: 'Biology' },
-    { id: 6, label: 'English' },
-    { id: 7, label: 'Computer Science' },
-    { id: 8, label: 'Chemistry' },
-    { id: 9, label: 'Physics' },
-    { id: 10, label: 'Ethics' },
-    { id: 11, label: 'Geography' },
-    { id: 12, label: 'Art' },
-    { id: 13, label: 'Music' },
-    { id: 14, label: 'Physical Education (PE)' },
-    { id: 15, label: 'Social Studies' },
-    { id: 16, label: 'Literature' },
-    { id: 17, label: 'Economics' },
-    { id: 18, label: 'Spanish' },
-    { id: 19, label: 'German' },
-    { id: 20, label: 'Environmental Science' },
-  ]);
+  useEffect(() => {
+    fetchSubcategories();
+  }, []);
+
+  //fetching all the subcategories
+  const fetchSubcategories = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/subcategories/fetchAll');
+      if (response.ok) {
+        const data = await response.json();
+        setSubcategories(data);
+      } else {
+        console.error('Failed to fetch subcategories:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching subcategories:', error);
+    }
+  };
+
   const [checkedboxItems, setCheckedboxItems] = useState({});
-  const [selectedNumber, setSelectedNumber] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState([]);
   const [selectedLabels, setSelectedLabels] = useState([]);
 
   const toggleCheckbox = (id) => {
@@ -47,18 +45,20 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
         ...prevCheckedboxItems,
         [id]: !prevCheckedboxItems[id] || false,
       };
-      updateselectedNumber(updatedCheckedboxItems);
+      updateSelectedSubjects(updatedCheckedboxItems);
       return updatedCheckedboxItems;
     });
   };
 
-  const updateselectedNumber = (updatedCheckedboxItems) => {
-    const numbers = Object.keys(updatedCheckedboxItems)
+  const updateSelectedSubjects = (updatedCheckedboxItems) => {
+    const subject = Object.keys(updatedCheckedboxItems)
       .filter((key) => updatedCheckedboxItems[key])
-      .map(Number);
+      .map(String);
 
-    setSelectedNumber(numbers);
-    const labels = dataFilter.filter((item) => numbers.includes(item.id)).map((item) => item.label);
+    setSelectedSubject(subject);
+    const labels = subcategories
+      .filter((item) => subject.includes(item._id))
+      .map((item) => item.name);
 
     setSelectedLabels(labels);
   };
@@ -111,18 +111,18 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
           {/* display each row with checkbox and filter text */}
           <FlatList
             style={{ marginTop: '3%', flexGrow: 0.2, height: '70%' }}
-            data={dataFilter}
-            keyExtractor={(item) => item.id.toString()}
+            data={subcategories}
+            keyExtractor={(item) => item._id.toString()}
             numColumns={3}
             renderItem={({ item }) => (
               <View style={styles.checkedboxItemsContainer}>
                 <Checkbox
-                  status={checkedboxItems[item.id] ? 'checked' : 'unchecked'}
-                  onPress={() => toggleCheckbox(item.id)}
-                  testID={`checkbox-${item.id}`}
+                  status={checkedboxItems[item._id] ? 'checked' : 'unchecked'}
+                  onPress={() => toggleCheckbox(item._id)}
+                  testID={`checkbox-${item._id}`}
                   color="#4F85FF"
                 />
-                <Text>{item.label}</Text>
+                <Text>{item.name}</Text>
               </View>
             )}
           />
