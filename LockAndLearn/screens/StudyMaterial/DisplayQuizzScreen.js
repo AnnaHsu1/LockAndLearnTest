@@ -218,7 +218,7 @@ const DisplayQuizzScreen = ({ route }) => {
             console.log("NEW QUIZ RESULT OBJECT", newChildQuizResult);
 
             const response = await fetch('http://localhost:4000/childQuizResults/addChildQuizResults', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
