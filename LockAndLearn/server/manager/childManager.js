@@ -73,7 +73,10 @@ exports.deleteChild = async function deleteChild(childId) {
 };
 
 // Function to add/update child passing grade requirement per subject
-exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassingGrade(userId, subjects) {
+exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassingGrade(
+  userId,
+  subjects
+) {
   try {
     const existingUser = await Child.findById(userId);
     if (!existingUser) {
@@ -105,7 +108,7 @@ exports.updateChildMaterial = async function updateChildMaterial(childId, materi
     } else {
       // Get packageID(s) from workpackageID(s) and assign to assignedMaterials which is linked to child
       const promises = materialId.map(async (material) => {
-        const packageId = await Package.find({workPackageID: material}); // find packageID(s) from workpackageID
+        const packageId = await Package.find({ workPackageID: material }); // find packageID(s) from workpackageID
         // tmp fix for workpackage having 0 package
         if (packageId == '') {
           const wpId = 'wp' + material;
@@ -141,7 +144,7 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
     console.log('Error getting previous passing grades for child: ', err);
   }
 };
-  
+
 // Function to get all workPackageIDs assigned to the child with packageIDs
 exports.getWorkPackagesByChildId = async function getWorkPackagesByChildId(childId) {
   try {
@@ -181,7 +184,7 @@ exports.getPackageByPackageId = async function getPackageByPackageId(packageId) 
       // throw new Error('Package not found with the specified _id');
     }
     const package = await Package.findById(packageId);
-    const workPackage = await WorkPackage2.findById(package.workPackageID);  
+    const workPackage = await WorkPackage2.findById(package.workPackageID);
     const packagesInfo = {
       package_id: package._id,
       name: workPackage.name,
@@ -197,7 +200,7 @@ exports.getPackageByPackageId = async function getPackageByPackageId(packageId) 
     console.log('Error getting work packages by id: ', err);
     throw err;
   }
-};  
+};
 
 // Function to get all packages from child with childId
 exports.getPackagesByChildId = async function getPackagesByChildId(childId) {
@@ -212,5 +215,20 @@ exports.getPackagesByChildId = async function getPackagesByChildId(childId) {
   } catch (err) {
     console.log('Error getting packages for child: ', err);
     throw err;
+  }
+};
+
+exports.getPreferences = async function getPreferences(childId) {
+  try {
+    const child = await Child.findById(childId);
+    if (child) {
+      const preferences = child.preferences;
+      return preferences;
+    } else {
+      console.log('No child found');
+    }
+  } catch (error) {
+    console.error('Error getting preferences:', error);
+    throw error;
   }
 };
