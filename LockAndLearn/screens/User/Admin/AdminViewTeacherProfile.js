@@ -54,7 +54,7 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
     <View style={styles.page}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Profile of </Text>
+          <Text style={styles.title}>Created Work Packages</Text>
         </View>
         <ScrollView style={styles.userListContainer}>
         {workPackages.map((workPackage) => (

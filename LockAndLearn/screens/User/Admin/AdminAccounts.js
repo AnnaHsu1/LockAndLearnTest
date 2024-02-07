@@ -133,6 +133,9 @@ const AdminAccount = ({ route, navigation }) => {
                 <TouchableOpacity onPress={() => openModal(user._id)}>
                   <Text style={styles.deleteButton}>Delete</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => openModal(user._id)}>
+                  <Text style={styles.deleteButton}>Suspend</Text>
+                </TouchableOpacity>
               </View>
             ))
           ) : (
