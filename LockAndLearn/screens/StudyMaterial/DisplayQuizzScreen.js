@@ -9,6 +9,7 @@ const DisplayQuizzScreen = ({ route }) => {
     const quizId = route.params.quizId;
     const questionIndex = route.params.questionIndex;
     const quizLength = route.params.quizLength;
+    const packageID = route.params.packageId;
     const subject = route.params.subject;
     const [questions, setQuestions] = useState(route.params.questions || []);
 
@@ -191,15 +192,19 @@ const DisplayQuizzScreen = ({ route }) => {
         const data = await response.json();
         console.log("DATAAAAAAA", data);
 
-        const threshold = data.find(sub => sub.name === subject).grade;
+        const subjectObject = data.find(sub => sub.name === subject);
+        const threshold = subjectObject && (subjectObject.grade || subjectObject.grade === 0) ? subjectObject.grade : 50;
+
+        console.log("THRESHOLD", threshold);
 
         return threshold;
     }
 
     const saveQuizResult = async (numOfCorrectAnswers) => {
         const threshold = await fetchThreshold();
+        console.log("THRESHOLDDDDDDD", threshold);
         const grade = (numOfCorrectAnswers/quizLength) * 100;
-        const status = (threshold >= grade) ? "failed" : "passed";
+        const status = (threshold > grade) ? "failed" : "passed";
         try {
             const newChildQuizResult = {
                 childID: childID,
@@ -208,6 +213,7 @@ const DisplayQuizzScreen = ({ route }) => {
                 score: grade,
                 status: status,
                 date: Date.now(),
+                packageID: packageID,
             }
             console.log("NEW QUIZ RESULT OBJECT", newChildQuizResult);
 
@@ -227,13 +233,13 @@ const DisplayQuizzScreen = ({ route }) => {
             console.error('Error creating newChildQuizResult:', error);
             // Handle network errors or server issues
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
 
     }
 
     useEffect(() => {
-        fetchThreshold();
+        // fetchThreshold();
         fetchQuestion();
     }, [questionIndex]);
 
@@ -324,6 +330,7 @@ const DisplayQuizzScreen = ({ route }) => {
                                     questionIndex: questionIndex - 1,
                                     child_ID: childID,
                                     subject: subject,
+                                    packageId: packageID,
                                 });
                             }}
                         >
@@ -340,6 +347,7 @@ const DisplayQuizzScreen = ({ route }) => {
                                     questionIndex: questionIndex + 1,
                                     child_ID: childID,
                                     subject: subject,
+                                    packageId: packageID,
                                 });
                             }}
                         >
