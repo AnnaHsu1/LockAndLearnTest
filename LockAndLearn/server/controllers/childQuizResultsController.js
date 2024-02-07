@@ -69,5 +69,21 @@ router.get('/getStatusForQuiz/:id/:quizId', async (req, res) => {
   }
 });
 
+// get quiz results for a child based on childId
+router.get('/getQuizResults/:id', async (req, res) => {
+  try {
+      // Use query parameters for GET requests
+      const childID = req.params.id;
+      // Use find to retrieve all documents that match the criteria
+      const quizResults = await ChildQuizResults.find({ childID: childID });
+      if (!quizResults) {
+          return res.status(404).json({ error: 'Quiz results not found' });
+      }
+      res.status(201).json({ quizResults: quizResults });
+  } catch (error) {
+      console.error('Error getting childQuizResults:', error);
+      res.status(500).json({ error: 'Unable to get childQuizResults' });
+  }
+});
 
 module.exports = router;
