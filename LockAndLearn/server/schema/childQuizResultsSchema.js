@@ -26,6 +26,9 @@ const childQuizResultsSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  packageID: {
+    type: String,
+  },
 });
 
 const ChildQuizResults = mongoose.model('ChildQuizResults', childQuizResultsSchema, collectionName); // Where the item will be stored in the database
