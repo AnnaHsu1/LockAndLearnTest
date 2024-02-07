@@ -20,7 +20,8 @@ const childQuizResultsSchema = new mongoose.Schema({
     default: [],
   },
   status: {
-    type: String,
+    type: Array,
+    default: [],
   },
   Date: {
     type: Date,
