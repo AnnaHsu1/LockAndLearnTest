@@ -135,21 +135,20 @@ const SelectQuizToAdd = () => {
           </TouchableOpacity>
         </View>
         {/* Display all quizzes from user */}
-        <ScrollView style={styles.scrollContainer}>
-          {quizzes.map((quiz) => (
-            <View key={quiz._id} style={styles.quizContainer}>
-              <Checkbox
-                status={selectedQuizzes.includes(quiz._id) ? 'checked' : 'unchecked'}
-                onPress={() => toggleQuizSelection(quiz._id)}
-                color="#407BFF"
-                disabled={!quiz.approved}
-              />
+        <View style={styles.centeredContainer}>
+          <ScrollView style={styles.scrollContainer}>
+            {quizzes.map((quiz) => (
               <TouchableOpacity
+                key={quiz._id}
                 testID="quiz-selection-checkbox"
                 style={[
                   styles.quizItem,
                   { backgroundColor: quiz.approved ? 'white' : '#FAFAFA' },
-                  { opacity: quiz.approved ? 1 : 0.5 }, // Adjust the opacity for unapproved quizzes
+                  { opacity: quiz.approved ? 1 : 0.5 },
+                  selectedQuizzes.includes(quiz._id) && {
+                    borderColor: '#407BFF',
+                    backgroundColor: '#407BFF1A',
+                  },
                 ]}
                 onPress={() => {
                   if (quiz.approved) {
@@ -158,11 +157,17 @@ const SelectQuizToAdd = () => {
                 }}
                 disabled={!quiz.approved}
               >
-                <Text style={{ color: quiz.approved ? '#333' : 'grey' }}>{quiz.name}</Text>
+                <Text
+                  style={{
+                    color: selectedQuizzes.includes(quiz._id) ? '#407BFF' : quiz.approved ? '#696969' : 'grey',
+                  }}
+                >
+                  {quiz.name}
+                </Text>
               </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
+            ))}
+          </ScrollView>
+        </View>
         {/* Display button to add quizzes to work package */}
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
@@ -179,6 +184,11 @@ const SelectQuizToAdd = () => {
 };
 
 const styles = StyleSheet.create({
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center', 
+  },
   buttonText: {
     color: '#FFFFFF',
     alignItems: 'center',
@@ -206,10 +216,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quizContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
+    justifyContent: 'center',
   },
   container: {
     flex: 1,
@@ -238,13 +245,13 @@ const styles = StyleSheet.create({
   quizItem: {
     fontSize: 18,
     marginVertical: 10,
-    color: '#333',
-    borderColor: '#333',
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-    width: '70%',
+    width: '100%',
+    borderColor: '#696969',
+    backgroundColor: '#696969',
   },
   scrollContainer: {
     height: 300,
