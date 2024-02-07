@@ -115,12 +115,14 @@ const DisplayStudyMaterial = ({}) => {
   const handleTakeQuiz = async (quizId) => {
     const quiz = await fetchQuizById(quizId);
 
+
     navigation.navigate('DisplayQuizzScreen', {
       quizId: quiz._id,
       quizLength: quiz.questions.length,
       questionIndex: 0,
       child_ID: childID,
       subject: packageInfo.name,
+      packageId: packageInfo.package_id,
     });
   };
 
