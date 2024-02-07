@@ -16,9 +16,11 @@ router.put('/addChildQuizResults', async (req, res) => {
           // Append new scores and statuses to the existing arrays
           const updatedScores = result.score.concat(score); // Use concat for arrays
           const updatedStatuses = result.status.concat(status);
+          const updatedDates = result.date.concat(date);
+
 
           // Update the document with new scores and statuses
-          await ChildQuizResults.findByIdAndUpdate(result._id, { $set: { score: updatedScores, status: updatedStatuses } });
+          await ChildQuizResults.findByIdAndUpdate(result._id, { $set: { score: updatedScores, status: updatedStatuses, date: updatedDates } });
 
           res.status(200).json({ message: "Successfully updated childQuizResult" });
       } else {
