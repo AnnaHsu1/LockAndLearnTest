@@ -290,4 +290,24 @@ router.get('/fetchQuizzes/:packageID', async (req, res) => {
   }
 });
 
+// Get all packages given quiz ID
+router.get('/fetchWpByQuizAndPackage/:quizId/:packageId', async (req, res) => {
+  try {
+    // Get the quizID from the request parameters
+    const { quizId, packageId } = req.params;
+    // Find all packages for the given quizID and packageID and only return the workPackageID
+    const packages = await Package.find({ quizzes: quizId, _id: packageId });
+    let wpId = []
+    packages.forEach((package) => {
+      wpId.push(package.workPackageID);
+    });
+    // Send a success response with the packages
+    res.status(200).json(wpId);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error getting packages:', error);
+    res.status(500).json({ error: 'An error occurred while getting the packages.' });
+  }
+});
+
 module.exports = router;
