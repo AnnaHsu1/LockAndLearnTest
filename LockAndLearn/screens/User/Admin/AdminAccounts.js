@@ -10,6 +10,11 @@ const AdminAccount = ({ route, navigation }) => {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
+  const [isSuspendModalVisible, setIsSuspendModalVisible] = useState(false);
+  const [suspendUserId, setSuspendUserId] = useState(null);
+  const [suspendPassword, setSuspendPassword] = useState('');
+  const [suspendPasswordError, setSuspendPasswordError] = useState('');
+
   useEffect(() => {
     fetchAllUsers();
   }, []);
@@ -47,10 +52,14 @@ const AdminAccount = ({ route, navigation }) => {
     }
   };
 
-  const openModal = (userId) => {
-    setSelectedUser(userId);
-    console.log('xxxxx' + userId);
-    setIsModalVisible(true);
+  const openModal = (userId, action) => {
+    if (action === 'delete') {
+      setSelectedUser(userId);
+      setIsModalVisible(true);
+    } else if (action === 'suspend') {
+      setSuspendUserId(userId);
+      setIsSuspendModalVisible(true);
+    }
   };
 
   const closeModal = () => {
@@ -58,6 +67,13 @@ const AdminAccount = ({ route, navigation }) => {
     setIsModalVisible(false);
     setPassword('');
     setPasswordError('');
+  };
+
+  const closeSuspendModal = () => {
+    setSuspendUserId(null);
+    setIsSuspendModalVisible(false);
+    setSuspendPassword('');
+    setSuspendPasswordError('');
   };
 
   const handleDeletePress = async () => {
@@ -89,6 +105,53 @@ const AdminAccount = ({ route, navigation }) => {
   const handleUserProfileNavigation = (userId) => {
     // Navigate to AdminViewTeacherProfile and pass user._id
     navigation.navigate('AdminViewTeacherProfile', { userId });
+  };
+
+  const suspendUser = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/suspendUser/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Handle success, e.g., update local state
+        closeModal(); // Close the suspend modal
+      } else {
+        console.error('Failed to suspend user:', response.status);
+      }
+    } catch (error) {
+      console.error('Error suspending user:', error);
+    }
+  };
+
+  const handleSuspendPress = async () => {
+    try {
+      // Call the admin password check endpoint
+      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password: suspendPassword }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Admin password check successful, proceed with user suspension
+        suspendUser(suspendUserId);
+        console.log(suspendUserId, ' has been suspended');
+      } else {
+        // Admin password check failed
+        setSuspendPasswordError(data.msg || 'Incorrect password. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error handling suspend press:', error);
+      setSuspendPasswordError('Error checking password. Please try again.');
+    }
   };
 
   return (
@@ -130,10 +193,10 @@ const AdminAccount = ({ route, navigation }) => {
                 )}
                 <Text style={styles.userDetails}>Email: {user.email}</Text>
                 <Text style={styles.userDetails}>Birthday: {user.birthDate}</Text>
-                <TouchableOpacity onPress={() => openModal(user._id)}>
+                <TouchableOpacity onPress={() => openModal(user._id, 'delete')}>
                   <Text style={styles.deleteButton}>Delete</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => openModal(user._id)}>
+                <TouchableOpacity onPress={() => openModal(user._id, 'suspend')}>
                   <Text style={styles.deleteButton}>Suspend</Text>
                 </TouchableOpacity>
               </View>
@@ -166,6 +229,38 @@ const AdminAccount = ({ route, navigation }) => {
                   <Text style={styles.confirmButtonText}>Delete</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={closeModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        {/* Modal for suspension confirmation */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isSuspendModalVisible}
+          onRequestClose={closeSuspendModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>Are you sure you want to suspend this user?</Text>
+              <Text style={styles.modalTextConfirm}>Enter your password to confirm suspension</Text>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Enter your password"
+                secureTextEntry={true}
+                value={suspendPassword}
+                onChangeText={(text) => setSuspendPassword(text)}
+              />
+              {suspendPasswordError ? (
+                <Text style={styles.errorText}>{suspendPasswordError}</Text>
+              ) : null}
+              <View style={styles.modalButtons}>
+                <TouchableOpacity onPress={handleSuspendPress} style={styles.confirmButton}>
+                  <Text style={styles.confirmButtonText}>Suspend</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeSuspendModal} style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>

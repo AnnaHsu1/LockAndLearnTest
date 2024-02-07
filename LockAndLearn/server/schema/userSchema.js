@@ -43,6 +43,7 @@ const User = mongoose.model(
       },
       suspended: {
         type: Boolean,
+        default: false,
         required: false,
       },
       purchasedWorkPackages: {
