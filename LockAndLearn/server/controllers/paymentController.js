@@ -52,20 +52,33 @@ router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, r
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        // Track revenue for each seller
+        const sellersRevenue = {};
 
         // Iterate through the CartWorkPackages and update the stripePurchaseId field
         for (const workPackageId of user.CartWorkPackages) {
             const workPackage = await WorkPackage.findById(workPackageId);
             console.log("work Package:", workPackageId);
             if (workPackage) {
+                const sellerId = workPackage.instructorID;
+
+                // Calculate revenue for the seller based on the material price
+                const materialPrice = workPackage.price;
+                sellersRevenue[sellerId] = (sellersRevenue[sellerId] || 0) + materialPrice;
+                console.log("total revenue", sellersRevenue[sellerId]);
                 // Add stripeId to the stripePurchaseId array
                 workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId.toString()];
                 await workPackage.save();
             }
         }
-        console.log("success");
 
+        // Update revenue for each seller
+        for (const sellerId of Object.keys(sellersRevenue)) {
+            await User.findByIdAndUpdate(sellerId, { $inc: { revenue: sellersRevenue[sellerId] } })
+            const seller = await User.findById(sellerId);
+            console.log("revenue", seller.revenue);
+        };
+        console.log("success");
         // Save the updated user's payment stripe info and the bought WPs
         user.purchasedWorkPackages.push({
           stripePurchaseId: stripeId.toString(),
