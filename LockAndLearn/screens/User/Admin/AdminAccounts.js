@@ -117,8 +117,7 @@ const AdminAccount = ({ route, navigation }) => {
       });
 
       if (response.ok) {
-        // Handle success, e.g., update local state
-        closeModal(); // Close the suspend modal
+        closeSuspendModal();
       } else {
         console.error('Failed to suspend user:', response.status);
       }
