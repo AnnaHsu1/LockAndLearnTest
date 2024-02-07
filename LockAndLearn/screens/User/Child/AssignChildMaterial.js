@@ -12,6 +12,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { height, width } = useWindowDimensions();
   const child = route.params?.child;
+  const [statusWps, setStatusWps] = useState([]);
 
   // function to get all previously assigned work packages from the child
   const fetchPreviouslyAssignedWorkPackages = async () => {
@@ -24,6 +25,51 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const data = await response.json();
     setPreviouslyAssigned(data);
   };
+
+  // function get workpackage id from quiz id
+  const findWpIDfromQuizIDandPackageID = async (quizId, packageId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/packages/fetchWpByQuizAndPackage/${quizId}/${packageId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  };
+
+  // function get all results from child
+  const childQuizResults = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/childQuizResults/getQuizResults/${child._id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status === 200 || response.status === 201) {
+        // console.log(data.quizResults);
+        data.quizResults.forEach(async (result) => {
+          const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
+          statusWps[wpID] = result.status[result.status.length - 1];
+        })
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
+  };
+
+
   // const [workPackageData, setWorkPackageData] =  useState([])
   // [
   //   workpackageID: {packageID, status}, {packageID...},
@@ -32,7 +78,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   //  ]
   
   
-  const fetchPackagesForAWorkPackage = async (async workPackageId => {
+  const fetchPackagesForAWorkPackage = async (workPackageId) => {
     // call backend to get all package related to wpID
     try {
       const response = await fetch(
@@ -48,14 +94,13 @@ const AssignChildMaterial = ({ route, navigation }) => {
         const packages = await response.json();
         const packagesStatus = [];
         packages.forEach((pckg) => {
-          if (pckg.quizzes) {
-            quizzesStatus = []
+          if (pckg.quizzes.length !== 0) {
             // for each quizid fetch the quiz status pass/fail with given childid
-            let packageStatus = "pass";
+            var packageStatus = "pass";
             pckg.quizzes.forEach(async (quizId)=>{
               try{
                 const response = await fetch(
-                  `http://localhost:4000/childQuizResults/fetchQuizStatus/${childId}/${quizId}`,
+                  `http://localhost:4000/childQuizResults/getStatusForQuiz/${child._id}/${quizId}`,
                   {
                     method: 'GET',
                     headers: {
@@ -63,26 +108,55 @@ const AssignChildMaterial = ({ route, navigation }) => {
                     },
                   }
                 );
+
                 if (response.status === 200 || response.status === 201) {
                   const quizStatus = await response.json();
-                  if ( quizStatus === 'fail'){
+                  // console.log("Quiz status", quizStatus)
+                  if ( quizStatus.quizResultStatus === 'failed') {
+                    console.log("1Quiz failed", quizId)
                     packageStatus = "fail"
                   }
                 }
-  
+                else if (response.status === 404) {
+                  console.log("No status found for quiz", quizId)
+                  packageStatus = "not started"
+                }
               } catch (error) {
                 console.error('Network error:', error);
               }
+              console.log("Package status", packageStatus)
+
             })
+            console.log("OUTSIDE Package status", packageStatus)
+
+            // console.log("Package status", packageStatus)
             if (packageStatus === 'pass') {
               packagesStatus[pckg._id] = 'pass';
             }
-            else {
+            else if (packageStatus === 'fail') {
+              console.log("2Fail", pckg._id)
               packagesStatus[pckg._id] = 'fail';
               return 'fail'
             }
+            else {
+              packagesStatus[pckg._id] = 'not started'
+              return 'not started'
+            }
+          }
+          else {
+            console.log("No staaaaaaaaaaaaarted", pckg._id)
+            return packagesStatus[pckg._id] = 'not started'
           } 
         })
+        if (packagesStatus.includes('pass')) {
+          return 'pass'
+        }
+        else if (packagesStatus.includes('fail')) {
+          return 'fail'
+        }
+        else {
+          return 'not started'
+        }
       } else {
         console.error('Error fetching workPackages');
       }
@@ -95,7 +169,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
     // set status of workpackage
 
-  })
+  }
 
   // function to get all owned work packages from the user
   const fetchWorkPackages = async (displayOwned = false) => {
@@ -121,7 +195,11 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
           setWorkPackages(data);
           data.forEach((workPackage) => {
-            fetchPackagesForAWorkPackage(workPackage._id);
+            // const statusWp = fetchPackagesForAWorkPackage(workPackage._id);
+            // setStatusWps((prevStatusWps) => ({
+            //   ...prevStatusWps,
+            //   [workPackage._id]: statusWp,
+            // }));
             setCheckedboxItems((prevCheckedboxItems) => ({
               ...prevCheckedboxItems,
               [workPackage._id]: previouslyAssigned.includes(workPackage._id),
@@ -147,6 +225,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   useEffect(() => {
     fetchPreviouslyAssignedWorkPackages();
     setDeviceWidth(width);
+    childQuizResults();
   }, []);
 
   useEffect(() => {
@@ -188,7 +267,12 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
 // function to display the work package information
   const renderWorkPackage = (workPackage) => {
+    {if (statusWps[workPackage._id] === undefined) {
+      statusWps[workPackage._id] = 'not started'
+    }}
     return (
+      console.log("STATUS", statusWps),
+      // if statuswp is undefined, display not started
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center', width: '60%' }}>
           <Checkbox
