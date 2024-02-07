@@ -23,9 +23,9 @@ const childQuizResultsSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  Date: {
-    type: Date,
-    default: Date.now
+  date: {
+    type: [Date],
+    default: [],
   },
   packageID: {
     type: String,
