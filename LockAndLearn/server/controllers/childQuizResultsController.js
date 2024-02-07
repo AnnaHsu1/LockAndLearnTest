@@ -7,7 +7,7 @@ router.post('/addChildQuizResults', async (req, res) => {
     try {
       // Extract childQuizResults data from the request body
       console.log(req.body);
-      const { childID, quizID, answers, score, status, date } = req.body;
+      const { childID, quizID, answers, score, status, date, packageID} = req.body;
    
       // create new childQuizResults instance with the extracted passed data
       const newChildQuizResults = new ChildQuizResults({
@@ -17,6 +17,7 @@ router.post('/addChildQuizResults', async (req, res) => {
         score: score,
         status: status,
         date: date,
+        packageID: packageID,
       });
 
       // Save ChildQuizResults to the database
