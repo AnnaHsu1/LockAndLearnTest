@@ -14,6 +14,7 @@ import { Button, Icon } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { Divider } from '@rneui/themed';
 import PropTypes from 'prop-types';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
@@ -40,6 +41,9 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [editStartMinute, setEditStartMinute] = useState({});
   const [editEndHour, setEditEndHour] = useState({});
   const [editEndMinute, setEditEndMinute] = useState({});
+  const [preferences, setPreferences] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [open, setOpen] = useState(false);
 
   // Set the edit start hour/start minute/end hour/end minute states
   const setEditTime = (timeframes) => {
@@ -140,6 +144,34 @@ const ChildTimeframes = ({ route, navigation }) => {
         // console.log('orderedTimeframes', orderedTimeframes);
         setTimeframes(orderedTimeframes);
         setEditTime(orderedTimeframes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getChildPreferences = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:4000/child/getPreferences/' + childSelected._id,
+        {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        }
+      );
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        // console.log(data);
+        data.forEach((preference) => {
+          const preferenceObj = {
+            label: preference,
+            value: preference,
+          };
+          setPreferences((prevPreferences) => [...prevPreferences, preferenceObj]);
+        });
+        console.log('Preferences retrieved successfully!');
       }
     } catch (error) {
       console.log(error);
@@ -317,6 +349,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     setDeviceWidth(width);
     setChild(childSelected);
     getChildTimeframes();
+    getChildPreferences();
   }, []);
 
   // Update the database when a switch is toggled
@@ -372,8 +405,10 @@ const ChildTimeframes = ({ route, navigation }) => {
                 ) : (
                   // if editMode is true and addMode is false
                   <View style={{ flexDirection: 'row', marginLeft: -40 }}>
-                    <TouchableOpacity onPress={() => cancelEdit()} >
-                      <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
+                    <TouchableOpacity onPress={() => cancelEdit()}>
+                      <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>
+                        Cancel
+                      </Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => saveEditTimeframes()}>
                       <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
@@ -437,73 +472,109 @@ const ChildTimeframes = ({ route, navigation }) => {
                 ))}
               </View>
               <View style={[{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }]}>
-                <View style={[{ justifyContent: 'center', flex: 1 }]}>
-                  <View style={[{ marginVertical: 10 }]}>
-                    <Text style={[{ color: '#333', fontSize: 16 }]}>Start time</Text>
-                    <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginRight: 5,
-                          },
-                        ]}
-                        placeholder="HH"
-                        keyboardType="numeric"
-                        value={starthour}
-                        onChangeText={setStartHour}
-                        maxLength={2}
-                        testID="start-hour"
-                      />
-                      <Text>:</Text>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginLeft: 5,
-                          },
-                        ]}
-                        placeholder="MM"
-                        keyboardType="numeric"
-                        value={startminute}
-                        onChangeText={setStartMinute}
-                        maxLength={2}
-                        testID="start-minute"
-                      />
-                    </View>
+                <View
+                  style={[
+                    {
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      flex: 1,
+                      gap: 30,
+                      zIndex: 2000,
+                    },
+                  ]}
+                >
+                  <View style={{ zIndex: 9999 }}>
+                    <Text style={[{ color: '#333', fontSize: 16 }]}>Subject</Text>
+                    <DropDownPicker
+                      open={open}
+                      value={selectedSubject}
+                      items={preferences}
+                      setOpen={setOpen}
+                      setValue={setSelectedSubject}
+                      style={{
+                        borderColor: '#407BFF',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                      }}
+                      containerStyle={{
+                        zIndex: 9999,
+                        width: 200,
+                        height: 40,
+                      }}
+                      maxHeight={500}
+                      disabledStyle={{
+                        opacity: 1, // if the dropdown is disabled, the opacity is 0.5
+                      }}
+                    />
                   </View>
-                  <View style={[{ marginVertical: 10 }]}>
-                    <Text style={[{ color: '#333', fontSize: 16 }]}>End time</Text>
-                    <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginRight: 5,
-                          },
-                        ]}
-                        placeholder="HH"
-                        keyboardType="numeric"
-                        value={endhour}
-                        onChangeText={setEndHour}
-                        maxLength={2}
-                        testID="end-hour"
-                      />
-                      <Text>:</Text>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginLeft: 5,
-                          },
-                        ]}
-                        placeholder="MM"
-                        keyboardType="numeric"
-                        value={endminute}
-                        onChangeText={setEndMinute}
-                        maxLength={2}
-                        testID="end-minute"
-                      />
+                  <View>
+                    <View style={[{ marginVertical: 10 }]}>
+                      <Text style={[{ color: '#333', fontSize: 16 }]}>Start time</Text>
+                      <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginRight: 5,
+                            },
+                          ]}
+                          placeholder="HH"
+                          keyboardType="numeric"
+                          value={starthour}
+                          onChangeText={setStartHour}
+                          maxLength={2}
+                          testID="start-hour"
+                        />
+                        <Text>:</Text>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginLeft: 5,
+                            },
+                          ]}
+                          placeholder="MM"
+                          keyboardType="numeric"
+                          value={startminute}
+                          onChangeText={setStartMinute}
+                          maxLength={2}
+                          testID="start-minute"
+                        />
+                      </View>
+                    </View>
+                    <View style={[{ marginVertical: 10 }]}>
+                      <Text style={[{ color: '#333', fontSize: 16 }]}>End time</Text>
+                      <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginRight: 5,
+                            },
+                          ]}
+                          placeholder="HH"
+                          keyboardType="numeric"
+                          value={endhour}
+                          onChangeText={setEndHour}
+                          maxLength={2}
+                          testID="end-hour"
+                        />
+                        <Text>:</Text>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginLeft: 5,
+                            },
+                          ]}
+                          placeholder="MM"
+                          keyboardType="numeric"
+                          value={endminute}
+                          onChangeText={setEndMinute}
+                          maxLength={2}
+                          testID="end-minute"
+                        />
+                      </View>
                     </View>
                   </View>
                 </View>
