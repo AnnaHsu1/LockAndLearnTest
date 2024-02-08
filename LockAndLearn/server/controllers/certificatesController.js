@@ -181,13 +181,55 @@ router.put('/rejectCertificate/:id', async (req, res) => {
   res.status(200).json({ message: 'REJECTED STATUS UPDATED' });
 });
 
-// get status of user 
+// get status of user
 router.get('/getCertificatesStatus/:userId', async (req, res) => {
   const requestUserId = req.params.userId;
   const conn = mongoose.connection;
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
-  const uploadedCertificates = await bucket.find({ "metadata.userId": requestUserId }).toArray();
+  const uploadedCertificates = await bucket.find({ 'metadata.userId': requestUserId }).toArray();
   res.status(201).json({ uploadedCertificates });
+});
+
+// add pictures in certificates' metadata
+router.put('/uploadImages/:userId', uploadCertificates.array('pictures', 10), async (req, res) => {
+  const pictures = req.files;
+  const userId = req.body.userId;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const uploadCertificates = await bucket.find({ 'metadata.userId': userId }).toArray();
+
+  if (uploadCertificates.length === 0) {
+    return res.status(404).json({ message: 'Certificate not found' });
+  }
+
+  for (let i = 0; i < uploadCertificates.length; i++) {
+    const certificate = uploadCertificates[i];
+    const existingMetadata = certificate.metadata;
+    const updatedMetadata = {
+      ...existingMetadata,
+      verificationImages: [],
+    };
+
+    for (let j = 0; j < pictures.length; j++) {
+      const picture = pictures[j];
+      updatedMetadata.verificationImages.push({
+        filename: picture.originalname,
+        contentType: picture.mimetype,
+      });
+      const uploadStream = bucket.openUploadStream(picture.originalname, {
+        metadata: { userId, filename: picture.originalname },
+      });
+      uploadStream.on('error', (error) => {
+        console.log('Error uploading picture:', error);
+      });
+      uploadStream.on('finish', () => {
+        if (i === uploadCertificates.length - 1 && j === pictures.length - 1) {
+          res.status(201).json({ message: 'Images uploaded and metadata updated successfully' });
+        }
+      });
+      uploadStream.end(picture.buffer);
+    }
+  }
 });
 
 module.exports = router;
