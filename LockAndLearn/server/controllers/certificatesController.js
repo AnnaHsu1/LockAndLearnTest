@@ -194,6 +194,8 @@ router.get('/getCertificatesStatus/:userId', async (req, res) => {
 router.put('/uploadImages/:userId', uploadCertificates.array('pictures', 2), async (req, res) => {
   const pictures = req.files;
   const userId = req.params.userId;
+  const verificationQuestion = req.body.verificationQuestion;
+  const randomQuestion = req.body.randomQuestion;
   const conn = mongoose.connection;
   const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
   const uploadCertificates = await bucket.find({ 'metadata.userId': userId }).toArray();
@@ -210,14 +212,21 @@ router.put('/uploadImages/:userId', uploadCertificates.array('pictures', 2), asy
     for (let j = 0; j < pictures.length; j++) {
       const picture = pictures[j];
       verificationImages.push({
-      filename: picture.originalname,
-      contentType: picture.mimetype,
+        filename: picture.originalname,
+        contentType: picture.mimetype,
       });
 
-      const updateStatus = await conn.db
-        .collection('UploadCertificates.files')
-        .updateMany({ 'metadata.userId': userId }, { $set: { 'metadata.verificationImages': verificationImages } });
-      
+      const updateMetadata = await conn.db.collection('UploadCertificates.files').updateMany(
+        { 'metadata.userId': userId },
+        {
+          $set: {
+            'metadata.verificationImages': verificationImages,
+            'metadata.verificationQuestion': verificationQuestion,
+            'metadata.randomQuestion': randomQuestion,
+          },
+        }
+      );
+
       const uploadStream = bucket.openUploadStream(picture.originalname, {
         metadata: { userId, filename: picture.originalname, certificateId: certificate._id },
       });
