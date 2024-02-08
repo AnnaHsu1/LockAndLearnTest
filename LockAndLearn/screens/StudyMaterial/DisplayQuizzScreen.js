@@ -201,6 +201,7 @@ const DisplayQuizzScreen = ({ route }) => {
     }
 
     const saveQuizResult = async (numOfCorrectAnswers) => {
+        console.log("num of correct answers", numOfCorrectAnswers);
         const threshold = await fetchThreshold();
         console.log("THRESHOLDDDDDDD", threshold);
         const grade = (numOfCorrectAnswers/quizLength) * 100;
@@ -314,7 +315,7 @@ const DisplayQuizzScreen = ({ route }) => {
                         <TextInput
                             style={styles.answerInput}
                             placeholder="Enter the answer here"
-                            value={answers[questionIndex] || " "}
+                            value={answers[questionIndex] || ""}
                             onChangeText={(text) => handleSetAnswer(text, questionIndex)}
                         />
                     )}
