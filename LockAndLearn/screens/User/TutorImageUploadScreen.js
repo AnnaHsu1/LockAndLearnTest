@@ -7,7 +7,7 @@ import {
   Platform,
   ImageBackground,
   FlatList,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -27,6 +27,45 @@ const TutorImageUploadScreen = ({ navigation }) => {
   const dict = [];
   const maxTextWidth = width * 0.9;
   const { width } = Dimensions.get('window');
+  const verificationQuestion = 'Take a clear picture of your face';
+  const randomVerificationQuestions = [
+    'Take a picture of your finger on your nose',
+    'Take a picture of your hand on a book',
+    'Take a picture of your hand over your head',
+    'Take a picture of you with a water bottle',
+    'Take a picture of you with your wallet',
+    'Take a picture of you with a calculator',
+    'Take a picture of you with a pillow',
+    'Take a picture of you doing a peace sign',
+    'Do a high five sign with your hand',
+    'Take a picture of 1 finger',
+    'Take a picture of 2 fingers',
+    'Take a picture of 3 fingers',
+    'Take a picture of 4 fingers',
+    'Take a picture showing the back of your palm',
+    'Take a picture of you holding a pen',
+    'Take a picture of you holding an eraser',
+    'Take a picture of you holding a ruler',
+    'Take a picture of you holding scissors',
+    'Take a picture of you smiling',
+    'Take a picture of you frowning',
+    'Take a picture of you holding a fork',
+    'Take a picture of you holding a spoon',
+    'Take a picture of you holding a bowl',
+    'Take a picture of you holding a toilet roll',
+    'Take a picture of you holding a pan',
+  ];
+  const [randomQuestion, setRandomQuestion] = useState([]);
+
+  useEffect(() => {
+    chooseRandomQuestion();
+  }, []);
+
+  const chooseRandomQuestion = () => {
+    const randomIndex = Math.floor(Math.random() * randomVerificationQuestions.length);
+    const selectedQuestion = randomVerificationQuestions[randomIndex];
+    setRandomQuestion(selectedQuestion);
+  };
 
   const getUserToken = async () => {
     const userToken = await getUser();
@@ -37,7 +76,7 @@ const TutorImageUploadScreen = ({ navigation }) => {
 
   // Function to select pictures
   const picturesSelectedHandler = async () => {
-    let result = await DocumentPicker.getDocumentAsync({ multiple: true, type: "image/*" });
+    let result = await DocumentPicker.getDocumentAsync({ multiple: true, type: 'image/*' });
     if (Platform.OS === 'web') {
       const selectedFileNames = Array.from(result.output).map((file) => file.name);
       const noDuplicateFileName = selectedFileNames.filter((name) => !fileName.includes(name));
@@ -71,7 +110,7 @@ const TutorImageUploadScreen = ({ navigation }) => {
     const invalidFileType = fileName.filter((name) => {
       const splitName = name.split('.');
       const fileType = splitName[splitName.length - 1];
-      return !(fileType == 'jpeg');
+      return !(fileType == 'jpeg' || fileType == 'jpg' || fileType == 'png');
     });
 
     if (invalidFileType.length > 0) {
@@ -79,8 +118,22 @@ const TutorImageUploadScreen = ({ navigation }) => {
       return;
     }
 
+    if (files.length == 1) {
+      toast.error('Please upload 2 pictures that conform to the criteria.');
+      return;
+    }
+
+    if (files.length > 2) {
+      toast.error(
+        'You cannot upload more than 2 pictures. Please delete your picture and try again.'
+      );
+      return;
+    }
+
     const fileData = new FormData();
     fileData.append('userId', userId);
+    fileData.append('verificationQuestion', verificationQuestion);
+    fileData.append('randomQuestion', randomQuestion);
     files.forEach((file) => {
       fileData.append('pictures', file);
     });
@@ -94,8 +147,9 @@ const TutorImageUploadScreen = ({ navigation }) => {
         const data = await response.json();
         if (data.message == 'Images uploaded and metadata updated successfully') {
           toast.success('Pictures uploaded successfully!');
-          setTimeout(()=> {
-          navigation.navigate('UserLandingPage')}, 2000)
+          setTimeout(() => {
+            navigation.navigate('UserLandingPage');
+          }, 2000);
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
@@ -113,7 +167,11 @@ const TutorImageUploadScreen = ({ navigation }) => {
       <View key={index}>
         <View
           key={index}
-          style={[fileType == 'jpeg' ? styles.successRowUpload : styles.errorRowUpload]}
+          style={[
+            fileType == 'jpeg' || fileType == 'jpg' || fileType == 'png'
+              ? styles.successRowUpload
+              : styles.errorRowUpload,
+          ]}
         >
           <View style={styles.rowUpload} key={index}>
             <Text
@@ -128,16 +186,18 @@ const TutorImageUploadScreen = ({ navigation }) => {
               style={styles.buttonDelete}
               onPress={() => deleteFile(index)}
             >
-              {fileType == 'jpeg' ? (
+              {fileType == 'jpeg' || fileType == 'jpg' || fileType == 'png' ? (
                 <Icon source="trash-can-outline" size={22} color={'#F24E1E'} />
               ) : (
                 <Icon source="close-circle" size={20} color={'#F24E1E'} />
               )}
             </TouchableOpacity>
           </View>
-          {fileType == 'jpeg' ? <View style={styles.rowDescription}></View> : null}
+          {fileType == 'jpeg' || fileType == 'jpg' || fileType == 'png' ? (
+            <View style={styles.rowDescription}></View>
+          ) : null}
         </View>
-        {fileType == 'jpeg' ? null : (
+        {fileType == 'jpeg' || fileType == 'jpg' || fileType == 'png' ? null : (
           <View style={styles.errorMsgRow}>
             <Text style={styles.errorText}>This format is not supported. Please try again.</Text>
           </View>
@@ -163,60 +223,64 @@ const TutorImageUploadScreen = ({ navigation }) => {
     getUserToken();
   }, []);
 
-  const validateFields = files.length == 0
+  const validateFields = files.length == 0;
 
   return (
     <View style={styles.page}>
-        <View style={styles.containerFile}>
-          <ToastContainer
-            position="top-center"
-            hideProgressBar
-            closeOnClick
-            theme="dark"
-            style={{ marginTop: '70px' }}
-            autoClose={7000}
-          />
-          <Text style={styles.pictureTitle}>
-            Please upload a picture of yourself for authentication purposes
-          </Text>
-          <Text style={styles.selectPictures}>Select picture</Text>
-          <View style={styles.buttonUploadFiles}>
-            <TouchableOpacity
-              testID="selectButton"
-              onPress={picturesSelectedHandler}
-              accept=".jpeg"
+      <View style={styles.containerFile}>
+        <ToastContainer
+          position="top-center"
+          hideProgressBar
+          closeOnClick
+          theme="dark"
+          style={{ marginTop: '70px' }}
+          autoClose={7000}
+        />
+        <Text style={styles.pictureTitle}>
+          Please upload two pictures of yourself for authentication purposes
+        </Text>
+        <Text style={styles.selectPictures}>
+          Your pictures must conform to the following criteria:{' '}
+        </Text>
+        <Text style={styles.pictureCriteria}> 1- {verificationQuestion} </Text>
+        <Text style={styles.pictureCriteria}> 2- {randomQuestion} </Text>
+        <View style={styles.buttonUploadFiles}>
+          <TouchableOpacity
+            testID="selectButton"
+            onPress={picturesSelectedHandler}
+            accept=".jpeg, .jpg, .png"
+          >
+            <ImageBackground
+              style={styles.imageUpload}
+              source={require('../../assets/UploadDashedZoneH.png')}
             >
-              <ImageBackground
-                style={styles.imageUpload}
-                source={require('../../assets/UploadDashedZoneH.png')}
-              >
-                <Text style={[styles.supportedFormats, { marginTop: '40%', textAlign: 'center' }]}>
-                  Supported format:{'\n'}jpeg
-                </Text>
-              </ImageBackground>
+              <Text style={[styles.supportedFormats, { marginTop: '40%', textAlign: 'center' }]}>
+                Supported format:{'\n'}jpeg
+              </Text>
+            </ImageBackground>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.containerUploaded}>
+          <Text style={styles.uploadFiles}>Uploads - {fileName.length} picture(s)</Text>
+          <FlatList
+            data={fileName}
+            renderItem={({ item, index }) => renderFile(item, index)}
+            keyExtractor={(item, index) => index.toString()}
+            style={{ width: '100%' }}
+          />
+
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={uploadPicturesHandler}
+              style={[styles.buttonUpload, validateFields && styles.disabledButton]}
+              testID="uploadButton"
+              disabled={validateFields}
+            >
+              <Text style={styles.buttonText}>Upload</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.containerUploaded}>
-            <Text style={styles.uploadFiles}>Uploads - {fileName.length} picture(s)</Text>
-            <FlatList
-              data={fileName}
-              renderItem={({ item, index }) => renderFile(item, index)}
-              keyExtractor={(item, index) => index.toString()}
-              style={{ width: '100%' }}
-            />
-
-            <View style={{ alignItems: 'center' }}>
-              <TouchableOpacity
-                onPress={uploadPicturesHandler}
-                style={[styles.buttonUpload, validateFields && styles.disabledButton]}
-                testID="uploadButton"
-                disabled={validateFields}
-              >
-                <Text style={styles.buttonText}>Upload</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
         </View>
+      </View>
     </View>
   );
 };
@@ -295,6 +359,13 @@ const styles = StyleSheet.create({
   selectPictures: {
     color: '#696969',
     fontSize: 24,
+    fontWeight: '500',
+    marginTop: '1%',
+    textAlign: 'center',
+  },
+  pictureCriteria: {
+    color: '#696969',
+    fontSize: 20,
     fontWeight: '500',
     marginTop: '1%',
     textAlign: 'center',
