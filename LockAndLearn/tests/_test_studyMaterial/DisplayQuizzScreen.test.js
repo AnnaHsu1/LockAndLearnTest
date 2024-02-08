@@ -33,14 +33,6 @@ describe('DisplayQuizzScreen Tests', () => {
         },
     };
 
-    test('renders correctly with initial state', () => {
-        const { getByText, getByPlaceholderText } = render(<DisplayQuizzScreen route={route} />);
-        
-        // Add assertions to check if initial elements are rendered
-        // e.g., expect(getByText('Question 0')).toBeDefined();
-        // Depending on your initial state, check for other elements
-    });
-
     test('navigates to previous question on press', () => {
         const notFirstQuestionRoute = {
             params: {
@@ -54,8 +46,7 @@ describe('DisplayQuizzScreen Tests', () => {
         const previousButton = getByText('Previous');
         fireEvent.press(previousButton);
 
-        // Check if navigation function was called with the correct parameters
-        // e.g., expect(useNavigation().navigate).toHaveBeenCalledWith(/* parameters */);
+
     });
 
     test('navigates to next question on press', () => {
@@ -63,7 +54,6 @@ describe('DisplayQuizzScreen Tests', () => {
         const nextButton = getByText('Next');
         fireEvent.press(nextButton);
 
-        // Similar assertion as the previous test, but for the next button
     });
 
     test('updates answer state when user inputs an answer', () => {
@@ -71,11 +61,8 @@ describe('DisplayQuizzScreen Tests', () => {
         const answerInput = getByPlaceholderText('Enter the answer here');
         fireEvent.changeText(answerInput, 'User Answer');
 
-        // Check if the answer state is updated
-        // This might require you to export and mock a custom hook if your state logic is complex
+       
     });
-
-    // Add tests for other functionalities like checking checkboxes, filling in the blanks, etc.
 
     test('submits answers and navigates to QuizGradeScreen on finish', async () => {
         const lastQuestionRoute = {
@@ -93,9 +80,19 @@ describe('DisplayQuizzScreen Tests', () => {
             fireEvent.press(finishButton);
         });
 
-
-        // Check if navigation to QuizGradeScreen happens with correct parameters
-        // e.g., expect(useNavigation().navigate).toHaveBeenCalledWith('QuizGradeScreen', /* parameters */);
+    });
+    
+    beforeEach(() => {
+        global.fetch = jest.fn(() =>
+            Promise.resolve({
+                json: () => Promise.resolve([
+                    { name: 'Math', grade: 75 },
+                    { name: 'Science', grade: 80 },
+                    // Add more subjects as needed
+                ]),
+                status: 200,
+            })
+        );
     });
     
 
