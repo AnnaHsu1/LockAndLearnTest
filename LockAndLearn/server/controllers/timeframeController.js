@@ -121,7 +121,14 @@ router.delete('/deletetimeframe/:timeframeId', async (req, res) => {
 
 // Handle timeframe update for edit time periods
 router.put('/updateEditTimeframe', async (req, res) => {
-  const { timeframeIds, editStartHours, editStartMinutes, editEndHours, editEndMinutes } = req.body;
+  const {
+    timeframeIds,
+    editStartHours,
+    editStartMinutes,
+    editEndHours,
+    editEndMinutes,
+    editSubjects,
+  } = req.body;
 
   try {
     for (let i = 0; i < timeframeIds.length; i++) {
@@ -130,6 +137,7 @@ router.put('/updateEditTimeframe', async (req, res) => {
       const editStartMinute = editStartMinutes[i];
       const editEndHour = editEndHours[i];
       const editEndMinute = editEndMinutes[i];
+      const editSubject = editSubjects[i];
 
       // Input validations
       if (!timeframeId) {
@@ -165,6 +173,7 @@ router.put('/updateEditTimeframe', async (req, res) => {
         {
           startTime: `${editStartHour}:${editStartMinute}`,
           endTime: `${editEndHour}:${editEndMinute}`,
+          subject: editSubject,
         }
       );
     }

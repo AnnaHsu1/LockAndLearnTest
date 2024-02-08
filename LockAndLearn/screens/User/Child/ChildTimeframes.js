@@ -42,11 +42,12 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [editEndHour, setEditEndHour] = useState({});
   const [editEndMinute, setEditEndMinute] = useState({});
   const [editSubject, setEditSubject] = useState({});
+  const [subjectDropdownOpen, setSubjectDropdownOpen] = useState({});
   const [preferences, setPreferences] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [open, setOpen] = useState(false);
 
-  // Set the edit start hour/start minute/end hour/end minute states
+  // Set the edit start hour/start minute/end hour/end minute states & subject states
   const setEditTime = (timeframes) => {
     Object.keys(timeframes).map((day) => {
       const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
@@ -89,10 +90,22 @@ const ChildTimeframes = ({ route, navigation }) => {
             ...endMinuteTime,
           };
         });
+        const subjectToAdd = {
+          [timeframes[day][index]._id]: subject[index],
+        };
         setEditSubject((prevSubject) => {
           return {
             ...prevSubject,
-            ...subject,
+            ...subjectToAdd,
+          };
+        });
+        const subjectDropdownOpenToAdd = {
+          [timeframes[day][index]._id]: false,
+        };
+        setSubjectDropdownOpen((prevSubjectDropdownOpen) => {
+          return {
+            ...prevSubjectDropdownOpen,
+            ...subjectDropdownOpenToAdd,
           };
         });
       });
@@ -114,6 +127,7 @@ const ChildTimeframes = ({ route, navigation }) => {
           editStartMinutes: Object.values(editStartMinute),
           editEndHours: Object.values(editEndHour),
           editEndMinutes: Object.values(editEndMinute),
+          editSubjects: Object.values(editSubject),
         }),
       });
       const data = await response.json();
@@ -501,16 +515,19 @@ const ChildTimeframes = ({ route, navigation }) => {
                     <DropDownPicker
                       open={open}
                       value={selectedSubject}
+                      placeholder="Select a subject"
                       items={preferences}
                       setOpen={setOpen}
                       setValue={setSelectedSubject}
                       style={{
                         borderColor: '#407BFF',
+                        backgroundColor: '#fafafa',
                         borderWidth: 1,
                         borderRadius: 5,
                       }}
                       containerStyle={{
                         zIndex: 9999,
+                        backgroundColor: '#fafafa',
                         width: 200,
                         height: 40,
                       }}
@@ -749,109 +766,173 @@ const ChildTimeframes = ({ route, navigation }) => {
                       );
                     }
                     // display time periods for the day
-
                     startTimes.forEach((time, index) => {
                       timePeriods.push(
-                        <View key={`${day}-${index}`} style={styles.timePeriod}>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginRight: 5,
-                              },
-                            ]}
-                            placeholder="HH"
-                            keyboardType="numeric"
-                            value={editStartHour[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditStartHour((prevStartHour) => {
-                                return {
-                                  ...prevStartHour,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
+                        <View
+                          key={`${day}-${index}`}
+                          style={[
+                            styles.timePeriod,
+                            {
+                              flexDirection: 'column',
+                              zIndex: subjectDropdownOpen[timeframes[day][index]._id] ? 9999 : 1,
+                            },
+                          ]}
+                        >
+                          <View
+                            style={{
+                              zIndex: 10000,
+                              marginBottom: 10,
+                              justifyContent: 'space-between',
+                              flexDirection: 'row',
+                              width: '100%',
                             }}
-                            maxLength={2}
-                          />
-                          <Text>:</Text>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginLeft: 5,
-                              },
-                            ]}
-                            placeholder="MM"
-                            keyboardType="numeric"
-                            value={editStartMinute[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditStartMinute((prevStartMinute) => {
-                                return {
-                                  ...prevStartMinute,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
-                            }}
-                            maxLength={2}
-                          />
-                          <Text> - </Text>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginRight: 5,
-                              },
-                            ]}
-                            placeholder="HH"
-                            keyboardType="numeric"
-                            value={editEndHour[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditEndHour((prevEndHour) => {
-                                return {
-                                  ...prevEndHour,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
-                            }}
-                            maxLength={2}
-                          />
-                          <Text>:</Text>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginLeft: 5,
-                              },
-                            ]}
-                            placeholder="MM"
-                            keyboardType="numeric"
-                            value={editEndMinute[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditEndMinute((prevEndMinute) => {
-                                return {
-                                  ...prevEndMinute,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
-                            }}
-                            maxLength={2}
-                          />
+                          >
+                            <DropDownPicker
+                              // corresponding to the time period open boolean
+                              open={subjectDropdownOpen[timeframes[day][index]._id]}
+                              // corresponding to the time period subject value
+                              value={editSubject[timeframes[day][index]._id]}
+                              placeholder="Select a subject"
+                              items={preferences}
+                              // set the open boolean to the opposite of the current open boolean
+                              setOpen={(open) => {
+                                setSubjectDropdownOpen((prevSubjectDropdownOpen) => {
+                                  return {
+                                    ...prevSubjectDropdownOpen,
+                                    [timeframes[day][index]._id]: open,
+                                  };
+                                });
+                              }}
+                              // setValue={setTempSubject}
+                              onSelectItem={(item) => {
+                                setEditSubject((prevSubject) => {
+                                  return {
+                                    ...prevSubject,
+                                    [timeframes[day][index]._id]: item.value,
+                                  };
+                                });
+                              }}
+                              style={{
+                                borderColor: '#407BFF',
+                                backgroundColor: '#fafafa',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                              }}
+                              containerStyle={{
+                                backgroundColor: '#fafafa',
+                                width: 200,
+                              }}
+                              maxHeight={500}
+                            />
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <TouchableOpacity
+                                onPress={() => {
+                                  toggleDeleteModal();
+                                  setTimeframeId(timeframes[day][index]._id);
+                                  setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
+                                }}
+                                testID={`delete-${day}-${index}-${timeframes[day][index]._id}`}
+                              >
+                                <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
+                              width: '100%',
+                              justifyContent: 'space-between',
                             }}
                           >
-                            <TouchableOpacity
-                              onPress={() => {
-                                toggleDeleteModal();
-                                setTimeframeId(timeframes[day][index]._id);
-                                setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginRight: 5,
+                                },
+                              ]}
+                              placeholder="HH"
+                              keyboardType="numeric"
+                              value={editStartHour[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditStartHour((prevStartHour) => {
+                                  return {
+                                    ...prevStartHour,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
                               }}
-                              testID={`delete-${day}-${index}-${timeframes[day][index]._id}`}
-                            >
-                              <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                            </TouchableOpacity>
+                              maxLength={2}
+                            />
+                            <Text>:</Text>
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginLeft: 5,
+                                },
+                              ]}
+                              placeholder="MM"
+                              keyboardType="numeric"
+                              value={editStartMinute[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditStartMinute((prevStartMinute) => {
+                                  return {
+                                    ...prevStartMinute,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
+                              }}
+                              maxLength={2}
+                            />
+                            <Text> - </Text>
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginRight: 5,
+                                },
+                              ]}
+                              placeholder="HH"
+                              keyboardType="numeric"
+                              value={editEndHour[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditEndHour((prevEndHour) => {
+                                  return {
+                                    ...prevEndHour,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
+                              }}
+                              maxLength={2}
+                            />
+                            <Text>:</Text>
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginLeft: 5,
+                                },
+                              ]}
+                              placeholder="MM"
+                              keyboardType="numeric"
+                              value={editEndMinute[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditEndMinute((prevEndMinute) => {
+                                  return {
+                                    ...prevEndMinute,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
+                              }}
+                              maxLength={2}
+                            />
                           </View>
                         </View>
                       );
