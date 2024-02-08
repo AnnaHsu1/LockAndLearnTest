@@ -10,7 +10,7 @@ router.put('/addChildQuizResults', async (req, res) => {
       const { childID, quizID, answers, score, status, date, packageID } = req.body;
 
       // Check if the result already exists
-      const result = await ChildQuizResults.findOne({ childID: childID, quizID: quizID });
+      const result = await ChildQuizResults.findOne({ childID: childID, quizID: quizID, packageID: packageID});
 
       if (result) {
           // Append new scores and statuses to the existing arrays
