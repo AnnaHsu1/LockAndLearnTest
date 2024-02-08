@@ -502,7 +502,8 @@ const ChildTimeframes = ({ route, navigation }) => {
                 <View
                   style={[
                     {
-                      flexDirection: 'row',
+                      flexDirection: width < 620 ? 'column' : 'row',
+                      marginTop: width < 620 ? 20 : 0,
                       alignItems: 'center',
                       flex: 1,
                       gap: 30,
