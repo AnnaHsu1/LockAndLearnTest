@@ -115,9 +115,12 @@ const AdminAccount = ({ route, navigation }) => {
           'Content-Type': 'application/json',
         },
       });
-
+  
       if (response.ok) {
         closeSuspendModal();
+  
+        // Show success alert
+        Alert.alert('Success', 'User has been successfully suspended.');
       } else {
         console.error('Failed to suspend user:', response.status);
       }
