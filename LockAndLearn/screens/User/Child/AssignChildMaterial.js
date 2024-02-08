@@ -65,6 +65,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     };
 
   // function get all results from child
+
   const childQuizResults = async () => {
     try {
       const response = await fetch(
@@ -82,20 +83,22 @@ const AssignChildMaterial = ({ route, navigation }) => {
         data.quizResults.forEach(async (result) => {
           const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
           console.log("WP!!!!!!!!", wpID);
-          const count = getPackageCount(wpID);
+          const count = await getPackageCount(wpID);
           console.log("COUNT!!!!!!!!!!!!!!!!!", count);
 
 
-          if (statusWps[wpID]) {
-              // If statusWps[wpID] already exists, append the new status
-              console.log("11111");
-              statusWps[wpID].push(result.status[result.status.length - 1]);
-          } else {
-              // If statusWps[wpID] doesn't exist, initialize it as an array with the new status
-              statusWps[wpID] = [result.status[result.status.length - 1]];
+          if (!statusWps[wpID]) {
+              // If statusWps[wpID] doesn't exist, initialize it with statuses array and count
+              statusWps[wpID] = { statuses: [], count: 0 };
           }
+      
+          // Append the new status to the statuses array for this wpID
+          statusWps[wpID].statuses.push(result.status[result.status.length - 1]);
+      
+          // Update the count for this wpID
+          statusWps[wpID].count = count;
+      
           console.log("statusWPs", statusWps);
-          // statusWps[wpID] = result.status[result.status.length - 1];
         })
       }
     } catch (error) {
