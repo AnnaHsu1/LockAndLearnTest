@@ -314,7 +314,7 @@ const DisplayQuizzScreen = ({ route }) => {
                         <TextInput
                             style={styles.answerInput}
                             placeholder="Enter the answer here"
-                            value={answers[questionIndex]}
+                            value={answers[questionIndex] || " "}
                             onChangeText={(text) => handleSetAnswer(text, questionIndex)}
                         />
                     )}
