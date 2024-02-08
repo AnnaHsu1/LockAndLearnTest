@@ -44,6 +44,26 @@ const AssignChildMaterial = ({ route, navigation }) => {
     }
   };
 
+    // function to get package count based on the workpackage id
+    const getPackageCount = async (wpId) => {
+      try {
+        const response = await fetch(`http://localhost:4000/packages/fetchPackageCount/${wpId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === 200) {
+          const data = await response.json();
+          console.log("this should be the package count", data);
+
+          return data;
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+      }
+    };
+
   // function get all results from child
   const childQuizResults = async () => {
     try {
@@ -61,6 +81,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
         // console.log(data.quizResults);
         data.quizResults.forEach(async (result) => {
           const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
+          const count = getPackageCount(wpID);
+          console.log("COUNT!!!!!!!!!!!!!!!!!", count);
           statusWps[wpID] = result.status[result.status.length - 1];
         })
       }
