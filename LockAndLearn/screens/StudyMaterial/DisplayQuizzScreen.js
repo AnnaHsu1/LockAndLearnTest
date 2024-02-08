@@ -153,7 +153,7 @@ const DisplayQuizzScreen = ({ route }) => {
                     setIsTrueAnswer(question.answer === "True"); // Assuming 'answer' is the field where true/false is stored
                     // setAnswer(question.answer); // The answer should already be "True" or "False"
                     ans = question.answer;
-                } if (question.questionType === "Short Answer") {
+                } if (question.questionType === "Short Answer" || question.questionType === "Another Type") {
                     // setAnswer(question.answer || ''); // Assuming 'answer' contains the short answer text
                     ans = question.answer
                 }
