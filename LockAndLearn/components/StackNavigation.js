@@ -60,6 +60,7 @@ import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial'
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
+import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -118,6 +119,11 @@ const StackNavigation = () => {
         <Stack.Screen
           name="StudyMaterial"
           component={StudyMaterial}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TutorImageUpload"
+          component={TutorImageUploadScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
