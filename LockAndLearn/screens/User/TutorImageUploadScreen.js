@@ -255,7 +255,7 @@ const TutorImageUploadScreen = ({ navigation }) => {
               source={require('../../assets/UploadDashedZoneH.png')}
             >
               <Text style={[styles.supportedFormats, { marginTop: '40%', textAlign: 'center' }]}>
-                Supported format:{'\n'}jpeg
+                Supported formats:{'\n'}JPEG, JPG, PNG
               </Text>
             </ImageBackground>
           </TouchableOpacity>
