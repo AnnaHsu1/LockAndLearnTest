@@ -78,12 +78,24 @@ const AssignChildMaterial = ({ route, navigation }) => {
       );
       const data = await response.json();
       if (response.status === 200 || response.status === 201) {
-        // console.log(data.quizResults);
+        console.log("QUIZZZZZRESULTS",data);
         data.quizResults.forEach(async (result) => {
           const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
+          console.log("WP!!!!!!!!", wpID);
           const count = getPackageCount(wpID);
           console.log("COUNT!!!!!!!!!!!!!!!!!", count);
-          statusWps[wpID] = result.status[result.status.length - 1];
+
+
+          if (statusWps[wpID]) {
+              // If statusWps[wpID] already exists, append the new status
+              console.log("11111");
+              statusWps[wpID].push(result.status[result.status.length - 1]);
+          } else {
+              // If statusWps[wpID] doesn't exist, initialize it as an array with the new status
+              statusWps[wpID] = [result.status[result.status.length - 1]];
+          }
+          console.log("statusWPs", statusWps);
+          // statusWps[wpID] = result.status[result.status.length - 1];
         })
       }
     } catch (error) {
