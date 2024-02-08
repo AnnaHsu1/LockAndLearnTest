@@ -113,7 +113,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log(data.msg);
         setError(data.msg);
       } else {
-        console.log('Timeframe updated successfully!');
+        // console.log('Timeframe updated successfully!');
         setEditMode(false);
         getChildTimeframes();
         setError('');
@@ -137,7 +137,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (response.status != 200) {
         console.log(data.msg);
       } else {
-        console.log('Timeframes retrieved successfully!');
+        // console.log('Timeframes retrieved successfully!');
         // console.log(data);
         getSwitchesStatus(data);
         const orderedTimeframes = orderSortTimeframes(data);
@@ -171,7 +171,7 @@ const ChildTimeframes = ({ route, navigation }) => {
           };
           setPreferences((prevPreferences) => [...prevPreferences, preferenceObj]);
         });
-        console.log('Preferences retrieved successfully!');
+        // console.log('Preferences retrieved successfully!');
       }
     } catch (error) {
       console.log(error);
@@ -227,6 +227,7 @@ const ChildTimeframes = ({ route, navigation }) => {
             (endhour.length < 2 ? `0${endhour}` : endhour) +
             ':' +
             (endminute.length < 2 ? `0${endminute}` : endminute),
+          subject: selectedSubject,
         }),
       });
 
@@ -236,7 +237,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log(data.msg);
         setError(data.msg);
       } else {
-        console.log('Timeframe added successfully!');
+        // console.log('Timeframe added successfully!');
         setAddMode(false);
         clearAddFields();
         setAddedSuccessful(true);
@@ -285,7 +286,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (response.status != 200) {
         console.log(data.msg);
       } else {
-        console.log('Timeframe updated successfully!');
+        // console.log('Timeframe updated successfully!');
       }
     } catch (error) {
       console.log(error.msg);
@@ -312,7 +313,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log(data.msg);
         setError(data.msg);
       } else {
-        console.log('Timeframe deleted successfully!');
+        // console.log('Timeframe deleted successfully!');
         getChildTimeframes();
         // when the timeframe is deleted, the edit fields of that timeframe are deleted
         const editStartHourCopy = { ...editStartHour };
