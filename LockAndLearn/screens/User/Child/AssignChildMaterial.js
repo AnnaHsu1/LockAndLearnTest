@@ -299,6 +299,38 @@ const AssignChildMaterial = ({ route, navigation }) => {
     navigation.navigate('ChildProfile', { child: child });
   };
 
+  const getStatusText = (workPackage) => {
+    // console.log("inside get status nethod", statusWps.workPackageId);
+    const workPackageId= workPackage._id;
+    console.log("inside get status nethod", statusWps[workPackageId]);
+
+
+    const statuses = statusWps[workPackageId];
+  
+    // Check if there are no statuses
+    if (!statuses || statuses.length === 0 || statuses === "not started") {
+      return "Not started";
+    }
+  
+    // Check if any status is "fail"
+    if (statuses.includes("failed")) {
+      return "Failed";
+    }
+  
+    // Check if the number of statuses is less than packageCount
+    if (statuses.length < workPackage.packageCount) {
+      return "Incomplete";
+    }
+    
+    //Check if all statuses are "pass"
+    if (statuses.every(status => status === "passed")) {
+      return "Passed";
+    }
+  
+    // Default case, if none of the above conditions are met
+    return "Status Unknown";
+  };
+
 // function to display the work package information
   const renderWorkPackage = (workPackage) => {
     {if (statusWps[workPackage._id] === undefined) {
@@ -335,6 +367,9 @@ const AssignChildMaterial = ({ route, navigation }) => {
               <Text style={[styles.workPackageText, { marginTop: 5 }]}>
                 {workPackage.packageCount} {workPackage.packageCount > 1 ? 'packages' : 'package'}
               </Text>
+              <View>
+                <Text>{getStatusText(workPackage)}</Text>
+              </View>
             </View>
           </TouchableOpacity>
         </View>
