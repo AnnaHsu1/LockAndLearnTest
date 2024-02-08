@@ -359,16 +359,16 @@ const DisplayQuizzScreen = ({ route }) => {
                             style={styles.finishQuizButton}
                             onPress={() => {
                                 fetchQuestion();
-                                saveQuizResult(handleGrade(answers, solutions));
-                                // const grade = handleGrade(answers, solutions);
-                                // navigation.navigate('QuizGradeScreen', {
-                                //     quizId: quizId,
-                                //     numOfCorrectAnswers: handleGrade(answers, solutions),
-                                //     quizLength: quizLength,
-                                //     answers: answers,
-                                //     solutions: solutions,
-                                //     questions: questions,
-                                // });
+                                const grade = handleGrade(answers, solutions);
+                                saveQuizResult(grade);
+                                navigation.navigate('QuizGradeScreen', {
+                                    quizId: quizId,
+                                    numOfCorrectAnswers: grade,
+                                    quizLength: quizLength,
+                                    answers: answers,
+                                    solutions: solutions,
+                                    questions: questions,
+                                });
                             }}
                         >
                             <Text style={styles.finishQuizButtonText} testID='save-button'>Finish Quiz</Text>
