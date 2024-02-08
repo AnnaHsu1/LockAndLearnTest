@@ -310,4 +310,21 @@ router.get('/fetchWpByQuizAndPackage/:quizId/:packageId', async (req, res) => {
   }
 });
 
+// Get packages count from a workPackage based on workpackage ID
+router.get('/fetchPackageCount/:wpId', async (req, res) => {
+  try {
+    // get wp id
+    const { wpId } = req.params;
+    // find the workpackage by ID
+    const workpackage = await Workpackage.findById(wpId);
+    const packageCount = workpackage.packageCount;
+    // send success with the package count    
+    res.status(200).json(packageCount);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error getting packages:', error);
+    res.status(500).json({ error: 'An error occurred while getting the packages.' });
+  }
+});
+
 module.exports = router;
