@@ -367,8 +367,54 @@ const AssignChildMaterial = ({ route, navigation }) => {
               <Text style={[styles.workPackageText, { marginTop: 5 }]}>
                 {workPackage.packageCount} {workPackage.packageCount > 1 ? 'packages' : 'package'}
               </Text>
-              <View>
-                <Text>{getStatusText(workPackage)}</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor:
+                      getStatusText(workPackage) === 'Failed'
+                        ? '#FF0000'
+                        : getStatusText(workPackage) === 'Passed'
+                        ? '#4CAF50'
+                        : getStatusText(workPackage) === 'Incomplete'
+                        ? 'orange'
+                        : 'lightgray',
+                    width:
+                      getStatusText(workPackage) === 'Failed'
+                        ? 46
+                        : getStatusText(workPackage) === 'Passed'
+                        ? 52
+                        : getStatusText(workPackage) === 'Incomplete'
+                        ? 80
+                        : 81,
+                    borderRadius: 5,
+                  }}
+                >
+                  <Text
+                    style={{
+                      marginHorizontal: 5,
+                      color: 'white',
+                    }}
+                  >
+                    {getStatusText(workPackage)}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('More info')
+                    // navigation.navigate('newPageToCreate[Details of results page]', { pass the childQuizResults ID });
+                  }}
+                >
+                  {width < 350 
+                  ? <View style={{flexDirection: 'row'}}><Text style={{color: '#407BFF'}}>+</Text><Text style={{color: '#407BFF', textDecorationLine: 'underline'}}>Info</Text></View>
+                  : <Text style={[styles.workPackageText, { color: '#407BFF', textDecorationLine: 'underline'}]}>More Info</Text>
+                  }
+                </TouchableOpacity>
               </View>
             </View>
           </TouchableOpacity>
