@@ -797,10 +797,12 @@ const ChildTimeframes = ({ route, navigation }) => {
                               // set the open boolean to the opposite of the current open boolean
                               setOpen={(open) => {
                                 setSubjectDropdownOpen((prevSubjectDropdownOpen) => {
-                                  return {
-                                    ...prevSubjectDropdownOpen,
-                                    [timeframes[day][index]._id]: open,
-                                  };
+                                  const updatedSubjectDropdownOpen = {};
+                                  for (const key in prevSubjectDropdownOpen) {
+                                    updatedSubjectDropdownOpen[key] =
+                                      key === timeframes[day][index]._id ? open : false;
+                                  }
+                                  return updatedSubjectDropdownOpen;
                                 });
                               }}
                               // setValue={setTempSubject}
