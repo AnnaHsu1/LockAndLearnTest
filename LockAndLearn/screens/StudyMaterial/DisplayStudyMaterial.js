@@ -59,7 +59,11 @@ const DisplayStudyMaterial = ({}) => {
         // if (data.message) {
         //     console.log(data.message)
         // }
-      } else {
+      } 
+      else if (response.status === 400) {
+        console.error('No package found for child with ID:', childID);
+      }
+      else {
         console.error('Error fetching study material');
       }
     } catch (error) {
@@ -210,7 +214,17 @@ const DisplayStudyMaterial = ({}) => {
             </View>
           </View>
         ) : (
-          <Text>No assigned PDF material has been found.</Text>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <Text>No assigned PDF material has been found.</Text>
+          </View>
         )}
       </View>
     </ImageBackground>
