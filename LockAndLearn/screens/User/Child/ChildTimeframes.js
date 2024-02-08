@@ -41,6 +41,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [editStartMinute, setEditStartMinute] = useState({});
   const [editEndHour, setEditEndHour] = useState({});
   const [editEndMinute, setEditEndMinute] = useState({});
+  const [editSubject, setEditSubject] = useState({});
   const [preferences, setPreferences] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [open, setOpen] = useState(false);
@@ -50,6 +51,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     Object.keys(timeframes).map((day) => {
       const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
       const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+      const subject = timeframes[day].map((time) => Object.values(time)[5]);
       startTimes.forEach((time, index) => {
         const startHourTime = {
           [timeframes[day][index]._id]: time.substring(0, 2),
@@ -85,6 +87,12 @@ const ChildTimeframes = ({ route, navigation }) => {
           return {
             ...prevEndMinute,
             ...endMinuteTime,
+          };
+        });
+        setEditSubject((prevSubject) => {
+          return {
+            ...prevSubject,
+            ...subject,
           };
         });
       });
@@ -241,6 +249,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         setAddMode(false);
         clearAddFields();
         setAddedSuccessful(true);
+        setSelectedSubject('');
         setError('');
       }
     } catch (error) {
@@ -328,6 +337,9 @@ const ChildTimeframes = ({ route, navigation }) => {
         const editEndMinuteCopy = { ...editEndMinute };
         delete editEndMinuteCopy[timeframeId];
         setEditEndMinute(editEndMinuteCopy);
+        const editSubjectCopy = { ...editSubject };
+        delete editSubjectCopy[timeframeId];
+        setEditSubject(editSubjectCopy);
       }
     } catch (error) {
       console.log(error.msg);
@@ -614,6 +626,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                   {Object.keys(timeframes).map((day) => {
                     const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+                    const subject = timeframes[day].map((time) => Object.values(time)[5]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
                     if (startTimes.length === 0 && day === 'Sunday') {
@@ -648,9 +661,14 @@ const ChildTimeframes = ({ route, navigation }) => {
                     startTimes.forEach((time, index) => {
                       timePeriods.push(
                         <View key={`${day}-${index}`} style={styles.timePeriod}>
-                          <Text style={{ fontSize: 15 }}>
-                            {time} - {endTimes[index]}
-                          </Text>
+                          <View>
+                            <Text style={{ fontSize: 16, fontWeight: '600', color: '#407BFF' }}>
+                              {subject[index] ? subject[index] : 'No subject'}
+                            </Text>
+                            <Text style={{ fontSize: 15 }}>
+                              {time} - {endTimes[index]}
+                            </Text>
+                          </View>
                           <Switch
                             trackColor={{ false: 'lightgray', true: '#81b0ff' }}
                             thumbColor={isEnabled ? '#407BFF' : 'gray'}
@@ -1003,7 +1021,7 @@ const styles = StyleSheet.create({
     width: '65%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   timeframeInput: {
     borderColor: '#407BFF',
