@@ -383,5 +383,18 @@ router.get('/getParentUserName/:stripePurchaseId', async (req, res) => {
   }
 });
 
+router.get('/balanceInstructor/:instructorId', async (req, res) => {
+    try {
+        const instructorID = req.params.instructorId;
+        const user = await User.findById(instructorID);
+        const revenue = user.revenue;
+        // Return the  revenue as a response
+        res.status(200).json({ revenue: revenue });
+    } catch (error) {
+        console.error('Error fetching balance:', error);
+        res.status(500).json({ error: 'An error occurred while fetching balance.' });
+    }
+});
+
 
 module.exports = router;
