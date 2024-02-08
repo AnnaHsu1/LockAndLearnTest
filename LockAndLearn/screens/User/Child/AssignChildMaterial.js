@@ -397,8 +397,12 @@ const AssignChildMaterial = ({ route, navigation }) => {
                 >
                   <Text
                     style={{
-                      marginHorizontal: 5,
+                      // marginHorizontal: 5,
+                      marginVertical:3,
                       color: 'white',
+                      fontSize: 14,
+                      alignSelf: 'center',
+                      justifyContent:'center',
                     }}
                   >
                     {getStatusText(workPackage)}
