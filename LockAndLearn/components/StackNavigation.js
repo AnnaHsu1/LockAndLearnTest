@@ -61,6 +61,7 @@ import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePrevie
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
 import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfile';
+import SuspendedUser from '../screens/User/SuspendedUser';
 
 const Stack = createNativeStackNavigator();
 
@@ -391,6 +392,11 @@ const StackNavigation = () => {
           name="AdminViewTeacherProfile"
           component={AdminViewTeacherProfile}
           options={{ title: `AdminViewTeacherProfile` }}
+        />
+        <Stack.Screen
+          name="SuspendedUser"
+          component={SuspendedUser}
+          options={{ title: `SuspendedUser` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
