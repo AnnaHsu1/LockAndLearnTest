@@ -127,7 +127,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         );
         if (response.status === 200) {
           const data = await response.json();
-          setWorkPackages(data.slice(0, numberOfWorkPackagesToLoad));
+          const publishedWorkPackages = data.filter(wp => wp.isPublished);
+          setWorkPackages(publishedWorkPackages.slice(0, numberOfWorkPackagesToLoad));
         } else {
           console.error('Error fetching workPackagesBrowse');
         }
