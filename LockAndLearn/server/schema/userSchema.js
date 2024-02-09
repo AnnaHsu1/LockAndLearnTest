@@ -41,6 +41,7 @@ const User = mongoose.model(
         default: 0,
         required: false
     },
+    StripeBusinessId: { type: String },
     purchasedWorkPackages: {
         type: [
             {

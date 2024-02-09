@@ -422,6 +422,10 @@ router.get('/initiateStripeBusinessAccount/:instructorId', async (req, res) => {
 
     console.log('stripe account created: ', account);
 
+    // Save StripeBusinessId to the instructor's collection
+    user.StripeBusinessId = account.id; // This replaces it if it already exists
+    await user.save();
+
     //Creating a link for the instructor to complete the onboarding process
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
@@ -437,6 +441,34 @@ router.get('/initiateStripeBusinessAccount/:instructorId', async (req, res) => {
   } catch (error) {
     console.error('Error initiating Stripe account for the instructor:', error);
     res.status(500).json({ error: 'An error occurred while initiating Stripe business.' });
+  }
+});
+
+//Check if the instructor has successfully completed the Stripe onboarding process (necessary to start receiving payments)
+router.get('/checkStripeCapabilities/:instructorId', async (req, res) => {
+  try {
+    const instructorID = req.params.instructorId;
+    const user = await User.findById(instructorID); // Find the instructor by ID
+
+    if (!user || !user.StripeBusinessId) {
+      return res.status(400).json({ error: 'User or Stripe Business ID not found.' });
+    }
+
+    // Retrieve the Stripe account information
+    const account = await stripe.accounts.retrieve(user.StripeBusinessId);
+
+    // Check if the account has card_payments and transfers capabilities
+    const hasCardPaymentsCapability = account.capabilities && account.capabilities.card_payments === 'active';
+    const hasTransfersCapability = account.capabilities && account.capabilities.transfers === 'active';
+
+    res.status(200).json({
+      hasCardPaymentsCapability,
+      hasTransfersCapability,
+    });
+
+  } catch (error) {
+    console.error('Error checking Stripe capabilities:', error);
+    res.status(500).json({ error: 'An error occurred while checking Stripe capabilities.' });
   }
 });
 

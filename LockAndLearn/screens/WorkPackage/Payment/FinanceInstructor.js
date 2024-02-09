@@ -36,10 +36,21 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
-    getWorkPackages();
-    fetchBalance();
-    fetchAllTransactions();
-  }, [refresh]);
+    const fetchData = async () => {
+      await checkStripeEligibility(); //Comment out to see the unregistered instructor view
+  
+      // Only proceed with additional fetches if isRegistered is true
+      if (isRegistered) {
+        await getWorkPackages();
+        await fetchBalance();
+        await fetchAllTransactions();
+      }
+  
+      console.log('is registered? ', isRegistered);
+    };
+  
+    fetchData();
+  }, [refresh, isRegistered]);
 
   /**
    * Retrieves the recent purchase time for a given work package ID when involved in a transaction.
@@ -49,6 +60,27 @@ const FinanceInstructor = ({ navigation, route }) => {
   const getRecentPurchaseTime = (workPackageId) => {
     const recentTransaction = transactions.find((transaction) => transaction.id === workPackageId);
     return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
+  };
+
+
+  const checkStripeEligibility = async () => {
+    try {
+      const token = await getItem('@token');
+      const user = JSON.parse(token);
+      const userId = user._id;
+      const response = await fetch(`http://localhost:4000/payment/checkStripeCapabilities/${userId}`); // Replace 'currentUserId' with the actual user ID
+      const data = await response.json();
+
+      if (response.ok) {
+        const { hasCardPaymentsCapability, hasTransfersCapability } = data;
+        const newUserStatus = hasCardPaymentsCapability && hasTransfersCapability;
+        setIsRegistered(newUserStatus);
+      } else {
+        console.error('Error fetching Stripe capabilities:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching Stripe capabilities:', error);
+    }
   };
 
   /**
