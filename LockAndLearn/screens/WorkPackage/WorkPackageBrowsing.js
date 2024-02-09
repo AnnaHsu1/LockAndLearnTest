@@ -29,10 +29,9 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const [user, setUser] = useState(null);
   const [children, setChildren] = useState([]);
   const [suggestedWorkPackages, setSuggestedWorkPackages] = useState([]);
-  const [checkedGrade, setCheckedGrade] = useState([]);
 
   // Grades list to pass to the DropdownComponent
-  const gradesList = [1,2,3,4,5,6,7,8,9,10,11,12];
+  const gradesList = [1,2,3,4,5,6,7,8,9,10,11,12,"Any"];
   const [selectedGrade, setSelectedGrade] = useState(gradesList[0]);
   const [selectedOption, setSelectedOption] = useState(gradesList[0]);
 
@@ -55,7 +54,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    initializeCheckedGrade();
     fetchWorkPackages();
     fetchCartWorkPackages();
   }, []);
@@ -180,6 +178,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
 
   // Filter Workpackages by grade checked.
   const filterWorkPackagesByGrade = async (displayOwned = false) => {
+    console.log(typeof(selectedGrade))
     const token = await getItem('@token');
     const user = JSON.parse(token);
     const userId = user._id;
@@ -198,83 +197,50 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         if (response.status === 200) {
           const data = await response.json();
           const workPackageArray = data.slice(0, numberOfWorkPackagesToLoad);
-          if (checkedGrade.every((val) => val === false)) {
+          if (selectedGrade == "Any" && document.getElementById('Search').value != '') {
             filterWorkPackagesByText((displayOwned = false), workPackageArray);
-          } else {
+          }
+          else if (selectedGrade == "Any") {
+            setWorkPackages(workPackageArray);
+          }
+          else {
             for (let x in workPackageArray) {
-              if (
-                (workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade === '1') &&
-                checkedGrade[0] === true
-              ) {
+              if ((workPackageArray[x].grade === '1st Grade' || workPackageArray[x].grade ==='1') && selectedGrade === 1) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade === '2') &&
-                checkedGrade[1] === true
-              ) {
+              if ((workPackageArray[x].grade === '2nd Grade' || workPackageArray[x].grade ==='2') && selectedGrade === 2) {
+                console.log('from 2nd grade:', filteredResults)
+                filteredResults.push(workPackageArray[x]);
+                console.log('from 2nd grade end:', filteredResults)
+              }
+              if ((workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade ==='3') && selectedGrade === 3) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '3rd Grade' || workPackageArray[x].grade === '3') &&
-                checkedGrade[2] === true
-              ) {
+              if ((workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade ==='4') && selectedGrade === 4) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '4th Grade' || workPackageArray[x].grade === '4') &&
-                checkedGrade[3] === true
-              ) {
+              if ((workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade ==='5') && selectedGrade === 5) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '5th Grade' || workPackageArray[x].grade === '5') &&
-                checkedGrade[4] === true
-              ) {
+              if ((workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade ==='6') && selectedGrade === 6) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '6th Grade' || workPackageArray[x].grade === '6') &&
-                checkedGrade[5] === true
-              ) {
+              if ((workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade ==='7') && selectedGrade === 7) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '7th Grade' || workPackageArray[x].grade === '7') &&
-                checkedGrade[6] === true
-              ) {
+              if ((workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade ==='8') && selectedGrade === 8) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '8th Grade' || workPackageArray[x].grade === '8') &&
-                checkedGrade[7] === true
-              ) {
+              if ((workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade ==='9') && selectedGrade === 9) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '9th Grade' || workPackageArray[x].grade === '9') &&
-                checkedGrade[8] === true
-              ) {
+              if ((workPackageArray[x].grade === '10th Grade' || workPackageArray[x].grade ==='10') && selectedGrade === 10) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '10th Grade' ||
-                  workPackageArray[x].grade === '10') &&
-                checkedGrade[9] === true
-              ) {
+              if ((workPackageArray[x].grade === '11th Grade' || workPackageArray[x].grade ==='11') && selectedGrade === 11) {
                 filteredResults.push(workPackageArray[x]);
               }
-              if (
-                (workPackageArray[x].grade === '11th Grade' ||
-                  workPackageArray[x].grade === '11') &&
-                checkedGrade[10] === true
-              ) {
-                filteredResults.push(workPackageArray[x]);
-              }
-              if (
-                (workPackageArray[x].grade === '12th Grade' ||
-                  workPackageArray[x].grade === '12') &&
-                checkedGrade[11] === true
-              ) {
+              if ((workPackageArray[x].grade === '12th Grade' || workPackageArray[x].grade ==='12') && selectedGrade === 12) {
                 filteredResults.push(workPackageArray[x]);
               }
             }
@@ -370,92 +336,10 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
   }, [route.params?.removedWP]);
 
-  // Function to handle the checkbox state
-  const handleCheckbox = (grade) => {
-    const tempArray = [...checkedGrade];
-
-    switch (grade) {
-      case 1:
-        tempArray[0] = !tempArray[0];
-        break;
-      case 2:
-        tempArray[1] = !tempArray[1];
-        break;
-      case 3:
-        tempArray[2] = !tempArray[2];
-        break;
-      case 4:
-        tempArray[3] = !tempArray[3];
-        break;
-      case 5:
-        tempArray[4] = !tempArray[4];
-        break;
-      case 6:
-        tempArray[5] = !tempArray[5];
-        break;
-      case 7:
-        tempArray[6] = !tempArray[6];
-        break;
-      case 8:
-        tempArray[7] = !tempArray[7];
-        break;
-      case 9:
-        tempArray[8] = !tempArray[8];
-        break;
-      case 10:
-        tempArray[9] = !tempArray[9];
-        break;
-      case 11:
-        tempArray[10] = !tempArray[10];
-        break;
-      case 12:
-        tempArray[11] = !tempArray[11];
-        break;
-      default:
-        break;
-    }
-    setCheckedGrade(tempArray);
-  };
-
   const clearFilter = () => {
-    initializeCheckedGrade();
+    
     document.getElementById('Search').value = '';
     fetchWorkPackages();
-  };
-
-  // Function to initialize the checkedGrade array to false
-  const initializeCheckedGrade = () => {
-    const tempArray = [];
-    for (let i = 0; i < 12; i++) {
-      tempArray.push(false);
-    }
-    setCheckedGrade(tempArray);
-  };
-
-  const CheckboxComponent = ({ label, checked, onChange }) => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginVertical: 8,
-          marginHorizontal: 8,
-        }}
-      >
-        <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={onChange} color="blue" />
-        <Text
-          style={{
-            fontWeight: 'none',
-            marginLeft: -5,
-            fontSize: 14,
-            color: '#333',
-            lineHeight: 24,
-          }}
-        >
-          {label}
-        </Text>
-      </View>
-    );
   };
 
   // Function to determine the grade suffix
@@ -481,8 +365,14 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const DropdownComponent = ({ label, options, defaultValue}) => {
 
     const handleDropdownChange = (event) => {
+      
       setSelectedOption(event.target.value);
-      setSelectedGrade(event.target.value);
+      if (event.target.value === "Any") {
+        setSelectedGrade(event.target.value);
+      }
+      else {
+      setSelectedGrade(parseInt(event.target.value));
+      }
     };
 
     return (
