@@ -20,12 +20,20 @@ const FinanceInstructor = ({ navigation, route }) => {
     const refresh = route.params?.refresh;
     const [workPackages, setWorkPackages] = useState([]);
     const [balance, setBalance] = useState([]);
-
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         getWorkPackages();
         fetchBalance();
+        fetchAllTransactions();
     }, [refresh]);
 
+    const getRecentPurchaseTime = (workPackageId) => {
+        const recentTransaction = transactions.find(
+            (transaction) => transaction.id === workPackageId
+        );
+        return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
+    };
     const fetchBalance = async () => {
         try {
             const token = await getItem('@token');
@@ -53,7 +61,24 @@ const FinanceInstructor = ({ navigation, route }) => {
             console.error('Error fetching balance:', error);
         }
     };
+    const fetchAllTransactions = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/payment/transactions');
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Updated transactions:', data);
 
+                setTransactions(data.payments);
+            } else {
+                console.error('Failed to fetch transactions:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+        } finally {
+            console.log('set loading to false!');
+            setLoading(false); // Set loading to false when the request completes
+        }
+    };
     const getWorkPackages = async () => {
         try {
             const userToken = await getUser();
@@ -92,15 +117,15 @@ return (
                 <Text style={styles.balance}>Sales since last login: </Text>
             </View>
             <ScrollView style={styles.transactionListContainer}>
-                <Text style={styles.text}>My Work Packages</Text>
+                <Text style={styles.title}>My Work Packages</Text>
                 {workPackages.map((workPackage) => (
                     <View key={workPackage._id} style={styles.userContainer}>
                         <View style={styles.workPackageText}>
-                            <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
-                            <Text >Total Profit: $</Text>
+                            <Text style={styles.workPackageNameText}>{`${workPackage.name}`} Grade {`${workPackage.grade}`}</Text>
+                            <Text >Total Profit: ${`${workPackage.price}`}</Text>
                             <Text >Cost: $</Text>
                             <Text >Quantity Sold: </Text>
-    
+                            <Text >Most Recent Purchase: {getRecentPurchaseTime(workPackage._id)}</Text>
                         </View>
                     </View>
                 ))}
@@ -144,7 +169,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container: {
-        minWidth: '70%',
+        minWidth: '40%',
         minHeight: '65%',
         maxHeight: '90%',
         paddingLeft: 20,
