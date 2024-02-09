@@ -316,6 +316,10 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
             amount: amountInCents,
             currency: 'cad',
             customer: customer.id,
+            //application_fee_amount: amountInCents * 0.10,
+            //transfer_data: {
+             //   destination: 'seller stripe account ID',
+            //},
         });
 
         console.log("Sending client secret...");
@@ -324,6 +328,7 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
             clientSecret: paymentIntent.client_secret,
             customerName: customer.name,
             customerEmail: customer.email,
+            //application_fee_amount: paymentIntent.application_fee_amount,
         });
         console.log("Sent to front-end.");
     } catch (e) {
@@ -394,6 +399,42 @@ router.get('/balanceInstructor/:instructorId', async (req, res) => {
         console.error('Error fetching balance:', error);
         res.status(500).json({ error: 'An error occurred while fetching balance.' });
     }
+});
+
+router.get('/initiateStripeBusiness/:instructorId', async (req, res) => {
+  try {
+    const instructorID = req.params.instructorId;
+    const user = await User.findById(instructorID); // Find the instructor by ID
+
+    // Create a Stripe account for the instructor
+    const account = await stripe.accounts.create({
+      type: 'express',
+      country: 'CA',
+      email: user.email,
+      capabilities: {
+        card_payments: { requested: true },
+        transfers: { requested: true },
+      },
+    });
+
+    console.log('stripe account created: ', account);
+
+    //Creating a link for the instructor to complete the onboarding process
+    const accountLink = await stripe.accountLinks.create({
+      account: account.id,
+      refresh_url: 'https://localhost:19006/',
+      return_url: 'https://localhost:19006/',
+      type: 'account_onboarding',
+    });
+
+    console.log('account link created: ', accountLink);
+    
+    res.status(200).json({ url: accountLink.url });
+
+  } catch (error) {
+    console.error('Error initiating Stripe account for the instructor:', error);
+    res.status(500).json({ error: 'An error occurred while initiating Stripe business.' });
+  }
 });
 
 

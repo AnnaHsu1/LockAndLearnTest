@@ -41,6 +41,7 @@ const Payment = ({ navigation, route }) => {
                 });
                 const { clientSecret } = await orderResponse.json();
                 console.log("Received CS:", clientSecret);
+                console.log("App fee:", clientSecret.application_fee_amount);
                 setClientSecret(clientSecret);
                 console.log("Client Secret set.");
             } catch (error) {

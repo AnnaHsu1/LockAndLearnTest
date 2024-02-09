@@ -20,12 +20,33 @@ const FinanceInstructor = ({ navigation, route }) => {
     const refresh = route.params?.refresh;
     const [workPackages, setWorkPackages] = useState([]);
     const [balance, setBalance] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isRegistered, setIsRegistered] = useState(true); // TEMPORARY FOR STRIPE SETUP
 
     useEffect(() => {
         getWorkPackages();
         fetchBalance();
+        fetchAllTransactions();
     }, [refresh]);
 
+
+    /**
+     * Retrieves the recent purchase time for a given work package ID when involved in a transaction.
+     * @param {string} workPackageId - The ID of the work package.
+     * @returns {string} - The formatted recent purchase time, or an empty string if not found.
+     */
+    const getRecentPurchaseTime = (workPackageId) => {
+        const recentTransaction = transactions.find(
+            (transaction) => transaction.id === workPackageId
+        );
+        return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
+    };
+    
+    /**
+     * Fetches the total revenue balance of the instructor.
+     * @returns {Promise<void>} A promise that resolves when the balance is fetched successfully.
+     */
     const fetchBalance = async () => {
         try {
             const token = await getItem('@token');
@@ -54,6 +75,34 @@ const FinanceInstructor = ({ navigation, route }) => {
         }
     };
 
+
+    /**
+     * Fetches all transactions from the server.
+     * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
+     */
+    const fetchAllTransactions = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/payment/transactions');
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Updated transactions:', data);
+
+                setTransactions(data.payments);
+            } else {
+                console.error('Failed to fetch transactions:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+        } finally {
+            console.log('set loading to false!');
+            setLoading(false); // Set loading to false when the request completes
+        }
+    };
+    
+    /**
+     * Retrieves created work packages for the current instructor.
+     * @returns {Promise<void>} A promise that resolves when the work packages are retrieved successfully.
+     */
     const getWorkPackages = async () => {
         try {
             const userToken = await getUser();
@@ -77,60 +126,102 @@ const FinanceInstructor = ({ navigation, route }) => {
         }
     };
 
+const generateStripeSetupLink = async () => {
+    try{
+        const response = await fetch('http://localhost:4000/payment/generateStripeSetupLink')
+        const data = await response.json();
+    }
+    catch (error) {
+
+    }
+
+};
 
 return (
-    <View style={styles.page} testID="main-view">
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Finances</Text>
-            </View>
-            {/* Displaying the list of transactions */}
-            <View style={styles.userContainer}>
-                <Text style={styles.balance}>Total revenue: ${balance}</Text>
-                <Text style={styles.balance}>Total Sales: </Text>
-                <Text style={styles.balance}>Sales this week: </Text>
-                <Text style={styles.balance}>Sales since last login: </Text>
-            </View>
-            <ScrollView style={styles.transactionListContainer}>
-                <Text style={styles.text}>My Work Packages</Text>
-                {workPackages.map((workPackage) => (
-                    <View key={workPackage._id} style={styles.userContainer}>
-                        <View style={styles.workPackageText}>
-                            <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
-                            <Text >Total Profit: $</Text>
-                            <Text >Cost: $</Text>
-                            <Text >Quantity Sold: </Text>
-    
-                        </View>
-                    </View>
-                ))}
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => navigation.navigate('CreateWorkPackage')}
-                >
-                </TouchableOpacity>
-            </ScrollView>
+  <View style={styles.page} testID="main-view">
+    <View style={styles.container}>
+      {isRegistered ? (
+        <View style={styles.header}>
+          <Text style={styles.title}>My Finance Dashboard</Text>
         </View>
+      ) : (
+        <View style={styles.header}>
+          <Text style={styles.title}>Finance Setup</Text>
+        </View>
+      )}
 
-        {/* Error Modal */}
-        {/*<Modal*/}
-        {/*    animationType="slide"*/}
-        {/*    isVisible={errorModalVisible}*/}
-        {/*    onBackdropPress={() => setErrorModalVisible(false)}*/}
-        {/*    transparent={true}*/}
-        {/*    style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}*/}
-        {/*>*/}
-        {/*    <View style={styles.modalCard}>*/}
-        {/*        <Text style={styles.modalText}>{errorMessage}</Text>*/}
-        {/*        <TouchableOpacity*/}
-        {/*            style={[styles.modalButton, { backgroundColor: '#4F85FF', borderColor: '#4F85FF' }]}*/}
-        {/*            onPress={() => setErrorModalVisible(false)}*/}
-        {/*        >*/}
-        {/*            <Text style={{ fontWeight: 'bold', color: 'white' }}>Okay</Text>*/}
-        {/*        </TouchableOpacity>*/}
-        {/*    </View>*/}
-        {/*</Modal>*/}
+      {!isRegistered && (
+        <View style={styles.userContainer}>
+          <Text style={styles.balance}>Get started by setting up your Stripe Account.</Text>
+          <TouchableOpacity
+            style={{
+              ...styles.content,
+              backgroundColor: '#635BFF',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+            onPress={() => generateStripeSetupLink()}
+          >
+            <Text style={styles.text}> Create Setup Link </Text>
+            <Image
+              source={require('../../../assets/stripeIcon.png')}
+              style={{ width: 35, height: 35}}
+            />
+          </TouchableOpacity>
+          <Text style={{ textAlign: 'center' }}>
+            * Please note that without a registered Stripe account, we will not be able to transfer
+            the profits to you.
+          </Text>
+        </View>
+      )}
+
+      {/* Displaying the list of transactions */}
+      {isRegistered && (
+        <View style={styles.userContainer}>
+          <Text style={styles.balance}>Total revenue: ${balance}</Text>
+          <Text style={styles.balance}>Total Sales: </Text>
+          <Text style={styles.balance}>Sales this week: </Text>
+          <Text style={styles.balance}>Sales since last login: </Text>
+        </View>
+      )}
+
+      {isRegistered && (
+        <ScrollView style={styles.transactionListContainer}>
+          <Text style={styles.title}>My Work Packages</Text>
+          {workPackages.map((workPackage) => (
+            <View key={workPackage._id} style={styles.userContainer}>
+              <View style={styles.workPackageText}>
+              <Text style={styles.workPackageNameText}>{`${workPackage.name}`} Grade {`${workPackage.grade}`}</Text>
+                <Text >Total Profit: ${`${workPackage.price}`}</Text>
+                <Text>Cost: $</Text>
+                <Text>Quantity Sold: </Text>
+                <Text>Most Recent Purchase: {getRecentPurchaseTime(workPackage._id)}</Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
+
+    {/* Error Modal */}
+    {/*<Modal*/}
+    {/*    animationType="slide"*/}
+    {/*    isVisible={errorModalVisible}*/}
+    {/*    onBackdropPress={() => setErrorModalVisible(false)}*/}
+    {/*    transparent={true}*/}
+    {/*    style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}*/}
+    {/*>*/}
+    {/*    <View style={styles.modalCard}>*/}
+    {/*        <Text style={styles.modalText}>{errorMessage}</Text>*/}
+    {/*        <TouchableOpacity*/}
+    {/*            style={[styles.modalButton, { backgroundColor: '#4F85FF', borderColor: '#4F85FF' }]}*/}
+    {/*            onPress={() => setErrorModalVisible(false)}*/}
+    {/*        >*/}
+    {/*            <Text style={{ fontWeight: 'bold', color: 'white' }}>Okay</Text>*/}
+    {/*        </TouchableOpacity>*/}
+    {/*    </View>*/}
+    {/*</Modal>*/}
+  </View>
 );
 };
 
@@ -144,7 +235,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container: {
-        minWidth: '70%',
+        minWidth: '40%',
         minHeight: '65%',
         maxHeight: '90%',
         paddingLeft: 20,
@@ -159,11 +250,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#4F85FF',
         borderRadius: 5,
         marginVertical: 10,
-        paddingVertical: 20,
-        paddingHorizontal: 30,
         justifyContent: 'center',
         alignItems: 'center',
-        minWidth: wp(10),
+        minWidth: wp(5),
         minHeight: hp(5),
         boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     },
