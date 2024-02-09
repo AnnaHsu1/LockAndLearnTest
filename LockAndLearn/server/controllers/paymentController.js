@@ -415,8 +415,13 @@ router.post('/transferPayments', async (req, res) => {
     const transferPromises = stripePayingSplits.map(async (split) => {
       const { price, instructorID, StripeBusinessId } = split;
 
+      // Calculate the application fee based on the amount (you can adjust the fee percentage as needed)
+      const applicationFeePercentage = 0.1; // 10% application fee, adjust as needed
+      const applicationFee = Math.round(price * applicationFeePercentage * 100); // Application fee in cents
+      console.log('application fee for this instructor: ', applicationFee / 100);
+
       const transfer = await stripe.transfers.create({
-        amount: price * 100, // Amount in cents
+        amount: (price * 100) - applicationFee, // Amount in cents
         currency: 'cad',
         destination: StripeBusinessId,
       });
@@ -427,6 +432,7 @@ router.post('/transferPayments', async (req, res) => {
         transferId: transfer.id,
         amount: transfer.amount / 100, // Amount in dollars
         status: transfer.status,
+        applicationFee: applicationFee / 100, // Application fee in dollars
       };
     });
 
