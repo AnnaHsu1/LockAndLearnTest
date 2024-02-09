@@ -102,7 +102,6 @@ describe('WorkPackageBrowsing Tests', () => {
         await waitFor(() => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
-        fireEvent.press(getByTestId('addButton-wp1'));
     });
 
     it('navigates to cart screen on button press', () => {
