@@ -296,36 +296,43 @@ router.get("/config", (req, res) => {
 router.post("/initOrderStripe/:userId", async (req, res) => {
     try {
         console.log("initOrderStripe endpoint hit!");
-        const { totalPrice } = req.body;
+        const { totalPrice, workPackagesInCart } = req.body;
         const userId = req.params.userId;
         const user = await User.findById(userId);
         console.log("server total price: ", totalPrice);
+        console.log('work packages involved: ', workPackagesInCart);
         console.log("user", user);
+
         if (!totalPrice) {
             throw new Error("Total price is missing or invalid.");
         }
+        
         // Convert the string to a floating-point number
         const priceInDollars = parseFloat(totalPrice);
 
         // Convert the price to an integer representing cents (assuming it's in dollars)
         const amountInCents = Math.round(priceInDollars * 100); // Rounding to the nearest cent
+        console.log('amount in cents', amountInCents);
 
-        console.log("amount in cents", amountInCents);
-        const userFullName = user.firstName +" " + user.lastName;
-        console.log("full name", userFullName);
+        // Reduce workPackagesInCart to only contain price and instructorID (for transfer splits)
+        const reducedWorkPackages = await setPayingSplitsPerSeller(workPackagesInCart);
+
+        console.log('processable paying splits on Stripe: ', reducedWorkPackages);
+
+        // Create a new customer in Stripe
+        const userFullName = user.firstName + ' ' + user.lastName;
+        console.log('full name', userFullName);
         const customer = await stripe.customers.create({
             name: userFullName,
             email: user.email,
         });
         console.log(customer.id);
+
+        // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({
             amount: amountInCents,
             currency: 'cad',
-            customer: customer.id,
-            //application_fee_amount: amountInCents * 0.10,
-            //transfer_data: {
-             //   destination: 'seller stripe account ID',
-            //},
+            customer: customer.id
         });
 
         console.log("Sending client secret...");
@@ -334,7 +341,7 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
             clientSecret: paymentIntent.client_secret,
             customerName: customer.name,
             customerEmail: customer.email,
-            //application_fee_amount: paymentIntent.application_fee_amount,
+            stripePayingSplits: reducedWorkPackages,
         });
         console.log("Sent to front-end.");
     } catch (e) {
@@ -346,6 +353,58 @@ router.post("/initOrderStripe/:userId", async (req, res) => {
         });
     }
 });
+
+// Function to fetch StripeBusinessId for each instructorID and sum the total amount to be paid to each seller (only valid sellers with StripeBusinessIds are in the array)
+const setPayingSplitsPerSeller = async (workPackagesInCart) => {
+  try {
+      const mergedMap = new Map();
+
+      const promises = workPackagesInCart.map(async (workPackage) => {
+          try {
+
+              // Convert the string to a floating-point number
+              const priceInDollars = parseFloat(workPackage.price);
+
+              // Fetch the user from the database based on instructorID (_id in MongoDB)
+              const user = await User.findById(workPackage.instructorID);
+
+              // If the user is found, add StripeBusinessId to the workPackage object
+              if (user && user.StripeBusinessId) {
+                  const key = `${workPackage.instructorID}-${user.StripeBusinessId}`;
+
+                  if (mergedMap.has(key)) {
+                      // If the key already exists, sum the prices
+                      mergedMap.get(key).price += priceInDollars;
+                  } else {
+                      // If the key doesn't exist, create a new entry
+                      mergedMap.set(key, {
+                          price: priceInDollars,
+                          instructorID: workPackage.instructorID,
+                          StripeBusinessId: user.StripeBusinessId,
+                      });
+                  }
+              } else {
+                  // Handle the case where the user or StripeBusinessId is not found
+                  console.error(`User not found or StripeBusinessId missing for instructorID: ${workPackage.instructorID}`);
+              }
+          } catch (error) {
+              // Handle database query errors
+              console.error(`Error fetching user for instructorID: ${workPackage.instructorID}`, error);
+          }
+      });
+
+      // Wait for all promises to resolve
+      await Promise.all(promises);
+
+      // Convert the Map values to an array and filter out null entries
+      const mergedWorkPackages = Array.from(mergedMap.values()).filter((entry) => entry !== null);
+
+      return mergedWorkPackages;
+  } catch (error) {
+      console.error('Error fetching and merging StripeBusinessIds:', error);
+      return [];
+  }
+};
 
 // Endpoint to fetch all transactions
 router.get('/transactions', async (req, res) => {

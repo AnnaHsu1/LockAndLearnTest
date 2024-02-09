@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../../components/AsyncStorage';
-const CheckoutForm = ({ navigation, route }) => {
+const CheckoutForm = ({ stripePayingSplits }) => {
+  //console.log('Stripe Paying Splits:', stripePayingSplits);
   const navigation1 = useNavigation();
   const stripe = useStripe();
   const elements = useElements();
