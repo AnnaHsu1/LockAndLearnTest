@@ -26,7 +26,7 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [balance, setBalance] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(true); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
+  const [isRegistered, setIsRegistered] = useState(false); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
   const [generatedUrl, setGeneratedUrl] = useState(null);
   const [expiryTime, setExpiryTime] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
@@ -194,17 +194,17 @@ const FinanceInstructor = ({ navigation, route }) => {
               disabled={disableButton}
               onPress={() => generateStripeSetupLink()}
             >
-              {isLoading && (
-                <ActivityIndicator size="small" color="white" style={{ marginRight: 10 }} />
-              )}
               <Text style={styles.text}>
                 {' '}
                 {isLoading
-                  ? 'Generating Stripe Link'
+                  ? 'Generating Stripe Link...'
                   : generatedUrl
                   ? 'Stripe Link Generated'
                   : 'Create Setup Link'}{' '}
               </Text>
+              {isLoading && (
+                <ActivityIndicator size="small" color="white" style={{ marginRight: 10 }} />
+              )}
               {!isLoading && (
                 <Image
                   source={require('../../../assets/stripeIcon.png')}
