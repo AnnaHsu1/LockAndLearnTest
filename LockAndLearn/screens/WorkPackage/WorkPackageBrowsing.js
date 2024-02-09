@@ -365,7 +365,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const DropdownComponent = ({ label, options, defaultValue}) => {
 
     const handleDropdownChange = (event) => {
-      
+
       setSelectedOption(event.target.value);
       if (event.target.value === "Any") {
         setSelectedGrade(event.target.value);
@@ -414,25 +414,23 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             <DropdownComponent label="Grade" options={gradesList} defaultValue={gradesList[0]} />
           </View>
           <View style={styles.containerFilterButtons}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.buttonFilter}
-                onPress={() => {
-                  filterWorkPackagesByGrade();
-                }}
-              >
-                <Icon source="filter" size={30} color="#000" />
-              </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonFilter}
+              onPress={() => {
+                filterWorkPackagesByGrade();
+              }}
+            >
+              <Text style={{ color: 'white' }}>Filter Results</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.buttonClearFilter}
-                onPress={() => {
-                  clearFilter();
-                }}
-              >
-                <Icon source="filter-remove-outline" size={30} color="#000" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={styles.buttonClearFilter}
+              onPress={() => {
+                clearFilter();
+              }}
+            >
+              <Text style={{ color: 'white' }}>Clear Filter</Text>
+            </TouchableOpacity>
           </View>
           <View style={{ maxHeight: 600 }}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -979,27 +977,27 @@ const styles = StyleSheet.create(
       backgroundColor: '#4F85FF',
       alignItems: 'center',
       justifyContent: 'center',
-      width: '30%',
+      width: '25%',
       height: 40,
       borderRadius: 8,
-      marginHorizontal: 23, // Adjust the margin as needed for spacing
+      marginHorizontal: 2, // Adjust the margin as needed for spacing
       paddingVertical: 0,
     },
     buttonClearFilter: {
       backgroundColor: '#B2BEB5',
       alignItems: 'center',
       justifyContent: 'center',
-      width: '30%',
+      width: '25%',
       height: 40,
       borderRadius: 8,
-      marginHorizontal: 23, // Adjust the margin as needed for spacing
+      marginHorizontal: 2, // Adjust the margin as needed for spacing
       paddingVertical: 0,
     },
     containerFilterButtons: {
       backgroundColor: 'FAFAFA',
       width: '100%',
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'center',
       alignSelf: 'top',
       alignItems: 'center',
       borderTopLeftRadius: 40,
@@ -1037,7 +1035,19 @@ const styles = StyleSheet.create(
       fontWeight: 'bold', // Make the instructor's name bold
     },
     buttonContainer: {
+      backgroundColor: 'yellow',
       flexDirection: 'row',
+    },
+    dropdownContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 500,
+      marginBottom: 20,
+    },
+    dropdownLabel: {
+      marginHorizontal: 10,
     },
   },
   {
