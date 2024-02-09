@@ -100,16 +100,19 @@ export const WorkPackageCard = ({ props }) => {
             <Text style={styles.header}>
               {workpackage.name} - {workpackage.grade}{getGradeSuffix(workpackage.grade)} Grade
             </Text>
-            <View style={styles.row}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('EditWorkPackage', { workpackage: props })}
-              >
-                <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-              </TouchableOpacity>
-            </View>
+            {/* The Edit and Delete Buttons should only show if the workpackage is not published */}
+            {workpackage.isPublished === false || isPublished ? (
+              <View style={styles.row}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('EditWorkPackage', { workpackage: props })}
+                >
+                  <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                  <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                </TouchableOpacity>
+              </View>) : (<View></View>
+            )}
           </View>
           <Text style={styles.price}>${workpackage.price}</Text>
           <Text style={[styles.text, { paddingTop: 10 }]}>
