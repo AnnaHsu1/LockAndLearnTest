@@ -103,108 +103,6 @@ const AssignChildMaterial = ({ route, navigation }) => {
     }
   };
 
-
-  // const [workPackageData, setWorkPackageData] =  useState([])
-  // [
-  //   workpackageID: {packageID, status}, {packageID...},
-  //   workpackageID: {status},
-  //   workpackageID: {}
-  //  ]
-  
-  
-  const fetchPackagesForAWorkPackage = async (workPackageId) => {
-    // call backend to get all package related to wpID
-    try {
-      const response = await fetch(
-        `http://localhost:4000/packages/fetchPackages/${workPackageId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      if (response.status === 200) {
-        const packages = await response.json();
-        const packagesStatus = [];
-        packages.forEach((pckg) => {
-          if (pckg.quizzes.length !== 0) {
-            // for each quizid fetch the quiz status pass/fail with given childid
-            var packageStatus = "pass";
-            pckg.quizzes.forEach(async (quizId)=>{
-              try{
-                const response = await fetch(
-                  `http://localhost:4000/childQuizResults/getStatusForQuiz/${child._id}/${quizId}`,
-                  {
-                    method: 'GET',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                  }
-                );
-
-                if (response.status === 200 || response.status === 201) {
-                  const quizStatus = await response.json();
-                  // console.log("Quiz status", quizStatus)
-                  if ( quizStatus.quizResultStatus === 'failed') {
-                    console.log("1Quiz failed", quizId)
-                    packageStatus = "fail"
-                  }
-                }
-                else if (response.status === 404) {
-                  console.log("No status found for quiz", quizId)
-                  packageStatus = "not started"
-                }
-              } catch (error) {
-                console.error('Network error:', error);
-              }
-              console.log("Package status", packageStatus)
-
-            })
-            console.log("OUTSIDE Package status", packageStatus)
-
-            // console.log("Package status", packageStatus)
-            if (packageStatus === 'pass') {
-              packagesStatus[pckg._id] = 'pass';
-            }
-            else if (packageStatus === 'fail') {
-              console.log("2Fail", pckg._id)
-              packagesStatus[pckg._id] = 'fail';
-              return 'fail'
-            }
-            else {
-              packagesStatus[pckg._id] = 'not started'
-              return 'not started'
-            }
-          }
-          else {
-            console.log("No staaaaaaaaaaaaarted", pckg._id)
-            return packagesStatus[pckg._id] = 'not started'
-          } 
-        })
-        if (packagesStatus.includes('pass')) {
-          return 'pass'
-        }
-        else if (packagesStatus.includes('fail')) {
-          return 'fail'
-        }
-        else {
-          return 'not started'
-        }
-      } else {
-        console.error('Error fetching workPackages');
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-    }
-    // and get packageid and status
-
-    // [..., setWorkPackageData]
-
-    // set status of workpackage
-
-  }
-
   // function to get all owned work packages from the user
   const fetchWorkPackages = async (displayOwned = false) => {
     const user = await getUser();
@@ -222,18 +120,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
         if (response.status === 200) {
           const data = await response.json();
 
-          // create a function to get all package for each wp
-          // inside each package, get their status
-          // sort wp and package to get right status
-          // display status for each wp
-
           setWorkPackages(data);
           data.forEach((workPackage) => {
-            // const statusWp = fetchPackagesForAWorkPackage(workPackage._id);
-            // setStatusWps((prevStatusWps) => ({
-            //   ...prevStatusWps,
-            //   [workPackage._id]: statusWp,
-            // }));
             setCheckedboxItems((prevCheckedboxItems) => ({
               ...prevCheckedboxItems,
               [workPackage._id]: previouslyAssigned.includes(workPackage._id),
@@ -449,6 +337,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
               <Text>No work owned packages</Text>
             </View>
           )}
+          testID="workPackageList"
         />
         {/* display button to add selected wp*/}
         <TouchableOpacity
