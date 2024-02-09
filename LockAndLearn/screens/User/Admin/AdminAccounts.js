@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 const AdminAccount = ({ route, navigation }) => {
   const styles = useStyles();
@@ -73,7 +73,7 @@ const AdminAccount = ({ route, navigation }) => {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
         // Update the users state after suspending the user
         const updatedUsers = users.map(user => {
@@ -83,9 +83,9 @@ const AdminAccount = ({ route, navigation }) => {
           return user;
         });
         setUsers(updatedUsers);
-  
+
         closeSuspendModal();
-  
+
         // Show success alert
         Alert.alert('Success', 'User has been successfully suspended.');
       } else {
@@ -95,7 +95,7 @@ const AdminAccount = ({ route, navigation }) => {
       console.error('Error suspending user:', error);
     }
   };
-  
+
 
   const handleSuspendPress = async () => {
     try {
@@ -131,54 +131,54 @@ const AdminAccount = ({ route, navigation }) => {
           <Text style={styles.title}>Accounts</Text>
         </View>
         {/* Displaying the list of users */}
-<ScrollView style={styles.userListContainer}>
-  {users.length > 0 ? (
-    users.map((user, index) => (
-      <View
-        key={index}
-        style={[
-          user.isParent ? styles.userContainerTutor : styles.userContainerTutor,
-          user.suspended ? styles.suspendedUserContainer : null,
-        ]}
-      >
-        {!user.isParent ? (
-          <TouchableOpacity onPress={() => handleUserProfileNavigation(user._id)}>
-            <Text
-              style={[
-                styles.userName,
-                !user.isParent && styles.underline,
-                !user.isParent && styles.userNameTutor,
-              ]}
-            >
-              {user.firstName} {user.lastName}
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <Text
-            style={[
-              styles.userName,
-              !user.isParent && styles.underline,
-              !user.isParent && styles.userNameTutor,
-            ]}
-          >
-            {user.firstName} {user.lastName}
-          </Text>
-        )}
-        <Text style={styles.userDetails}>Email: {user.email}</Text>
-        <Text style={styles.userDetails}>Birthday: {user.birthDate}</Text>
-        {user.suspended ? (
-          <Text style={styles.deleteButton}>Suspended</Text>
-        ) : (
-          <TouchableOpacity onPress={() => openModal(user._id, 'suspend')}>
-            <Text style={styles.deleteButton}>Suspend</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    ))
-  ) : (
-    <Text style={styles.noUsersText}>No users available</Text>
-  )}
-</ScrollView>
+        <ScrollView style={styles.userListContainer}>
+          {users.length > 0 ? (
+            users.map((user, index) => (
+              <View
+                key={index}
+                style={[
+                  user.isParent ? styles.userContainerTutor : styles.userContainerTutor,
+                  user.suspended ? styles.suspendedUserContainer : null,
+                ]}
+              >
+                {!user.isParent ? (
+                  <TouchableOpacity onPress={() => handleUserProfileNavigation(user._id)}>
+                    <Text
+                      style={[
+                        styles.userName,
+                        !user.isParent && styles.underline,
+                        !user.isParent && styles.userNameTutor,
+                      ]}
+                    >
+                      {user.firstName} {user.lastName}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text
+                    style={[
+                      styles.userName,
+                      !user.isParent && styles.underline,
+                      !user.isParent && styles.userNameTutor,
+                    ]}
+                  >
+                    {user.firstName} {user.lastName}
+                  </Text>
+                )}
+                <Text style={styles.userDetails}>Email: {user.email}</Text>
+                <Text style={styles.userDetails}>Birthday: {user.birthDate}</Text>
+                {user.suspended ? (
+                  <Text style={styles.deleteButton}>Suspended</Text>
+                ) : (
+                  <TouchableOpacity onPress={() => openModal(user._id, 'suspend')}>
+                    <Text style={styles.deleteButton}>Suspend</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noUsersText}>No users available</Text>
+          )}
+        </ScrollView>
 
         {/* Modal for deletion confirmation */}
         <Modal
