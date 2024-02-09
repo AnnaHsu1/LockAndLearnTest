@@ -68,6 +68,9 @@ router.post("/transferWorkPackages/:userId/:stripeId/:stripeSale", async (req, r
                 console.log("total revenue", sellersRevenue[sellerId]);
                 // Add stripeId to the stripePurchaseId array
                 workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId.toString()];
+                // Increment the profit by the price of the work package
+                workPackage.profit = (workPackage.profit || 0) + parseFloat(workPackage.price);
+                console.log("profit", workPackage.profit);
                 await workPackage.save();
             }
         }
@@ -123,6 +126,9 @@ router.post("/transferWorkPackages/:userId", async (req, res) => {
             if (workPackage) {
                 // Add stripeId to the stripePurchaseId array
                 workPackage.stripePurchaseId = [...(workPackage.stripePurchaseId || []), stripeId];
+                // Increment the profit by the price of the work package
+                workPackage.profit = (workPackage.profit || 0) + parseFloat(workPackage.price);
+                console.log("profit", workPackage.profit);
                 await workPackage.save();
             }
         }
@@ -435,6 +441,37 @@ router.get('/initiateStripeBusiness/:instructorId', async (req, res) => {
     console.error('Error initiating Stripe account for the instructor:', error);
     res.status(500).json({ error: 'An error occurred while initiating Stripe business.' });
   }
+});
+// Function to get the last purchase time for a given work package ID
+const getLastPurchaseTime = async (workPackageId) => {
+    try {
+        // Fetch transactions associated with the work package
+        const transactions = await stripe.paymentIntents.list({
+            limit: 10, // Adjust as needed
+            // Add any additional filters if required, e.g., metadata: { workPackageId: workPackageId }
+        });
+
+        // Sort transactions by creation date in descending order
+        transactions.data.sort((a, b) => new Date(b.created) - new Date(a.created));
+
+        // Return the creation time of the first transaction (assuming it's the latest)
+        return transactions.data.length > 0 ? transactions.data[0].created : null;
+    } catch (error) {
+        console.error('Error fetching last purchase time:', error);
+        throw error;
+    }
+};
+//  route to get the last purchase time for a work package
+router.get('/lastPurchaseTime/:workPackageId', async (req, res) => {
+    const { workPackageId } = req.params;
+
+    try {
+        const lastPurchaseTime = await getLastPurchaseTime(workPackageId);
+        res.status(200).json({ lastPurchaseTime });
+    } catch (error) {
+        console.error('Error fetching last purchase time:', error);
+        res.status(500).json({ error: 'An error occurred while fetching last purchase time.' });
+    }
 });
 
 

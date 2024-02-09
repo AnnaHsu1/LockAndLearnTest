@@ -40,9 +40,10 @@ const FinanceInstructor = ({ navigation, route }) => {
         const recentTransaction = transactions.find(
             (transaction) => transaction.id === workPackageId
         );
+        console.log("recent", recentTransaction.created);
         return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
     };
-    
+
     /**
      * Fetches the total revenue balance of the instructor.
      * @returns {Promise<void>} A promise that resolves when the balance is fetched successfully.
@@ -85,7 +86,7 @@ const FinanceInstructor = ({ navigation, route }) => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Updated transactions:', data);
-
+                console.log("payment", data.payments);
                 setTransactions(data.payments);
             } else {
                 console.error('Failed to fetch transactions:', response.status);
@@ -124,6 +125,10 @@ const FinanceInstructor = ({ navigation, route }) => {
             console.log(error);
         }
     };
+    const totalWorkPackagesSold = workPackages.reduce((total, workPackage) => {
+        // Increment the total by the length of the stripePurchaseId array for each work package
+        return total + workPackage.stripePurchaseId.length;
+    }, 0);
 
 const generateStripeSetupLink = async () => {
     try{
@@ -178,7 +183,7 @@ return (
       {isRegistered && (
         <View style={styles.userContainer}>
           <Text style={styles.balance}>Total revenue: ${balance}</Text>
-          <Text style={styles.balance}>Total Sales: </Text>
+          <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
           <Text style={styles.balance}>Sales this week: </Text>
           <Text style={styles.balance}>Sales since last login: </Text>
         </View>
@@ -191,10 +196,10 @@ return (
             <View key={workPackage._id} style={styles.userContainer}>
               <View style={styles.workPackageText}>
               <Text style={styles.workPackageNameText}>{`${workPackage.name}`} Grade {`${workPackage.grade}`}</Text>
-                <Text >Total Profit: ${`${workPackage.price}`}</Text>
-                <Text>Cost: $</Text>
-                <Text>Quantity Sold: </Text>
-                <Text>Most Recent Purchase: {getRecentPurchaseTime(workPackage._id)}</Text>
+                <Text >Total Profit: ${`${workPackage.profit}`} </Text>
+                <Text>Cost: ${`${workPackage.price}`}</Text>
+                <Text>Quantity Sold: {workPackage.stripePurchaseId.length}</Text>
+                <Text>Most Recent Purchase: </Text>
               </View>
             </View>
           ))}

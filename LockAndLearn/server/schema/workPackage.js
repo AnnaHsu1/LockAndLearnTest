@@ -57,6 +57,10 @@ const WorkPackage = mongoose.model('WorkPackage', new mongoose.Schema({
         default: [],
         required: true,
     }, //Unique purchase ID from Stripe
+    profit: {
+        type: Number,
+        default: 0,
+    },
 
 }), collectionName);
 
