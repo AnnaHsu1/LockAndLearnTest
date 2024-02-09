@@ -90,16 +90,14 @@ router.put('/updateWorkPackage/:workpackageID', async (req, res) => {
       existingWorkPackage.price = price;
 
       if (
-        existingWorkPackage.ratings.find(
-          (ratings) => ratings.user._id.toString() === req.body.ratings.user
-        ) != null
+        existingWorkPackage.ratings[0] === undefined || existingWorkPackage.ratings[0] === null
       ) {
-        console.log('User already rated this package, updating review');
-        const index = existingWorkPackage.ratings.findIndex(
-          (ratings) => ratings.user._id.toString() === req.body.ratings.user
-        );
-        existingWorkPackage.ratings[index] = req.body.ratings;
-      } else {
+        existingWorkPackage.ratings[0] = ratings;
+      } else if (existingWorkPackage.ratings.findIndex((rating) => rating.user === ratings.user) !== -1){
+          const index = existingWorkPackage.ratings.findIndex((rating) => rating.user === ratings.user);
+          existingWorkPackage.ratings[index] = ratings;
+      }
+      else {
         existingWorkPackage.ratings.push(ratings);
       }
       const editedWorkpackage = await existingWorkPackage.save();

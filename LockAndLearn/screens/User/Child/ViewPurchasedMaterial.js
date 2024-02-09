@@ -96,7 +96,8 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
 
   // function to display the work package information
   const RenderWorkPackage = ({ workPackage }) => {
-    const index = workPackage.ratings.user
+    
+    const index = workPackage.ratings[0]!==null && workPackage.ratings[0]!==undefined
       ? workPackage.ratings.findIndex((ratings) => ratings.user === userId)
       : -1;
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
@@ -182,13 +183,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
                 style={styles.buttonSubmit}
                 textColor="white"
                 onPress={() => {
-                  handleUpdateWorkPackage(
-                    workPackage,
-                    rating,
-                    document.getElementById('commentField').value
-                  ) !== null
-                    ? document.getElementById('commentField').value
-                    : ' ';
+                  handleUpdateWorkPackage(workPackage, rating,((document.getElementById('commentField').value) !== null? document.getElementById('commentField').value: ' '));
                   setComment(document.getElementById('commentField').value);
                 }}
               >
