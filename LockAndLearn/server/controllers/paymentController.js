@@ -486,9 +486,9 @@ router.get('/lastPurchaseTime/:workPackageId', async (req, res) => {
 });
 
 //For devs to test the account deletion and Stripe cleanup
-router.get('/delete-account/', async (req, res) => {
+router.get('/delete-account/:accountId', async (req, res) => {
   
-  const accountId = '';
+  const { accountId } = req.params;
 
   try {
     const deleted = await stripe.accounts.del(accountId);

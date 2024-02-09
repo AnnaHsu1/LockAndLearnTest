@@ -8,7 +8,9 @@ import {
   Image,
   ScrollView,
   Clipboard,
-  ActivityIndicator
+  ActivityIndicator,
+  TextInput,
+  Modal,
 } from 'react-native';
 
 import {
@@ -30,6 +32,8 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [generatedUrl, setGeneratedUrl] = useState(null);
   const [expiryTime, setExpiryTime] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const [accountIdToDelete, setAccountIdToDelete] = useState(''); // For devs
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     getWorkPackages();
@@ -168,6 +172,35 @@ const FinanceInstructor = ({ navigation, route }) => {
     }
   };
 
+  // FOR DEVS: Delete the instructor Stripe accounts 
+  const handleDeleteAccount = async () => {
+    try {
+      const stripeId = accountIdToDelete;
+
+      // Make a request to your server to trigger the account deletion
+      const response = await fetch(`http://localhost:4000/payment/delete-account/${stripeId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // You may include additional headers or authentication tokens here
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // The account deletion was successful
+        console.log('Account deleted successfully: ', stripeId);
+      } else {
+        // The account deletion failed
+        console.log('Account deletion failed:', data);
+      }
+
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    }
+  };
+
   return (
     <View style={styles.page} testID="main-view">
       <View style={styles.container}>
@@ -276,6 +309,69 @@ const FinanceInstructor = ({ navigation, route }) => {
             ))}
           </ScrollView>
         )}
+
+        {/* Temporary Modal for test account deletions */}
+        <Modal animationType="slide" transparent={true} visible={showDeleteModal}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, height: 200, width: 500 }}>
+              <TextInput
+                style={{
+                  width: '100%',
+                  height: 50,
+                  borderColor: 'gray',
+                  backgroundColor: 'white',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  padding: 10,
+                  marginBottom: 20,
+                }}
+                placeholder="Enter Account ID to Delete"
+                value={accountIdToDelete}
+                onChangeText={(text) => setAccountIdToDelete(text)}
+              />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#D22B2B',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 10,
+                  borderRadius: 5,
+                  width: '100%'
+                }}
+                onPress={handleDeleteAccount}
+              >
+                <Text style={{ color: 'white' }}> Delete Account </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setShowDeleteModal(false)}
+                style={{
+                  backgroundColor: 'white',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 10,
+                  borderRadius: 5,
+                  width: '100%',
+                }}
+              >
+                <Text style={{ color: 'black' }}> Cancel </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* ... other components */}
+
+        <TouchableOpacity
+          style={{
+            ...styles.content,
+            backgroundColor: '#635BFF',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+          onPress={() => setShowDeleteModal(true)}
+        >
+          <Text style={styles.text}> [Dev] Delete Stripe Account Modal </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Error Modal */}
