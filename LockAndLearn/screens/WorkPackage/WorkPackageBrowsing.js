@@ -127,7 +127,11 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         );
         if (response.status === 200) {
           const data = await response.json();
-          setWorkPackages(data.slice(0, numberOfWorkPackagesToLoad));
+          // console.log("DATA OF WORK PACKAGES FETCHED", data);
+          const publishedWorkPackages = data.filter(wp => wp.isPublished);
+          console.log("PUBLISHED WORK PACKAGES", publishedWorkPackages);
+
+          setWorkPackages(publishedWorkPackages.slice(0, numberOfWorkPackagesToLoad));
         } else {
           console.error('Error fetching workPackagesBrowse');
         }
