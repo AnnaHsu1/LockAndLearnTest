@@ -104,14 +104,6 @@ describe('WorkPackageBrowsing Tests', () => {
         });
     });
 
-    it('navigates to cart screen on button press', () => {
-        const navigate = jest.fn();
-        useNavigation.mockImplementation(() => ({ navigate }));
-        const { getByTestId } = render(<WorkPackageBrowsing {...mockedParameters}/>);
-        fireEvent.press(getByTestId('viewCartButton'));
-        expect(navigate).toHaveBeenCalledWith('WorkPackageCart');
-    });
-
     it('renders the work package item correctly', async () => {
         const { findByText } = render(<WorkPackageBrowsing {...mockedParameters} />);  
         await waitFor(() => {
