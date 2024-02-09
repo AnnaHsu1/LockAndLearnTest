@@ -26,7 +26,7 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [balance, setBalance] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
+  const [isRegistered, setIsRegistered] = useState(true); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
   const [generatedUrl, setGeneratedUrl] = useState(null);
   const [expiryTime, setExpiryTime] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
@@ -47,40 +47,6 @@ const FinanceInstructor = ({ navigation, route }) => {
     return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
   };
 
-<<<<<<< Updated upstream
-    /**
-     * Retrieves the recent purchase time for a given work package ID when involved in a transaction.
-     * @param {string} workPackageId - The ID of the work package.
-     * @returns {string} - The formatted recent purchase time, or an empty string if not found.
-     */
-    const getRecentPurchaseTime = (workPackageId) => {
-        const recentTransaction = transactions.find(
-            (transaction) => transaction.id === workPackageId
-        );
-        console.log("recent", recentTransaction.created);
-        return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
-    };
-
-    /**
-     * Fetches the total revenue balance of the instructor.
-     * @returns {Promise<void>} A promise that resolves when the balance is fetched successfully.
-     */
-    const fetchBalance = async () => {
-        try {
-            const token = await getItem('@token');
-            const user = JSON.parse(token);
-            const userId = user._id;
-            const response = await fetch(`http://localhost:4000/payment/balanceInstructor/${userId}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-            let data = await response.json();
-            if (response.status === 200) {
-=======
   /**
    * Fetches the total revenue balance of the instructor.
    * @returns {Promise<void>} A promise that resolves when the balance is fetched successfully.
@@ -99,7 +65,6 @@ const FinanceInstructor = ({ navigation, route }) => {
       let data = await response.json();
       if (response.status === 200) {
         console.log('balance', data.revenue);
->>>>>>> Stashed changes
 
         setBalance(data.revenue);
       } else {
@@ -110,75 +75,6 @@ const FinanceInstructor = ({ navigation, route }) => {
     }
   };
 
-<<<<<<< Updated upstream
-                setBalance(data.revenue);
-                
-            } else {
-                console.error('Failed to fetch balance:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching balance:', error);
-        }
-    };
-
-    /**
-     * Fetches all transactions from the server.
-     * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
-     */
-    const fetchAllTransactions = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/payment/transactions');
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Updated transactions:', data);
-                console.log("payment", data.payments);
-                setTransactions(data.payments);
-            } else {
-                console.error('Failed to fetch transactions:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching transactions:', error);
-        } finally {
-            console.log('set loading to false!');
-            setLoading(false); // Set loading to false when the request completes
-        }
-    };
-    
-    /**
-     * Retrieves created work packages for the current instructor.
-     * @returns {Promise<void>} A promise that resolves when the work packages are retrieved successfully.
-     */
-    const getWorkPackages = async () => {
-        try {
-            const userToken = await getUser();
-            const response = await fetch(
-                'http://localhost:4000/workPackages/getWorkPackages/' + userToken._id,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-            let data = await response.json();
-            if (response.status === 200) {
-                // // if tutor deleted workpackage, don't display it
-                data = data.filter((workpackage) => !workpackage.deletedByTutor);
-                setWorkPackages(data);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const totalWorkPackagesSold = workPackages.reduce((total, workPackage) => {
-        // Increment the total by the length of the stripePurchaseId array for each work package
-        return total + workPackage.stripePurchaseId.length;
-    }, 0);
-
-const generateStripeSetupLink = async () => {
-    try{
-        const response = await fetch('http://localhost:4000/payment/generateStripeSetupLink')
-=======
   /**
    * Fetches all transactions from the server.
    * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
@@ -187,7 +83,6 @@ const generateStripeSetupLink = async () => {
     try {
       const response = await fetch('http://localhost:4000/payment/transactions');
       if (response.ok) {
->>>>>>> Stashed changes
         const data = await response.json();
         console.log('Updated transactions:', data);
 
@@ -243,29 +138,6 @@ const generateStripeSetupLink = async () => {
     Clipboard.setString(generatedUrl);
   };
 
-<<<<<<< Updated upstream
-      {/* Displaying the list of transactions */}
-      {isRegistered && (
-        <View style={styles.userContainer}>
-          <Text style={styles.balance}>Total revenue: ${balance}</Text>
-          <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
-          <Text style={styles.balance}>Sales this week: </Text>
-          <Text style={styles.balance}>Sales since last login: </Text>
-        </View>
-      )}
-
-      {isRegistered && (
-        <ScrollView style={styles.transactionListContainer}>
-          <Text style={styles.title}>My Work Packages</Text>
-          {workPackages.map((workPackage) => (
-            <View key={workPackage._id} style={styles.userContainer}>
-              <View style={styles.workPackageText}>
-              <Text style={styles.workPackageNameText}>{`${workPackage.name}`} Grade {`${workPackage.grade}`}</Text>
-                <Text >Total Profit: ${`${workPackage.profit}`} </Text>
-                <Text>Cost: ${`${workPackage.price}`}</Text>
-                <Text>Quantity Sold: {workPackage.stripePurchaseId.length}</Text>
-                <Text>Most Recent Purchase: </Text>
-=======
   /**
    * Generates a Stripe setup link for the instructor.
    * @returns {Promise<void>} A promise that resolves when the Stripe setup link is generated.
@@ -358,7 +230,6 @@ const generateStripeSetupLink = async () => {
                     style={{ width: 20, height: 20 }}
                   />
                 </TouchableOpacity>
->>>>>>> Stashed changes
               </View>
             )}
 
