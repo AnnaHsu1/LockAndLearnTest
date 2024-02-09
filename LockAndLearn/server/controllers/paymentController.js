@@ -407,7 +407,7 @@ router.get('/balanceInstructor/:instructorId', async (req, res) => {
     }
 });
 
-router.get('/initiateStripeBusiness/:instructorId', async (req, res) => {
+router.get('/initiateStripeBusinessAccount/:instructorId', async (req, res) => {
   try {
     const instructorID = req.params.instructorId;
     const user = await User.findById(instructorID); // Find the instructor by ID
@@ -417,10 +417,7 @@ router.get('/initiateStripeBusiness/:instructorId', async (req, res) => {
       type: 'express',
       country: 'CA',
       email: user.email,
-      capabilities: {
-        card_payments: { requested: true },
-        transfers: { requested: true },
-      },
+      requested_capabilities: ['card_payments', 'transfers'],
     });
 
     console.log('stripe account created: ', account);
@@ -435,7 +432,7 @@ router.get('/initiateStripeBusiness/:instructorId', async (req, res) => {
 
     console.log('account link created: ', accountLink);
     
-    res.status(200).json({ url: accountLink.url });
+    res.status(200).json({ url: accountLink.url, linkExpiry: accountLink.expires_at});
 
   } catch (error) {
     console.error('Error initiating Stripe account for the instructor:', error);
@@ -472,6 +469,52 @@ router.get('/lastPurchaseTime/:workPackageId', async (req, res) => {
         console.error('Error fetching last purchase time:', error);
         res.status(500).json({ error: 'An error occurred while fetching last purchase time.' });
     }
+});
+
+// Function to get the last purchase time for a given work package ID
+const getLastPurchaseTime = async (workPackageId) => {
+  try {
+      // Fetch transactions associated with the work package
+      const transactions = await stripe.paymentIntents.list({
+          limit: 10, // Adjust as needed
+          // Add any additional filters if required, e.g., metadata: { workPackageId: workPackageId }
+      });
+
+      // Sort transactions by creation date in descending order
+      transactions.data.sort((a, b) => new Date(b.created) - new Date(a.created));
+
+      // Return the creation time of the first transaction (assuming it's the latest)
+      return transactions.data.length > 0 ? transactions.data[0].created : null;
+  } catch (error) {
+      console.error('Error fetching last purchase time:', error);
+      throw error;
+  }
+};
+//  route to get the last purchase time for a work package
+router.get('/lastPurchaseTime/:workPackageId', async (req, res) => {
+  const { workPackageId } = req.params;
+
+  try {
+      const lastPurchaseTime = await getLastPurchaseTime(workPackageId);
+      res.status(200).json({ lastPurchaseTime });
+  } catch (error) {
+      console.error('Error fetching last purchase time:', error);
+      res.status(500).json({ error: 'An error occurred while fetching last purchase time.' });
+  }
+});
+
+//For devs to test the account deletion and Stripe cleanup
+router.get('/delete-account/', async (req, res) => {
+  
+  const accountId = '';
+
+  try {
+    const deleted = await stripe.accounts.del(accountId);
+    res.status(200).json({ success: true, message: 'Account deleted successfully', data: deleted });
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
 });
 
 
