@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { Text, View} from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
-import { Button } from 'react-native-paper';
 
-const SuspendedUser = ({ route, navigation }) => {
+
+const SuspendedUser = () => {
   const styles = useStyles();
 
 
@@ -25,39 +25,6 @@ const useStyles = CreateResponsiveStyle(
       flexDirection: 'row',
       alignItems: 'flex-start',
     },
-    workPackageText: {
-      flex: 1, // Allow text to wrap within the available space
-    },
-    workPackageBox: {
-      backgroundColor: '#fff',
-      padding: 15,
-      marginBottom: 15,
-      borderRadius: 8,
-      elevation: 2,
-    },
-    workPackageItem: {
-      fontSize: 16,
-      marginVertical: 10,
-      color: '#000000',
-      borderColor: '#407BFF',
-      borderWidth: 1,
-      padding: 13,
-      borderRadius: 15,
-    },
-    workPackageItemContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      alignItems: 'center',
-    },
-    workPackageNameText: {
-      fontSize: '150%',
-      color: '#4F85FF',
-    },
-    TitleName: {
-      fontSize: 25,
-      marginBottom: 10,
-      color: '#696969',
-    },
     container: {
       flex: 1,
       position: 'absolute',
@@ -65,22 +32,6 @@ const useStyles = CreateResponsiveStyle(
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
-    },
-    containerFile: {
-      flex: 1,
-      backgroundColor: '#FAFAFA',
-      alignItems: 'center',
-      width: '100%',
-      borderTopLeftRadius: 40,
-      borderTopRightRadius: 40,
-      marginTop: '5%',
-      padding: 20, // Add padding to match the styling in QuizzesOverviewScreen
-      paddingBottom: 100,
-    },
-    priceWP: {
-      fontWeight: '700',
-      fontSize: '120%',
-      color: '#696969',
     },
     title: {
       color: '#4F85FF',
@@ -130,42 +81,10 @@ const useStyles = CreateResponsiveStyle(
       color: '#4F85FF',
       fontSize: 20,
     },
-    userListContainer: {
-      paddingRight: 20,
-    },
-    tagBox: {
-      backgroundColor: '#7393B3',
-      borderTopLeftRadius: 10,
-      borderBottomLeftRadius: 10,
-      borderTopRightRadius: 70,
-      borderBottomRightRadius: 70,
-      paddingVertical: 5,
-      paddingHorizontal: 10,
-      marginTop: 6,
-      marginBottom: 6,
-    },
-    tagText: {
-      textAlign: 'center',
-      color: 'white',
-    },
     containerTag: {
       flexDirection: 'row',
       alignItems: 'flex-start',
     },
-    boldText: {
-      fontWeight: 'bold', // Make the instructor's name bold
-    },
-    workPackageDescription: {
-      fontSize: '110%',
-      color: '#696969',
-    },
-    instructorDetails: {
-      fontSize: '80%',
-      color: '#696969',
-    },
-    previewButton:{
-      maxWidth: 130,
-    }
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
