@@ -15,6 +15,7 @@ import { getItem } from '../../components/AsyncStorage';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import '../../carousel.css';
+import { IoMdStar } from 'react-icons/io';
 
 const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -451,6 +452,73 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     );
   };
 
+  // Function to calculate the average star rating of a work package
+  const calculate_average_star_rating = (workpackage) => {
+    
+    let sum = 0;
+    let count = 0;
+    console.log(workpackage);
+
+    //if workpackage is old and has no ratings field
+    if (workpackage.ratings[0] === null || workpackage.ratings[0] === undefined) {
+      console.log('Null ratings');
+      return 0;
+    }
+
+    //if workpackage has ratings
+    if (workpackage.ratings.length === 0) {
+        console.log('No ratings');
+        return 0;
+    }
+
+    if(workpackage.ratings.length > 0){
+      for (let i = 0; i < workpackage.ratings.length; i++) {
+        console.log("Ratings:",workpackage.ratings[i]);
+        sum += workpackage.ratings[i].stars;
+        count++;
+      }
+      //return the average rating rounded to the nearest whole number
+      return Number((sum / count).toFixed());
+    }
+  };
+
+  // Funtion to get the number of reviews
+  const get_number_of_reviews = (workpackage) => {
+    if (workpackage.ratings[0] === null || workpackage.ratings[0] === undefined) {
+      return 0;
+    }
+    return workpackage.ratings.length;
+  };
+
+
+
+  const RenderStarRatings = ({ workpackage }) => {
+
+    const [rating, setRating] = useState(calculate_average_star_rating(workpackage));
+
+
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        {[...Array(5)].map((star, i) => {
+          const ratingValue = i + 1;
+          return (
+            <View key={i}>
+              <IoMdStar
+                style={styles.buttonStarRating}
+                id='starRating'
+                size={30}
+                className="star"
+                color={ratingValue <= (rating) ? '#4f85ff' : '#e4e5e9'}
+              />
+            </View>
+          );
+        })}
+      </View>
+    );
+
+
+  };
+
   // Function to determine the grade suffix
   const getGradeSuffix = (grade) => {
     if (grade >= 11 && grade <= 13) {
@@ -618,10 +686,13 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                         suggestedWorkPackages[childIndex].map((workPackage) => (
                           <View key={workPackage._id} style={styles.carouselWorkPackageBox}>
                             <View style={styles.workPackageText}>
-                              <Text
-                                style={styles.workPackageNameText}
-                              >{`${workPackage.name}`}</Text>
-
+                              <View style={styles.containerNameAndRating}>
+                                <Text
+                                  style={styles.workPackageNameText}
+                                >{`${workPackage.name}`}</Text>
+                                <RenderStarRatings workpackage={workPackage} />
+                                <Text>({(get_number_of_reviews(workPackage))})</Text>
+                              </View>
                               <View style={styles.containerTag}>
                                 <View style={styles.tagBox}>
                                   <Text style={styles.tagText} selectable={false}>
@@ -710,16 +781,19 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                 // Display the work package details
                 <View key={workPackage._id} style={styles.workPackageBox}>
                   <View style={styles.workPackageText}>
-                    <TouchableOpacity
-                      key={workPackage._id}
-                      onPress={() => {
-                        console.log('Previewing '+workPackage);
-                        navigation.navigate('WorkPackagePreview', { workPackage });
-                      }}
-                    >
-                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
-                    </TouchableOpacity>
-
+                    <View style={styles.containerNameAndRating}>
+                      <TouchableOpacity
+                        key={workPackage._id}
+                        onPress={() => {
+                          console.log('Previewing '+workPackage);
+                          navigation.navigate('WorkPackagePreview', { workPackage });
+                        }}
+                      >
+                        <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                      </TouchableOpacity>
+                      <RenderStarRatings workpackage={workPackage} />
+                      <Text>({(get_number_of_reviews(workPackage))})</Text>
+                    </View>
                     <View style={styles.containerTag}>
                       <View style={styles.tagBox}>
                         <Text style={styles.tagText} selectable={false}>
@@ -1208,6 +1282,9 @@ const styles = StyleSheet.create(
       fontWeight: 'bold', // Make the instructor's name bold
     },
     buttonContainer: {
+      flexDirection: 'row',
+    },
+    containerNameAndRating: {
       flexDirection: 'row',
     },
   },
