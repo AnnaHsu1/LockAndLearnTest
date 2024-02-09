@@ -437,7 +437,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                         Cancel
                       </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => saveEditTimeframes()}>
+                    <TouchableOpacity testID="save-edit" onPress={() => saveEditTimeframes()}>
                       <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
                     </TouchableOpacity>
                   </View>
@@ -520,6 +520,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                       items={preferences}
                       setOpen={setOpen}
                       setValue={setSelectedSubject}
+                      testID="subject-dropdown-picker-add"
                       style={{
                         borderColor: '#407BFF',
                         backgroundColor: '#fafafa',
@@ -795,6 +796,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               value={editSubject[timeframes[day][index]._id]}
                               placeholder="Select a subject"
                               items={preferences}
+                              testID={`subject-dropdown-picker-edit-${day}-${index}-${timeframes[day][index]._id}`}
                               // set the open boolean to the opposite of the current open boolean
                               setOpen={(open) => {
                                 setSubjectDropdownOpen((prevSubjectDropdownOpen) => {
@@ -862,6 +864,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               ]}
                               placeholder="HH"
                               keyboardType="numeric"
+                              testID={`start-hour-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
                               value={editStartHour[timeframes[day][index]._id]}
                               onChangeText={(text) => {
                                 setEditStartHour((prevStartHour) => {
@@ -883,6 +886,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               ]}
                               placeholder="MM"
                               keyboardType="numeric"
+                              testID={`start-minute-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
                               value={editStartMinute[timeframes[day][index]._id]}
                               onChangeText={(text) => {
                                 setEditStartMinute((prevStartMinute) => {
@@ -904,6 +908,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               ]}
                               placeholder="HH"
                               keyboardType="numeric"
+                              testID={`end-hour-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
                               value={editEndHour[timeframes[day][index]._id]}
                               onChangeText={(text) => {
                                 setEditEndHour((prevEndHour) => {
@@ -925,6 +930,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                               ]}
                               placeholder="MM"
                               keyboardType="numeric"
+                              testID={`end-minute-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
                               value={editEndMinute[timeframes[day][index]._id]}
                               onChangeText={(text) => {
                                 setEditEndMinute((prevEndMinute) => {
@@ -960,7 +966,12 @@ const ChildTimeframes = ({ route, navigation }) => {
           )}
         </View>
         {/* Pop-up: Confirmation to delete timeframe */}
-        <Modal transparent={true} visible={isDeleteModalVisible} onRequestClose={toggleDeleteModal}>
+        <Modal
+          transparent={true}
+          visible={isDeleteModalVisible}
+          onRequestClose={toggleDeleteModal}
+          testID="delete-modal"
+        >
           {/* display modal's background */}
           <View style={styles.modalContainer}>
             {/* display modal */}
@@ -972,6 +983,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                 <Button
                   style={styles.modalNoButton}
                   mode="contained"
+                  testID="delete-timeframe-no-button"
                   onPress={() => {
                     toggleDeleteModal();
                   }}
@@ -981,6 +993,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                 <Button
                   style={styles.modalYesButton}
                   mode="contained"
+                  testID="delete-timeframe-yes-button"
                   onPress={() => {
                     toggleDeleteModal();
                     handleDeleteTimeframe(timeframeId);
