@@ -33,6 +33,12 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   //Checkboxes states for each grade, default is unchecked
   const [checkedGrade, setCheckedGrade] = useState([]);
 
+  // Grades list to pass to the DropdownComponent
+  const gradesList = [1,2,3,4,5,6,7,8,9,10,11,12];
+  const [selectedGrade, setSelectedGrade] = useState(gradesList[0]);
+  const [selectedOption, setSelectedOption] = useState(gradesList[0]);
+
+
 
   // Function to handle selecting a work package
   const selectWorkPackage = (workPackage) => {
@@ -444,6 +450,27 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
   };
 
+  const DropdownComponent = ({ label, options, defaultValue}) => {
+
+    const handleDropdownChange = (event) => {
+      setSelectedOption(event.target.value);
+      setSelectedGrade(event.target.value);
+    };
+
+    return (
+      <View style={styles.dropdownContainer}>
+        <Text style={styles.dropdownLabel}>{label}</Text>
+        <select name='select' id='select' value={selectedOption} onChange={handleDropdownChange}>
+          {options.map((option) => (
+            <option key={option} value={option} defaultValue={defaultValue === option}> 
+              {option}
+            </option>
+          ))}
+        </select>
+      </View>
+    );
+  }
+
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -466,96 +493,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
             Filter Work Packages by school grade
           </Text>
           <View style={styles.filterContainer}>
-            <View style={styles.checkboxGroupStyle}>
-              <CheckboxComponent
-                label="1st"
-                checked={checkedGrade[0]}
-                onChange={() => {
-                  handleCheckbox(1);
-                }}
-              />
-              <CheckboxComponent
-                label="2nd"
-                checked={checkedGrade[1]}
-                onChange={() => {
-                  handleCheckbox(2);
-                }}
-              />
-              <CheckboxComponent
-                label="3rd"
-                checked={checkedGrade[2]}
-                onChange={() => {
-                  handleCheckbox(3);
-                }}
-              />
-              <CheckboxComponent
-                label="4th"
-                checked={checkedGrade[3]}
-                onChange={() => {
-                  handleCheckbox(4);
-                }}
-              />
-            </View>
-            <View style={styles.checkboxGroupStyle}>
-              <CheckboxComponent
-                label="5th"
-                checked={checkedGrade[4]}
-                onChange={() => {
-                  handleCheckbox(5);
-                }}
-              />
-              <CheckboxComponent
-                label="6th"
-                checked={checkedGrade[5]}
-                onChange={() => {
-                  handleCheckbox(6);
-                }}
-              />
-              <CheckboxComponent
-                label="7th"
-                checked={checkedGrade[6]}
-                onChange={() => {
-                  handleCheckbox(7);
-                }}
-              />
-              <CheckboxComponent
-                label="8th"
-                checked={checkedGrade[7]}
-                onChange={() => {
-                  handleCheckbox(8);
-                }}
-              />
-            </View>
-            <View style={styles.checkboxGroupStyle}>
-              <CheckboxComponent
-                label="9th"
-                checked={checkedGrade[8]}
-                onChange={() => {
-                  handleCheckbox(9);
-                }}
-              />
-              <CheckboxComponent
-                label="10th"
-                checked={checkedGrade[9]}
-                onChange={() => {
-                  handleCheckbox(10);
-                }}
-              />
-              <CheckboxComponent
-                label="11th"
-                checked={checkedGrade[10]}
-                onChange={() => {
-                  handleCheckbox(11);
-                }}
-              />
-              <CheckboxComponent
-                label="12th"
-                checked={checkedGrade[11]}
-                onChange={() => {
-                  handleCheckbox(12);
-                }}
-              />
-            </View>
+            <DropdownComponent label="Grade" options={gradesList} defaultValue={gradesList[0]} />
           </View>
           <View style={styles.containerFilterButtons}>
             <View style={styles.buttonContainer}>
