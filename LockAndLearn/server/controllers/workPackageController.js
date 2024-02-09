@@ -175,6 +175,7 @@ router.get('/allWorkPackages', async (req, res) => {
           grade: workPackage.grade,
           instructorName,
           instructorEmail,
+          ratings: workPackage.ratings,
         };
       })
     );

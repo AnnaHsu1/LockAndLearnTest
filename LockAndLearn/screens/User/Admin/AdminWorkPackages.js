@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
+import { IoMdStar } from 'react-icons/io';
 
 const AdminWorkPackages = ({ route, navigation }) => {
   const styles = useStyles();
@@ -88,6 +89,74 @@ const AdminWorkPackages = ({ route, navigation }) => {
     }
   };
 
+  // Function to calculate the average star rating of a work package
+  const calculate_average_star_rating = (workpackage) => {
+  
+    let sum = 0;
+    let count = 0;
+    console.log(workpackage);
+
+    //if workpackage is old and has no ratings field
+    if (workpackage.ratings[0] === null || workpackage.ratings[0] === undefined) {
+      console.log('Null ratings');
+      return 0;
+    }
+
+    //if workpackage has ratings
+    if (workpackage.ratings.length === 0) {
+        console.log('No ratings');
+        return 0;
+    }
+
+    if(workpackage.ratings.length > 0){
+      for (let i = 0; i < workpackage.ratings.length; i++) {
+        console.log("Ratings:",workpackage.ratings[i]);
+        sum += workpackage.ratings[i].stars;
+        count++;
+      }
+      //return the average rating rounded to the nearest whole number
+      return Number((sum / count).toFixed());
+    }
+  };
+
+
+  // Funtion to get the number of reviews
+  const get_number_of_reviews = (workpackage) => {
+    if (workpackage.ratings[0] === null || workpackage.ratings[0] === undefined) {
+      return 0;
+    }
+    return workpackage.ratings.length;
+  };
+
+  const RenderStarRatings = ({ workpackage }) => {
+
+    const [rating, setRating] = useState(calculate_average_star_rating(workpackage));
+
+
+    return (
+      <View style={{ flexDirection: 'row' }}>
+        {[...Array(5)].map((star, i) => {
+          const ratingValue = i + 1;
+          return (
+            <View key={i}>
+              <IoMdStar
+                style={styles.buttonStarRating}
+                id='starRating'
+                size={30}
+                className="star"
+                color={ratingValue <= (rating) ? '#4f85ff' : '#e4e5e9'}
+              />
+            </View>
+          );
+        })}
+      </View>
+    );
+
+
+  };
+
+
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -99,14 +168,18 @@ const AdminWorkPackages = ({ route, navigation }) => {
           {workPackages.length > 0 ? (
             workPackages.map((workPackage, index) => (
               <View key={index} style={styles.workPackageContainer}>
-                <TouchableOpacity
-                  key={index.toString()}
-                  onPress={() => navigation.navigate('AdminPackages', { workPackageId: workPackage._id })}
-                >
-                  <Text style={styles.workPackageTitle}>
-                    {workPackage.name} - {workPackage.grade}
-                  </Text>
-                </TouchableOpacity>
+                <View style={styles.containerNameAndRating}>
+                  <TouchableOpacity
+                    key={index.toString()}
+                    onPress={() => navigation.navigate('AdminPackages', { workPackageId: workPackage._id })}
+                  >
+                    <Text style={styles.workPackageTitle}>
+                      {workPackage.name} - {workPackage.grade}
+                    </Text>
+                  </TouchableOpacity>
+                  <RenderStarRatings workpackage={workPackage} />
+                  <Text>({(get_number_of_reviews(workPackage))})</Text>
+                </View>
 
                 <View style={styles.instructorInfoContainer}>
                   <Text style={styles.greyText}>
@@ -366,7 +439,10 @@ const useStyles = CreateResponsiveStyle(
     },
     scrollView: {
       paddingRight: 20.
-    }
+    },
+    containerNameAndRating: {
+      flexDirection: 'row',
+    },
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
