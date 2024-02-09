@@ -22,7 +22,7 @@ const FinanceInstructor = ({ navigation, route }) => {
     const [balance, setBalance] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isRegistered, setIsRegistered] = useState(true); // TEMPORARY FOR STRIPE SETUP
+    const [isRegistered, setIsRegistered] = useState(false); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
 
     useEffect(() => {
         getWorkPackages();
