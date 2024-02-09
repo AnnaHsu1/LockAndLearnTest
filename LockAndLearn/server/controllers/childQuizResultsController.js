@@ -6,7 +6,6 @@ const ChildQuizResults = require('../schema/childQuizResultsSchema.js')
 router.put('/addChildQuizResults', async (req, res) => {
   try {
       // Extract childQuizResults data from the request body
-      console.log(req.body);
       const { childID, quizID, answers, score, status, date, packageID } = req.body;
 
       // Check if the result already exists
@@ -48,7 +47,6 @@ router.put('/addChildQuizResults', async (req, res) => {
   }
 });
 
-
 // get status for a quiz based on childId and quizId
 router.get('/getStatusForQuiz/:id/:quizId', async (req, res) => {
   try {
@@ -60,7 +58,6 @@ router.get('/getStatusForQuiz/:id/:quizId', async (req, res) => {
       if (!quizResult) {
           return res.status(404).json({ error: 'Quiz result not found' });
       }
-
       const status = quizResult.status;
       res.status(201).json({ quizResultStatus: status });
   } catch (error) {

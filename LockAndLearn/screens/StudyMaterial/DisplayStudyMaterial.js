@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
-import { Icon, Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
@@ -55,10 +55,6 @@ const DisplayStudyMaterial = ({}) => {
         data.materials.forEach((material) => {
           getPDFs(material);
         });
-        // detect if there is no package assigned to the child, don't display pdfs
-        // if (data.message) {
-        //     console.log(data.message)
-        // }
       } 
       else if (response.status === 400) {
         console.error('No package found for child with ID:', childID);
@@ -94,6 +90,7 @@ const DisplayStudyMaterial = ({}) => {
     }
   };
 
+  // function to get quiz by quizID
   const fetchQuizById = async (quizId) => {
     console.log('Fetching Quiz with ID:', quizId);
     try {
@@ -116,9 +113,9 @@ const DisplayStudyMaterial = ({}) => {
     }
   };
 
+  // function to navigate to quiz page
   const handleTakeQuiz = async (quizId) => {
     const quiz = await fetchQuizById(quizId);
-
 
     navigation.navigate('DisplayQuizzScreen', {
       quizId: quiz._id,
@@ -130,36 +127,19 @@ const DisplayStudyMaterial = ({}) => {
     });
   };
 
+  // function to handle next PDFs
   const handleNextPdf = (nextIndex, length) => {
     if (nextIndex < length) {
       setCurrentPdfIndex(nextIndex);
     }
   };
+
+  // function to handle previous PDFs
   const handlePrevPdf = (prevIndex, length) => {
     if (prevIndex >= length) {
       setCurrentPdfIndex(prevIndex);
     }
   };
-
-  // Function to determine the grade suffix
-  // const getGradeSuffix = (grade) => {
-  //   if (grade >= 11 && grade <= 13) {
-  //     return 'th';
-  //   }
-
-  //   const lastDigit = grade % 10;
-
-  //   switch (lastDigit) {
-  //     case 1:
-  //       return 'st';
-  //     case 2:
-  //       return 'nd';
-  //     case 3:
-  //       return 'rd';
-  //     default:
-  //       return 'th';
-  //   }
-  // };
 
   return (
     <ImageBackground
@@ -214,15 +194,7 @@ const DisplayStudyMaterial = ({}) => {
             </View>
           </View>
         ) : (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              height: '100%',
-            }}
-          >
+          <View style={styles.noMaterialText}>
             <Text>No assigned PDF material has been found.</Text>
           </View>
         )}
@@ -339,6 +311,13 @@ const styles = StyleSheet.create({
   progressBarText: {
     color: 'darkgrey',
     fontSize: 14,
+  },
+  noMaterialText: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
 });
 

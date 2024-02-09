@@ -1,4 +1,4 @@
-import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
@@ -67,9 +67,8 @@ const DisplayQuizzScreen = ({ route }) => {
                 counter++;
             }
         };
-        console.log("COUNTERRRRRRRRR", counter);
+        console.log("COUNTER", counter);
         return counter;
-
     };
 
     const handleTrueFalseChange = (newValue, questionIndex) => {
@@ -133,11 +132,9 @@ const DisplayQuizzScreen = ({ route }) => {
                 setQuestions(questions => [...questions, question])
                 console.log("QUESTIONS ARRAY", questions);
                 let ans = '';
-                // console.log("ANSWERRRRRRRRRRAAAAAAAAAAA",question.answer);
                 setQuestionText(question.questionText || ''); // Ensuring a string is always set
                 setQuestionType(question.questionType || '');
                 setAnswer(question.answer || '');
-                // console.log("NEW ANSWERRAAAAAA",answer);
 
                 // For multiple choice questions, ensure that each option text is a string
                 if (question.questionType === "Multiple Choice Question") {
@@ -162,7 +159,6 @@ const DisplayQuizzScreen = ({ route }) => {
                     setInputs(question.inputs || ['']); // Make sure you receive an array of strings for blanks
                     // setAnswer(question.inputs || ['']);
                     ans = question.inputs || [''];
-                    // console.log("THIRD FILL IN BLANKS ANSWERRAAAAAA",answer);          
                 }
                 console.log("ANSWER FOR THIS QUESTION->", ans);
                 const newArray = [...solutions]; // Create a copy of the array
@@ -180,14 +176,13 @@ const DisplayQuizzScreen = ({ route }) => {
         }
     }
 
-
     const fetchThreshold = async () => {
         // add part fetching threshold
         const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childID}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         const data = await response.json();
         console.log("DATAAAAAAA", data);
@@ -236,11 +231,9 @@ const DisplayQuizzScreen = ({ route }) => {
         } finally {
             // setLoading(false);
         }
-
     }
 
     useEffect(() => {
-        // fetchThreshold();
         fetchQuestion();
     }, [questionIndex]);
 

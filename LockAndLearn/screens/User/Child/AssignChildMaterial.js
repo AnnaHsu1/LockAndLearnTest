@@ -10,9 +10,26 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const [checkedboxItems, setCheckedboxItems] = useState({});
   const [previouslyAssigned, setPreviouslyAssigned] = useState([]);
   const [deviceWidth, setDeviceWidth] = useState(0);
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const child = route.params?.child;
   const [statusWps, setStatusWps] = useState([]);
+
+    // inital fetch
+    useEffect(() => {
+      fetchPreviouslyAssignedWorkPackages();
+      setDeviceWidth(width);
+      childQuizResults();
+    }, []);
+  
+    // update device width
+    useEffect(() => {
+      setDeviceWidth(width);
+    }, [width]);
+  
+    // fetch workpackages that user has access to then display the work packages corresponding to the child
+    useEffect(() => {
+      fetchWorkPackages(true);
+    }, [previouslyAssigned]);
 
   // function to get all previously assigned work packages from the child
   const fetchPreviouslyAssignedWorkPackages = async () => {
@@ -58,20 +75,15 @@ const AssignChildMaterial = ({ route, navigation }) => {
       );
       const data = await response.json();
       if (response.status === 200 || response.status === 201) {
-        console.log("QUIZZZZZRESULTS",data);
         data.quizResults.forEach(async (result) => {
           const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
-          console.log("WP!!!!!!!!", wpID);
-
           if (statusWps[wpID]) {
               // If statusWps[wpID] already exists, append the new status
-              console.log("11111");
               statusWps[wpID].push(result.status[result.status.length - 1]);
           } else {
               // If statusWps[wpID] doesn't exist, initialize it as an array with the new status
               statusWps[wpID] = [result.status[result.status.length - 1]];
           }
-          console.log("statusWPs", statusWps);
         })
       }
     } catch (error) {
@@ -119,22 +131,6 @@ const AssignChildMaterial = ({ route, navigation }) => {
     }));
   };
 
-  // inital fetch
-  useEffect(() => {
-    fetchPreviouslyAssignedWorkPackages();
-    setDeviceWidth(width);
-    childQuizResults();
-  }, []);
-
-  useEffect(() => {
-    setDeviceWidth(width);
-  }, [width]);
-
-  // fetch workpackages that user has access to then display the work packages corresponding to the child
-  useEffect(() => {
-    fetchWorkPackages(true);
-  }, [previouslyAssigned]);
-
   // function to check if there is any wp selected: return true if there is no wp selected
   const isAddButtonDisabled = () => {
     for (var key in checkedboxItems) {
@@ -166,9 +162,6 @@ const AssignChildMaterial = ({ route, navigation }) => {
   // function to get the status of the work package
   const getStatusText = (workPackage) => {
     const workPackageId= workPackage._id;
-    console.log("inside get status nethod", statusWps[workPackageId]);
-
-
     const statuses = statusWps[workPackageId];
   
     // Check if there are no statuses
@@ -201,7 +194,6 @@ const AssignChildMaterial = ({ route, navigation }) => {
       statusWps[workPackage._id] = 'not started'
     }}
     return (
-      console.log("STATUS", statusWps),
       // if statuswp is undefined, display not started
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
         <View style={{ flexDirection: 'row', alignItems: 'center', width: '60%' }}>
@@ -231,13 +223,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
               <Text style={[styles.workPackageText, { marginTop: 5 }]}>
                 {workPackage.packageCount} {workPackage.packageCount > 1 ? 'packages' : 'package'}
               </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                }}
-              >
+              <View style={styles.statusContainer}>
                 <View
                   style={{
                     backgroundColor:
@@ -259,18 +245,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
                     borderRadius: 5,
                   }}
                 >
-                  <Text
-                    style={{
-                      // marginHorizontal: 5,
-                      marginVertical:3,
-                      color: 'white',
-                      fontSize: 14,
-                      alignSelf: 'center',
-                      justifyContent:'center',
-                    }}
-                  >
-                    {getStatusText(workPackage)}
-                  </Text>
+                  <Text style={styles.statusText}>{getStatusText(workPackage)}</Text>
                 </View>
                 <TouchableOpacity
                   onPress={() => {
@@ -340,6 +315,18 @@ AssignChildMaterial.propTypes = {
 };
 
 const styles = StyleSheet.create({
+  statusText: {
+    marginVertical: 3,
+    color: 'white',
+    fontSize: 14,
+    alignSelf: 'center',
+    justifyContent:'center',
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   buttonAddMaterial: {
     backgroundColor: '#407BFF',
     width: 190,
@@ -378,12 +365,6 @@ const styles = StyleSheet.create({
     marginTop: '2%',
     textAlign: 'center',
   },
-  childInfo: {
-    color: '#696969',
-    fontSize: 22,
-    marginTop: '1%',
-    textAlign: 'center',
-  },
   workPackageItemContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
@@ -407,17 +388,6 @@ const styles = StyleSheet.create({
   workPackageText: {
     fontSize: 14,
     color: '#696969',
-  },
-  buttonUpload: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: '5%',
-    marginBottom: '5%',
   },
   buttonText: {
     color: '#FFFFFF',
