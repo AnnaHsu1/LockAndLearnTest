@@ -406,6 +406,40 @@ const setPayingSplitsPerSeller = async (workPackagesInCart) => {
   }
 };
 
+// Endpoint to process transaction splits to instructors using Stripe API
+router.post('/transferPayments', async (req, res) => {
+  try {
+    const { stripePayingSplits } = req.body;
+
+    // Iterate through each instructor instances and initiate a transfer
+    const transferPromises = stripePayingSplits.map(async (split) => {
+      const { price, instructorID, StripeBusinessId } = split;
+
+      const transfer = await stripe.transfers.create({
+        amount: price * 100, // Amount in cents
+        currency: 'cad',
+        destination: StripeBusinessId,
+      });
+
+      return {
+        instructorID,
+        StripeBusinessId,
+        transferId: transfer.id,
+        amount: transfer.amount / 100, // Amount in dollars
+        status: transfer.status,
+      };
+    });
+
+    // Wait for all transfers to complete
+    const transfers = await Promise.all(transferPromises);
+
+    res.status(200).json({ transfers });
+  } catch (error) {
+    console.error('Error processing transfers:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Endpoint to fetch all transactions
 router.get('/transactions', async (req, res) => {
     try {
