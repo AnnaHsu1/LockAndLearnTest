@@ -75,7 +75,6 @@ const FinanceInstructor = ({ navigation, route }) => {
         }
     };
 
-
     /**
      * Fetches all transactions from the server.
      * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
