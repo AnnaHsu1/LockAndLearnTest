@@ -90,14 +90,10 @@ export const WorkPackageCard = ({ props }) => {
               : workpackage.description?.substr(0, 390) + '...'}
           </Text>
         </View>
-        <View style={styles.lastRow}>
-          <Text style={styles.text}>
-            {workpackage.packageCount} {workpackage.packageCount == 1 ? 'package' : 'packages'}
-          </Text>
-          <TouchableOpacity style={styles.publishButton}>
-            <Text style={styles.buttonText}>Publish</Text>
-          </TouchableOpacity>
-        </View>
+
+        <Text style={styles.text}>
+          {workpackage.packageCount} {workpackage.packageCount == 1 ? 'package' : 'packages'}
+        </Text>
       </View>
       <Modal
         animationType="slide"
@@ -184,18 +180,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     marginTop: 10,
-  },
-  lastRow: {
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-  },
-  publishButton: {
-    backgroundColor: '#407BFF', 
-    borderRadius: 5, 
-    padding: 10,
-  },
-  buttonText: {
-    color: 'white', 
   },
 });
