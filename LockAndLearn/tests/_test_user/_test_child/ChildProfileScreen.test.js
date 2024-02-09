@@ -60,7 +60,7 @@ describe('Child Profile Screen test', () => {
     );
     const startSessionButton = getByTestId('start-session');
     fireEvent.press(startSessionButton);
-    expect(mockNavigation.navigate).toBeCalledWith('Locking');
+    expect(mockNavigation.navigate).toBeCalledWith("Locking", {"child_ID": "child123"});
   });
 
   it('Attempts to edit a child profile', () => {
