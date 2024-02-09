@@ -72,7 +72,6 @@ const AssignChildMaterial = ({ route, navigation }) => {
               statusWps[wpID] = [result.status[result.status.length - 1]];
           }
           console.log("statusWPs", statusWps);
-          // statusWps[wpID] = result.status[result.status.length - 1];
         })
       }
     } catch (error) {
@@ -164,8 +163,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
     navigation.navigate('ChildProfile', { child: child });
   };
 
+  // function to get the status of the work package
   const getStatusText = (workPackage) => {
-    // console.log("inside get status nethod", statusWps.workPackageId);
     const workPackageId= workPackage._id;
     console.log("inside get status nethod", statusWps[workPackageId]);
 
@@ -196,7 +195,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     return "Status Unknown";
   };
 
-// function to display the work package information
+  // function to display the work package information
   const renderWorkPackage = (workPackage) => {
     {if (statusWps[workPackage._id] === undefined) {
       statusWps[workPackage._id] = 'not started'
