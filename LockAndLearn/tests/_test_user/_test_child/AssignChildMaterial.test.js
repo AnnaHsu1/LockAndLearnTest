@@ -88,7 +88,7 @@ describe('AssignChildMaterial component', () => {
     const { getByTestId } = render(
       <AssignChildMaterial navigation={{ navigate: jest.fn() }} route={useRoute()} />
     );
-    expect(global.fetch).toHaveBeenCalledTimes(4);
+    expect(global.fetch).toHaveBeenCalledTimes(6);
   }
   );
 });
