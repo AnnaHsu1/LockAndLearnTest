@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, Touchable, TouchableOpacity, View } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import { TbMoodEdit } from 'react-icons/tb';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 const ChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -40,85 +42,78 @@ const ChildProfileScreen = ({ route, navigation }) => {
     <View style={styles.page}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Icon source="account-circle" color="#fff" size={30} />
-          <Text style={styles.title}>
-            {child.firstName} {child.lastName}
-          </Text>
+          <View style={[{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}>
+            <Icon source="account-circle" color="#fff" size={30} />
+            <Text style={styles.title}>
+              {child.firstName} {child.lastName}
+            </Text>
+          </View>
+          {/* Edit profile */}
+          <TouchableOpacity
+            testID="edit-profile"
+            onPress={() => {
+              navigation.navigate('EditChild', { child: child });
+            }}
+          >
+            <TbMoodEdit color="#fff" size={30} />
+          </TouchableOpacity>
         </View>
-        {/* Start session */}
-        <Button
-          testID="start-session"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('Locking',{ child_ID: child._id });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Start session</Text>
-        </Button>
-        {/* Add Material */}
-        <Button
-          testID="add-child-material"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AddChildMaterial', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Add material</Text>
-        </Button>
-        {/* Edit profile */}
-        {/* <Button
-          testID="purchased-material"
-          mode="contained"
-          onPress={() => {
-             navigation.navigate('PurchasedMaterial', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-            <Text style={styles.text}>View purchased material</Text>
-        </Button> */}
-        {/* Edit profile */}
-        <Button
-          testID="edit-profile"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('EditChild', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Edit profile</Text>
-        </Button>
-        <Button
-          testID="see-performance"
-          mode="contained"
-          onPress={() => {
-            console.log('See performance');
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>See performance</Text>
-        </Button>
-        <Button
-          testID="preferences"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('StudyMaterialPreferences', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Set Preferences</Text>
-        </Button>
-        <Button
-          testID="settings"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('ChildSettings', { child: child });
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          <Text style={styles.text}>Settings</Text>
-        </Button>
+        <View style={[{ justifyContent: 'space-evenly', flex: 1, gap: 10 }]}>
+          {/* Start session button */}
+          <Button
+            testID="start-session"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('Locking',{ child_ID: child._id });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Start session</Text>
+          </Button>
+          {/* See performance */}
+          {/* Performance should be shown on this page! TODO */}
+          <Button
+            testID="see-performance"
+            mode="contained"
+            onPress={() => {
+              console.log('See performance');
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>See performance</Text>
+          </Button>
+          <Button
+            testID="preferences"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('StudyMaterialPreferences', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Set preferences</Text>
+          </Button>
+          {/* Add Material */}
+          <Button
+            testID="add-child-material"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('AddChildMaterial', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Assign material</Text>
+          </Button>
+          <Button
+            testID="settings"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('ChildSettings', { child: child });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Settings</Text>
+          </Button>
+        </View>
       </View>
       {/* Delete child link */}
       <Button
@@ -130,7 +125,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
       >
         <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
       </Button>
-
       {/* Modal to confirm the deletion of a child */}
       <Modal
         testID="delete-child-modal"
@@ -203,37 +197,32 @@ const useStyles = CreateResponsiveStyle(
     },
     container: {
       minWidth: '90%',
-      maxHeight: 520,
       paddingLeft: 20,
       paddingRight: 20,
-      paddingTop: 10,
-      paddingBottom: 20, // Added bottom padding
-      marginTop: "3%",
-      marginBottom: 10,
+      paddingVertical: 10,
+      marginVertical: '2%',
       borderRadius: 10,
       backgroundColor: '#4F85FF',
-      flex: 1,
       justifyContent: 'space-between',
     },
     header: {
       alignItems: 'center',
       height: 50,
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
     },
     title: {
       color: '#ffffff',
       fontSize: 24,
       textAlign: 'center',
-      paddingTop: 2,
-      paddingLeft: 5,
+      paddingLeft: 10,
     },
     button: {
       color: '#4F85FF',
       backgroundColor: '#ffffff',
       borderRadius: 10,
       marginVertical: 3,
-      minHeight: 50,
+      minHeight: 70,
       justifyContent: 'center',
       minWidth: 100,
     },

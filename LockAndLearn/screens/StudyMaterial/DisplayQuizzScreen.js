@@ -1,13 +1,16 @@
-import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
 
 const DisplayQuizzScreen = ({ route }) => {
     const navigation = useNavigation();
+    const childID = route.params.child_ID;
     const quizId = route.params.quizId;
     const questionIndex = route.params.questionIndex;
     const quizLength = route.params.quizLength;
+    const packageID = route.params.packageId;
+    const subject = route.params.subject;
     const [questions, setQuestions] = useState(route.params.questions || []);
 
     const [questionText, setQuestionText] = useState('');
@@ -64,9 +67,8 @@ const DisplayQuizzScreen = ({ route }) => {
                 counter++;
             }
         };
-        console.log("COUNTERRRRRRRRR", counter);
+        console.log("COUNTER", counter);
         return counter;
-
     };
 
     const handleTrueFalseChange = (newValue, questionIndex) => {
@@ -130,11 +132,9 @@ const DisplayQuizzScreen = ({ route }) => {
                 setQuestions(questions => [...questions, question])
                 console.log("QUESTIONS ARRAY", questions);
                 let ans = '';
-                // console.log("ANSWERRRRRRRRRRAAAAAAAAAAA",question.answer);
                 setQuestionText(question.questionText || ''); // Ensuring a string is always set
                 setQuestionType(question.questionType || '');
                 setAnswer(question.answer || '');
-                // console.log("NEW ANSWERRAAAAAA",answer);
 
                 // For multiple choice questions, ensure that each option text is a string
                 if (question.questionType === "Multiple Choice Question") {
@@ -150,7 +150,7 @@ const DisplayQuizzScreen = ({ route }) => {
                     setIsTrueAnswer(question.answer === "True"); // Assuming 'answer' is the field where true/false is stored
                     // setAnswer(question.answer); // The answer should already be "True" or "False"
                     ans = question.answer;
-                } if (question.questionType === "Short Answer") {
+                } if (question.questionType === "Short Answer" || question.questionType === "Another Type") {
                     // setAnswer(question.answer || ''); // Assuming 'answer' contains the short answer text
                     ans = question.answer
                 }
@@ -159,7 +159,6 @@ const DisplayQuizzScreen = ({ route }) => {
                     setInputs(question.inputs || ['']); // Make sure you receive an array of strings for blanks
                     // setAnswer(question.inputs || ['']);
                     ans = question.inputs || [''];
-                    // console.log("THIRD FILL IN BLANKS ANSWERRAAAAAA",answer);          
                 }
                 console.log("ANSWER FOR THIS QUESTION->", ans);
                 const newArray = [...solutions]; // Create a copy of the array
@@ -174,6 +173,63 @@ const DisplayQuizzScreen = ({ route }) => {
             }
         } catch (error) {
             console.error("Network error:", error);
+        }
+    }
+
+    const fetchThreshold = async () => {
+        // add part fetching threshold
+        const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        console.log("DATAAAAAAA", data);
+
+        const subjectObject = data.find(sub => sub.name === subject);
+        const threshold = subjectObject && (subjectObject.grade || subjectObject.grade === 0) ? subjectObject.grade : 50;
+
+        console.log("THRESHOLD", threshold);
+
+        return threshold;
+    }
+
+    const saveQuizResult = async (numOfCorrectAnswers) => {
+        console.log("num of correct answers", numOfCorrectAnswers);
+        const threshold = await fetchThreshold();
+        console.log("THRESHOLDDDDDDD", threshold);
+        const grade = (numOfCorrectAnswers/quizLength) * 100;
+        const status = (threshold > grade) ? "failed" : "passed";
+        try {
+            const newChildQuizResult = {
+                childID: childID,
+                quizID: quizId,
+                answers: answers,
+                score: grade,
+                status: status,
+                date: Date.now(),
+                packageID: packageID,
+            }
+            console.log("NEW QUIZ RESULT OBJECT", newChildQuizResult);
+
+            const response = await fetch('http://localhost:4000/childQuizResults/addChildQuizResults', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newChildQuizResult),
+            });
+            
+            if (response.status === 201 || response.status === 200) {
+            console.log("newChildQuizResult successfully saved in database!")
+            }
+
+        } catch (error) {
+            console.error('Error creating newChildQuizResult:', error);
+            // Handle network errors or server issues
+        } finally {
+            // setLoading(false);
         }
     }
 
@@ -252,7 +308,7 @@ const DisplayQuizzScreen = ({ route }) => {
                         <TextInput
                             style={styles.answerInput}
                             placeholder="Enter the answer here"
-                            value={answers[questionIndex]}
+                            value={answers[questionIndex] || ""}
                             onChangeText={(text) => handleSetAnswer(text, questionIndex)}
                         />
                     )}
@@ -266,6 +322,9 @@ const DisplayQuizzScreen = ({ route }) => {
                                     quizId: quizId,
                                     quizLength: quizLength,
                                     questionIndex: questionIndex - 1,
+                                    child_ID: childID,
+                                    subject: subject,
+                                    packageId: packageID,
                                 });
                             }}
                         >
@@ -280,6 +339,9 @@ const DisplayQuizzScreen = ({ route }) => {
                                     quizId: quizId,
                                     quizLength: quizLength,
                                     questionIndex: questionIndex + 1,
+                                    child_ID: childID,
+                                    subject: subject,
+                                    packageId: packageID,
                                 });
                             }}
                         >
@@ -291,10 +353,11 @@ const DisplayQuizzScreen = ({ route }) => {
                             style={styles.finishQuizButton}
                             onPress={() => {
                                 fetchQuestion();
-                                // const grade = handleGrade(answers, solutions);
+                                const grade = handleGrade(answers, solutions);
+                                saveQuizResult(grade);
                                 navigation.navigate('QuizGradeScreen', {
                                     quizId: quizId,
-                                    numOfCorrectAnswers: handleGrade(answers, solutions),
+                                    numOfCorrectAnswers: grade,
                                     quizLength: quizLength,
                                     answers: answers,
                                     solutions: solutions,
