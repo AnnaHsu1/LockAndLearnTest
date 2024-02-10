@@ -37,6 +37,33 @@ describe('FinanceInstructor component', () => {
       expect(getByText('* Please note that without a registered Stripe account, we will not be able to transfer the profits to you.')).toBeTruthy();
     });
   });
+
+
+    it('deletes stripe account correctly', async () => {
+        // Mock the fetch response for delete-account
+        fetch.mockResponseOnce(JSON.stringify({ success: true }));
+
+        const { getByText, getByPlaceholderText } = render(<FinanceInstructor navigation={{}} route={{}} />);
+
+        // Open the delete account modal
+        fireEvent.press(getByText('[Dev] Delete Stripe Account Modal'));
+
+        // Type an account ID in the input field
+        fireEvent.changeText(getByPlaceholderText('Enter Account ID to Delete'), 'test-account-id');
+
+        // Click on the delete account button
+        fireEvent.press(getByText('Delete Account'));
+
+        // Wait for the component to make the delete account request
+        await waitFor(() => {
+            // Assert that it successfully deletes the account
+            expect(fetch).toHaveBeenCalledWith('http://localhost:4000/payment/delete-account/test-account-id', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+        });
+    });
+
 /* 
   it('registered view renders correctly', async () => {
 

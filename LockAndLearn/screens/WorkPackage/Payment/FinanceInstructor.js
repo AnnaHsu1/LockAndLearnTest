@@ -135,7 +135,7 @@ const FinanceInstructor = ({ navigation, route }) => {
             return null; // Return null if there is an error
         }
     };
-    // Define a function to calculate the count of sales made this week
+    //  function to calculate the count of sales made this week
     const calculateSalesThisWeek = (transactionsData) => {
         let salesThisWeekCount = 0;
         const today = new Date();
@@ -373,7 +373,6 @@ const FinanceInstructor = ({ navigation, route }) => {
                       <Text style={styles.balance}>Total revenue: ${balance}</Text>
                       <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
                       <Text style={styles.balance}>Sales this week: {salesThisWeek} </Text>
-                      <Text style={styles.balance}>Sales since last login: </Text>
                   </View>
               )}
 
