@@ -49,7 +49,7 @@ router.get('/allQuizzes', async (req, res) => {
 router.post('/addQuestion/:quizId', async (req, res) => {
   try {
     const quizId = req.params.quizId;
-    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options } =
+    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options, explanation } =
       req.body;
 
     // Construct the new question
@@ -61,6 +61,7 @@ router.post('/addQuestion/:quizId', async (req, res) => {
       multipleChoiceAnswers,
       inputs,
       options,
+      explanation,
     };
 
     // Find the quiz by ID

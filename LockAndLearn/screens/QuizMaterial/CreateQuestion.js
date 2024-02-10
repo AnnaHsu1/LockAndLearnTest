@@ -17,6 +17,7 @@ const CreateQuestion = ({ route }) => {
   const { quizId } = route.params;
   const [questionText, setQuestionText] = useState('');
   const [questionType, setQuestionType] = useState('Short Answer');
+  const [explanation, setExplanation] = useState('');
   const [inputs, setInputs] = useState(['']);
   const [answer, setAnswer] = useState('');
   const [isTrue, setIsTrue] = useState(false);
@@ -46,6 +47,7 @@ const CreateQuestion = ({ route }) => {
       inputs: questionType === 'Fill In The Blanks' ? inputs : [], // Set inputs or an empty array
       options:
         questionType === 'Multiple Choice Question' ? options.map((option) => option.text) : [], // Set options for multiple-choice questions or an empty array
+      explanation,
     };
 
     if (questionType === 'Multiple Choice Question') {
@@ -104,6 +106,7 @@ const CreateQuestion = ({ route }) => {
           { id: 'D', text: '', isCorrect: false },
         ]);
         setInputs(['']);
+        setExplanation('');
       } else {
         // Handle error response
         console.error('Failed to create question:', response.statusText);
@@ -162,23 +165,24 @@ const CreateQuestion = ({ route }) => {
   // Define a function to check if the form is valid
   const isFormValid = () => {
     if (questionType === 'Short Answer') {
-      return questionText.trim() !== '' && answer.trim() !== '';
+      return questionText.trim() !== '' && answer.trim() !== '' && explanation.trim() !== '';
     } else if (questionType === 'Multiple Choice Question') {
       const allOptionsFilled = options.every((option) => option.text.trim() !== '');
       const isAnswerChosen = options.some((option) => option.isCorrect);
 
-      return questionText.trim() !== '' && allOptionsFilled && isAnswerChosen;
+      return questionText.trim() !== '' && allOptionsFilled && isAnswerChosen && explanation.trim() !== '';
     } else if (questionType === 'True or False') {
-      return questionText.trim() !== '' && (isTrue || !isTrue);
+      return questionText.trim() !== '' && (isTrue || !isTrue) && explanation.trim() !== '';
     } else if (questionType === 'Fill In The Blanks') {
       return (
         questionText.trim() !== '' &&
-        inputs.every((input) => input.trim() !== '')
+        inputs.every((input) => input.trim() !== '') &&
+        explanation.trim() !== ''
       );
     }
 
     // For other types, consider them valid if questionText is not empty
-    return questionText.trim() !== '';
+    return questionText.trim() !== '' && explanation.trim() !== '';
   };
 
   return (
@@ -283,6 +287,12 @@ const CreateQuestion = ({ route }) => {
               onChangeText={(text) => setAnswer(text)}
             />
           )}
+          <TextInput
+          style={styles.questionInput}
+          placeholder="Enter the explanation here"
+          value={explanation}
+          onChangeText={(text) => setExplanation(text)}
+        />
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => {

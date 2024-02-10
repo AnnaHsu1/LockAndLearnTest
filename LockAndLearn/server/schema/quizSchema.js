@@ -41,7 +41,11 @@ const quizSchema = new mongoose.Schema({
       inputs:{
         type: [String],
         required: false,
-      }
+      },
+      explanation: {
+        type: String, // The explanation for the answer
+        required: true,
+      },
       // Other question-specific fields
     },
   ],
