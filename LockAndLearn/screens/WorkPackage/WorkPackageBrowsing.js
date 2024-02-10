@@ -376,7 +376,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     return (
       <View style={styles.dropdownContainer}>
         <Text style={styles.dropdownLabel}>{label}</Text>
-        <select name='select' id='select' value={selectedOption} onChange={handleDropdownChange}>
+        <select name='select' id='select' value={selectedOption} onChange={handleDropdownChange} style={styles.dropdown}>
           {options.map((option) => (
             <option key={option} value={option} defaultValue={defaultValue === option}> 
               {option}
@@ -1041,11 +1041,22 @@ const styles = StyleSheet.create(
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      width: 500,
-      marginBottom: 20,
+      width: '100%',
+      marginVertical: 15,
     },
     dropdownLabel: {
       marginHorizontal: 10,
+      fontSize: 20,
+    },
+    dropdown: {
+      width: '13%',
+      height: 40,
+      borderRadius: 10,
+      borderColor: '#407BFF',
+      borderStyle: 'solid',
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderWidth: 1,
     },
   },
   {
