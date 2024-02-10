@@ -450,13 +450,30 @@ router.post('/transferPayments', async (req, res) => {
 router.get('/transactions', async (req, res) => {
     try {
         // Use the Stripe API to retrieve a list of payments or transactions
-        const payments = await stripe.paymentIntents.list({ limit: 10 }); // Adjust parameters as needed
+        const payments = await stripe.paymentIntents.list({ limit: 50 }); // Adjust parameters as needed
 
         // Return the list of payments as a response
         res.status(200).json({ payments: payments.data });
     } catch (error) {
         console.error('Error fetching transactions:', error);
         res.status(500).json({ error: 'An error occurred while fetching transactions.' });
+    }
+});
+
+
+// Endpoint to fetch a specific transaction by its ID
+router.get('/transactions/:transactionId', async (req, res) => {
+    try {
+        const transactionId = req.params.transactionId;
+        console.log("here");
+        // Use the Stripe API to retrieve the details of the specified payment intent
+        const payment = await stripe.paymentIntents.retrieve(transactionId);
+        console.log("pay", payment);
+        // Return the payment details as a response
+        res.status(200).json({ payment });
+    } catch (error) {
+        console.error('Error fetching transaction:', error);
+        res.status(500).json({ error: 'An error occurred while fetching the transaction.' });
     }
 });
 

@@ -33,7 +33,8 @@ const AdminFinances = ({ route, navigation }) => {
         const data = await response.json();
         console.log('Updated transactions:', data);
 
-        setTransactions(data.payments);
+          setTransactions(data.payments);
+          console.log("transaction", transactions);
       } else {
         console.error('Failed to fetch transactions:', response.status);
       }

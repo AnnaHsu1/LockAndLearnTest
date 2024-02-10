@@ -27,7 +27,8 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [workPackages, setWorkPackages] = useState([]);
   const [balance, setBalance] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+    const [isInfoLoading, setInfoLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
   const [generatedUrl, setGeneratedUrl] = useState(null);
   const [expiryTime, setExpiryTime] = useState(null);
@@ -43,7 +44,6 @@ const FinanceInstructor = ({ navigation, route }) => {
       if (isRegistered) {
         await getWorkPackages();
         await fetchBalance();
-        await fetchAllTransactions();
       }
   
       console.log('is registered? ', isRegistered);
@@ -57,10 +57,13 @@ const FinanceInstructor = ({ navigation, route }) => {
    * @param {string} workPackageId - The ID of the work package.
    * @returns {string} - The formatted recent purchase time, or an empty string if not found.
    */
-  const getRecentPurchaseTime = (workPackageId) => {
-    const recentTransaction = transactions.find((transaction) => transaction.id === workPackageId);
-    return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
-  };
+    const getRecentPurchaseTime = (workPackageId) => {
+        // Find the most recent transaction associated with the work package
+        const recentTransaction = transactions.find((transaction) => transaction.id === workPackageId);
+        console.log("recenTransaction", recentTransaction);
+        // If a recent transaction is found, format its creation time
+        return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
+    };
 
 
   const checkStripeEligibility = async () => {
@@ -115,52 +118,101 @@ const FinanceInstructor = ({ navigation, route }) => {
    * Fetches all transactions from the server.
    * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
    */
-  const fetchAllTransactions = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/payment/transactions');
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Updated transactions:', data);
+    //const fetchAllTransactions = async () => {
+    //    try {
+    //        const response = await fetch('http://localhost:4000/payment/transactions');
+    //        if (response.ok) {
+    //            const data = await response.json();
+    //            console.log('Updated transactions:', data);
 
-        setTransactions(data.payments);
-      } else {
-        console.error('Failed to fetch transactions:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-    } finally {
-      console.log('set loading to false!');
-      setLoading(false); // Set loading to false when the request completes
-    }
-  };
+    //            setTransactions(data.payments);
+    //            console.log("transaction", transactions);
+    //        } else {
+    //            console.error('Failed to fetch transactions:', response.status);
+    //        }
+    //    } catch (error) {
+    //        console.error('Error fetching transactions:', error);
+    //    } finally {
+    //        console.log('set loading to false!');
+    //        setInfoLoading(false); // Set loading to false when the request completes
+    //    }
+    //};
+
+    // Function to fetch a transaction by ID
+    const fetchTransaction = async (transactionId) => {
+        try {
+            const response = await fetch(`http://localhost:4000/payment/transactions/${transactionId}`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.payment; // Return the transaction data
+            } else {
+                console.error('Failed to fetch transaction:', response.status);
+                return null; // Return null if the transaction fetch fails
+            }
+        } catch (error) {
+            console.error('Error fetching transaction:', error);
+            return null; // Return null if there is an error
+        }
+    };
 
   /**
    * Retrieves created work packages for the current instructor.
    * @returns {Promise<void>} A promise that resolves when the work packages are retrieved successfully.
    */
-  const getWorkPackages = async () => {
-    try {
-      const userToken = await getUser();
-      const response = await fetch(
-        'http://localhost:4000/workPackages/getWorkPackages/' + userToken._id,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      let data = await response.json();
-      if (response.status === 200) {
-        // // if tutor deleted workpackage, don't display it
-        data = data.filter((workpackage) => !workpackage.deletedByTutor);
-        setWorkPackages(data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const getWorkPackages = async () => {
+        try {
+            const userToken = await getUser();
+            const response = await fetch(
+                'http://localhost:4000/workPackages/getWorkPackages/' + userToken._id,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            let data = await response.json();
+            if (response.status === 200) {
+                // Filter out deleted work packages
+                data = data.filter((workpackage) => !workpackage.deletedByTutor);
 
+                // Extract transaction IDs from work packages
+                const transactionIds = data.reduce(
+                    (ids, workPackage) => ids.concat(workPackage.stripePurchaseId),
+                    []
+                );
+
+                // Fetch transactions for the extracted transaction IDs
+                const transactionsPromises = transactionIds.map(fetchTransaction);
+                const transactionsData = await Promise.all(transactionsPromises);
+
+                // Update work packages with recent purchase time
+                const updatedWorkPackages = data.map((workPackage) => {
+                    // Filter transactions related to this work package
+                    const relevantTransactions = transactionsData.filter(transaction =>
+                        workPackage.stripePurchaseId.includes(transaction.id)
+                    );
+
+                    // Find the latest transaction among relevant transactions
+                    const latestTransaction = relevantTransactions.reduce((latest, transaction) => {
+                        return !latest || transaction.created > latest.created ? transaction : latest;
+                    }, null);
+
+                    // Format recent purchase time or set to null if no transaction found
+                    const recentPurchaseTime = latestTransaction ? new Date(latestTransaction.created * 1000).toLocaleString() : null;
+
+                    return {
+                        ...workPackage,
+                        recentPurchaseTime: recentPurchaseTime,
+                    };
+                });
+
+                setWorkPackages(updatedWorkPackages);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
   const totalWorkPackagesSold = workPackages.reduce((total, workPackage) => {
     // Increment the total by the length of the stripePurchaseId array for each work package
@@ -314,35 +366,34 @@ const FinanceInstructor = ({ navigation, route }) => {
           </View>
         )}
 
-        {/* Displaying the list of transactions */}
-        {isRegistered && (
-          <View style={styles.userContainer}>
-            <Text style={styles.balance}>Total revenue: ${balance}</Text>
-            <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
-            <Text style={styles.balance}>Sales this week: </Text>
-            <Text style={styles.balance}>Sales since last login: </Text>
-          </View>
-        )}
+              {/* Displaying the list of transactions */}
+              {isRegistered && (
+                  <View style={styles.userContainer}>
+                      <Text style={styles.balance}>Total revenue: ${balance}</Text>
+                      <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
+                      <Text style={styles.balance}>Sales this week: </Text>
+                      <Text style={styles.balance}>Sales since last login: </Text>
+                  </View>
+              )}
 
-        {isRegistered && (
-          <ScrollView style={styles.transactionListContainer}>
-            <Text style={styles.title}>My Work Packages</Text>
-            {workPackages.map((workPackage) => (
-              <View key={workPackage._id} style={styles.userContainer}>
-                <View style={styles.workPackageText}>
-                  <Text style={styles.workPackageNameText}>
-                    {`${workPackage.name}`} Grade {`${workPackage.grade}`}
-                  </Text>
-                  <Text>Total Profit: ${`${workPackage.profit}`} </Text>
-                  <Text>Cost: ${`${workPackage.price}`}</Text>
-                  <Text>Quantity Sold: {workPackage.stripePurchaseId.length}</Text>
-                  <Text>Most Recent Purchase: </Text>
-                </View>
-              </View>
-            ))}
-          </ScrollView>
-        )}
-
+              {isRegistered && (
+                  <ScrollView style={styles.transactionListContainer}>
+                      <Text style={styles.title}>My Work Packages</Text>
+                      {workPackages.map((workPackage) => (
+                          <View key={workPackage._id} style={styles.userContainer}>
+                              <View style={styles.workPackageText}>
+                                  <Text style={styles.workPackageNameText}>
+                                      {`${workPackage.name}`} Grade {`${workPackage.grade}`}
+                                  </Text>
+                                  <Text>Total Profit: ${`${workPackage.profit}`} </Text>
+                                  <Text>Cost: ${`${workPackage.price}`}</Text>
+                                  <Text>Quantity Sold: {workPackage.stripePurchaseId.length}</Text>
+                                  <Text>Most Recent Purchase: {workPackage.recentPurchaseTime || "No recent purchase"}</Text>
+                              </View>
+                          </View>
+                      ))}
+                  </ScrollView>
+              )}
         {/* Temporary Modal for test account deletions */}
         <Modal animationType="slide" transparent={true} visible={showDeleteModal}>
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -406,25 +457,6 @@ const FinanceInstructor = ({ navigation, route }) => {
           <Text style={styles.text}> [Dev] Delete Stripe Account Modal </Text>
         </TouchableOpacity>
       </View>
-
-      {/* Error Modal */}
-      {/*<Modal*/}
-      {/*    animationType="slide"*/}
-      {/*    isVisible={errorModalVisible}*/}
-      {/*    onBackdropPress={() => setErrorModalVisible(false)}*/}
-      {/*    transparent={true}*/}
-      {/*    style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}*/}
-      {/*>*/}
-      {/*    <View style={styles.modalCard}>*/}
-      {/*        <Text style={styles.modalText}>{errorMessage}</Text>*/}
-      {/*        <TouchableOpacity*/}
-      {/*            style={[styles.modalButton, { backgroundColor: '#4F85FF', borderColor: '#4F85FF' }]}*/}
-      {/*            onPress={() => setErrorModalVisible(false)}*/}
-      {/*        >*/}
-      {/*            <Text style={{ fontWeight: 'bold', color: 'white' }}>Okay</Text>*/}
-      {/*        </TouchableOpacity>*/}
-      {/*    </View>*/}
-      {/*</Modal>*/}
     </View>
   );
 };
