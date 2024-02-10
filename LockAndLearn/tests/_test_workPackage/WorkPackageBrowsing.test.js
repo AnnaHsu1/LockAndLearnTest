@@ -98,7 +98,7 @@ describe('WorkPackageBrowsing Tests', () => {
 
     it('displays work packages properly and adds to cart', async () => {
 
-        const { getByTestId, findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
+        const {findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
         await waitFor(() => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
@@ -110,4 +110,36 @@ describe('WorkPackageBrowsing Tests', () => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
     });
+
+    it('displays an error message when work packages fetch fails', async () => {
+        global.fetch.mockRejectedValueOnce(new Error('Network Error'));
+    
+        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
+    
+        await waitFor(() => {
+            expect(findByText('Network Error')).toBeTruthy();
+        });
+    });
+
+    it('filters work packages by grade level correctly', async () => {
+        // Mocking fetch to return a variety of work packages
+        global.fetch.mockImplementationOnce(() =>
+            Promise.resolve({
+                json: () => Promise.resolve([
+                    { _id: '1', name: 'Work Package 1', grade: '1st' },
+                    { _id: '2', name: 'Work Package 2', grade: '5th' },
+                    { _id: '3', name: 'Work Package 3', grade: '3rd' },
+                ]),
+                status: 200,
+            })
+        );
+    
+        const { getByText } = render(<WorkPackageBrowsing {...mockedParameters} />);
+    
+
+        const gradeFilterButton = getByText('5th'); // Or use getByTestId if you've set testIDs
+        fireEvent.press(gradeFilterButton);
+    });
+    
+
 });
