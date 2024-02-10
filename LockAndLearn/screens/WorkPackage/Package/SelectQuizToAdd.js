@@ -8,8 +8,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Icon, Checkbox } from 'react-native-paper';
 import { getUser } from '../../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
 const SelectQuizToAdd = () => {
   const route = useRoute();
@@ -183,11 +183,29 @@ const SelectQuizToAdd = () => {
   );
 };
 
+SelectQuizToAdd.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      workPackage: PropTypes.shape({
+        wp_id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        grade: PropTypes.string.isRequired,
+      }),
+      package: PropTypes.shape({
+        p_id: PropTypes.string.isRequired,
+        p_materials: PropTypes.array,
+        subcategory: PropTypes.string,
+        description: PropTypes.string,
+      }),
+    }),
+  }),
+};
+
 const styles = StyleSheet.create({
   centeredContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', 
+    alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',

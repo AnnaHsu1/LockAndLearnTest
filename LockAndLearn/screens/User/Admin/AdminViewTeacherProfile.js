@@ -125,7 +125,6 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
 AdminViewTeacherProfile.propTypes = {
   route: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
-  userName: PropTypes.string.isRequired, // PropType for userName
 };
 
 const useStyles = CreateResponsiveStyle(
@@ -144,28 +143,9 @@ const useStyles = CreateResponsiveStyle(
       borderRadius: 8,
       elevation: 2,
     },
-    workPackageItem: {
-      fontSize: 16,
-      marginVertical: 10,
-      color: '#000000',
-      borderColor: '#407BFF',
-      borderWidth: 1,
-      padding: 13,
-      borderRadius: 15,
-    },
-    workPackageItemContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
-      alignItems: 'center',
-    },
     workPackageNameText: {
       fontSize: '150%',
       color: '#4F85FF',
-    },
-    TitleName: {
-      fontSize: 25,
-      marginBottom: 10,
-      color: '#696969',
     },
     container: {
       flex: 1,
@@ -174,17 +154,6 @@ const useStyles = CreateResponsiveStyle(
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
-    },
-    containerFile: {
-      flex: 1,
-      backgroundColor: '#FAFAFA',
-      alignItems: 'center',
-      width: '100%',
-      borderTopLeftRadius: 40,
-      borderTopRightRadius: 40,
-      marginTop: '5%',
-      padding: 20, // Add padding to match the styling in QuizzesOverviewScreen
-      paddingBottom: 100,
     },
     priceWP: {
       fontWeight: '700',
@@ -262,7 +231,7 @@ const useStyles = CreateResponsiveStyle(
       alignItems: 'flex-start',
     },
     boldText: {
-      fontWeight: 'bold', // Make the instructor's name bold
+      fontWeight: 'bold',
     },
     workPackageDescription: {
       fontSize: '110%',
