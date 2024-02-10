@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getUser } from '../../components/AsyncStorage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -202,9 +202,11 @@ const QuizzesOverviewScreen = ({ route }) => {
     return allQuizContent;
   };
 
-  useEffect(() => {
-    fetchQuizzes();
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchQuizzes();
+    }, [user])
+  );
 
   return (
     <ImageBackground
