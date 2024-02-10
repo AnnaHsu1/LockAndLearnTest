@@ -282,6 +282,10 @@ const LandingPage = ({ navigation }) => {
     );
   };
 
+  const goMainMenu = () => {
+    setStatus('accepted');
+  };
+
   useEffect(() => {
     getUserToken();
   }, []);
@@ -392,6 +396,9 @@ const LandingPage = ({ navigation }) => {
                 <Text style={styles.buttonText}>Next</Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={() => goMainMenu()}>
+              <Text>Go to main menu</Text>
+          </TouchableOpacity>
           </View>
         </View>
       )}
