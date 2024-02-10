@@ -258,6 +258,7 @@ const FinanceInstructor = ({ navigation, route }) => {
               }}
               disabled={disableButton}
               onPress={() => generateStripeSetupLink()}
+              accessible={true}
             >
               <Text style={styles.text}>
                 {' '}
