@@ -15,6 +15,7 @@ import { getItem } from '../../components/AsyncStorage';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import '../../carousel.css';
+import PropTypes from 'prop-types';
 
 const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -873,6 +874,10 @@ const WorkPackageBrowsingScreen = ({ route }) => {
       </View>
     </ImageBackground>
   );
+};
+
+WorkPackageBrowsingScreen.propTypes = {
+  route: PropTypes.object.isRequired,
 };
 
 const styles = StyleSheet.create(

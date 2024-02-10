@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View} from 'react-native';
+import { Text, View } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 
 
