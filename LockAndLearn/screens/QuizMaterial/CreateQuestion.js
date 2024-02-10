@@ -50,8 +50,8 @@ const CreateQuestion = ({ route }) => {
 
     if (questionType === 'Multiple Choice Question') {
       // Ensure all options are filled and one is marked as correct
-      const allOptionsFilled = options.every(option => option.text.trim() !== '');
-      const isAnswerChosen = options.some(option => option.isCorrect);
+      const allOptionsFilled = options.every((option) => option.text.trim() !== '');
+      const isAnswerChosen = options.some((option) => option.isCorrect);
 
       if (!allOptionsFilled) {
         alert('Please fill in all option texts.');
@@ -64,7 +64,7 @@ const CreateQuestion = ({ route }) => {
       }
 
       // Set the answer to the text of the selected correct option
-      newQuestion.answer = options.find(option => option.isCorrect).text;
+      newQuestion.answer = options.find((option) => option.isCorrect).text;
     } else if (questionType === 'True or False') {
       // For true or false, the answer is a boolean
       newQuestion.answer = answer; // Assuming answer is either 'True' or 'False'
@@ -88,9 +88,9 @@ const CreateQuestion = ({ route }) => {
       // console.log(response);
 
       if (response.ok) {
-        // Question created successfully, you can handle the response here
+        await updateQuizApproval(quizId, false);
         const result = await response.json();
-        // console.log('Question created:', result);
+        console.log('Question created:', result);
 
         // Clear the form after adding the question
         setQuestionText('');
@@ -114,6 +114,29 @@ const CreateQuestion = ({ route }) => {
       });
     } catch (error) {
       console.error('Error creating question:', error);
+    }
+  };
+
+  const updateQuizApproval = async (quizId, approved) => {
+    try {
+      const updateQuizResponse = await fetch(`http://localhost:4000/quizzes/${quizId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          approved: approved,
+        }),
+      });
+
+      if (updateQuizResponse.ok) {
+        const updatedQuiz = await updateQuizResponse.json();
+        console.log('Quiz updated:', updatedQuiz);
+      } else {
+        console.error('Failed to update quiz:', updateQuizResponse.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating quiz:', error);
     }
   };
 
@@ -171,10 +194,7 @@ const CreateQuestion = ({ route }) => {
     } else if (questionType === 'True or False') {
       return questionText.trim() !== '' && (isTrue || !isTrue);
     } else if (questionType === 'Fill In The Blanks') {
-      return (
-        questionText.trim() !== '' &&
-        inputs.every((input) => input.trim() !== '')
-      );
+      return questionText.trim() !== '' && inputs.every((input) => input.trim() !== '');
     }
 
     // For other types, consider them valid if questionText is not empty
