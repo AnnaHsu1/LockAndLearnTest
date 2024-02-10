@@ -27,7 +27,7 @@ global.fetch = jest.fn((url) => {
   if (url === 'http://localhost:4000/timeframes/addtimeframe') {
     return Promise.resolve({
       json: () => Promise.resolve(),
-      status: 200,
+      status: 201,
     });
   } else if (url === 'http://localhost:4000/timeframes/gettimeframes/child1') {
     return Promise.resolve({
@@ -39,6 +39,7 @@ global.fetch = jest.fn((url) => {
             day: 'Monday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
           {
             _id: 'timeframe2',
@@ -46,6 +47,7 @@ global.fetch = jest.fn((url) => {
             day: 'Tuesday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
           {
             _id: 'timeframe3',
@@ -53,6 +55,7 @@ global.fetch = jest.fn((url) => {
             day: 'Wednesday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
           {
             _id: 'timeframe4',
@@ -60,6 +63,7 @@ global.fetch = jest.fn((url) => {
             day: 'Thursday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
           {
             _id: 'timeframe5',
@@ -67,6 +71,7 @@ global.fetch = jest.fn((url) => {
             day: 'Friday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
           {
             _id: 'timeframe6',
@@ -74,6 +79,7 @@ global.fetch = jest.fn((url) => {
             day: 'Saturday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
           {
             _id: 'timeframe7',
@@ -81,8 +87,19 @@ global.fetch = jest.fn((url) => {
             day: 'Sunday',
             startTime: '10:30',
             endTime: '11:00',
+            subject: 'Math',
           },
         ]),
+      status: 200,
+    });
+  } else if (url === 'http://localhost:4000/child/getPreferences/child1') {
+    return Promise.resolve({
+      json: () =>
+        Promise.resolve({
+          preferences: {
+            subjects: ['Math', 'English', 'Science', 'French', 'History', 'Geography'],
+          },
+        }),
       status: 200,
     });
   } else {
@@ -136,9 +153,21 @@ describe('Child timeframe tests', () => {
     expect(save).toBeTruthy();
   });
 
-  test('change to add screen and input values', () => {
+  test('change to add screen and input values', async () => {
     const { getByTestId, getByText } = render(<ChildTimeframes route={useRoute()} />);
     const addTimeFrame = getByTestId('add-timeframe');
+
+    // Wait for the component to fetch data
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://localhost:4000/timeframes/gettimeframes/child1',
+        { credentials: 'include', method: 'GET' }
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://localhost:4000/child/getPreferences/child1',
+        { credentials: 'include', method: 'GET' }
+      );
+    });
 
     fireEvent.press(addTimeFrame);
 
@@ -147,6 +176,7 @@ describe('Child timeframe tests', () => {
     const startMinute = getByTestId('start-minute');
     const endHour = getByTestId('end-hour');
     const endMinute = getByTestId('end-minute');
+    const subject = getByTestId('subject-dropdown-picker-add');
     const save = getByText('Save');
 
     // Select Monday
@@ -159,6 +189,9 @@ describe('Child timeframe tests', () => {
     // Input values 11:00
     fireEvent.changeText(endHour, '11');
     fireEvent.changeText(endMinute, '00');
+
+    // Select subject
+    fireEvent(subject, 'onValueChange', 'Math');
 
     // Save changes
     fireEvent.press(save);
@@ -175,5 +208,78 @@ describe('Child timeframe tests', () => {
 
     expect(cancel).toBeTruthy();
     expect(save).toBeTruthy();
+  });
+
+  test('edit timeframe', async () => {
+    const { getByTestId, getByText } = render(<ChildTimeframes route={useRoute()} />);
+
+    // Wait for the component to fetch data
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://localhost:4000/timeframes/gettimeframes/child1',
+        { credentials: 'include', method: 'GET' }
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://localhost:4000/child/getPreferences/child1',
+        { credentials: 'include', method: 'GET' }
+      );
+    });
+
+    const editTimeFrame = getByTestId('edit-timeframe');
+    fireEvent.press(editTimeFrame);
+
+    const subject = getByTestId('subject-dropdown-picker-edit-Monday-0-timeframe1');
+    fireEvent(subject, 'onValueChange', 'English');
+
+    const startHour = getByTestId('start-hour-input-edit-Monday-0-timeframe1');
+    fireEvent.changeText(startHour, '17');
+
+    const startMinute = getByTestId('start-minute-input-edit-Monday-0-timeframe1');
+    fireEvent.changeText(startMinute, '00');
+
+    const endHour = getByTestId('end-hour-input-edit-Monday-0-timeframe1');
+    fireEvent.changeText(endHour, '19');
+
+    const endMinute = getByTestId('end-minute-input-edit-Monday-0-timeframe1');
+    fireEvent.changeText(endMinute, '30');
+
+    const save = getByText('Save');
+    fireEvent.press(save);
+  });
+
+  test('delete timeframe', async () => {
+    const { getByTestId } = render(<ChildTimeframes route={useRoute()} />);
+
+    // Wait for the component to fetch data
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://localhost:4000/timeframes/gettimeframes/child1',
+        { credentials: 'include', method: 'GET' }
+      );
+      expect(global.fetch).toHaveBeenCalledWith(
+        'http://localhost:4000/child/getPreferences/child1',
+        { credentials: 'include', method: 'GET' }
+      );
+    });
+
+    const editTimeFrame = getByTestId('edit-timeframe');
+    fireEvent.press(editTimeFrame);
+
+    const deleteTimeFrame = getByTestId('delete-Monday-0-timeframe1');
+    expect(deleteTimeFrame).toBeTruthy();
+
+    const deleteModal = getByTestId('delete-modal');
+    expect(deleteModal).toBeTruthy();
+
+    fireEvent.press(deleteTimeFrame);
+    const modalCancel = getByTestId('delete-timeframe-no-button');
+    fireEvent.press(modalCancel);
+
+    fireEvent.press(deleteTimeFrame);
+    const modalDelete = getByTestId('delete-timeframe-yes-button');
+    fireEvent.press(modalDelete);
+
+    // Restore the original fetch implementation
+    global.fetch.mockRestore();
   });
 });
