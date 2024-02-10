@@ -3,6 +3,9 @@ import { Text, View } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button, Icon } from 'react-native-paper';
 import PropTypes from 'prop-types';
+import { IoPhonePortraitSharp } from 'react-icons/io5';
+import { IoSchool } from 'react-icons/io5';
+import { FaRegCalendar } from 'react-icons/fa';
 
 const ChildSettings = ({ route, navigation }) => {
   const styles = useStyles();
@@ -33,7 +36,10 @@ const ChildSettings = ({ route, navigation }) => {
             }}
             style={[styles.button, styles.full_width]}
           >
-            <Text style={styles.text}>Device Controls</Text>
+            <View style={[styles.buttonItems]}>
+              <IoPhonePortraitSharp color="#4F85FF" size={30} />
+              <Text style={styles.text}>Device Controls</Text>
+            </View>
           </Button>
           {/* Passing Grade*/}
           <Button
@@ -44,7 +50,10 @@ const ChildSettings = ({ route, navigation }) => {
             }}
             style={[styles.button, styles.full_width]}
           >
-            <Text style={styles.text}>Passing Grade</Text>
+            <View style={[styles.buttonItems]}>
+              <IoSchool color="#4F85FF" size={30} />
+              <Text style={styles.text}>Passing Grade</Text>
+            </View>
           </Button>
           {/* Scheduling */}
           <Button
@@ -55,7 +64,10 @@ const ChildSettings = ({ route, navigation }) => {
             }}
             style={[styles.button, styles.full_width]}
           >
-            <Text style={styles.text}>Scheduling</Text>
+            <View style={[styles.buttonItems]}>
+              <FaRegCalendar color="#4F85FF" size={30} />
+              <Text style={styles.text}>Scheduling</Text>
+            </View>
           </Button>
         </View>
       </View>
@@ -137,12 +149,17 @@ const useStyles = CreateResponsiveStyle(
     text: {
       color: '#4F85FF',
       fontSize: 20,
-      padding: 10,
+      paddingLeft: 10,
     },
     options: {
       flex: 0.75,
       justifyContent: 'space-around',
       alignItems: 'center',
+    },
+    buttonItems: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
     },
   },
   {
