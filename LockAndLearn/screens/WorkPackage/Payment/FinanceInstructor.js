@@ -28,13 +28,13 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [balance, setBalance] = useState([]);
   const [transactions, setTransactions] = useState([]);
     const [isLoading, setLoading] = useState(false);
-    const [isInfoLoading, setInfoLoading] = useState(true);
   const [isRegistered, setIsRegistered] = useState(false); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
   const [generatedUrl, setGeneratedUrl] = useState(null);
   const [expiryTime, setExpiryTime] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(''); // For devs
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [salesThisWeek, setSalesThisWeek] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,28 +115,9 @@ const FinanceInstructor = ({ navigation, route }) => {
   };
 
   /**
-   * Fetches all transactions from the server.
+   * Fetches transactions from the server.
    * @returns {Promise<void>} A promise that resolves when the transactions are fetched.
    */
-    //const fetchAllTransactions = async () => {
-    //    try {
-    //        const response = await fetch('http://localhost:4000/payment/transactions');
-    //        if (response.ok) {
-    //            const data = await response.json();
-    //            console.log('Updated transactions:', data);
-
-    //            setTransactions(data.payments);
-    //            console.log("transaction", transactions);
-    //        } else {
-    //            console.error('Failed to fetch transactions:', response.status);
-    //        }
-    //    } catch (error) {
-    //        console.error('Error fetching transactions:', error);
-    //    } finally {
-    //        console.log('set loading to false!');
-    //        setInfoLoading(false); // Set loading to false when the request completes
-    //    }
-    //};
 
     // Function to fetch a transaction by ID
     const fetchTransaction = async (transactionId) => {
@@ -153,6 +134,22 @@ const FinanceInstructor = ({ navigation, route }) => {
             console.error('Error fetching transaction:', error);
             return null; // Return null if there is an error
         }
+    };
+    // Define a function to calculate the count of sales made this week
+    const calculateSalesThisWeek = (transactionsData) => {
+        let salesThisWeekCount = 0;
+        const today = new Date();
+        const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()); // Sunday
+        const endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (6 - today.getDay())); // Saturday
+
+        transactionsData.forEach((transaction) => {
+            const transactionDate = new Date(transaction.created * 1000);
+            if (transactionDate >= startOfWeek && transactionDate <= endOfWeek) {
+                salesThisWeekCount++;
+            }
+        });
+
+        return salesThisWeekCount;
     };
 
   /**
@@ -185,6 +182,10 @@ const FinanceInstructor = ({ navigation, route }) => {
                 // Fetch transactions for the extracted transaction IDs
                 const transactionsPromises = transactionIds.map(fetchTransaction);
                 const transactionsData = await Promise.all(transactionsPromises);
+
+                // Calculate sales made this week
+                const salesThisWeekCount = calculateSalesThisWeek(transactionsData);
+                setSalesThisWeek(salesThisWeekCount);
 
                 // Update work packages with recent purchase time
                 const updatedWorkPackages = data.map((workPackage) => {
@@ -371,7 +372,7 @@ const FinanceInstructor = ({ navigation, route }) => {
                   <View style={styles.userContainer}>
                       <Text style={styles.balance}>Total revenue: ${balance}</Text>
                       <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
-                      <Text style={styles.balance}>Sales this week: </Text>
+                      <Text style={styles.balance}>Sales this week: {salesThisWeek} </Text>
                       <Text style={styles.balance}>Sales since last login: </Text>
                   </View>
               )}
