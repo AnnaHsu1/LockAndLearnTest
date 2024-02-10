@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Button } from 'react-native-paper';
+import PropTypes from 'prop-types';
 
 const AdminViewTeacherProfile = ({ route, navigation }) => {
   const styles = useStyles();
@@ -57,68 +58,74 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
           <Text style={styles.title}>Created Work Packages</Text>
         </View>
         <ScrollView style={styles.userListContainer}>
-        {workPackages.map((workPackage) => (
-                // Display the work package details
-                <View key={workPackage._id} style={styles.workPackageBox}>
-                  <View style={styles.workPackageText}>
-                    <TouchableOpacity
-                      key={workPackage._id}
-                      onPress={() => {
-                        console.log('Previewing '+workPackage);
-                        navigation.navigate('WorkPackagePreview', { workPackage });
-                      }}
-                    >
-                      <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
-                    </TouchableOpacity>
+          {workPackages.map((workPackage) => (
+            // Display the work package details
+            <View key={workPackage._id} style={styles.workPackageBox}>
+              <View style={styles.workPackageText}>
+                <TouchableOpacity
+                  key={workPackage._id}
+                  onPress={() => {
+                    console.log('Previewing ' + workPackage);
+                    navigation.navigate('WorkPackagePreview', { workPackage });
+                  }}
+                >
+                  <Text style={styles.workPackageNameText}>{`${workPackage.name}`}</Text>
+                </TouchableOpacity>
 
-                    <View style={styles.containerTag}>
-                      <View style={styles.tagBox}>
-                        <Text style={styles.tagText} selectable={false}>
-                          {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`} grade
-                        </Text>
-                      </View>
-                    </View>
-
-                    <Text style={styles.workPackageDescription}>
-                      {`${
-                        workPackage.description === undefined ? `` : `${workPackage.description}`
-                      }`}
+                <View style={styles.containerTag}>
+                  <View style={styles.tagBox}>
+                    <Text style={styles.tagText} selectable={false}>
+                      {`${workPackage.grade}${getGradeSuffix(workPackage.grade)}`} grade
                     </Text>
-
-                    {workPackage.instructorDetails && (
-                      <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
-                        Made by{' '}
-                        <Text style={styles.boldText}>
-                          {workPackage.instructorDetails.firstName}{' '}
-                          {workPackage.instructorDetails.lastName}
-                        </Text>
-                      </Text>
-                    )}
-                  </View>
-                  <View>
-                    <Text style={styles.priceWP}>
-                      {workPackage.price && workPackage.price !== 0
-                        ? `$${workPackage.price} CAD`
-                        : 'Free'}
-                    </Text>
-                    <Button
-                      key={workPackage._id}
-                      mode="contained"
-                      style={[styles.previewButton]}
-                      onPress={() => {
-                        console.log(workPackage);
-                        navigation.navigate('WorkPackagePreview', { workPackage });
-                      }}
-                    >
-                      Preview
-                    </Button>
                   </View>
                 </View>
-              ))} 
+
+                <Text style={styles.workPackageDescription}>
+                  {`${workPackage.description === undefined ? `` : `${workPackage.description}`
+                    }`}
+                </Text>
+
+                {workPackage.instructorDetails && (
+                  <Text style={[styles.instructorDetails, { marginTop: 10 }]}>
+                    Made by{' '}
+                    <Text style={styles.boldText}>
+                      {workPackage.instructorDetails.firstName}{' '}
+                      {workPackage.instructorDetails.lastName}
+                    </Text>
+                  </Text>
+                )}
+              </View>
+              <View style={styles.buttonContainer}>
+                <Text style={styles.priceWP}>
+                  {workPackage.price && workPackage.price !== 0
+                    ? `$${workPackage.price} CAD`
+                    : 'Free'}
+                </Text>
+                <Button
+                  key={workPackage._id}
+                  mode="contained"
+                  style={styles.previewButton}
+                  onPress={() => {
+                    console.log(workPackage);
+                    navigation.navigate('WorkPackagePreview', { workPackage });
+                  }}
+                >
+                  Preview
+                </Button>
+              </View>
+            </View>
+          ))}
+
         </ScrollView>
       </View>
     </View>
   );
+};
+
+AdminViewTeacherProfile.propTypes = {
+  route: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
+  userName: PropTypes.string.isRequired, // PropType for userName
 };
 
 const useStyles = CreateResponsiveStyle(
@@ -265,9 +272,15 @@ const useStyles = CreateResponsiveStyle(
       fontSize: '80%',
       color: '#696969',
     },
-    previewButton:{
+    previewButton: {
       maxWidth: 130,
-    }
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
