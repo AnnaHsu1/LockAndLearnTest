@@ -138,6 +138,7 @@ describe('CreateQuestion Tests', () => {
     fireEvent(questionTypePicker, 'onValueChange', 'True or False');
 
     fireEvent.changeText(getByPlaceholderText('Enter your question here'), 'What is the capital of Spain?');
+    fireEvent.changeText(getByPlaceholderText('Enter the explanation here'), 'True');
     // Simulate entering other necessary data for the question based on its type
     
     await act(async () => {
