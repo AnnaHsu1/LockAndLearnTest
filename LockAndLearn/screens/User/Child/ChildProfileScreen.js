@@ -58,7 +58,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
             <TbMoodEdit color="#fff" size={30} />
           </TouchableOpacity>
         </View>
-        <View style={[{ justifyContent: 'space-evenly', flex: 1 }]}>
+        <View style={[{ justifyContent: 'space-evenly', flex: 1, gap: 10 }]}>
           {/* See performance */}
           {/* Performance should be shown on this page! TODO */}
           <Button
@@ -200,11 +200,10 @@ const useStyles = CreateResponsiveStyle(
       minWidth: '90%',
       paddingLeft: 20,
       paddingRight: 20,
-      paddingTop: 10,
+      paddingVertical: 10,
       marginVertical: '2%',
       borderRadius: 10,
       backgroundColor: '#4F85FF',
-      flex: 1,
       justifyContent: 'space-between',
     },
     header: {
@@ -224,7 +223,7 @@ const useStyles = CreateResponsiveStyle(
       backgroundColor: '#ffffff',
       borderRadius: 10,
       marginVertical: 3,
-      minHeight: 100,
+      minHeight: 70,
       justifyContent: 'center',
       minWidth: 100,
     },
