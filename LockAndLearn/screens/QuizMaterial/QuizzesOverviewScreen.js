@@ -11,6 +11,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getUser } from '../../components/AsyncStorage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import PropTypes from 'prop-types';
+
 
 const QuizzesOverviewScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -133,7 +135,7 @@ const QuizzesOverviewScreen = ({ route }) => {
       const isApproved =
         !detectionResult.toLowerCase().includes('true') &&
         !badWordFilterResult.toLowerCase().includes('true');
-      console.log('isApproved: '+isApproved)
+      console.log('isApproved: ' + isApproved)
 
       // Update the quiz's approved status in the backend
       await updateQuizApproval(quiz._id, isApproved);
@@ -159,7 +161,7 @@ const QuizzesOverviewScreen = ({ route }) => {
       },
       body: JSON.stringify({ approved: approved }),
     };
-  
+
     try {
       const response = await fetch(url, options);
       if (response.status === 200) {
@@ -170,7 +172,7 @@ const QuizzesOverviewScreen = ({ route }) => {
     } catch (error) {
       console.error('Network error during quiz approval update:', error);
     }
-  };  
+  };
 
   const getAllQuizContent = (quiz) => {
     const contentArray = [];
@@ -207,6 +209,14 @@ const QuizzesOverviewScreen = ({ route }) => {
       fetchQuizzes();
     }, [user])
   );
+
+  QuizzesOverviewScreen.propTypes = {
+    route: PropTypes.shape({
+      params: PropTypes.shape({
+        userId: PropTypes.string.isRequired,
+      }),
+    }).isRequired,
+  };
 
   return (
     <ImageBackground
@@ -296,12 +306,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  selectFiles: {
-    color: '#696969',
-    fontSize: 36,
-    fontWeight: '500',
-    marginTop: 20, // Add top margin for more space
   },
   confirmationText: {
     fontSize: 18,

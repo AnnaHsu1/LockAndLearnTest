@@ -1,80 +1,159 @@
-import { describe, expect, test } from '@jest/globals';
 import React from 'react';
-import { render, fireEvent, waitFor, act, cleanup } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import QuizzesOverviewScreen from '../../screens/QuizMaterial/QuizzesOverviewScreen';
-import { useNavigation } from '@react-navigation/native';
+import * as AsyncStorage from '../../components/AsyncStorage'; // Adjust the import path as needed
 
-const fetchMock = require('jest-fetch-mock');
-fetchMock.enableMocks();
-
+// Mock useFocusEffect to simply execute its argument immediately
 jest.mock('@react-navigation/native', () => {
   return {
-    ...jest.requireActual('@react-navigation/native'),
-    useNavigation: jest.fn(),
+    ...jest.requireActual('@react-navigation/native'), // use actual for all non-hook parts
+    useNavigation: () => ({
+      navigate: jest.fn(),
+      dispatch: jest.fn(),
+    }),
+    useFocusEffect: (effect) => effect(),
   };
 });
+
+
+// Mocking AsyncStorage
 jest.mock('../../components/AsyncStorage', () => ({
-  getUser: jest.fn().mockResolvedValue({ _id: '123' }),
+  getUser: jest.fn(),
 }));
 
-describe('QuizzesOverviewScreen Tests', () => {
+// Mocking fetch
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve([]), // Adjust based on expected data
+  })
+);
+
+describe('QuizzesOverviewScreen', () => {
   beforeEach(() => {
-    fetchMock.mockClear();
-  });
-  afterEach(() => {
-    cleanup();
-  });
-
-  it('renders quizzes correctly', async () => {
-    const mockQuizzes = [
-      { _id: 'quiz1', name: 'Quiz 1' },
-      { _id: 'quiz2', name: 'Quiz 2' },
-    ];
-
-    fetchMock.mockResponseOnce(JSON.stringify(mockQuizzes));
-
-    const route = { params: { userId: '123' } };
-    const { findByText } = render(<QuizzesOverviewScreen route={route} />);
-
-    expect(await findByText('Quiz 1')).toBeDefined();
-    expect(await findByText('Quiz 2')).toBeDefined();
+    // Clear all mocks before each test
+    jest.clearAllMocks();
+    fetch.mockClear();
+    AsyncStorage.getUser.mockResolvedValue({ _id: '123' }); // Mock user ID
   });
 
-  test('deletes a quiz when delete button is pressed', async () => {
-    const mockQuizzes = [{ _id: '1', name: 'Quiz 1' }];
-  
-    fetchMock.mockResponses(
-      [JSON.stringify(mockQuizzes), { status: 200 }], // Mock response for initial GET request
-      [JSON.stringify({ message: 'Quiz deleted' }), { status: 200 }] // Mock response for DELETE request
+  it('renders correctly', async () => {
+    const { getByText } = render(
+      <NavigationContainer>
+        <QuizzesOverviewScreen route={{ params: { userId: '123' } }} />
+      </NavigationContainer>
     );
-  
-    const { findByTestId } = render(
-      <QuizzesOverviewScreen route={{ params: { userId: '123' } }} />
-    );
-  
-    // Wait for initial quizzes to be rendered
-    await waitFor(() => findByTestId('delete-button-x'));
-  
-    // Press the delete button
-    const deleteButton = await findByTestId('delete-button-x');
-    fireEvent.press(deleteButton);
-  
-    // If there's a confirmation step (like a modal), simulate that as well
-    const confirmButton = await findByTestId('deleteConfirmationModal');
-    fireEvent.press(confirmButton);
-  
-    // Assert the DELETE fetch call
+
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        'http://localhost:4000/quizzes/deleteQuiz/1',
-        expect.objectContaining({
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-      );
+      expect(getByText('Quizzes')).toBeTruthy();
+    });
+  });
+
+  it('fetches quizzes on focus', async () => {
+    render(
+      <NavigationContainer>
+        <QuizzesOverviewScreen route={{ params: { userId: '123' } }} />
+      </NavigationContainer>
+    );
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('allQuizzes/123'), expect.anything());
+    });
+  });
+
+  it('deletes a quiz after confirmation', async () => {
+    const { getByTestId, getByText } = render(
+      <NavigationContainer>
+        <QuizzesOverviewScreen route={{ params: { userId: '123' } }} />
+      </NavigationContainer>
+    );
+
+    // Simulate fetching quizzes with a delete button available
+    global.fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 200,
+        json: () => Promise.resolve([{ _id: 'quiz1', name: 'Sample Quiz' }]),
+      })
+    );
+
+    await waitFor(() => {
+      expect(getByText('Sample Quiz')).toBeTruthy();
+    });
+
+    fireEvent.press(getByTestId('delete-button-x'));
+    fireEvent.press(getByTestId('deleteConfirmationModal'));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining('deleteQuiz/quiz1'), expect.anything());
+    });
+  });
+
+  it('fetches and renders quizzes correctly', async () => {
+    // Mock the AsyncStorage to return a specific user ID
+    AsyncStorage.getUser.mockResolvedValue({ _id: 'user123' });
+
+    // Mock the fetch response for quizzes
+    global.fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve([
+        { _id: 'quiz1', name: 'Quiz One', approved: true },
+        { _id: 'quiz2', name: 'Quiz Two', approved: false },
+      ]),
+      status: 200,
+    });
+
+    const { findByText } = render(
+      <NavigationContainer>
+        <QuizzesOverviewScreen route={{ params: { userId: 'user123' } }} />
+      </NavigationContainer>
+    );
+
+    // Wait for the quizzes to be fetched and rendered
+    const quizOne = await findByText('Quiz One');
+    const quizTwo = await findByText('Quiz Two');
+
+    expect(quizOne).toBeTruthy();
+    expect(quizTwo).toBeTruthy();
+  });
+
+  it('prompts and deletes a quiz correctly', async () => {
+    // Prepare mock quizzes
+    const mockQuizzes = [
+      { _id: 'quiz1', name: 'Quiz One', approved: true },
+    ];
+  
+    // Mock fetch to simulate fetching quizzes and deleting a quiz
+    global.fetch.mockImplementation((url) => {
+      if (url.includes('allQuizzes')) {
+        return Promise.resolve({ json: () => Promise.resolve(mockQuizzes), status: 200 });
+      }
+      if (url.includes('deleteQuiz')) {
+        // Simulate deleting the quiz by removing it from the mock quizzes array
+        const quizId = url.split('/').pop();
+        const index = mockQuizzes.findIndex(quiz => quiz._id === quizId);
+        if (index !== -1) mockQuizzes.splice(index, 1);
+        return Promise.resolve({ status: 200 });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    });
+  
+    const { getByText, queryByText, findByTestId } = render(
+      <NavigationContainer>
+        <QuizzesOverviewScreen route={{ params: { userId: 'user123' } }} />
+      </NavigationContainer>
+    );
+  
+    // Simulate pressing the delete button for the first quiz
+    fireEvent.press(await findByTestId('delete-button-x'));
+  
+    // Simulate confirming the deletion
+    fireEvent.press(getByText('Confirm'));
+  
+    // Use waitFor for asynchronous state updates and fetch calls
+    await waitFor(() => {
+      // Verify the quiz has been deleted by checking it's not in the document
+      expect(queryByText('Quiz One')).toBeNull();
     });
   });
   
+
 });

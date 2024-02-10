@@ -11,6 +11,7 @@ import {
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
+import PropTypes from 'prop-types';
 
 const CreateQuestion = ({ route }) => {
   const navigation = useNavigation();
@@ -337,6 +338,14 @@ const CreateQuestion = ({ route }) => {
   );
 };
 
+CreateQuestion.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      quizId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    }).isRequired,
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: 'gray',
@@ -348,6 +357,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginHorizontal: 10,
+    marginBottom: 10,
   },
   cancelButtonText: {
     color: '#FFFFFF',
