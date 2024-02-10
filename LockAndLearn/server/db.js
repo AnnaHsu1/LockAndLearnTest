@@ -82,5 +82,6 @@ app.use('/payment', require('./controllers/paymentController'));
 app.use('/certificates', require('./controllers/certificatesController'));
 app.use('/reports', require('./controllers/reportController'));
 app.use('/timeframes', require('./controllers/timeframeController'));
+app.use('/childQuizResults', require('./controllers/childQuizResultsController'));
 
 app.listen(port, () => console.log('Backend server listening on port 4000.'));
