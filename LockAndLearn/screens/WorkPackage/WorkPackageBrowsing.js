@@ -35,6 +35,11 @@ const WorkPackageBrowsingScreen = ({ route }) => {
   const [selectedGrade, setSelectedGrade] = useState(gradesList[0]);
   const [selectedOption, setSelectedOption] = useState(gradesList[0]);
 
+  // Grades list to pass to the DropdownComponent
+  const gradesList = [1,2,3,4,5,6,7,8,9,10,11,12,"Any"];
+  const [selectedGrade, setSelectedGrade] = useState(gradesList[0]);
+  const [selectedOption, setSelectedOption] = useState(gradesList[0]);
+
 
 
   // Function to handle selecting a work package
