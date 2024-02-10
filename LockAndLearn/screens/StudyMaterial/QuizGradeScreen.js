@@ -74,6 +74,13 @@ const QuizGradeScreen = ({ route }) => {
                                     </Text>
                                 )}
                             </View>
+                            <Text style={styles.textExplanation}>
+                                Explanation: 
+                            </Text>
+                            <Text>
+                                {questions[index].explanation || "No explanation provided"}
+                            </Text>
+
                         </View>
                     );
                 })}
@@ -189,6 +196,13 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    textExplanation: {
+        fontSize: 18,
+        color: '#333',
+        fontWeight: 'bold',
+        textAlign: 'left',
+        marginBottom: 5,
     },
     
 });
