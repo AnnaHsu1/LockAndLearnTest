@@ -58,8 +58,10 @@ describe('ParentAccountScreen component', () => {
 
   test('navigates to AddChild screen when "+ Add Child" is pressed', () => {
     const navigateMock = jest.fn();
-    const { getByText } = render(<ParentAccountScreen navigation={{ navigate: navigateMock }} />);
-    const addChildButton = getByText('+ Add Child');
+    const { getByText, getByTestId } = render(
+      <ParentAccountScreen navigation={{ navigate: navigateMock }} />
+    );
+    const addChildButton = getByTestId('add-child-button');
     fireEvent.press(addChildButton);
     expect(navigateMock).toHaveBeenCalledWith('AddChild');
   });

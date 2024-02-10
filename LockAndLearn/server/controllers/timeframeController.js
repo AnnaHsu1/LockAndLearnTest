@@ -6,10 +6,10 @@ const Timeframe = require('../schema/timeframeSchema.js');
 router.post('/addtimeframe', async (req, res) => {
   try {
     // Extract user data from the request body
-    const { childId, day, startTime, endTime } = req.body;
+    const { childId, day, startTime, endTime, subject } = req.body;
     startHour = startTime.substring(0, 2);
     startMin = startTime.substring(3, 5);
-    endHour = endTime.substring(0, 2);   
+    endHour = endTime.substring(0, 2);
     endMin = endTime.substring(3, 5);
 
     // Input validations
@@ -44,6 +44,7 @@ router.post('/addtimeframe', async (req, res) => {
       day,
       startTime,
       endTime,
+      subject,
     });
     await newTimeframe.save();
 
@@ -120,7 +121,14 @@ router.delete('/deletetimeframe/:timeframeId', async (req, res) => {
 
 // Handle timeframe update for edit time periods
 router.put('/updateEditTimeframe', async (req, res) => {
-  const { timeframeIds, editStartHours, editStartMinutes, editEndHours, editEndMinutes } = req.body;
+  const {
+    timeframeIds,
+    editStartHours,
+    editStartMinutes,
+    editEndHours,
+    editEndMinutes,
+    editSubjects,
+  } = req.body;
 
   try {
     for (let i = 0; i < timeframeIds.length; i++) {
@@ -129,44 +137,48 @@ router.put('/updateEditTimeframe', async (req, res) => {
       const editStartMinute = editStartMinutes[i];
       const editEndHour = editEndHours[i];
       const editEndMinute = editEndMinutes[i];
+      const editSubject = editSubjects[i];
 
-    // Input validations
-    if (!timeframeId) {
-      return res.status(400).json({ msg: 'Timeframe ID must be provided.' });
-    }
-    if (!editStartHour || !editStartMinute || !editEndHour || !editEndMinute) {
-      return res.status(400).json({ msg: 'All fields must be filled.' });
-    }
-    if (editStartHour < 0 || editStartHour > 23 || editEndHour < 0 || editEndHour > 23) {
-      return res.status(400).json({ msg: 'Hour must be between 00 and 23.' });
-    }
-    if (editStartMinute < 0 || editStartMinute > 59 || editEndMinute < 0 || editEndMinute > 59) {
-      return res.status(400).json({ msg: 'Minute must be between 00 and 59.' });
-    }
-    if (editStartHour > editEndHour || (editStartHour === editEndHour && editStartMinute > editEndMinute)) {
-      return res.status(400).json({ msg: 'Start time must be before end time.' });
-    }
-    const integerHoursCheck = new RegExp('^[0-9]+$');
-    if (!integerHoursCheck.test(editStartHour) || !integerHoursCheck.test(editEndHour)) {
-      return res.status(400).json({ msg: 'Hour must be an integer between 00 and 23.' });
-    }
-    const integerMinsCheck = new RegExp('^[0-5][0-9]$');
-    if (!integerMinsCheck.test(editStartMinute) || !integerMinsCheck.test(editEndMinute)) {
-      return res.status(400).json({ msg: 'Minute must be an integer between 00 and 59.' });
-    }  
-
-    // Update the timeframe
-    await Timeframe.updateOne(
-      { _id: timeframeId },
-      {
-        startTime: `${editStartHour}:${editStartMinute}`,
-        endTime: `${editEndHour}:${editEndMinute}`,
+      // Input validations
+      if (!timeframeId) {
+        return res.status(400).json({ msg: 'Timeframe ID must be provided.' });
       }
-    );
+      if (!editStartHour || !editStartMinute || !editEndHour || !editEndMinute) {
+        return res.status(400).json({ msg: 'All fields must be filled.' });
+      }
+      if (editStartHour < 0 || editStartHour > 23 || editEndHour < 0 || editEndHour > 23) {
+        return res.status(400).json({ msg: 'Hour must be between 00 and 23.' });
+      }
+      if (editStartMinute < 0 || editStartMinute > 59 || editEndMinute < 0 || editEndMinute > 59) {
+        return res.status(400).json({ msg: 'Minute must be between 00 and 59.' });
+      }
+      if (
+        editStartHour > editEndHour ||
+        (editStartHour === editEndHour && editStartMinute > editEndMinute)
+      ) {
+        return res.status(400).json({ msg: 'Start time must be before end time.' });
+      }
+      const integerHoursCheck = new RegExp('^[0-9]+$');
+      if (!integerHoursCheck.test(editStartHour) || !integerHoursCheck.test(editEndHour)) {
+        return res.status(400).json({ msg: 'Hour must be an integer between 00 and 23.' });
+      }
+      const integerMinsCheck = new RegExp('^[0-5][0-9]$');
+      if (!integerMinsCheck.test(editStartMinute) || !integerMinsCheck.test(editEndMinute)) {
+        return res.status(400).json({ msg: 'Minute must be an integer between 00 and 59.' });
+      }
+
+      // Update the timeframe
+      await Timeframe.updateOne(
+        { _id: timeframeId },
+        {
+          startTime: `${editStartHour}:${editStartMinute}`,
+          endTime: `${editEndHour}:${editEndMinute}`,
+          subject: editSubject,
+        }
+      );
     }
     // Respond with the updated timeframe
     res.status(200).json({ message: 'Successfully updated timeframe' });
-
   } catch (error) {
     // Handle errors if createUser function fails
     console.error('Error updating timeframe:', error);
