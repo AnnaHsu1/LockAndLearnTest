@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image } from 'react-native';
+import { Text, TextInput, View, navigation, Image, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
@@ -10,7 +10,6 @@ import {
 import { Button, Icon } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import PropTypes from 'prop-types';
-
 
 const EditChildProfileScreen = ({ route, navigation }) => {
   const styles = useStyles();
@@ -81,23 +80,23 @@ const EditChildProfileScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-              {/* Edit grade */}
-              <View style={[styles.containerPicker, { marginTop: 10 }]}>
-                  <Text style={{ color: '#ADADAD' }}>Grade</Text>
-                  <Picker
-                      testID="grade-input"
-                      selectedValue={fdata.Grade}
-                      onValueChange={(newText) => {
-                          setFdata({ ...fdata, Grade: newText });
-                      }}
-                      style={styles.textbox}
-                  >
-                      <Picker.Item label="Choose a Grade" value="Choose a Grade" />
-                      {[...Array(12)].map((_, index) => (
-                          <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
-                      ))}
-                  </Picker>
-              </View>
+        {/* Edit grade */}
+        <View style={[styles.containerPicker, { marginTop: 10 }]}>
+          <Text style={{ color: '#ADADAD' }}>Grade</Text>
+          <Picker
+            testID="grade-input"
+            selectedValue={fdata.Grade}
+            onValueChange={(newText) => {
+              setFdata({ ...fdata, Grade: newText });
+            }}
+            style={styles.textbox}
+          >
+            <Picker.Item label="Choose a Grade" value="Choose a Grade" />
+            {[...Array(12)].map((_, index) => (
+              <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
+            ))}
+          </Picker>
+        </View>
         {/*</View>*/}
         {/* Parent can edit passing grade here */}
         <View style={styles.input}>
@@ -135,6 +134,7 @@ const EditChildProfileScreen = ({ route, navigation }) => {
               backgroundColor: 'white',
               borderRadius: 20,
               padding: 20,
+              justifyContent: 'space-between',
               minHeight: hp('20%'),
             }}
           >
@@ -143,8 +143,18 @@ const EditChildProfileScreen = ({ route, navigation }) => {
             </Text>
 
             {/* Parent will acknowledge and navigate to parent account screen */}
-            <Button
-              style={styles.button}
+            <TouchableOpacity
+              style={[
+                {
+                  borderColor: '#4F85FF',
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  padding: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: 40,
+                },
+              ]}
               title="Hide modal"
               testID="close-modal-button"
               onPress={() => {
@@ -155,7 +165,7 @@ const EditChildProfileScreen = ({ route, navigation }) => {
               }}
             >
               <Text style={styles.close}>Close</Text>
-            </Button>
+            </TouchableOpacity>
           </View>
         </Modal>
       </View>
@@ -209,7 +219,7 @@ const useStyles = CreateResponsiveStyle(
       borderRadius: 10,
     },
     close: {
-      color: 'white',
+      color: '#4F85FF',
     },
     field: {
       color: '#ADADAD',
@@ -241,8 +251,7 @@ const useStyles = CreateResponsiveStyle(
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: 1,
-        },
-
+    },
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
