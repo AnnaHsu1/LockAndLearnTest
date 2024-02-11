@@ -59,6 +59,17 @@ const ChildProfileScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={[{ justifyContent: 'space-evenly', flex: 1, gap: 10 }]}>
+          {/* Start session button */}
+          <Button
+            testID="start-session"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('Locking',{ child_ID: child._id });
+            }}
+            style={[styles.button, styles.full_width]}
+          >
+            <Text style={styles.text}>Start session</Text>
+          </Button>
           {/* See performance */}
           {/* Performance should be shown on this page! TODO */}
           <Button
@@ -91,18 +102,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
             style={[styles.button, styles.full_width]}
           >
             <Text style={styles.text}>Assign material</Text>
-          </Button>
-
-          {/* to be removed (tmp): quick tmp way to access page */}
-          <Button
-            testID="settings"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate('DisplayStudyMaterial', { child_ID: child._id });
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Text style={styles.text}>Study time</Text>
           </Button>
           <Button
             testID="settings"

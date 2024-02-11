@@ -14,6 +14,7 @@ import { Button, Icon } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
 import { Divider } from '@rneui/themed';
 import PropTypes from 'prop-types';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const ChildTimeframes = ({ route, navigation }) => {
   const [child, setChild] = useState({});
@@ -40,12 +41,18 @@ const ChildTimeframes = ({ route, navigation }) => {
   const [editStartMinute, setEditStartMinute] = useState({});
   const [editEndHour, setEditEndHour] = useState({});
   const [editEndMinute, setEditEndMinute] = useState({});
+  const [editSubject, setEditSubject] = useState({});
+  const [subjectDropdownOpen, setSubjectDropdownOpen] = useState({});
+  const [preferences, setPreferences] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [open, setOpen] = useState(false);
 
-  // Set the edit start hour/start minute/end hour/end minute states
+  // Set the edit start hour/start minute/end hour/end minute states & subject states
   const setEditTime = (timeframes) => {
     Object.keys(timeframes).map((day) => {
       const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
       const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+      const subject = timeframes[day].map((time) => Object.values(time)[5]);
       startTimes.forEach((time, index) => {
         const startHourTime = {
           [timeframes[day][index]._id]: time.substring(0, 2),
@@ -83,6 +90,24 @@ const ChildTimeframes = ({ route, navigation }) => {
             ...endMinuteTime,
           };
         });
+        const subjectToAdd = {
+          [timeframes[day][index]._id]: subject[index],
+        };
+        setEditSubject((prevSubject) => {
+          return {
+            ...prevSubject,
+            ...subjectToAdd,
+          };
+        });
+        const subjectDropdownOpenToAdd = {
+          [timeframes[day][index]._id]: false,
+        };
+        setSubjectDropdownOpen((prevSubjectDropdownOpen) => {
+          return {
+            ...prevSubjectDropdownOpen,
+            ...subjectDropdownOpenToAdd,
+          };
+        });
       });
     });
   };
@@ -102,6 +127,7 @@ const ChildTimeframes = ({ route, navigation }) => {
           editStartMinutes: Object.values(editStartMinute),
           editEndHours: Object.values(editEndHour),
           editEndMinutes: Object.values(editEndMinute),
+          editSubjects: Object.values(editSubject),
         }),
       });
       const data = await response.json();
@@ -109,7 +135,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log(data.msg);
         setError(data.msg);
       } else {
-        console.log('Timeframe updated successfully!');
+        // console.log('Timeframe updated successfully!');
         setEditMode(false);
         getChildTimeframes();
         setError('');
@@ -133,13 +159,41 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (response.status != 200) {
         console.log(data.msg);
       } else {
-        console.log('Timeframes retrieved successfully!');
+        // console.log('Timeframes retrieved successfully!');
         // console.log(data);
         getSwitchesStatus(data);
         const orderedTimeframes = orderSortTimeframes(data);
         // console.log('orderedTimeframes', orderedTimeframes);
         setTimeframes(orderedTimeframes);
         setEditTime(orderedTimeframes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getChildPreferences = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:4000/child/getPreferences/' + childSelected._id,
+        {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+        }
+      );
+      const data = await response.json();
+      if (response.status != 200) {
+        console.log(data.msg);
+      } else {
+        // console.log(data);
+        data.forEach((preference) => {
+          const preferenceObj = {
+            label: preference,
+            value: preference,
+          };
+          setPreferences((prevPreferences) => [...prevPreferences, preferenceObj]);
+        });
+        // console.log('Preferences retrieved successfully!');
       }
     } catch (error) {
       console.log(error);
@@ -195,6 +249,7 @@ const ChildTimeframes = ({ route, navigation }) => {
             (endhour.length < 2 ? `0${endhour}` : endhour) +
             ':' +
             (endminute.length < 2 ? `0${endminute}` : endminute),
+          subject: selectedSubject,
         }),
       });
 
@@ -204,10 +259,11 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log(data.msg);
         setError(data.msg);
       } else {
-        console.log('Timeframe added successfully!');
+        // console.log('Timeframe added successfully!');
         setAddMode(false);
         clearAddFields();
         setAddedSuccessful(true);
+        setSelectedSubject('');
         setError('');
       }
     } catch (error) {
@@ -253,7 +309,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (response.status != 200) {
         console.log(data.msg);
       } else {
-        console.log('Timeframe updated successfully!');
+        // console.log('Timeframe updated successfully!');
       }
     } catch (error) {
       console.log(error.msg);
@@ -280,7 +336,7 @@ const ChildTimeframes = ({ route, navigation }) => {
         console.log(data.msg);
         setError(data.msg);
       } else {
-        console.log('Timeframe deleted successfully!');
+        // console.log('Timeframe deleted successfully!');
         getChildTimeframes();
         // when the timeframe is deleted, the edit fields of that timeframe are deleted
         const editStartHourCopy = { ...editStartHour };
@@ -295,6 +351,9 @@ const ChildTimeframes = ({ route, navigation }) => {
         const editEndMinuteCopy = { ...editEndMinute };
         delete editEndMinuteCopy[timeframeId];
         setEditEndMinute(editEndMinuteCopy);
+        const editSubjectCopy = { ...editSubject };
+        delete editSubjectCopy[timeframeId];
+        setEditSubject(editSubjectCopy);
       }
     } catch (error) {
       console.log(error.msg);
@@ -317,6 +376,7 @@ const ChildTimeframes = ({ route, navigation }) => {
     setDeviceWidth(width);
     setChild(childSelected);
     getChildTimeframes();
+    getChildPreferences();
   }, []);
 
   // Update the database when a switch is toggled
@@ -372,10 +432,12 @@ const ChildTimeframes = ({ route, navigation }) => {
                 ) : (
                   // if editMode is true and addMode is false
                   <View style={{ flexDirection: 'row', marginLeft: -40 }}>
-                    <TouchableOpacity onPress={() => cancelEdit()} >
-                      <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>Cancel</Text>
+                    <TouchableOpacity onPress={() => cancelEdit()}>
+                      <Text style={{ fontSize: 15, color: '#F24E1E', marginRight: 10 }}>
+                        Cancel
+                      </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => saveEditTimeframes()}>
+                    <TouchableOpacity testID="save-edit" onPress={() => saveEditTimeframes()}>
                       <Text style={{ fontSize: 15, color: '#407BFF' }}>Save</Text>
                     </TouchableOpacity>
                   </View>
@@ -437,73 +499,114 @@ const ChildTimeframes = ({ route, navigation }) => {
                 ))}
               </View>
               <View style={[{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }]}>
-                <View style={[{ justifyContent: 'center', flex: 1 }]}>
-                  <View style={[{ marginVertical: 10 }]}>
-                    <Text style={[{ color: '#333', fontSize: 16 }]}>Start time</Text>
-                    <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginRight: 5,
-                          },
-                        ]}
-                        placeholder="HH"
-                        keyboardType="numeric"
-                        value={starthour}
-                        onChangeText={setStartHour}
-                        maxLength={2}
-                        testID="start-hour"
-                      />
-                      <Text>:</Text>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginLeft: 5,
-                          },
-                        ]}
-                        placeholder="MM"
-                        keyboardType="numeric"
-                        value={startminute}
-                        onChangeText={setStartMinute}
-                        maxLength={2}
-                        testID="start-minute"
-                      />
-                    </View>
+                <View
+                  style={[
+                    {
+                      flexDirection: width < 620 ? 'column' : 'row',
+                      marginTop: width < 620 ? 20 : 0,
+                      alignItems: 'center',
+                      flex: 1,
+                      gap: 30,
+                      zIndex: 2000,
+                    },
+                  ]}
+                >
+                  <View style={{ zIndex: 9999 }}>
+                    <Text style={[{ color: '#333', fontSize: 16 }]}>Subject</Text>
+                    <DropDownPicker
+                      open={open}
+                      value={selectedSubject}
+                      placeholder="Select a subject"
+                      items={preferences}
+                      setOpen={setOpen}
+                      setValue={setSelectedSubject}
+                      testID="subject-dropdown-picker-add"
+                      style={{
+                        borderColor: '#407BFF',
+                        backgroundColor: '#fafafa',
+                        borderWidth: 1,
+                        borderRadius: 5,
+                      }}
+                      containerStyle={{
+                        zIndex: 9999,
+                        backgroundColor: '#fafafa',
+                        width: 200,
+                        height: 40,
+                      }}
+                      maxHeight={500}
+                      disabledStyle={{
+                        opacity: 1, // if the dropdown is disabled, the opacity is 0.5
+                      }}
+                    />
                   </View>
-                  <View style={[{ marginVertical: 10 }]}>
-                    <Text style={[{ color: '#333', fontSize: 16 }]}>End time</Text>
-                    <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginRight: 5,
-                          },
-                        ]}
-                        placeholder="HH"
-                        keyboardType="numeric"
-                        value={endhour}
-                        onChangeText={setEndHour}
-                        maxLength={2}
-                        testID="end-hour"
-                      />
-                      <Text>:</Text>
-                      <TextInput
-                        style={[
-                          styles.timeframeInput,
-                          {
-                            marginLeft: 5,
-                          },
-                        ]}
-                        placeholder="MM"
-                        keyboardType="numeric"
-                        value={endminute}
-                        onChangeText={setEndMinute}
-                        maxLength={2}
-                        testID="end-minute"
-                      />
+                  <View>
+                    <View style={[{ marginVertical: 10 }]}>
+                      <Text style={[{ color: '#333', fontSize: 16 }]}>Start time</Text>
+                      <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginRight: 5,
+                            },
+                          ]}
+                          placeholder="HH"
+                          keyboardType="numeric"
+                          value={starthour}
+                          onChangeText={setStartHour}
+                          maxLength={2}
+                          testID="start-hour"
+                        />
+                        <Text>:</Text>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginLeft: 5,
+                            },
+                          ]}
+                          placeholder="MM"
+                          keyboardType="numeric"
+                          value={startminute}
+                          onChangeText={setStartMinute}
+                          maxLength={2}
+                          testID="start-minute"
+                        />
+                      </View>
+                    </View>
+                    <View style={[{ marginVertical: 10 }]}>
+                      <Text style={[{ color: '#333', fontSize: 16 }]}>End time</Text>
+                      <View style={[{ flexDirection: 'row', alignItems: 'center' }]}>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginRight: 5,
+                            },
+                          ]}
+                          placeholder="HH"
+                          keyboardType="numeric"
+                          value={endhour}
+                          onChangeText={setEndHour}
+                          maxLength={2}
+                          testID="end-hour"
+                        />
+                        <Text>:</Text>
+                        <TextInput
+                          style={[
+                            styles.timeframeInput,
+                            {
+                              marginLeft: 5,
+                            },
+                          ]}
+                          placeholder="MM"
+                          keyboardType="numeric"
+                          value={endminute}
+                          onChangeText={setEndMinute}
+                          maxLength={2}
+                          testID="end-minute"
+                        />
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -542,6 +645,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                   {Object.keys(timeframes).map((day) => {
                     const startTimes = timeframes[day].map((time) => Object.values(time)[3]);
                     const endTimes = timeframes[day].map((time) => Object.values(time)[4]);
+                    const subject = timeframes[day].map((time) => Object.values(time)[5]);
                     const timePeriods = [];
                     // display message if there are no time periods for the day
                     if (startTimes.length === 0 && day === 'Sunday') {
@@ -576,9 +680,14 @@ const ChildTimeframes = ({ route, navigation }) => {
                     startTimes.forEach((time, index) => {
                       timePeriods.push(
                         <View key={`${day}-${index}`} style={styles.timePeriod}>
-                          <Text style={{ fontSize: 15 }}>
-                            {time} - {endTimes[index]}
-                          </Text>
+                          <View>
+                            <Text style={{ fontSize: 16, fontWeight: '600', color: '#407BFF' }}>
+                              {subject[index] ? subject[index] : 'No subject'}
+                            </Text>
+                            <Text style={{ fontSize: 15 }}>
+                              {time} - {endTimes[index]}
+                            </Text>
+                          </View>
                           <Switch
                             trackColor={{ false: 'lightgray', true: '#81b0ff' }}
                             thumbColor={isEnabled ? '#407BFF' : 'gray'}
@@ -659,109 +768,180 @@ const ChildTimeframes = ({ route, navigation }) => {
                       );
                     }
                     // display time periods for the day
-
                     startTimes.forEach((time, index) => {
                       timePeriods.push(
-                        <View key={`${day}-${index}`} style={styles.timePeriod}>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginRight: 5,
-                              },
-                            ]}
-                            placeholder="HH"
-                            keyboardType="numeric"
-                            value={editStartHour[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditStartHour((prevStartHour) => {
-                                return {
-                                  ...prevStartHour,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
+                        <View
+                          key={`${day}-${index}`}
+                          style={[
+                            styles.timePeriod,
+                            {
+                              flexDirection: 'column',
+                              zIndex: subjectDropdownOpen[timeframes[day][index]._id] ? 9999 : 1,
+                            },
+                          ]}
+                        >
+                          <View
+                            style={{
+                              zIndex: 10000,
+                              marginBottom: 10,
+                              justifyContent: 'space-between',
+                              flexDirection: 'row',
+                              width: '100%',
                             }}
-                            maxLength={2}
-                          />
-                          <Text>:</Text>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginLeft: 5,
-                              },
-                            ]}
-                            placeholder="MM"
-                            keyboardType="numeric"
-                            value={editStartMinute[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditStartMinute((prevStartMinute) => {
-                                return {
-                                  ...prevStartMinute,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
-                            }}
-                            maxLength={2}
-                          />
-                          <Text> - </Text>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginRight: 5,
-                              },
-                            ]}
-                            placeholder="HH"
-                            keyboardType="numeric"
-                            value={editEndHour[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditEndHour((prevEndHour) => {
-                                return {
-                                  ...prevEndHour,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
-                            }}
-                            maxLength={2}
-                          />
-                          <Text>:</Text>
-                          <TextInput
-                            style={[
-                              styles.timeframeInput,
-                              {
-                                marginLeft: 5,
-                              },
-                            ]}
-                            placeholder="MM"
-                            keyboardType="numeric"
-                            value={editEndMinute[timeframes[day][index]._id]}
-                            onChangeText={(text) => {
-                              setEditEndMinute((prevEndMinute) => {
-                                return {
-                                  ...prevEndMinute,
-                                  [timeframes[day][index]._id]: text,
-                                };
-                              });
-                            }}
-                            maxLength={2}
-                          />
+                          >
+                            <DropDownPicker
+                              // corresponding to the time period open boolean
+                              open={subjectDropdownOpen[timeframes[day][index]._id]}
+                              // corresponding to the time period subject value
+                              value={editSubject[timeframes[day][index]._id]}
+                              placeholder="Select a subject"
+                              items={preferences}
+                              testID={`subject-dropdown-picker-edit-${day}-${index}-${timeframes[day][index]._id}`}
+                              // set the open boolean to the opposite of the current open boolean
+                              setOpen={(open) => {
+                                setSubjectDropdownOpen((prevSubjectDropdownOpen) => {
+                                  const updatedSubjectDropdownOpen = {};
+                                  for (const key in prevSubjectDropdownOpen) {
+                                    updatedSubjectDropdownOpen[key] =
+                                      key === timeframes[day][index]._id ? open : false;
+                                  }
+                                  return updatedSubjectDropdownOpen;
+                                });
+                              }}
+                              // setValue={setTempSubject}
+                              onSelectItem={(item) => {
+                                setEditSubject((prevSubject) => {
+                                  return {
+                                    ...prevSubject,
+                                    [timeframes[day][index]._id]: item.value,
+                                  };
+                                });
+                              }}
+                              style={{
+                                borderColor: '#407BFF',
+                                backgroundColor: '#fafafa',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                              }}
+                              containerStyle={{
+                                backgroundColor: '#fafafa',
+                                width: 200,
+                              }}
+                              maxHeight={500}
+                            />
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <TouchableOpacity
+                                onPress={() => {
+                                  toggleDeleteModal();
+                                  setTimeframeId(timeframes[day][index]._id);
+                                  setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
+                                }}
+                                testID={`delete-${day}-${index}-${timeframes[day][index]._id}`}
+                              >
+                                <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
+                              width: '100%',
+                              justifyContent: 'space-between',
                             }}
                           >
-                            <TouchableOpacity
-                              onPress={() => {
-                                toggleDeleteModal();
-                                setTimeframeId(timeframes[day][index]._id);
-                                setPeriodDate(day + ' ' + time + ' ' + endTimes[index]);
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginRight: 5,
+                                },
+                              ]}
+                              placeholder="HH"
+                              keyboardType="numeric"
+                              testID={`start-hour-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
+                              value={editStartHour[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditStartHour((prevStartHour) => {
+                                  return {
+                                    ...prevStartHour,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
                               }}
-                              testID={`delete-${day}-${index}-${timeframes[day][index]._id}`}
-                            >
-                              <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-                            </TouchableOpacity>
+                              maxLength={2}
+                            />
+                            <Text>:</Text>
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginLeft: 5,
+                                },
+                              ]}
+                              placeholder="MM"
+                              keyboardType="numeric"
+                              testID={`start-minute-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
+                              value={editStartMinute[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditStartMinute((prevStartMinute) => {
+                                  return {
+                                    ...prevStartMinute,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
+                              }}
+                              maxLength={2}
+                            />
+                            <Text> - </Text>
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginRight: 5,
+                                },
+                              ]}
+                              placeholder="HH"
+                              keyboardType="numeric"
+                              testID={`end-hour-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
+                              value={editEndHour[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditEndHour((prevEndHour) => {
+                                  return {
+                                    ...prevEndHour,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
+                              }}
+                              maxLength={2}
+                            />
+                            <Text>:</Text>
+                            <TextInput
+                              style={[
+                                styles.timeframeInput,
+                                {
+                                  marginLeft: 5,
+                                },
+                              ]}
+                              placeholder="MM"
+                              keyboardType="numeric"
+                              testID={`end-minute-input-edit-${day}-${index}-${timeframes[day][index]._id}`}
+                              value={editEndMinute[timeframes[day][index]._id]}
+                              onChangeText={(text) => {
+                                setEditEndMinute((prevEndMinute) => {
+                                  return {
+                                    ...prevEndMinute,
+                                    [timeframes[day][index]._id]: text,
+                                  };
+                                });
+                              }}
+                              maxLength={2}
+                            />
                           </View>
                         </View>
                       );
@@ -786,7 +966,12 @@ const ChildTimeframes = ({ route, navigation }) => {
           )}
         </View>
         {/* Pop-up: Confirmation to delete timeframe */}
-        <Modal transparent={true} visible={isDeleteModalVisible} onRequestClose={toggleDeleteModal}>
+        <Modal
+          transparent={true}
+          visible={isDeleteModalVisible}
+          onRequestClose={toggleDeleteModal}
+          testID="delete-modal"
+        >
           {/* display modal's background */}
           <View style={styles.modalContainer}>
             {/* display modal */}
@@ -798,6 +983,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                 <Button
                   style={styles.modalNoButton}
                   mode="contained"
+                  testID="delete-timeframe-no-button"
                   onPress={() => {
                     toggleDeleteModal();
                   }}
@@ -807,6 +993,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                 <Button
                   style={styles.modalYesButton}
                   mode="contained"
+                  testID="delete-timeframe-yes-button"
                   onPress={() => {
                     toggleDeleteModal();
                     handleDeleteTimeframe(timeframeId);
@@ -931,7 +1118,7 @@ const styles = StyleSheet.create({
     width: '65%',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   timeframeInput: {
     borderColor: '#407BFF',
