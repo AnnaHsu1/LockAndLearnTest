@@ -35,6 +35,14 @@ const childSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  revealAnswers: {
+    type: Boolean,
+    default: false,
+  },
+  revealAnswersPassing: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Child = mongoose.model('Child', childSchema, collectionName); // Where the item will be stored in the database

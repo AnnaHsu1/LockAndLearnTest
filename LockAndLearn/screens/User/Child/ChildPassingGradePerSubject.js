@@ -7,12 +7,16 @@ import { getItem } from '../../../components/AsyncStorage';
 import { Button } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
+import { Switch } from '@rneui/themed';
+import { set } from 'mongoose';
 
 const ChildPassingGradePerSubject = ({ route, navigation }) => {
     const [child, setChild] = useState({});
     const childSelected = route.params.child;
     const [workPackages, setWorkPackages] = useState([]);
     const [subjects, setSubjects] = useState([]);
+    const [isEnabledAnswers, setIsEnabledAnswers] = useState(false);
+    const [isEnabledPassing, setIsEnabledPassing] = useState(false);
     const hasError = subjects.some(subject => subject.errorMessage);
 
     
@@ -150,6 +154,31 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
     
         setSubjects(updatedSubjects);
     };
+
+    const handleToggleAnswers = () => {
+
+        //Toggle visibility of answers
+        setIsEnabledAnswers(!isEnabledAnswers);
+
+        //If passing grade is enabled, disable it
+        if(isEnabledPassing){
+            setIsEnabledPassing(false);
+        }
+
+    };
+
+    const handleTogglePassing = () => {
+
+        //Toggle visibility of answers
+        setIsEnabledPassing(!isEnabledPassing);
+
+        //If answers is enabled, disable it
+        if(isEnabledAnswers){
+            setIsEnabledAnswers(false);
+        }
+
+    };
+
     useEffect(() => {
         setChild(childSelected);
         fetchWorkPackages(true);
@@ -184,6 +213,24 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
                         )}
                     </View>
                 ))}
+                <View style={styles.subjectRow}>
+                    <Text style={styles.subjectName}>Reveal Answers</Text>
+                    <Switch 
+                        trackColor={{ false: 'lightgray', true: '#81b0ff' }}
+                        thumbColor={isEnabledAnswers ? '#407BFF' : 'gray'}
+                        onValueChange={handleToggleAnswers}
+                        value={isEnabledAnswers}
+                    />
+                </View>
+                <View style={styles.subjectRow}>
+                    <Text style={styles.subjectName}>Reveal Answers Only With Passing Grade</Text>
+                    <Switch 
+                        trackColor={{ false: 'lightgray', true: '#81b0ff' }}
+                        thumbColor={isEnabledPassing ? '#407BFF' : 'gray'}
+                        onValueChange={handleTogglePassing}
+                        value={isEnabledPassing}
+                    />
+                </View>
                 </ScrollView>
                 <View style={styles.buttonRow}>
                     <Button
