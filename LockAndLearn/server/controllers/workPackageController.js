@@ -539,4 +539,27 @@ router.put('/acquireWorkPackage/:userId/:workPackageId', async (req, res) => {
   }
 });
 
+// creating route to publish work package (change the ispublished boolean to true)
+router.put('/publishWorkPackage/:workpackageID', async (req, res) => {
+  try {
+    console.log("IN BACKEND NOT")
+    const workPackageId = req.params.workpackageID;
+
+    // First, check if the work package exists
+    const existingWorkPackage = await WorkPackage2.findById(workPackageId);
+
+    if (!existingWorkPackage) {
+      return res.status(404).json({ error: 'Work package not found with the specified _id' });
+    }
+
+    // Update the isPublished field to true, adding it if it doesn't exist
+    const updatedWorkPackage = await WorkPackage2.findByIdAndUpdate(workPackageId, { $set: { isPublished: true } }, { new: true });
+
+    res.status(200).json(updatedWorkPackage);
+  } catch (error) {
+    console.error('Error publishing work package:', error);
+    res.status(500).json({ error: 'An error occurred while publishing the work package.' });
+  }
+});
+
 module.exports = router;

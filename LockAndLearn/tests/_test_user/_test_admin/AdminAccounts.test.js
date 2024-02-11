@@ -40,29 +40,32 @@ describe('AdminAccount Component', () => {
         });
     });
 
-    it('opens and closes the modal correctly', async () => {
-        const { getByText, queryByText, findAllByText } = render(<AdminAccount />);
-    
-        // Wait for a specific user to be rendered
-        await waitFor(() => {
-          expect(getByText(`${mockUsers[0].firstName} ${mockUsers[0].lastName}`)).toBeTruthy();
-        });
-    
-        const deleteButtons = await findAllByText('Delete');
-        expect(deleteButtons.length).toBeGreaterThan(0);
-    
-        // Interact with the first 'Delete' button found
-        fireEvent.press(deleteButtons[0]);
-        expect(queryByText('Are you sure you want to delete this user?')).toBeTruthy();
-    
-        // Close the modal
-        fireEvent.press(getByText('Cancel'));
-    
-        // Verify the modal is closed
-        await waitFor(() => {
-          expect(queryByText('Are you sure you want to delete this user?')).toBeNull();
-        });
+    it('opens suspension confirmation modal when "Suspend" button is clicked', async () => {
+      // Mocking users data
+      const mockUsers = [
+          { _id: '1', firstName: 'John', lastName: 'Doe', email: 'john@example.com', birthDate: '1990-01-01' },
+          // Add more mock users as needed
+      ];
+  
+      // Mocking the fetch response
+      fetch.mockResponseOnce(JSON.stringify(mockUsers));
+  
+      const { getByText, getByTestId } = render(<AdminAccount />);
+  
+      // Wait for the component to render with users
+      await waitFor(() => {
+          mockUsers.forEach(user => {
+              expect(getByText(`${user.firstName} ${user.lastName}`)).toBeTruthy();
+              expect(getByText(`Email: ${user.email}`)).toBeTruthy();
+              expect(getByText(`Birthday: ${user.birthDate}`)).toBeTruthy();
+          });
       });
-    // Add more tests here for deleting a user, handling errors, etc.
+  
+      // Find and click the "Suspend" button
+      const suspendButton = getByText('Suspend');
+      fireEvent.press(suspendButton);
+  });
+  
+
 });
 

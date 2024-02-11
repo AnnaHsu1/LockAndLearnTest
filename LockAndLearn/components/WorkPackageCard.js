@@ -11,6 +11,10 @@ export const WorkPackageCard = ({ props }) => {
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { height, width } = useWindowDimensions();
   const navigation = useNavigation();
+  let isPub = false;
+
+  const [isPublished, setIsPublished] = useState(workpackage.isPublished);
+
 
   const deleteWorkPackage = async () => {
     try {
@@ -28,6 +32,35 @@ export const WorkPackageCard = ({ props }) => {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const publishWorkPackage = async (workPackageId) => {
+    // modify fiels of isPublished from false to true and save workpackage to db
+    
+    try {
+      const response = await fetch(
+        `http://localhost:4000/workPackages/publishWorkPackage/${workPackageId}`,
+        {
+          method: 'PUT', // Use PUT since we're updating part of the resource
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        console.log('Work package published successfully.');
+        // Optionally, refresh the data or navigate as needed
+        // navigation.navigate('WorkPackageList', { refresh: true });
+        console.log("workpackage after publishing", workpackage);
+        setIsPublished(true);
+
+      } else {
+        console.error('Failed to publish work package. Status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error publishing work package:', error);
     }
   };
 
@@ -52,6 +85,7 @@ export const WorkPackageCard = ({ props }) => {
 
   useEffect(() => {
     setDeviceWidth(width);
+    console.log("props", props)
     setWorkPackage(props);
   }, []);
 
@@ -66,16 +100,19 @@ export const WorkPackageCard = ({ props }) => {
             <Text style={styles.header}>
               {workpackage.name} - {workpackage.grade}{getGradeSuffix(workpackage.grade)} Grade
             </Text>
-            <View style={styles.row}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('EditWorkPackage', { workpackage: props })}
-              >
-                <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Icon source="delete-outline" size={20} color={'#F24E1E'} />
-              </TouchableOpacity>
-            </View>
+            {/* The Edit and Delete Buttons should only show if the workpackage is not published */}
+            {workpackage.isPublished === false || isPublished ? (
+              <View style={styles.row}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('EditWorkPackage', { workpackage: props })}
+                >
+                  <Icon source="square-edit-outline" size={20} color={'#407BFF'} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                  <Icon source="delete-outline" size={20} color={'#F24E1E'} />
+                </TouchableOpacity>
+              </View>) : (<View></View>
+            )}
           </View>
           <Text style={styles.price}>${workpackage.price}</Text>
           <Text style={[styles.text, { paddingTop: 10 }]}>
@@ -90,10 +127,24 @@ export const WorkPackageCard = ({ props }) => {
               : workpackage.description?.substr(0, 390) + '...'}
           </Text>
         </View>
-
-        <Text style={styles.text}>
-          {workpackage.packageCount} {workpackage.packageCount == 1 ? 'package' : 'packages'}
-        </Text>
+        <View style={styles.lastRow}>
+          <Text style={styles.text}>
+            {workpackage.packageCount} {workpackage.packageCount == 1 ? 'package' : 'packages'}
+          </Text>
+          {workpackage.isPublished === true || isPublished ? (
+              <View style={styles.published}>
+                <Text style={styles.buttonText}>Published</Text>
+                <Icon source="check" size={20} color={'white'} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.publishButton}
+                onPress={() => publishWorkPackage(workpackage._id)}
+              >
+                <Text style={styles.buttonText}>Publish</Text>
+              </TouchableOpacity>
+            )}
+        </View>
       </View>
       <Modal
         animationType="slide"
@@ -180,5 +231,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     marginTop: 10,
+  },
+  lastRow: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+  },
+  publishButton: {
+    backgroundColor: '#407BFF', 
+    borderRadius: 5, 
+    padding: 10,
+  },
+  published: {
+    backgroundColor: 'green', 
+    borderRadius: 5, 
+    padding: 10,
+    flexDirection: 'row', 
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white', 
   },
 });
