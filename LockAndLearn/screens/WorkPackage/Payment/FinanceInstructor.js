@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ImageBackground,
   StyleSheet,
   Text,
   View,
@@ -18,9 +17,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import { getUser } from '../../../components/AsyncStorage';
-import { WorkPackageCard } from '../../../components/WorkPackageCard';
 import { getItem } from '../../../components/AsyncStorage';
-import { Icon,} from 'react-native-paper';
 
 const FinanceInstructor = ({ navigation, route }) => {
   const refresh = route.params?.refresh;
@@ -54,19 +51,6 @@ const FinanceInstructor = ({ navigation, route }) => {
   
     fetchData();
   }, [refresh, isRegistered]);
-
-  /**
-   * Retrieves the recent purchase time for a given work package ID when involved in a transaction.
-   * @param {string} workPackageId - The ID of the work package.
-   * @returns {string} - The formatted recent purchase time, or an empty string if not found.
-   */
-    const getRecentPurchaseTime = (workPackageId) => {
-        // Find the most recent transaction associated with the work package
-        const recentTransaction = transactions.find((transaction) => transaction.id === workPackageId);
-        console.log("recenTransaction", recentTransaction);
-        // If a recent transaction is found, format its creation time
-        return recentTransaction ? new Date(recentTransaction.created * 1000).toLocaleString() : '';
-    };
 
 
   const checkStripeEligibility = async () => {
@@ -389,7 +373,7 @@ const FinanceInstructor = ({ navigation, route }) => {
                       <Text style={styles.balance}>Total revenue: ${balanceStripe}</Text>
                       <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
                       <Text style={styles.balance}>Sales this week: {salesThisWeek} </Text>
-                      <Text style={styles.balance}>In transit to Bank: ${balancePending } </Text>
+                      <Text style={styles.balance}>Revenue transferred: ${balancePending } </Text>
                   </View>
               )}
 
