@@ -473,24 +473,6 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     }
   };
 
-  // Function to fetch user by ID
-  const fetchUserById = async (userId) => {
-    try {
-      // Replace 'your-api-endpoint' with the actual API endpoint for fetching user by ID
-      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
-
-      if (!response.ok) {
-        throw new Error(`Error fetching user: ${response.statusText}`);
-      }
-
-      const user = await response.json();
-      return user;
-    } catch (error) {
-      console.error('Error fetching user by ID:', error.message);
-      throw new Error('An error occurred while fetching the user by ID.');
-    }
-  };
-
   return (
     <ImageBackground
       source={require('../../assets/backgroundCloudyBlobsFull.png')}
