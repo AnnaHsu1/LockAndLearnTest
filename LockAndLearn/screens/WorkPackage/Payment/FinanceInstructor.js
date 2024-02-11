@@ -386,10 +386,9 @@ const FinanceInstructor = ({ navigation, route }) => {
               {/* Displaying the list of transactions */}
               {isRegistered && (
                   <View style={styles.userContainer}>
-                      <Text style={styles.balance}>Total revenue without fees: ${balance}</Text>
+                      <Text style={styles.balance}>Total revenue: ${balanceStripe}</Text>
                       <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
                       <Text style={styles.balance}>Sales this week: {salesThisWeek} </Text>
-                      <Text style={styles.balance}>Revenue to be transferred: ${balanceStripe} </Text>
                       <Text style={styles.balance}>In transit to Bank: ${balancePending } </Text>
                   </View>
               )}
