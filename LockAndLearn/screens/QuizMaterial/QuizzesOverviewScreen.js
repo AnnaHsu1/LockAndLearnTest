@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,12 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import { getUser } from '../../components/AsyncStorage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import PropTypes from 'prop-types';
+
 
 const QuizzesOverviewScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -19,6 +21,8 @@ const QuizzesOverviewScreen = ({ route }) => {
   const [quizzes, setQuizzes] = useState([]);
   const [deleteConfirmationModalVisible, setDeleteConfirmationModalVisible] = useState(false);
   const [selectedQuizId, setSelectedQuizId] = useState(null);
+
+  const [aiResponse, setAIResponse] = useState('');
 
   const fetchQuizzes = async () => {
     const user = await getUser();
@@ -68,9 +72,152 @@ const QuizzesOverviewScreen = ({ route }) => {
     }
   };
 
-  useEffect(() => {
-    fetchQuizzes();
-  }, [user]);
+  const fetchNSFWTextDetection = async (contentToCheck) => {
+    const url = 'https://nsfw-text-detection.p.rapidapi.com/nsfw?text=';
+    const options = {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': '5933339a3bmshb94ea9f04d12ecep1bf05cjsnfeaeca742c45',
+        'X-RapidAPI-Host': 'nsfw-text-detection.p.rapidapi.com',
+      },
+    };
+
+    try {
+      const response = await fetch(url + encodeURIComponent(contentToCheck), options);
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching NSFW text detection response:', error);
+      return '';
+    }
+  };
+
+  const fetchBadWordFilter = async (contentToCheck) => {
+    const lowercasedContent = contentToCheck.toLowerCase();
+  
+    const url = 'https://profanity-cleaner-bad-word-filter.p.rapidapi.com/profanity';
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': '5933339a3bmshb94ea9f04d12ecep1bf05cjsnfeaeca742c45',
+        'X-RapidAPI-Host': 'profanity-cleaner-bad-word-filter.p.rapidapi.com',
+      },
+      body: JSON.stringify({
+        text: lowercasedContent,
+        maskCharacter: 'x',
+        language: 'en',
+      }),
+    };
+  
+    try {
+      const response = await fetch(url, options);
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching bad word filter response:', error);
+      return '';
+    }
+  };  
+
+  const fetchAIResponse = async (quiz) => {
+    const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.`;
+  
+    const allQuizContent = getAllQuizContent(quiz);
+    console.log('All Quiz Content:', allQuizContent);
+  
+    const contentToCheck = `${introText} Quiz Content: ${allQuizContent}`;
+  
+    try {
+      const badWordFilterResult = await fetchBadWordFilter(allQuizContent);
+      console.log('Bad Word Filter Result:', badWordFilterResult);
+  
+      const nsfwTextDetectionResult = await fetchNSFWTextDetection(contentToCheck);
+      console.log('NSFW Text Detection Result:', nsfwTextDetectionResult);
+  
+      // Check if neither response contains "true" (ignoring case)
+      const isProfane =
+        JSON.parse(badWordFilterResult).profanities.length > 0 ||
+        nsfwTextDetectionResult.toLowerCase().includes('true');
+  
+      // Update the quiz's approved status in the backend
+      await updateQuizApproval(quiz._id, !isProfane);
+  
+      // Update the quiz's approved status in the state
+      const updatedQuizzes = quizzes.map((q) =>
+        q._id === quiz._id ? { ...q, approved: !isProfane } : q
+      );
+      setQuizzes(updatedQuizzes);
+  
+      setAIResponse(badWordFilterResult);
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+    }
+  };  
+
+  const updateQuizApproval = async (quizId, approved) => {
+    const url = `http://localhost:4000/quizzes/${quizId}`;
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ approved: approved }),
+    };
+
+    try {
+      const response = await fetch(url, options);
+      if (response.status === 200) {
+        console.log('Quiz Approval Updated');
+      } else {
+        console.error('Error updating quiz approval');
+      }
+    } catch (error) {
+      console.error('Network error during quiz approval update:', error);
+    }
+  };
+
+  const getAllQuizContent = (quiz) => {
+    const contentArray = [];
+
+    // Add quiz name to the content
+    contentArray.push(`Quiz Name: ${quiz.name}`);
+
+    // Add questions and their details to the content
+    quiz.questions.forEach((question, index) => {
+      contentArray.push(`\n${quiz.name}`);
+      contentArray.push(`\nQuestion ${index + 1}: ${question.questionText}`);
+      contentArray.push(`Answer: ${question.answer}`);
+
+      // Add options array to the content
+      contentArray.push('Options:');
+      question.options.forEach((option, optionIndex) => {
+        contentArray.push(`- Option ${optionIndex + 1}: ${option}`);
+      });
+
+      // Add inputs array to the content
+      contentArray.push('Inputs:');
+      question.inputs.forEach((input, inputIndex) => {
+        contentArray.push(`- Input ${inputIndex + 1}: ${input}`);
+      });
+    });
+
+    // Concatenate all content into a single string
+    const allQuizContent = contentArray.join('\n');
+    return allQuizContent;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchQuizzes();
+    }, [user])
+  );
+
+  QuizzesOverviewScreen.propTypes = {
+    route: PropTypes.shape({
+      params: PropTypes.shape({
+        userId: PropTypes.string.isRequired,
+      }),
+    }).isRequired,
+  };
 
   return (
     <ImageBackground
@@ -94,10 +241,14 @@ const QuizzesOverviewScreen = ({ route }) => {
                 >
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => deleteQuiz(quiz._id)}
-                // style={styles.deleteButton}
-                >
+                <TouchableOpacity onPress={() => fetchAIResponse(quiz)}>
+                  {quiz.approved ? (
+                    <MaterialIcons name="check-circle" size={40} color="green" />
+                  ) : (
+                    <MaterialIcons name="published-with-changes" size={40} color="orange" />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteQuiz(quiz._id)}>
                   <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
                 </TouchableOpacity>
               </View>
@@ -123,12 +274,10 @@ const QuizzesOverviewScreen = ({ route }) => {
         style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
       >
         <View style={styles.deleteConfirmationModal}>
-          <Text style={styles.confirmationText}>
-            Are you sure you want to delete this quiz?
-          </Text>
+          <Text style={styles.confirmationText}>Are you sure you want to delete this quiz?</Text>
           <View style={styles.confirmationButtons}>
             <TouchableOpacity
-              testID='deleteConfirmationModal'
+              testID="deleteConfirmationModal"
               onPress={() => {
                 confirmDelete();
                 setDeleteConfirmationModalVisible(false);
@@ -158,12 +307,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  selectFiles: {
-    color: '#696969',
-    fontSize: 36,
-    fontWeight: '500',
-    marginTop: 20, // Add top margin for more space
   },
   confirmationText: {
     fontSize: 18,

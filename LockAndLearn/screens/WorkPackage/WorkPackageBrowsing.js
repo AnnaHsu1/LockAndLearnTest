@@ -15,6 +15,7 @@ import { getItem } from '../../components/AsyncStorage';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import '../../carousel.css';
+import PropTypes from 'prop-types';
 
 const WorkPackageBrowsingScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -130,7 +131,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         );
         if (response.status === 200) {
           const data = await response.json();
-          setWorkPackages(data.slice(0, numberOfWorkPackagesToLoad));
+          const publishedWorkPackages = data.filter(wp => wp.isPublished);
+          setWorkPackages(publishedWorkPackages.slice(0, numberOfWorkPackagesToLoad));
         } else {
           console.error('Error fetching workPackagesBrowse');
         }
@@ -491,7 +493,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                                 }}
                                 style={[styles.previewButton]}
                                 onPress={() => {
-                                  console.log('Previewing '+workPackage);
+                                  console.log('Previewing ' + workPackage);
                                   navigation.navigate('WorkPackagePreview', { workPackage });
                                 }}
                                 labelStyle={{ ...styles.cart, color: 'white' }}
@@ -538,7 +540,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
                     <TouchableOpacity
                       key={workPackage._id}
                       onPress={() => {
-                        console.log('Previewing '+workPackage);
+                        console.log('Previewing ' + workPackage);
                         navigation.navigate('WorkPackagePreview', { workPackage });
                       }}
                     >
@@ -679,6 +681,10 @@ const WorkPackageBrowsingScreen = ({ route }) => {
       </View>
     </ImageBackground>
   );
+};
+
+WorkPackageBrowsingScreen.propTypes = {
+  route: PropTypes.object.isRequired,
 };
 
 const styles = StyleSheet.create(
