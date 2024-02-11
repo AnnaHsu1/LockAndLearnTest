@@ -510,13 +510,29 @@ router.get('/getParentUserName/:stripePurchaseId', async (req, res) => {
   }
 });
 
-router.get('/balanceInstructor/:instructorId', async (req, res) => {
+
+//Fetch balance of instructor on stripe
+router.get('/balanceInstructorStripe/:instructorID', async (req, res) => {
     try {
-        const instructorID = req.params.instructorId;
-        const user = await User.findById(instructorID);
+        console.log("inside balance stripe");
+        const instructorID = req.params.instructorID; // Corrected parameter name
+        const user = await User.findById(instructorID); // Find the instructor by ID
+
+        if (!user || !user.StripeBusinessId) {
+            return res.status(400).json({ error: 'User or Stripe Business ID not found.' });
+        }
+
+        console.log("find user", user.StripeBusinessId);
+        const balance = await stripe.balance.retrieve({
+            stripeAccount: user.StripeBusinessId,
+        });
+
+        console.log("balance stripe", balance); // Logging the balance
+
         const revenue = user.revenue;
-        // Return the  revenue as a response
-        res.status(200).json({ revenue: revenue });
+
+        res.status(200).json({ balance: balance, revenue: revenue });
+
     } catch (error) {
         console.error('Error fetching balance:', error);
         res.status(500).json({ error: 'An error occurred while fetching balance.' });
@@ -568,8 +584,8 @@ router.get('/checkStripeCapabilities/:instructorId', async (req, res) => {
 
     if (!user || !user.StripeBusinessId) {
       return res.status(400).json({ error: 'User or Stripe Business ID not found.' });
-    }
-
+      }
+      console.log("business user", user.StripeBusinessId);
     // Retrieve the Stripe account information
     const account = await stripe.accounts.retrieve(user.StripeBusinessId);
 
@@ -646,6 +662,7 @@ router.get('/delete-account/:accountId', async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
 
 
 module.exports = router;

@@ -25,7 +25,9 @@ import { Icon,} from 'react-native-paper';
 const FinanceInstructor = ({ navigation, route }) => {
   const refresh = route.params?.refresh;
   const [workPackages, setWorkPackages] = useState([]);
-  const [balance, setBalance] = useState([]);
+    const [balance, setBalance] = useState([]);
+    const [balanceStripe, setBalanceStripe] = useState([]);
+    const [balancePending, setBalancePending] = useState([]);
   const [transactions, setTransactions] = useState([]);
     const [isLoading, setLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false); // TEMPORARY FOR STRIPE SETUP, set to false to see the unregistered instructor view
@@ -34,7 +36,8 @@ const FinanceInstructor = ({ navigation, route }) => {
   const [disableButton, setDisableButton] = useState(false);
   const [accountIdToDelete, setAccountIdToDelete] = useState(''); // For devs
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [salesThisWeek, setSalesThisWeek] = useState(0);
+    const [salesThisWeek, setSalesThisWeek] = useState(0);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +46,7 @@ const FinanceInstructor = ({ navigation, route }) => {
       // Only proceed with additional fetches if isRegistered is true
       if (isRegistered) {
         await getWorkPackages();
-        await fetchBalance();
+          await fetchBalanceStripe();
       }
   
       console.log('is registered? ', isRegistered);
@@ -90,29 +93,42 @@ const FinanceInstructor = ({ navigation, route }) => {
    * Fetches the total revenue balance of the instructor.
    * @returns {Promise<void>} A promise that resolves when the balance is fetched successfully.
    */
-  const fetchBalance = async () => {
-    try {
-      const token = await getItem('@token');
-      const user = JSON.parse(token);
-      const userId = user._id;
-      const response = await fetch(`http://localhost:4000/payment/balanceInstructor/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      let data = await response.json();
-      if (response.status === 200) {
-        console.log('balance', data.revenue);
 
-        setBalance(data.revenue);
-      } else {
-        console.error('Failed to fetch balance:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-    }
-  };
+
+    const fetchBalanceStripe = async () => {
+        try {
+            const token = await getItem('@token');
+            const user = JSON.parse(token);
+            const userId = user._id;
+            const response = await fetch(`http://localhost:4000/payment/balanceInstructorStripe/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            let data = await response.json();
+
+            
+            if (response.status === 200) {
+                console.log('balance', data.revenue);
+
+                setBalance(data.revenue);
+
+                const availableBalance = data.balance.available[0].amount;
+                const totalAvailableBalance = (availableBalance / 100).toFixed(2);
+
+                setBalanceStripe(totalAvailableBalance);
+
+                const pendingBalance = data.balance.pending[0].amount;
+                const totalPendingBalance = (-pendingBalance / 100).toFixed(2);
+                setBalancePending(totalPendingBalance);
+            } else {
+                console.error('Failed to fetch balance:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching balance:', error);
+        }
+    };
 
   /**
    * Fetches transactions from the server.
@@ -370,9 +386,11 @@ const FinanceInstructor = ({ navigation, route }) => {
               {/* Displaying the list of transactions */}
               {isRegistered && (
                   <View style={styles.userContainer}>
-                      <Text style={styles.balance}>Total revenue: ${balance}</Text>
+                      <Text style={styles.balance}>Total revenue without fees: ${balance}</Text>
                       <Text style={styles.balance}>Total Sales: {totalWorkPackagesSold} </Text>
                       <Text style={styles.balance}>Sales this week: {salesThisWeek} </Text>
+                      <Text style={styles.balance}>Revenue to be transferred: ${balanceStripe} </Text>
+                      <Text style={styles.balance}>In transit to Bank: ${balancePending } </Text>
                   </View>
               )}
 
