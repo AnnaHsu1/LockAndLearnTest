@@ -57,12 +57,12 @@ router.post('/signup', async (req, res) => {
     // Input validations
     if (!FirstName || !LastName || !Email || !Password || !CPassword || !DOB || !isParent) {
       return res.status(400).json({ msg: 'All fields must be filled.' });
-      }
+    }
 
     // Validate FirstName and LastName with regular expressions
     const nameRegex = /^[a-zA-Z]+$/;
     if (!nameRegex.test(FirstName) || !nameRegex.test(LastName)) {
-        return res.status(400).json({ msg: 'First and Last names can only contain letters.' });
+      return res.status(400).json({ msg: 'First and Last names can only contain letters.' });
     }
     if (!(Email.includes('@') && Email.includes('.'))) {
       return res.status(400).json({ msg: 'Invalid email format.' });
@@ -79,42 +79,45 @@ router.post('/signup', async (req, res) => {
 
     if (Password !== CPassword) {
       return res.status(400).json({ msg: 'Passwords must match.' });
-      }
-      const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!DOB || !dobRegex.test(DOB)) {
-          return res.status(400).json({ msg: 'Invalid date format. Please use YYYY-MM-DD.' });
-      }
+    }
+    const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!DOB || !dobRegex.test(DOB)) {
+      return res.status(400).json({ msg: 'Invalid date format. Please use YYYY-MM-DD.' });
+    }
 
+    // Attempt to parse the date of birth
+    let dob;
+    try {
+      dob = parseISO(DOB);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ msg: 'Invalid date. Please provide a valid date in the format YYYY-MM-DD.' });
+    }
 
-      // Attempt to parse the date of birth
-      let dob;
-      try {
-          dob = parseISO(DOB);
-      } catch (error) {
-          return res.status(400).json({ msg: 'Invalid date. Please provide a valid date in the format YYYY-MM-DD.' });
-      }
+    // Parse the current date
+    const currentDate = new Date();
 
-      // Parse the current date
-      const currentDate = new Date();
+    // Check if the date of birth is a day before the current day
+    const isBeforeCurrentDay = isBefore(dob, startOfDay(currentDate));
 
-      // Check if the date of birth is a day before the current day
-      const isBeforeCurrentDay = isBefore(dob, startOfDay(currentDate));
+    if (!isBeforeCurrentDay) {
+      return res
+        .status(400)
+        .json({ msg: 'Invalid date of birth. It should be a day before the current day.' });
+    }
 
-      if (!isBeforeCurrentDay) {
-          return res.status(400).json({ msg: 'Invalid date of birth. It should be a day before the current day.' });
-      }
+    // Check if the user is older than 18
+    const isOlderThan18 = differenceInYears(currentDate, dob) >= 18;
 
-      // Check if the user is older than 18
-      const isOlderThan18 = differenceInYears(currentDate, dob) >= 18;
+    if (!isOlderThan18) {
+      return res.status(400).json({ msg: 'You must be at least 18 years old to register.' });
+    }
+    // Ensure that the first name and last name start with a capital letter
+    const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
-      if (!isOlderThan18) {
-          return res.status(400).json({ msg: 'You must be at least 18 years old to register.' });
-      }
-      // Ensure that the first name and last name start with a capital letter
-      const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-      const capitalizedFirstName = capitalizeFirstLetter(FirstName);
-      const capitalizedLastName = capitalizeFirstLetter(LastName);
+    const capitalizedFirstName = capitalizeFirstLetter(FirstName);
+    const capitalizedLastName = capitalizeFirstLetter(LastName);
 
     //Encrypt the input password
     const salt = await bcrypt.genSalt();
@@ -297,5 +300,35 @@ router.post('/getPIN/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while getting the PIN.' });
   }
 });
+
+// Suspend user by ID
+router.put('/suspendUser/:id', async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if 'isSuspended' field exists, if not, create it
+    if (user.suspended === undefined) {
+      // Assuming you are using Mongoose
+      user.schema.add({ isSuspended: Boolean });
+      user.suspended = true;
+    } else {
+      user.suspended = true; // Assuming your User schema has an 'isSuspended' field
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: 'User suspended successfully', user: user });
+  } catch (error) {
+    console.error('Error suspending user:', error);
+    res.status(500).json({ error: 'An error occurred while suspending the user.' });
+  }
+});
+
 
 module.exports = router;

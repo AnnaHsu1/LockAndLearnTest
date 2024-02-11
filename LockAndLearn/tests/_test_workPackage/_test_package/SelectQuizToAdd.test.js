@@ -83,4 +83,26 @@ describe('SelectQuizToAdd', () => {
       expect(deleteButton).toBeNull();
     }
   });
+
+  // Test for adding selected quizzes to the work package
+  it('adds selected quizzes to work package and navigates', async () => {
+    const navigateMock = jest.fn();
+    useNavigation.mockImplementation(() => ({
+      navigate: navigateMock,
+    }));
+
+    const { getByTestId } = render(<SelectQuizToAdd />);
+
+    // Assume "add-quizzes-button" is the testID for the button to add selected quizzes
+    const addButton = getByTestId('add-quizzes-button');
+    fireEvent.press(addButton);
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledTimes(1); // Adjust based on expected number of fetch calls
+      // Verify navigation has been called with expected arguments
+      expect(navigateMock).toHaveBeenCalledWith('EditPackage', expect.any(Object));
+    });
+  });
+
+
 });
