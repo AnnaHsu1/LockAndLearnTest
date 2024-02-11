@@ -75,7 +75,7 @@ const LandingPage = ({ navigation }) => {
         setStatus(returnedStatus);
         // Display appropriate notification based on the certificate status
         if (returnedStatus == 'pending') {
-          toast.info('Your certificate is under review. Please come back later.');
+          //toast.info('Your certificate is under review. Please come back later.');
         } else if (certificateStatus.length != 0 && returnedStatus == 'rejected') {
           toast.error('Your certificate has been rejected. Please upload a new certificate.');
         }
@@ -162,6 +162,7 @@ const LandingPage = ({ navigation }) => {
         }
       }
       setRefresh(true);
+      navigation.navigate('TutorImageUpload');
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -195,6 +196,7 @@ const LandingPage = ({ navigation }) => {
         }
       }
       setRefresh(true);
+      navigation.navigate('TutorImageUpload')
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -280,6 +282,10 @@ const LandingPage = ({ navigation }) => {
     );
   };
 
+  const goMainMenu = () => {
+    setStatus('accepted');
+  };
+
   useEffect(() => {
     getUserToken();
   }, []);
@@ -319,7 +325,7 @@ const LandingPage = ({ navigation }) => {
             closeOnClick
             theme="dark"
             style={{ marginTop: '70px' }}
-            autoClose={7000}
+            autoClose={2000}
           />
           <Text style={styles.certificateTitle}>
             Please upload your professional certificates to proceed further
@@ -387,9 +393,12 @@ const LandingPage = ({ navigation }) => {
                 testID="uploadButton"
                 disabled={validateFields}
               >
-                <Text style={styles.buttonText}>Upload</Text>
+                <Text style={styles.buttonText}>Next</Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={() => goMainMenu()}>
+              <Text>Go to main menu</Text>
+          </TouchableOpacity>
           </View>
         </View>
       )}
