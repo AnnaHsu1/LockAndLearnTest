@@ -75,7 +75,9 @@ exports.deleteChild = async function deleteChild(childId) {
 // Function to add/update child passing grade requirement per subject
 exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassingGrade(
   userId,
-  subjects
+  subjects,
+  revealAnswers,
+  revealAnswersPassing
 ) {
   try {
     const existingUser = await Child.findById(userId);
@@ -86,6 +88,14 @@ exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassin
       if (!existingUser.subjectPassingGrades) {
         existingUser.subjectPassingGrades = [];
       }
+      if (!existingUser.revealAnswers) {
+        existingUser.revealAnswers = false;
+      }
+      if (!existingUser.revealAnswersPassing) {
+        existingUser.revealAnswersPassing = false;
+      }
+      existingUser.revealAnswers = revealAnswers; // Update the revealAnswers field
+      existingUser.revealAnswersPassing = revealAnswersPassing; // Update the revealAnswersPassing field
       existingUser.subjectPassingGrades = subjects; // Update the subjects field
     }
     const updatedUser = await existingUser.save();
