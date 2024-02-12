@@ -43,12 +43,10 @@ describe('Child Profile Screen test', () => {
     const { getByTestId } = render(
       <ChildProfileScreen navigation={mockNavigation} route={mockRoute} />
     );
-    const startSessionButton = getByTestId('start-session');
     const editProfileButton = getByTestId('edit-profile');
     const seePerformanceButton = getByTestId('see-performance');
     const deleteProfileButton = getByTestId('delete-child-link');
 
-    expect(startSessionButton).toBeTruthy();
     expect(editProfileButton).toBeTruthy();
     expect(seePerformanceButton).toBeTruthy();
     expect(deleteProfileButton).toBeTruthy();
@@ -60,7 +58,7 @@ describe('Child Profile Screen test', () => {
     );
     const startSessionButton = getByTestId('start-session');
     fireEvent.press(startSessionButton);
-    expect(mockNavigation.navigate).toBeCalledWith('Locking');
+    expect(mockNavigation.navigate).toBeCalledWith("Locking", {"child_ID": "child123"});
   });
 
   it('Attempts to edit a child profile', () => {

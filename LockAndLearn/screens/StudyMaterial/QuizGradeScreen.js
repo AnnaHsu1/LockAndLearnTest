@@ -1,10 +1,9 @@
-import { StatusBar, StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, CheckBox } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
 
 const QuizGradeScreen = ({ route }) => {
     const navigation = useNavigation();
-    const quizId = route.params.quizId;
     const grade = route.params.numOfCorrectAnswers;
     const quizLength = route.params.quizLength;
     const answers = route.params.answers;
@@ -12,9 +11,7 @@ const QuizGradeScreen = ({ route }) => {
     const solutions = route.params.solutions;
     const [results, setResults] = useState([]);
 
-
     useEffect(() => {
-
         console.log("ANSWERS FROM GRADE:",answers);
         console.log("SOLUTIONS FROM GRADE",solutions);
         console.log("QUESTIONS FROM GRADE",questions);
@@ -43,6 +40,7 @@ const QuizGradeScreen = ({ route }) => {
         setResults(tempResults);
     }, []);
 
+    // Render the results of the quiz
     const RenderResults = () => {
         return (
             <View style={styles.listQuestions}>
@@ -190,7 +188,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
-    
 });
 
 export default QuizGradeScreen;

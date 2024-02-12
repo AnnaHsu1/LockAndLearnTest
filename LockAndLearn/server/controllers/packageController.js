@@ -290,4 +290,41 @@ router.get('/fetchQuizzes/:packageID', async (req, res) => {
   }
 });
 
+// Get all packages given quiz ID
+router.get('/fetchWpByQuizAndPackage/:quizId/:packageId', async (req, res) => {
+  try {
+    // Get the quizID from the request parameters
+    const { quizId, packageId } = req.params;
+    // Find all packages for the given quizID and packageID and only return the workPackageID
+    const packages = await Package.find({ quizzes: quizId, _id: packageId });
+    let wpId = []
+    packages.forEach((package) => {
+      wpId.push(package.workPackageID);
+    });
+    // Send a success response with the packages
+    res.status(200).json(wpId);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error getting packages:', error);
+    res.status(500).json({ error: 'An error occurred while getting the packages.' });
+  }
+});
+
+// Get packages count from a workPackage based on workpackage ID
+router.get('/fetchPackageCount/:wpId', async (req, res) => {
+  try {
+    // get wp id
+    const { wpId } = req.params;
+    // find the workpackage by ID
+    const workpackage = await Workpackage.findById(wpId);
+    const packageCount = workpackage.packageCount;
+    // send success with the package count    
+    res.status(200).json(packageCount);
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error('Error getting packages:', error);
+    res.status(500).json({ error: 'An error occurred while getting the packages.' });
+  }
+});
+
 module.exports = router;

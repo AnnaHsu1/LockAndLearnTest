@@ -64,11 +64,6 @@ describe('EditQuestion Tests', () => {
     // Simulate pressing the save button
     const saveButton = getByText('Save');
     fireEvent.press(saveButton);
-
-    // await waitFor(() => {
-    //   expect(fetchMock.mock.calls[1][0]).toEqual('http://localhost:4000/quizzes/updateQuestion/123/1');
-    //   expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual(expect.objectContaining({ questionText: 'Updated Question Text' }));
-    // });
   });
 
 
@@ -99,29 +94,8 @@ describe('EditQuestion Tests', () => {
     // Check the number of option inputs matches the number of options
     expect(optionInputs.length).toBe(mockQuestionData.options.length);
 
-    // Simulate user interaction with each option input
-    // for (const [index, input] of optionInputs.entries()) {
-    //   fireEvent.changeText(input, `Updated option ${index}`);
-    // }
-
-    // Simulate pressing the save button
     const saveButton = getByTestId('save-button');
     fireEvent.press(saveButton);
-
-    // Wait for the PUT request to be called and check if the payload is correct
-    // await waitFor(() => {
-    //   // Check if the PUT request was made with the updated question data
-    //   expect(fetchMock).toHaveBeenCalledWith(
-    //     expect.stringContaining('/quizzes/updateQuestion/'), // The URL should contain this string
-    //     expect.objectContaining({
-    //       method: 'PUT',
-    //       body: expect.stringContaining('Updated option') // The body should contain updated options
-    //     })
-    //   );
-    // });
-
-    // Assert the PUT request was made
-    // expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   test('changes to inputs update state for short answer questions', async () => {
@@ -170,22 +144,7 @@ describe('EditQuestion Tests', () => {
     const saveButton = getByTestId('save-button');
     fireEvent.press(saveButton);
 
-    // Wait for the PUT request to be called
-    // await waitFor(() => {
-    //   // Verify that the PUT request is made to the correct endpoint
-    //   const putCall = fetchMock.mock.calls[1]; // This assumes that fetchMock.mock.calls[0] was the initial GET request
-    //   expect(putCall[0]).toEqual(`http://localhost:4000/quizzes/updateQuestion/${mockRoute.params.quizId}/${mockRoute.params.questionIndex}`);
 
-    //   // The body of the PUT request should contain the filled-in blanks
-    //   const putBody = JSON.parse(putCall[1].body);
-    //   expect(putBody.inputs).toEqual(['', '']); // Verify that the inputs match the user's entries
-
-    //   // Verify the method of the request
-    //   expect(putCall[1].method).toBe('PUT');
-    // });
-
-    // Verify that the response handler is called
-    // expect(fetchMock.mock.calls.length).toBeGreaterThan(1);
   });
 
 
@@ -206,21 +165,6 @@ describe('EditQuestion Tests', () => {
     // Simulate pressing the save button
     const saveButton = getByTestId('save-button');
     fireEvent.press(saveButton);
-
-    // Wait for the PUT request to be called
-    // await waitFor(() => {
-    //   // Verify that the PUT request is made to the correct endpoint
-    //   const putCall = fetchMock.mock.calls[1]; // This assumes that fetchMock.mock.calls[0] was the initial GET request
-    //   expect(putCall[0]).toEqual(`http://localhost:4000/quizzes/updateQuestion/${mockRoute.params.quizId}/${mockRoute.params.questionIndex}`);
-
-    //   // The body of the PUT request should contain "False" as the answer since the false checkbox was last clicked
-    //   const putBody = JSON.parse(putCall[1].body);
-    //   expect(putBody.answer).toEqual('False'); // Verify that the answer matches the last checkbox interaction
-
-    //   // Verify the method of the request
-    //   expect(putCall[1].method).toBe('PUT');
-    // });
-
   });
 
   test('handleSaveQuestion constructs the correct payload and sends a PUT request for a Short Answer', async () => {
@@ -296,5 +240,28 @@ describe('EditQuestion Tests', () => {
     render(<EditQuestion route={mockRoute} />);
 
   });
+
+  test('updates multiple choice option text in state', async () => {
+    // Mock the initial fetch response for the question data
+    fetchMock.mockResponseOnce(JSON.stringify({
+      questionText: 'What is the capital of France?',
+      questionType: 'Multiple Choice Question',
+      options: ['Paris', 'London', 'Berlin', 'Madrid'],
+      answer: 'Paris',
+    }));
+  
+    const { getByTestId, findByPlaceholderText } = render(<EditQuestion route={mockRoute} />);
+  
+    // Simulate user changing the question type to 'Multiple Choice Question'
+    fireEvent(getByTestId('questionTypePicker'), 'onValueChange', 'Multiple Choice Question');
+  
+    // Simulate user updating the text of the first option
+    const firstOptionInput = await findByPlaceholderText('Option A');
+    fireEvent.changeText(firstOptionInput, 'Lyon');
+  
+    // Assert that the updated text 'Lyon' is now the value of the first option input
+    expect(firstOptionInput.props.value).toBe('Lyon');
+  });
+  
 
 });

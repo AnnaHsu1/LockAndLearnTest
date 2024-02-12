@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput, View, navigation, Image } from 'react-native';
+import {
+  Text,
+  TextInput,
+  View,
+  navigation,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
 import {
   widthPercentageToDP as wp,
@@ -16,11 +24,11 @@ import {
   removeItem,
   setUserTokenWithExpiry,
 } from '../../components/AsyncStorage';
+import { FcGoogle } from 'react-icons/fc';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = ({ navigation }) => {
-  const styles = useStyles();
   const deviceSize = useDeviceSize();
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
@@ -77,43 +85,48 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await fetch('http://localhost:4000/users/login', {
         method: 'POST',
-        credentials: 'include', // Ensure credentials are included
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginData), // Send user data as JSON
+        body: JSON.stringify(loginData),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.status === 201) {
         setErrorMsg(null);
-        // User logged in successfully
-        console.log('User successfully logged in!', data);
-        setDisplayMsg(
-          'Credentials are valid, welcome back' +
-            ' ' +
-            data.user.firstName +
-            ' ' +
-            data.user.lastName +
-            '!'
-        );
-        // Store the user data in AsyncStorage
-        await setUserTokenWithExpiry('@token', data.user);
-        if (data.user.isParent) {
-          navigation.navigate('ParentHomeScreen');
+  
+        if (data.user.suspended) {
+          // If the user is suspended, navigate to SuspendedUser screen
+          navigation.navigate('SuspendedUser');
         } else {
-          navigation.navigate('UserLandingPage');
+          // If the user is not suspended, proceed with regular navigation
+          console.log('User successfully logged in!', data);
+          setDisplayMsg(
+            'Credentials are valid, welcome back' +
+              ' ' +
+              data.user.firstName +
+              ' ' +
+              data.user.lastName +
+              '!'
+          );
+          await setUserTokenWithExpiry('@token', data.user);
+          
+          if (data.user.isParent) {
+            navigation.navigate('ParentHomeScreen');
+          } else {
+            navigation.navigate('UserLandingPage');
+          }
         }
       } else {
         // Store the error message in state
-        // console.log(data.msg);
         setErrorMsg(data.msg);
       }
     } catch (error) {
       console.error('Error logging user:', error);
     }
-  };
+  };  
 
   const sendLoginDataAdmin = async (loginData) => {
     try {
@@ -232,28 +245,43 @@ const LoginScreen = ({ navigation }) => {
           {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
         </View>
 
-        <Button
-          testID="login-button"
-          mode="contained"
-          onPress={() => {
-            handleSubmit();
-          }}
-          style={[styles.button, styles.full_width]}
-        >
-          Log in
-        </Button>
-
-        <Text style={styles.link}>Forgot password?</Text>
-        {!googleUser ? (
+        <View style={[{ gap: 10 }]}>
           <Button
-            testID="google-login-button"
+            testID="login-button"
             mode="contained"
-            onPress={() => promptAsync()}
+            onPress={() => {
+              handleSubmit();
+            }}
             style={[styles.button, styles.full_width]}
           >
-            Login with Google
+            Login
           </Button>
-        ) : null}
+          {!googleUser ? (
+            <TouchableOpacity
+              testID="google-login-button"
+              mode="contained"
+              onPress={() => promptAsync()}
+              style={[
+                {
+                  borderColor: '#407BFF',
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingVertical: 10,
+                },
+                styles.full_width,
+              ]}
+            >
+              <FcGoogle fontSize={24} />
+              <Text style={{ color: '#407BFF', textAlign: 'center', paddingLeft: 5 }}>
+                Login with Google
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+        <Text style={styles.link}>Forgot password?</Text>
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
@@ -261,17 +289,18 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-const useStyles = CreateResponsiveStyle(
+const styles = StyleSheet.create(
   {
     page: {
       backgroundColor: '#ffffff',
-      maxWidth: wp('100%'),
+      maxWidth: '100%',
       flex: 1,
       alignItems: 'center',
     },
     container: {
-      minWidth: wp('90%'),
-      minHeight: hp('65%'),
+      width: '100%',
+      maxWidth: 500,
+      minHeight: '65%',
       paddingLeft: 20,
       paddingRight: 20,
       paddingTop: 20,
@@ -322,8 +351,9 @@ const useStyles = CreateResponsiveStyle(
     },
     bottomCloud: {
       display: 'flex',
+      flex: 1,
       justifyContent: 'flex-end',
-      width: wp('100%'),
+      width: '100%',
       height: 250,
       resizeMode: 'stretch',
     },
@@ -335,7 +365,7 @@ const useStyles = CreateResponsiveStyle(
         width: 500,
       },
       bottomCloud: {
-        width: wp('100%'),
+        width: '100%',
         height: 300,
         resizeMode: 'stretch',
         flex: 1,
@@ -343,5 +373,4 @@ const useStyles = CreateResponsiveStyle(
     },
   }
 );
-
 export default LoginScreen;

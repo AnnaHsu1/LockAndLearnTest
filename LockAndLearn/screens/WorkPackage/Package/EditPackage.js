@@ -47,12 +47,24 @@ const EditPackage = () => {
     handleGradeAndSubjectChange();
   }, []);
 
-  // Function to diplay the subcategories or not, based on the selected grade and subject
-  const handleGradeAndSubjectChange = () => {
-    const selectedSubcategories =
-      subcategoryData[grade] && subcategoryData[grade][name] ? subcategoryData[grade][name] : [];
-    setPackageSubcategories(['Choose a Subcategory', ...selectedSubcategories]);
-    setSelectedSubcategory(subcategory);
+  // Function to display the subcategory selected by the user
+  const handleGradeAndSubjectChange = async () => {
+    try {
+      const allSubcategories = await fetch('http://localhost:4000/subcategories/fetchAll');
+      if (allSubcategories.status === 200 || 201) {
+        const data = await allSubcategories.json();
+        const subcategories = data.filter((subcategory) => subcategory.name === name);
+        if (subcategories.length > 0) {
+          const gradeSubcategories = subcategories[0].grades[grade];
+          setPackageSubcategories(['Choose a Subcategory', ...gradeSubcategories]);
+          setSelectedSubcategory(subcategory);
+        }
+      } else {
+        console.error('Error fetching subcategories');
+      }
+    } catch (error) {
+      console.error('Network error');
+    }
   };
 
   // Function to fetch and display the quiz name
@@ -678,14 +690,16 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   noQuizzesText: {
-    paddingLeft: '5%',
+    paddingLeft: '2%',
     paddingTop: 10,
     paddingBottom: 10,
+    color: '#8f8f8f',
   },
   noFilesText: {
-    paddingLeft: '5%',
+    paddingLeft: '2%',
     paddingTop: 10,
     paddingBottom: 10,
+    color: '#8f8f8f',
   },
   quizzesText: {
     borderTopWidth: 1,
