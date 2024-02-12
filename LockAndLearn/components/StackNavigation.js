@@ -62,6 +62,7 @@ import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
 import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfile';
 import SuspendedUser from '../screens/User/SuspendedUser';
+import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
 
 const Stack = createNativeStackNavigator();
@@ -120,6 +121,11 @@ const StackNavigation = () => {
         <Stack.Screen
           name="StudyMaterial"
           component={StudyMaterial}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TutorImageUpload"
+          component={TutorImageUploadScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
