@@ -196,7 +196,8 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         );
         if (response.status === 200) {
           const data = await response.json();
-          const workPackageArray = data.slice(0, numberOfWorkPackagesToLoad);
+          const publishedWorkPackagesForFilter = data.filter(wp => wp.isPublished);
+          const workPackageArray = publishedWorkPackagesForFilter.slice(0, numberOfWorkPackagesToLoad);
           if (selectedGrade == "Any" && document.getElementById('Search').value != '') {
             filterWorkPackagesByText((displayOwned = false), workPackageArray);
           }
