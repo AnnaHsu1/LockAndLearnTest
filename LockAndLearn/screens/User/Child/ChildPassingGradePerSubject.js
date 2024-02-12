@@ -33,8 +33,10 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
         },
         });
         const data = await response.json();
-        console.log("DATAAAAAAA", data);
-        return data;
+        console.log("DATAAAAAAA", typeof(data));
+        setIsEnabledAnswers(data.revealAnswer);
+        setIsEnabledPassing(data.revealAnswerPassing);
+        return data.prevPassingGrades;
         // setPrevPassingGradesArray(data);
     };
 

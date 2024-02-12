@@ -136,7 +136,9 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
     const child = await Child.findById(childId);
     if (child) {
       const prevPassingGrades = child.subjectPassingGrades;
-      return prevPassingGrades;
+      const revealAnswer = child.revealAnswers || false;
+      const revealAnswerPassing = child.revealAnswersPassing || false;
+      return {prevPassingGrades, revealAnswer, revealAnswerPassing};
     } else {
       console.log('No child found');
     }
