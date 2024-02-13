@@ -77,7 +77,9 @@ exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassin
   userId,
   subjects,
   revealAnswers,
-  revealAnswersPassing
+  revealAnswersPassing,
+  revealExplanation,
+  revealExplanationPassing
 ) {
   try {
     const existingUser = await Child.findById(userId);
@@ -88,12 +90,25 @@ exports.updateUserSubjectsPassingGrade = async function updateUserSubjectsPassin
       if (!existingUser.subjectPassingGrades) {
         existingUser.subjectPassingGrades = [];
       }
+      // Initialize the revealAnswers field if it doesn't exist
       if (!existingUser.revealAnswers) {
         existingUser.revealAnswers = false;
       }
+      // Initialize the revealAnswersPassing field if it doesn't exist
       if (!existingUser.revealAnswersPassing) {
         existingUser.revealAnswersPassing = false;
       }
+      // Initialize the revealExplanation field if it doesn't exist
+      if (!existingUser.revealExplanation) {
+        existingUser.revealExplanation = false;
+      }
+      // Initialize the revealExplanationPassing field if it doesn't exist
+      if (!existingUser.revealExplanationPassing) {
+        existingUser.revealExplanationPassing = false;
+      }
+      // Update the fields with the new data
+      existingUser.revealExplanation = revealExplanation; // Update the revealExplanation field'
+      existingUser.revealExplanationPassing = revealExplanationPassing; // Update the revealExplanationPassing field
       existingUser.revealAnswers = revealAnswers; // Update the revealAnswers field
       existingUser.revealAnswersPassing = revealAnswersPassing; // Update the revealAnswersPassing field
       existingUser.subjectPassingGrades = subjects; // Update the subjects field

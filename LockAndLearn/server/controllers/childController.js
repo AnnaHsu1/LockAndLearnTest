@@ -116,8 +116,8 @@ router.delete('/deletechild/:id', async (req, res) => {
 router.put('/updateUserSubjectsPassingGrade/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    const { subjects, revealAnswers, revealAnswersPassing } = req.body;
-    const child = await updateUserSubjectsPassingGrade(userId, subjects, revealAnswers, revealAnswersPassing);
+    const { subjects, revealAnswers, revealAnswersPassing, revealExplanation, revealExplanationPassing } = req.body;
+    const child = await updateUserSubjectsPassingGrade(userId, subjects, revealAnswers, revealAnswersPassing, revealExplanation, revealExplanationPassing);
     res.status(200).json(child);
   } catch (error) {
     console.error('Error updating user subjects:', error);

@@ -117,7 +117,13 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ subjects: transformedSubjects, revealAnswers: isEnabledAnswers, revealAnswersPassing: isEnabledPassing }),
+            body: JSON.stringify({ 
+                subjects: transformedSubjects, 
+                revealAnswers: isEnabledAnswers, 
+                revealAnswersPassing: isEnabledPassing,
+                revealExplanation: isEnabledExplanation,
+                revealExplanationPassing: isEnabledExplanationPassing,
+            }),
           });
       
           if (!response.ok) {
