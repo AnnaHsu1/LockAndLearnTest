@@ -40,6 +40,7 @@ const WorkPackageCart = () => {
 
             const totalPrice = calculateTotalPrice(); // Calculate the total price
             console.log('total', totalPrice);
+            console.log('workPackages info: ', workPackages);
 
             //If the cart only has free items
             if (userId && totalPrice === '0.00' && workPackages.length > 0) {
@@ -49,7 +50,7 @@ const WorkPackageCart = () => {
                 navigation.navigate('PurchaseSuccessPage');
                 return;
             } else {
-                navigation.navigate('Payment', { totalPrice });
+                navigation.navigate('Payment', { totalPrice, workPackages });
             }
         } catch (error) {
             console.error('Network error:', error);

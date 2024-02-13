@@ -62,6 +62,10 @@ const WorkPackage = mongoose.model('WorkPackage', new mongoose.Schema({
         default: false,
         required: false,
     },
+    profit: {
+        type: Number,
+        default: 0,
+    },
 
 }), collectionName);
 

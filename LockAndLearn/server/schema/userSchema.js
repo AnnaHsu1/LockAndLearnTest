@@ -47,6 +47,10 @@ const User = mongoose.model(
         required: false,
       },
       purchasedWorkPackages: {
+        required: false
+    },
+    StripeBusinessId: { type: String },
+    purchasedWorkPackages: {
         type: [
           {
             stripePurchaseId: { type: String, required: true }, //Unique purchase ID from Stripe
