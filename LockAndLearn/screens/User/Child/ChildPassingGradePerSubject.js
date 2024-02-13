@@ -37,6 +37,8 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
         console.log("DATAAAAAAA", typeof(data));
         setIsEnabledAnswers(data.revealAnswer);
         setIsEnabledPassing(data.revealAnswerPassing);
+        setIsEnabledExplanation(data.revealExplanation);
+        setIsEnabledExplanationPassing(data.revealExplanationPassing);
         return data.prevPassingGrades;
         // setPrevPassingGradesArray(data);
     };
@@ -242,20 +244,24 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
                     </View>
                 ))}
                 <View style={styles.subjectRow}>
-                <Text style={styles.subjectName}>Reveal Explanation</Text>
+                    <Text style={styles.subjectName}>Reveal Explanation</Text>
                     <Switch 
                         trackColor={{ false: 'lightgray', true: '#81b0ff' }}
-                        thumbColor={isEnabledAnswers ? '#407BFF' : 'gray'}
+                        thumbColor={isEnabledExplanation ? '#407BFF' : 'gray'}
                         onValueChange={handleToggleExplanation}
-                        value={isEnabledAnswers}
+                        value={isEnabledExplanation}
                     />
+                </View>
+                <View style={styles.subjectRow}>
                     <Text style={styles.subjectName}>Reveal Explanation Only With a Passing Grade </Text>
                     <Switch 
                         trackColor={{ false: 'lightgray', true: '#81b0ff' }}
-                        thumbColor={isEnabledAnswers ? '#407BFF' : 'gray'}
+                        thumbColor={isEnabledExplanationPassing ? '#407BFF' : 'gray'}
                         onValueChange={handleToggleExplanationPassing}
-                        value={isEnabledAnswers}
+                        value={isEnabledExplanationPassing}
                     />
+                </View>
+                <View style={styles.subjectRow}>
                     <Text style={styles.subjectName}>Reveal Answers</Text>
                     <Switch 
                         trackColor={{ false: 'lightgray', true: '#81b0ff' }}

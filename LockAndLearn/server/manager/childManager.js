@@ -148,7 +148,9 @@ exports.getPreviousPassingGrades = async function getPreviousPassingGrades(child
       const prevPassingGrades = child.subjectPassingGrades;
       const revealAnswer = child.revealAnswers || false;
       const revealAnswerPassing = child.revealAnswersPassing || false;
-      return {prevPassingGrades, revealAnswer, revealAnswerPassing};
+      const revealExplanation = child.revealExplanation || false;
+      const revealExplanationPassing = child.revealExplanationPassing || false;
+      return {prevPassingGrades, revealAnswer, revealAnswerPassing, revealExplanation, revealExplanationPassing};
     } else {
       console.log('No child found');
     }
