@@ -43,6 +43,14 @@ const childSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  revealExplanation: {
+    type: Boolean,
+    default: false,
+  },
+  revealExplanationPassing: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Child = mongoose.model('Child', childSchema, collectionName); // Where the item will be stored in the database

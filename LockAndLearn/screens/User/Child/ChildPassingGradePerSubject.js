@@ -8,7 +8,6 @@ import { Button } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 import { Switch } from '@rneui/themed';
-import { set } from 'mongoose';
 
 const ChildPassingGradePerSubject = ({ route, navigation }) => {
     const [child, setChild] = useState({});
@@ -17,6 +16,8 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
     const [subjects, setSubjects] = useState([]);
     const [isEnabledAnswers, setIsEnabledAnswers] = useState(false);
     const [isEnabledPassing, setIsEnabledPassing] = useState(false);
+    const [isEnabledExplanation, setIsEnabledExplanation] = useState(false);
+    const [isEnabledExplanationPassing, setIsEnabledExplanationPassing] = useState(false);
     const hasError = subjects.some(subject => subject.errorMessage);
 
     
@@ -181,6 +182,31 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
 
     };
 
+    const handleToggleExplanation = () => {
+
+        //Toggle visibility of explanation
+        setIsEnabledExplanation(!isEnabledExplanation);
+
+        //If explanation on passing grade is enabled, disable it
+        if(isEnabledExplanationPassing){
+
+            setIsEnabledExplanationPassing(false);
+        }
+
+    };
+
+    const handleToggleExplanationPassing = () => {
+
+        //Toggle visibility of explanation on passing grade
+        setIsEnabledExplanationPassing(!isEnabledExplanationPassing);
+
+        //If explanations is enabled, disable it
+        if(isEnabledExplanation){
+            setIsEnabledExplanation(false);
+        }
+
+    };
+
     useEffect(() => {
         setChild(childSelected);
         fetchWorkPackages(true);
@@ -216,6 +242,20 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
                     </View>
                 ))}
                 <View style={styles.subjectRow}>
+                <Text style={styles.subjectName}>Reveal Explanation</Text>
+                    <Switch 
+                        trackColor={{ false: 'lightgray', true: '#81b0ff' }}
+                        thumbColor={isEnabledAnswers ? '#407BFF' : 'gray'}
+                        onValueChange={handleToggleExplanation}
+                        value={isEnabledAnswers}
+                    />
+                    <Text style={styles.subjectName}>Reveal Explanation Only With a Passing Grade </Text>
+                    <Switch 
+                        trackColor={{ false: 'lightgray', true: '#81b0ff' }}
+                        thumbColor={isEnabledAnswers ? '#407BFF' : 'gray'}
+                        onValueChange={handleToggleExplanationPassing}
+                        value={isEnabledAnswers}
+                    />
                     <Text style={styles.subjectName}>Reveal Answers</Text>
                     <Switch 
                         trackColor={{ false: 'lightgray', true: '#81b0ff' }}
@@ -225,7 +265,7 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
                     />
                 </View>
                 <View style={styles.subjectRow}>
-                    <Text style={styles.subjectName}>Reveal Answers Only With Passing Grade</Text>
+                    <Text style={styles.subjectName}>Reveal Answers Only With a Passing Grade</Text>
                     <Switch 
                         trackColor={{ false: 'lightgray', true: '#81b0ff' }}
                         thumbColor={isEnabledPassing ? '#407BFF' : 'gray'}
