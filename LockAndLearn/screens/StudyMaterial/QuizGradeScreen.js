@@ -83,15 +83,14 @@ const QuizGradeScreen = ({ route }) => {
         return (
             <View style={styles.listQuestions}>
                 <Text style={styles.gradeText}>Here are the results:</Text>
-                <View style={{flexDirection: "row"}}>
-                    <Text style={styles.headerQuestion}>Question</Text>
-                    <Text style={styles.headerAnswer}>Your Answer</Text>
-                    <Text style={styles.headerResult}>Result</Text>
-                </View>
-
                 {results.map((result, index) => {
                     return (
                         <View style={styles.containerCompleteQuestion}>
+                            <View style={{flexDirection: "row", paddingHorizontal: 10}}>
+                                <Text style={styles.headerQuestion}>Question</Text>
+                                <Text style={styles.headerAnswer}>Your Answer</Text>
+                                <Text style={styles.headerResult}>Result</Text>
+                            </View>
                             <View key={index} style={styles.containerQuestion}>
                                 <Text style={styles.containerQuestionText}>
                                     {questions[index].questionText}
@@ -188,11 +187,12 @@ const styles = StyleSheet.create({
     //Container for each question
     containerQuestion: {
         fontSize: 18,
-        color: '#333',
+        color: '#558dff',
         fontWeight: 'bold',
         textAlign: 'left',
         marginBottom: 10,
         flexDirection: 'row',
+        paddingHorizontal: 10,
     },
     containerQuestionText: {
         fontSize: 16,
@@ -213,6 +213,8 @@ const styles = StyleSheet.create({
     containerCorrectAnswer: {
         backgroundColor: 'green',
         textAlign: 'center',
+        marginLeft: "auto",
+        marginRight: "7%",
         justifyContent: 'center',
         color: 'white',
         width: "4%",
@@ -221,6 +223,8 @@ const styles = StyleSheet.create({
     containerIncorrectAnswer: {
         backgroundColor: 'red',
         textAlign: 'center',
+        marginLeft: "auto",
+        marginRight: "7%",
         justifyContent: 'center',
         color: 'white',
         width: "4%",
@@ -254,17 +258,18 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     containerExplanation: {
-        paddingHorizontal: 30,
+        paddingHorizontal: 10,
     },
     containerAnswer: {
-        paddingHorizontal: 50,
+        paddingHorizontal: 10,
     },
     containerCompleteQuestion: {
         flexDirection: 'column',
-        borderColor: '#333',
+        borderColor: '#558dff',
         borderWidth: 1,
         borderRadius: 10,
         justifyContent: 'space-between',
+        marginBottom: 10,
     },
 
     
