@@ -192,6 +192,26 @@ router.get('/getPackagesInfo/:id', async (req, res) => {
     res.status(500).json({ error: 'Unable to get packages for child' });
   }
 });
+// Get packages info (name, grade, description) by package Id
+router.get('/getPackagesInfo/:id/:packageID', async (req, res) => {
+  try {
+    const childId = req.params.id;
+    const packageID = req.params.packageID
+
+    // get this package info with its wp info
+    const packageInfo = await getPackageByPackageId(packageID);
+    // when no package found
+    if (packageInfo === null) {
+      res.status(400).json({ error: 'no package found' });
+    }
+    else {
+      res.status(200).json(packageInfo);
+    }
+  } catch (err) {
+    console.log('Error getting packages for child: ', err);
+    res.status(500).json({ error: 'Unable to get packages for child' });
+  }
+});
 
 router.get('/getPreferences/:id', async (req, res) => {
   try {

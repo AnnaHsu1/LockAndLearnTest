@@ -29,7 +29,7 @@ const LockingSessionBeginsScreen = ({route}) => {
 
     const timer = setTimeout(() => {
       // Navigate to the "LockingSchedulePresentation" screen after the delay
-      navigation.navigate('DisplayStudyMaterial', { child_ID: child_ID});
+      navigation.navigate('DisplayStudyMaterial', { child_ID: child_ID, packageID: -1});
     }, delay);
 
     // Clean up the timer when the component unmounts

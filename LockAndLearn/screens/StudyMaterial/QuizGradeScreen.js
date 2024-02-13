@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
 
@@ -9,7 +9,11 @@ const QuizGradeScreen = ({ route }) => {
     const answers = route.params.answers;
     const questions = route.params.questions;
     const solutions = route.params.solutions;
+    const packageID = route.params.packageID;
     const [results, setResults] = useState([]);
+    const passOrFail = route.params.passOrFail;
+    const childID = route.params.childID;
+
 
     useEffect(() => {
         console.log("ANSWERS FROM GRADE:",answers);
@@ -89,6 +93,13 @@ const QuizGradeScreen = ({ route }) => {
                 <Text style={styles.gradeText}>You got {grade} correct answers out of {quizLength}!</Text>
                 <Text style={styles.gradeText}>Your grade is {((grade/quizLength) * 100).toFixed(0)} %</Text>
                 <RenderResults />
+                {passOrFail =="passed"?
+                    <View></View> :
+                    <TouchableOpacity style={styles.doneButton} onPress={() => {navigation.navigate('DisplayStudyMaterial', { child_ID: childID, packageID: packageID});}}    >
+                        <Text style={styles.doneButtonText}>Try Again?</Text>
+                    </TouchableOpacity> 
+                }
+
             </View>
         </ImageBackground>
     );
@@ -187,6 +198,22 @@ const styles = StyleSheet.create({
         color: '#333',
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    doneButton: {
+        backgroundColor: '#1E4D8B',
+        width: 190,
+        height: 45,
+        borderRadius: 9,
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    doneButtonText: {
+        fontSize: 22, // Larger font size for better readability
+        color: 'white', // Dark color for the text
+        fontWeight: 'bold', // Bold font weight
+        textAlign: 'center', // Center align the text
+        marginBottom: 10, // Space below the text
     },
 });
 

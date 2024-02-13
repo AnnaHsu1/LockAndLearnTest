@@ -17,6 +17,8 @@ const DisplayStudyMaterial = ({}) => {
   const [quiz, setQuiz] = useState([]);
   const [quizLength, setQuizLength] = useState([]);
   const [quizzesArray, setQuizzesArray] = useState([]);
+  const packageID= route.params.packageID;
+  
 
   const ProgressBar = ({ current, total }) => {
     const completionPercentage = (current / total) * 100;
@@ -39,31 +41,64 @@ const DisplayStudyMaterial = ({}) => {
 
   // function to get all study material info
   const fetchPackageInfo = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.status === 200) {
-        const data = await response.json();
-        setQuizLength(data.quizzes.length);
-        setPackageInfo(data);
-        setQuizzesArray(data.quizzes);
-        // get the url PDFs with material IDs
-        data.materials.forEach((material) => {
-          getPDFs(material);
+    if(packageID != -1){
+      // sett all values to 0
+      setCurrentPdfIndex(0)
+      setPdfUrls([]);
+
+      try {
+        const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}/${packageID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
-      } 
-      else if (response.status === 400) {
-        console.error('No package found for child with ID:', childID);
+        if (response.status === 200) {
+          const data = await response.json();
+          setQuizLength(data.quizzes.length);
+          setPackageInfo(data);
+          setQuizzesArray(data.quizzes);
+          // get the url PDFs with material IDs
+          data.materials.forEach((material) => {
+            getPDFs(material);
+          });
+        } 
+        else if (response.status === 400) {
+          console.error('No package found for child with ID:', childID);
+        }
+        else {
+          console.error('Error fetching study material');
+        }
+      } catch (error) {
+        console.error('Network error:', error);
       }
-      else {
-        console.error('Error fetching study material');
+    } else{
+      try {
+        const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.status === 200) {
+          const data = await response.json();
+          setQuizLength(data.quizzes.length);
+          setPackageInfo(data);
+          setQuizzesArray(data.quizzes);
+          // get the url PDFs with material IDs
+          data.materials.forEach((material) => {
+            getPDFs(material);
+          });
+        } 
+        else if (response.status === 400) {
+          console.error('No package found for child with ID:', childID);
+        }
+        else {
+          console.error('Error fetching study material');
+        }
+      } catch (error) {
+        console.error('Network error:', error);
       }
-    } catch (error) {
-      console.error('Network error:', error);
     }
   };
 

@@ -231,6 +231,18 @@ const DisplayQuizzScreen = ({ route }) => {
         } finally {
             // setLoading(false);
         }
+
+        navigation.navigate('QuizGradeScreen', {
+            quizId: quizId,
+            numOfCorrectAnswers: numOfCorrectAnswers,
+            quizLength: quizLength,
+            answers: answers,
+            solutions: solutions,
+            questions: questions,
+            packageID: packageID,
+            passOrFail: status,
+            childID: childID,
+        });
     }
 
     useEffect(() => {
@@ -355,14 +367,7 @@ const DisplayQuizzScreen = ({ route }) => {
                                 fetchQuestion();
                                 const grade = handleGrade(answers, solutions);
                                 saveQuizResult(grade);
-                                navigation.navigate('QuizGradeScreen', {
-                                    quizId: quizId,
-                                    numOfCorrectAnswers: grade,
-                                    quizLength: quizLength,
-                                    answers: answers,
-                                    solutions: solutions,
-                                    questions: questions,
-                                });
+                                
                             }}
                         >
                             <Text style={styles.finishQuizButtonText} testID='save-button'>Finish Quiz</Text>
