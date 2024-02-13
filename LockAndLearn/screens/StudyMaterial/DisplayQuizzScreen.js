@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity, C
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import PropTypes from 'prop-types';
+import { set } from 'mongoose';
 
 const DisplayQuizzScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -187,7 +188,7 @@ const DisplayQuizzScreen = ({ route }) => {
         const data = await response.json();
         console.log("DATAAAAAAA", data);
 
-        const subjectObject = data.find(sub => sub.name === subject);
+        const subjectObject = data.prevPassingGrades.find(sub => sub.name === subject);
         const threshold = subjectObject && (subjectObject.grade || subjectObject.grade === 0) ? subjectObject.grade : 50;
 
         console.log("THRESHOLD", threshold);
@@ -356,12 +357,14 @@ const DisplayQuizzScreen = ({ route }) => {
                                 const grade = handleGrade(answers, solutions);
                                 saveQuizResult(grade);
                                 navigation.navigate('QuizGradeScreen', {
+                                    childID: childID,
                                     quizId: quizId,
                                     numOfCorrectAnswers: grade,
                                     quizLength: quizLength,
                                     answers: answers,
                                     solutions: solutions,
                                     questions: questions,
+                                    subject: subject,
                                 });
                             }}
                         >

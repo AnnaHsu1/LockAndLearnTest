@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from "@react-navigation/native";
+import { set } from 'mongoose';
 
 const QuizGradeScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -9,7 +10,15 @@ const QuizGradeScreen = ({ route }) => {
     const answers = route.params.answers;
     const questions = route.params.questions;
     const solutions = route.params.solutions;
+    const childID = route.params.childID;
+    const subject = route.params.subject;
+    const [revealAnswers, setRevealAnswers] = useState(false);
+    const [revealAnswersPassing, setRevealAnswersPassing] = useState(false);
+    const [revealExplanation, setRevealExplanation] = useState(false);
+    const [revealExplanationPassing, setRevealExplanationPassing] = useState(false);
     const [results, setResults] = useState([]);
+    const [percentage, setPercentage] = useState(0);
+    const [status, setStatus] = useState(false);
 
     useEffect(() => {
         console.log("ANSWERS FROM GRADE:",answers);
@@ -38,7 +47,36 @@ const QuizGradeScreen = ({ route }) => {
         };
         //set results to tempResults
         setResults(tempResults);
+        getResultsData();
     }, []);
+
+    //get data related to rendering results
+    const getResultsData = async () => {
+        // add part fetching threshold
+        const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        console.log("DATAAAAAAA", data);
+
+        const subjectObject = data.prevPassingGrades.find(sub => sub.name === subject);
+        const threshold = subjectObject && (subjectObject.grade || subjectObject.grade === 0) ? subjectObject.grade : 50;
+
+        const tempPercentage = (grade / quizLength) * 100;
+        setPercentage(tempPercentage);
+
+        const tempStatus = tempPercentage >= threshold;
+        setStatus(tempStatus);
+
+        setRevealAnswers(data.revealAnswer);
+        setRevealAnswersPassing(data.revealAnswerPassing);
+        setRevealExplanation(data.revealExplanation);
+        setRevealExplanationPassing(data.revealExplanationPassing);
+
+    }
 
     // Render the results of the quiz
     const RenderResults = () => {
@@ -53,7 +91,7 @@ const QuizGradeScreen = ({ route }) => {
 
                 {results.map((result, index) => {
                     return (
-                        <View>
+                        <View style={styles.containerCompleteQuestion}>
                             <View key={index} style={styles.containerQuestion}>
                                 <Text style={styles.containerQuestionText}>
                                     {questions[index].questionText}
@@ -72,13 +110,26 @@ const QuizGradeScreen = ({ route }) => {
                                     </Text>
                                 )}
                             </View>
-                            <Text style={styles.textExplanation}>
-                                Explanation: 
-                            </Text>
-                            <Text>
-                                {questions[index].explanation || "No explanation provided"}
-                            </Text>
-
+                            {revealAnswers || (revealAnswersPassing && status) ? (
+                            <View style={styles.containerAnswer}>
+                                <Text style={styles.textExplanation}>
+                                    Answer: 
+                                </Text>
+                                <Text>
+                                    {solutions[index] || "No answer provided"}
+                                </Text>
+                            </View>
+                            ) : null}
+                            {revealExplanation || (revealExplanationPassing && status) ? (
+                            <View style={styles.containerExplanation}>
+                                <Text style={styles.textExplanation}>
+                                    Explanation: 
+                                </Text>
+                                <Text>
+                                    {questions[index].explanation || "No explanation provided"}
+                                </Text>
+                            </View>
+                            ) : null}
                         </View>
                     );
                 })}
@@ -94,7 +145,7 @@ const QuizGradeScreen = ({ route }) => {
         >
             <View style={styles.containerFile}>
                 <Text style={styles.gradeText}>You got {grade} correct answers out of {quizLength}!</Text>
-                <Text style={styles.gradeText}>Your grade is {((grade/quizLength) * 100).toFixed(0)} %</Text>
+                <Text style={styles.gradeText}>Your grade is {percentage} %</Text>
                 <RenderResults />
             </View>
         </ImageBackground>
@@ -202,6 +253,20 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         marginBottom: 5,
     },
+    containerExplanation: {
+        paddingHorizontal: 30,
+    },
+    containerAnswer: {
+        paddingHorizontal: 50,
+    },
+    containerCompleteQuestion: {
+        flexDirection: 'column',
+        borderColor: '#333',
+        borderWidth: 1,
+        borderRadius: 10,
+        justifyContent: 'space-between',
+    },
+
     
 });
 
