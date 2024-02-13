@@ -14,6 +14,7 @@ const EditQuestion = ({ route }) => {
     const [inputs, setInputs] = useState(['']);
     const [answer, setAnswer] = useState('');
     const [isTrue, setIsTrue] = useState(false);
+    const [explanation, setExplanation] = useState('');
     const [options, setOptions] = useState([
         { id: 'A', text: '', isCorrect: false },
         { id: 'B', text: '', isCorrect: false },
@@ -75,6 +76,7 @@ const EditQuestion = ({ route }) => {
             questionType: questionType,
             answer: answer, // This line will include the answer for the "Short Answer" question type
             options: options.map(option => option.text),
+            explanation: explanation,
         };
         // const correctOption = options.find(option => option.isCorrect);
         // updatedQuestion.answer = correctOption ? correctOption.text : '';
@@ -141,6 +143,7 @@ const EditQuestion = ({ route }) => {
                 setQuestionText(question.questionText || ''); // Ensuring a string is always set
                 setQuestionType(question.questionType || '');
                 setAnswer(question.answer || '');
+                setExplanation(question.explanation || '');
 
                 // For multiple choice questions, ensure that each option text is a string
                 if (question.questionType === "Multiple Choice Question") {
@@ -185,7 +188,8 @@ const EditQuestion = ({ route }) => {
         } else if (questionType === 'Fill In The Blanks') {
             return (
                 questionText.trim() !== '' &&
-                inputs.every((input) => input.trim() !== '')
+                inputs.every((input) => input.trim() !== '' &&
+                explanation.trim() !== '')
             );
         }
 
@@ -303,6 +307,12 @@ const EditQuestion = ({ route }) => {
                         onChangeText={(text) => setAnswer(text)}
                     />
                 )}
+                <TextInput
+                style={styles.questionInput}
+                placeholder="Enter the explanation here"
+                value={explanation}
+                onChangeText={(text) => setExplanation(text)}
+                />
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.cancelButton}

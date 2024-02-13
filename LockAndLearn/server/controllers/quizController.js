@@ -88,7 +88,7 @@ router.put('/updateQuestion/:quizId/:questionIndex', async (req, res) => {
   try {
     const quizId = req.params.quizId;
     const questionIndex = parseInt(req.params.questionIndex, 10);
-    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options } =
+    const { questionText, questionType, answer, isTrue, multipleChoiceAnswers, inputs, options, explanation } =
       req.body;
 
     // Ensure the questionIndex is a valid number
@@ -117,6 +117,7 @@ router.put('/updateQuestion/:quizId/:questionIndex', async (req, res) => {
       multipleChoiceAnswers,
       inputs,
       options,
+      explanation,
     };
 
     quiz.questions[questionIndex] = updatedQuestion;

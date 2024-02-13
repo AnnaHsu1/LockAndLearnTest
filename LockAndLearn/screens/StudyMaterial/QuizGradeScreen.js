@@ -87,7 +87,7 @@ const QuizGradeScreen = ({ route }) => {
                     return (
                         <View style={styles.containerCompleteQuestion}>
                             <View style={{flexDirection: "row", paddingHorizontal: 10}}>
-                                <Text style={styles.headerQuestion}>Question</Text>
+                                <Text style={styles.headerQuestion}>Question {index+1}</Text>
                                 <Text style={styles.headerAnswer}>Your Answer</Text>
                                 <Text style={styles.headerResult}>Result</Text>
                             </View>
