@@ -11,6 +11,8 @@ jest.mock('@react-navigation/native', () => {
     };
 });
 
+global.fetch = require('jest-fetch-mock');
+
 describe('QuizGradeScreen Tests', () => {
     const route = {
         params: {
@@ -28,6 +30,14 @@ describe('QuizGradeScreen Tests', () => {
                 quizLength: 10,
             },
         };
+
+        fetch.mockResponseOnce(JSON.stringify({
+            prevPassingGrades: [{name: 'Math', grade: '70'}],
+            revealAnswer: false,
+            revealAnswerPassing: true,
+            revealExplanation: false,
+            revealExplanationPassing: true,
+          }));
     
         const { getByText } = render(<QuizGradeScreen route={route} />);
     

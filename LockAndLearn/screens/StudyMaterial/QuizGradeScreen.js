@@ -144,7 +144,7 @@ const QuizGradeScreen = ({ route }) => {
         >
             <View style={styles.containerFile}>
                 <Text style={styles.gradeText}>You got {grade} correct answers out of {quizLength}!</Text>
-                <Text style={styles.gradeText}>Your grade is {percentage} %</Text>
+                <Text style={styles.gradeText}>Your grade is {((grade/quizLength)*100).toFixed(0)} %</Text>
                 <RenderResults />
             </View>
         </ImageBackground>
