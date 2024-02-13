@@ -8,16 +8,15 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { Icon, Checkbox } from 'react-native-paper';
 import { getUser } from '../../../components/AsyncStorage';
+import PropTypes from 'prop-types';
 
 const SelectQuizToAdd = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const params = route.params;
   const { wp_id, name, grade } = params?.workPackage;
-  const { p_id, p_quizzes, p_materials, subcategory, description } = params?.package;
-  const workPackage = route.params.workPackage;
+  const { p_id, p_materials, subcategory, description } = params?.package;
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuizzes, setSelectedQuizzes] = useState([]);
 
@@ -33,12 +32,12 @@ const SelectQuizToAdd = () => {
       if (response.status === 200) {
         const data = await response.json();
         setQuizzes(data);
-        // set checked (true) to checkboxes that are already selected in the package 
+        // set checked (true) to checkboxes that are already selected in the package
         const quizzesInDb = await fetch(`http://localhost:4000/packages/fetchQuizzes/${p_id}`, {
           method: 'GET',
         });
         const selectedQuizzesDb = await quizzesInDb.json();
-        setSelectedQuizzes(selectedQuizzesDb)
+        setSelectedQuizzes(selectedQuizzesDb);
       } else {
         console.error('Error fetching quizzes');
       }
@@ -64,21 +63,18 @@ const SelectQuizToAdd = () => {
   // Function to add selected quizzes to the work package
   const addQuizzesToWorkPackage = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:4000/packages/addContent/${p_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contentType: 'quiz',
-            quizzes: selectedQuizzes,
-          }),
-        }
-      );
+      const response = await fetch(`http://localhost:4000/packages/addContent/${p_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contentType: 'quiz',
+          quizzes: selectedQuizzes,
+        }),
+      });
       if (response.ok) {
-        navigation.navigate('EditPackage', { 
+        navigation.navigate('EditPackage', {
           package: {
             p_id: p_id,
             p_quizzes: selectedQuizzes,
@@ -90,8 +86,8 @@ const SelectQuizToAdd = () => {
             name: name,
             grade: grade,
             wp_id: wp_id,
-          }
-       });
+          },
+        });
       } else {
         console.error('Failed to add quizzes to the work package:', response.status);
       }
@@ -139,25 +135,39 @@ const SelectQuizToAdd = () => {
           </TouchableOpacity>
         </View>
         {/* Display all quizzes from user */}
-        <ScrollView style={styles.scrollContainer}>
-          {quizzes.map((quiz) => (
-            <View key={quiz._id} style={styles.quizContainer}>
-              {/* checkbox to be changed -> used another lib, as from react native, it is removed */}
-              <Checkbox
-                status={selectedQuizzes.includes(quiz._id) ? 'checked' : 'unchecked'}
-                onPress={() => toggleQuizSelection(quiz._id)}
-                color='#407BFF'
-              />
+        <View style={styles.centeredContainer}>
+          <ScrollView style={styles.scrollContainer}>
+            {quizzes.map((quiz) => (
               <TouchableOpacity
+                key={quiz._id}
                 testID="quiz-selection-checkbox"
-                style={styles.quizItem}
-                onPress={() => toggleQuizSelection(quiz._id)}
+                style={[
+                  styles.quizItem,
+                  { backgroundColor: quiz.approved ? 'white' : '#FAFAFA' },
+                  { opacity: quiz.approved ? 1 : 0.5 },
+                  selectedQuizzes.includes(quiz._id) && {
+                    borderColor: '#407BFF',
+                    backgroundColor: '#407BFF1A',
+                  },
+                ]}
+                onPress={() => {
+                  if (quiz.approved) {
+                    toggleQuizSelection(quiz._id);
+                  }
+                }}
+                disabled={!quiz.approved}
               >
-                <Text>{quiz.name}</Text>
+                <Text
+                  style={{
+                    color: selectedQuizzes.includes(quiz._id) ? '#407BFF' : quiz.approved ? '#696969' : 'grey',
+                  }}
+                >
+                  {quiz.name}
+                </Text>
               </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
+            ))}
+          </ScrollView>
+        </View>
         {/* Display button to add quizzes to work package */}
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
@@ -173,7 +183,30 @@ const SelectQuizToAdd = () => {
   );
 };
 
+SelectQuizToAdd.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      workPackage: PropTypes.shape({
+        wp_id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        grade: PropTypes.string.isRequired,
+      }),
+      package: PropTypes.shape({
+        p_id: PropTypes.string.isRequired,
+        p_materials: PropTypes.array,
+        subcategory: PropTypes.string,
+        description: PropTypes.string,
+      }),
+    }),
+  }),
+};
+
 const styles = StyleSheet.create({
+  centeredContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   buttonText: {
     color: '#FFFFFF',
     alignItems: 'center',
@@ -189,7 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 8,
     marginTop: '2%',
-    marginBottom: '3%'
+    marginBottom: '3%',
   },
   buttonNavigate: {
     alignSelf: 'flex-end',
@@ -201,10 +234,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   quizContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
+    justifyContent: 'center',
   },
   container: {
     flex: 1,
@@ -233,13 +263,13 @@ const styles = StyleSheet.create({
   quizItem: {
     fontSize: 18,
     marginVertical: 10,
-    color: '#333',
-    borderColor: '#333',
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-    width: '70%',
+    width: '100%',
+    borderColor: '#696969',
+    backgroundColor: '#696969',
   },
   scrollContainer: {
     height: 300,

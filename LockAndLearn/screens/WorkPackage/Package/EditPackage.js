@@ -690,14 +690,16 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   noQuizzesText: {
-    paddingLeft: '5%',
+    paddingLeft: '2%',
     paddingTop: 10,
     paddingBottom: 10,
+    color: '#8f8f8f',
   },
   noFilesText: {
-    paddingLeft: '5%',
+    paddingLeft: '2%',
     paddingTop: 10,
     paddingBottom: 10,
+    color: '#8f8f8f',
   },
   quizzesText: {
     borderTopWidth: 1,

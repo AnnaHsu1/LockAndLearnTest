@@ -85,43 +85,48 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await fetch('http://localhost:4000/users/login', {
         method: 'POST',
-        credentials: 'include', // Ensure credentials are included
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginData), // Send user data as JSON
+        body: JSON.stringify(loginData),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.status === 201) {
         setErrorMsg(null);
-        // User logged in successfully
-        console.log('User successfully logged in!', data);
-        setDisplayMsg(
-          'Credentials are valid, welcome back' +
-            ' ' +
-            data.user.firstName +
-            ' ' +
-            data.user.lastName +
-            '!'
-        );
-        // Store the user data in AsyncStorage
-        await setUserTokenWithExpiry('@token', data.user);
-        if (data.user.isParent) {
-          navigation.navigate('ParentHomeScreen');
+  
+        if (data.user.suspended) {
+          // If the user is suspended, navigate to SuspendedUser screen
+          navigation.navigate('SuspendedUser');
         } else {
-          navigation.navigate('UserLandingPage');
+          // If the user is not suspended, proceed with regular navigation
+          console.log('User successfully logged in!', data);
+          setDisplayMsg(
+            'Credentials are valid, welcome back' +
+              ' ' +
+              data.user.firstName +
+              ' ' +
+              data.user.lastName +
+              '!'
+          );
+          await setUserTokenWithExpiry('@token', data.user);
+          
+          if (data.user.isParent) {
+            navigation.navigate('ParentHomeScreen');
+          } else {
+            navigation.navigate('UserLandingPage');
+          }
         }
       } else {
         // Store the error message in state
-        // console.log(data.msg);
         setErrorMsg(data.msg);
       }
     } catch (error) {
       console.error('Error logging user:', error);
     }
-  };
+  };  
 
   const sendLoginDataAdmin = async (loginData) => {
     try {

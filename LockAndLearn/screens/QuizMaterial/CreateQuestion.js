@@ -11,6 +11,7 @@ import {
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
+import PropTypes from 'prop-types';
 
 const CreateQuestion = ({ route }) => {
   const navigation = useNavigation();
@@ -52,8 +53,8 @@ const CreateQuestion = ({ route }) => {
 
     if (questionType === 'Multiple Choice Question') {
       // Ensure all options are filled and one is marked as correct
-      const allOptionsFilled = options.every(option => option.text.trim() !== '');
-      const isAnswerChosen = options.some(option => option.isCorrect);
+      const allOptionsFilled = options.every((option) => option.text.trim() !== '');
+      const isAnswerChosen = options.some((option) => option.isCorrect);
 
       if (!allOptionsFilled) {
         alert('Please fill in all option texts.');
@@ -66,7 +67,7 @@ const CreateQuestion = ({ route }) => {
       }
 
       // Set the answer to the text of the selected correct option
-      newQuestion.answer = options.find(option => option.isCorrect).text;
+      newQuestion.answer = options.find((option) => option.isCorrect).text;
     } else if (questionType === 'True or False') {
       // For true or false, the answer is a boolean
       newQuestion.answer = answer; // Assuming answer is either 'True' or 'False'
@@ -90,9 +91,9 @@ const CreateQuestion = ({ route }) => {
       // console.log(response);
 
       if (response.ok) {
-        // Question created successfully, you can handle the response here
+        await updateQuizApproval(quizId, false);
         const result = await response.json();
-        // console.log('Question created:', result);
+        console.log('Question created:', result);
 
         // Clear the form after adding the question
         setQuestionText('');
@@ -117,6 +118,29 @@ const CreateQuestion = ({ route }) => {
       });
     } catch (error) {
       console.error('Error creating question:', error);
+    }
+  };
+
+  const updateQuizApproval = async (quizId, approved) => {
+    try {
+      const updateQuizResponse = await fetch(`http://localhost:4000/quizzes/${quizId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          approved: approved,
+        }),
+      });
+
+      if (updateQuizResponse.ok) {
+        const updatedQuiz = await updateQuizResponse.json();
+        console.log('Quiz updated:', updatedQuiz);
+      } else {
+        console.error('Failed to update quiz:', updateQuizResponse.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating quiz:', error);
     }
   };
 
@@ -327,6 +351,14 @@ const CreateQuestion = ({ route }) => {
   );
 };
 
+CreateQuestion.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      quizId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    }).isRequired,
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: 'gray',
@@ -338,6 +370,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginHorizontal: 10,
+    marginBottom: 10,
   },
   cancelButtonText: {
     color: '#FFFFFF',

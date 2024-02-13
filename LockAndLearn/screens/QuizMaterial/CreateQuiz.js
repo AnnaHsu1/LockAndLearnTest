@@ -30,6 +30,7 @@ const CreateQuiz = () => {
         name: quizName,
         userId: userId, // Add userId to the quiz object
         questions: [], // Initially, the questions array is empty
+        approved: false,
       };
 
       // Send a POST request to create the quiz
@@ -43,7 +44,7 @@ const CreateQuiz = () => {
 
       if (response.status === 200 || 201) {
         // Quiz created successfully, you can handle the response if needed
-
+        console.log('Created quiz:',newQuiz);
         // Navigate to the QuestionsOverviewScreen
         navigation.navigate('QuizzesOverviewScreen', {
           userId: userId, // Change this to your default value

@@ -15,6 +15,10 @@ const quizSchema = new mongoose.Schema({
     type: String, // You may choose the appropriate data type (e.g., ObjectId) for the user ID
     required: false,
   },
+  approved: {
+    type: Boolean, // You may choose the appropriate data type (e.g., ObjectId) for the user ID
+    required: false,
+  },
   questions: [
     {
       _id: {

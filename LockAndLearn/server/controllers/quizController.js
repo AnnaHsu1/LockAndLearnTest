@@ -5,8 +5,8 @@ const Quiz = require('../schema/quizSchema.js');
 // Create a new quiz
 router.post('/create', async (req, res) => {
   try {
-    const { name, questions, userId } = req.body;
-    const newQuiz = new Quiz({ name, questions, userId });
+    const { name, questions, userId, approved } = req.body;
+    const newQuiz = new Quiz({ name, questions, userId, approved });
     const savedQuiz = await newQuiz.save();
     res.json(savedQuiz);
   } catch (err) {
@@ -225,10 +225,10 @@ router.get('/quiz/:quizId', async (req, res) => {
 router.put('/:quizId', async (req, res) => {
   try {
     const quizId = req.params.quizId;
-    const { name, workPackageId, questions } = req.body;
+    const { name, workPackageId, questions, approved } = req.body;
     const updatedQuiz = await Quiz.findByIdAndUpdate(
       quizId,
-      { name, workPackageId, questions },
+      { name, workPackageId, questions, approved },
       { new: true }
     );
     res.json(updatedQuiz);

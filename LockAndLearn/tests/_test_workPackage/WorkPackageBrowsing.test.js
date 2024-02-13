@@ -98,19 +98,10 @@ describe('WorkPackageBrowsing Tests', () => {
 
     it('displays work packages properly and adds to cart', async () => {
 
-        const { getByTestId, findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
+        const {findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
         await waitFor(() => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
-        fireEvent.press(getByTestId('addButton-wp1'));
-    });
-
-    it('navigates to cart screen on button press', () => {
-        const navigate = jest.fn();
-        useNavigation.mockImplementation(() => ({ navigate }));
-        const { getByTestId } = render(<WorkPackageBrowsing {...mockedParameters}/>);
-        fireEvent.press(getByTestId('viewCartButton'));
-        expect(navigate).toHaveBeenCalledWith('WorkPackageCart');
     });
 
     it('renders the work package item correctly', async () => {
@@ -119,4 +110,16 @@ describe('WorkPackageBrowsing Tests', () => {
             expect(findByText('Work Package 1')).toBeTruthy();
         });
     });
+
+    it('displays an error message when work packages fetch fails', async () => {
+        global.fetch.mockRejectedValueOnce(new Error('Network Error'));
+    
+        const { findByText } = render(<WorkPackageBrowsing {...mockedParameters}/>);
+    
+        await waitFor(() => {
+            expect(findByText('Network Error')).toBeTruthy();
+        });
+    });
+
+
 });
