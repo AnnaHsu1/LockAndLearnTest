@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getItem } from '../../../components/AsyncStorage';
-const CheckoutForm = ({ navigation, route }) => {
+const CheckoutForm = ({ stripePayingSplits }) => {
+  //console.log('Stripe Paying Splits:', stripePayingSplits);
   const navigation1 = useNavigation();
   const stripe = useStripe();
   const elements = useElements();
@@ -52,7 +53,8 @@ const CheckoutForm = ({ navigation, route }) => {
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       setMessage('Payment successful!');
       transferToPurchasedWorkPackage(userId, paymentIntent.id, paymentIntent.amount);
-      navigation1.navigate('PurchaseSuccessPage'); // Replace 'SuccessScreen' with your screen name
+      await processTransfers(stripePayingSplits); // Process and split the payments to all the relevant parties
+      navigation1.navigate('PurchaseSuccessPage'); 
     } else {
       console.log('Payment failed');
     }
@@ -86,6 +88,30 @@ const CheckoutForm = ({ navigation, route }) => {
       }
     } catch (error) {
       console.error('Network error:', error);
+    }
+  };
+
+  /**
+   * Sends the payment splits to the backend for processing, where the payments will be split and transferred to the relevant parties on Stripe.
+   * @param {Array} stripePayingSplits - The array of stripe paying splits.
+   * @returns {Promise} - A promise that resolves when the transfers are processed.
+   */
+  const processTransfers = async (stripePayingSplits) => {
+    try {
+      const response = await fetch(`http://localhost:4000/payment/transferPayments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          stripePayingSplits: stripePayingSplits,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log('Transfers processed:', data);
+    } catch (error) {
+      console.error('Error processing transfers:', error);
     }
   };
 

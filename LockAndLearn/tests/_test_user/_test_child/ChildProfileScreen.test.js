@@ -52,6 +52,15 @@ describe('Child Profile Screen test', () => {
     expect(deleteProfileButton).toBeTruthy();
   });
 
+  it('Attempts to start a session', () => {
+    const { getByTestId } = render(
+      <ChildProfileScreen navigation={mockNavigation} route={mockRoute} />
+    );
+    const startSessionButton = getByTestId('start-session');
+    fireEvent.press(startSessionButton);
+    expect(mockNavigation.navigate).toBeCalledWith("Locking", {"child_ID": "child123"});
+  });
+
   it('Attempts to edit a child profile', () => {
     const { getByTestId } = render(
       <ChildProfileScreen navigation={mockNavigation} route={mockRoute} />

@@ -12,8 +12,10 @@ import { getItem } from '../../../components/AsyncStorage';
 
 const Payment = ({ navigation, route }) => {
     const { totalPrice } = route.params || {};
+    const { workPackages } = route.params || {};
     const [stripePromise, setStripePromise] = useState(null);
     const [clientSecret, setClientSecret] = useState("");
+    const [stripePayingSplits, setStripePayingSplits] = useState([]);
 
 
     useEffect(() => {
@@ -37,11 +39,14 @@ const Payment = ({ navigation, route }) => {
                     },
                     body: JSON.stringify({
                         totalPrice: totalPrice,
+                        workPackagesInCart: workPackages,
                     }),
                 });
-                const { clientSecret } = await orderResponse.json();
+                const { clientSecret, stripePayingSplits } = await orderResponse.json();
                 console.log("Received CS:", clientSecret);
+                console.log('**Received paying splits: ', stripePayingSplits);
                 setClientSecret(clientSecret);
+                setStripePayingSplits(stripePayingSplits);
                 console.log("Client Secret set.");
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -49,7 +54,7 @@ const Payment = ({ navigation, route }) => {
         };
 
         fetchData(); // Execute the combined fetch logic
-    }, [totalPrice, setStripePromise, setClientSecret]);
+    }, [totalPrice, setStripePromise, setClientSecret, setStripePayingSplits]);
 
 
 
@@ -66,7 +71,7 @@ const Payment = ({ navigation, route }) => {
                     <View style={styles.cardContainer}>
                         {/* Add a container around the Stripe elements */}
                         <Elements testID="stripe-elements-container" stripe={stripePromise} options={{ clientSecret }}>
-                            <CheckoutForm />
+                            <CheckoutForm stripePayingSplits={stripePayingSplits} />
                         </Elements>
                     </View>
                 )}

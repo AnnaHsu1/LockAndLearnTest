@@ -60,7 +60,10 @@ import DisplayStudyMaterial from '../screens/StudyMaterial/DisplayStudyMaterial'
 import WorkPackagePreview from '../screens/WorkPackage/Preview/WorkPackagePreview';
 import PackagePreview from '../screens/WorkPackage/Preview/PackagePreview';
 import ChildTimeframes from '../screens/User/Child/ChildTimeframes';
-
+import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfile';
+import SuspendedUser from '../screens/User/SuspendedUser';
+import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
+import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
 
 const Stack = createNativeStackNavigator();
 
@@ -118,6 +121,11 @@ const StackNavigation = () => {
         <Stack.Screen
           name="StudyMaterial"
           component={StudyMaterial}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TutorImageUpload"
+          component={TutorImageUploadScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -308,6 +316,11 @@ const StackNavigation = () => {
           name="WorkPackageBrowsing"
           component={WorkPackageBrowsing}
           options={{ title: 'Work Package Browsing' }}
+              />
+        <Stack.Screen
+            name="FinanceInstructor"
+            component={FinanceInstructor}
+            options={{ title: 'Finance Instructor' }}
         />
         <Stack.Screen
           name="WorkPackageCart"
@@ -373,19 +386,29 @@ const StackNavigation = () => {
           options={{ title: 'CheckoutForm' }}
         />
         <Stack.Screen
-            name="WorkPackagePreview"
-            component={WorkPackagePreview}
-            options={{ title: 'WorkPackagePreview' }}
+          name="WorkPackagePreview"
+          component={WorkPackagePreview}
+          options={{ title: 'WorkPackagePreview' }}
         />
         <Stack.Screen
-            name="PackagePreview"
-            component={PackagePreview}
-            options={{ title: 'PackagePreview' }}
+          name="PackagePreview"
+          component={PackagePreview}
+          options={{ title: 'PackagePreview' }}
         />
         <Stack.Screen
           name="ChildTimeframes"
           component={ChildTimeframes}
           options={{ title: `List Child's Timeframes` }}
+        />
+        <Stack.Screen
+          name="AdminViewTeacherProfile"
+          component={AdminViewTeacherProfile}
+          options={{ title: `AdminViewTeacherProfile` }}
+        />
+        <Stack.Screen
+          name="SuspendedUser"
+          component={SuspendedUser}
+          options={{ title: `SuspendedUser` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
