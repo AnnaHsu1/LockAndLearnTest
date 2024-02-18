@@ -243,4 +243,13 @@ router.put('/uploadImages/:userId', uploadCertificates.array('pictures', 2), asy
   }
 });
 
+// download upload tutor's pictures
+router.get('/uploadImages/:filename', async (req, res) => {
+  const requestImageName = req.params.filename;
+  const conn = mongoose.connection;
+  const bucket = new GridFSBucket(conn.db, { bucketName: 'UploadCertificates' });
+  const downloadStream = bucket.openDownloadStreamByName(requestImageName);
+  downloadStream.pipe(res);
+});
+
 module.exports = router;
