@@ -50,6 +50,7 @@ router.put(
   async (req, res) => {
     const certificates = req.files;
     const userId = req.body.userId;
+    const status = req.body.status;
     const fullName = req.body.fullName;
     const highestDegree = req.body.highestDegree;
     const conn = mongoose.connection;
@@ -67,7 +68,7 @@ router.put(
         });
       }
       const uploadStream = bucket.openUploadStream(certificate.originalname, {
-        metadata: { userId, filename: certificate.originalname, fullName, highestDegree },
+        metadata: { userId, filename: certificate.originalname, status, fullName, highestDegree },
       });
       uploadStream.on('error', (error) => {
         console.log('Error uploading certificate:', error);

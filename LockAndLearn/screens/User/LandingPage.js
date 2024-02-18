@@ -174,6 +174,7 @@ const LandingPage = ({ navigation }) => {
     }
     const fileData = new FormData();
     fileData.append('userId', userId);
+    fileData.append('status', certificateStatus);
     files.forEach((file) => {
       fileData.append('certificates', file);
     });
