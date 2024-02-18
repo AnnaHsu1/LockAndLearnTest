@@ -144,10 +144,6 @@ const AdminCertificates = () => {
           {certificates.length > 0 ? (
             certificates.map((file, index) => (
               <View key={index} style={styles.fileContainer}>
-                {/* <TouchableOpacity
-                  testID={`certificateContainerTest-${index}`}
-                  onPress={() => downloadCertificate(file.filename)}
-                > */}
                 <TouchableOpacity
                   testID={`certificateContainerTest-${index}`}
                   style={styles.fileName}
@@ -155,35 +151,51 @@ const AdminCertificates = () => {
                 >
                   {file.filename}
                 </TouchableOpacity>
-                <Text style={styles.fileDetail}>Certificate ID: {file._id}</Text>
-                <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
-                {file.metadata && file.metadata.userId && (
-                  <Text style={styles.fileDetail}>Tutor ID: {file.metadata.userId}</Text>
-                )}
-                {file.metadata && file.metadata.fullName && (
-                  <Text style={styles.fileDetail}>Name: {file.metadata.fullName}</Text>
-                )}
-                {file.metadata && file.metadata.highestDegree && (
-                  <Text style={styles.fileDetail}>
-                    Highest Degree: {file.metadata.highestDegree}
-                  </Text>
-                )}
-                {file.metadata && file.metadata.verificationImages && (
-                  <Text style={styles.fileDetail}>
-                    Images:
-                    {file.metadata.verificationImages.map((file) => (
-                      <TouchableOpacity onPress={() => downloadTutorImage(file.filename)}>
-                        {file.filename}
-                      </TouchableOpacity>
-                    ))}
-                  </Text>
-                )}
                 {file.metadata && file.metadata.status && (
                   <Text style={styles.fileStatusDetail}>
                     Status: <Text style={styles.statusText}>{file.metadata.status}</Text>
                   </Text>
                 )}
-                {/* </TouchableOpacity> */}
+                {file.metadata && file.metadata.fullName && (
+                  <Text style={styles.fileStatusDetail}>
+                    Name: <Text style={styles.fileDetail}>{file.metadata.fullName}</Text>
+                  </Text>
+                )}
+                {file.metadata && file.metadata.highestDegree && (
+                  <Text style={styles.fileStatusDetail}>
+                    Highest Degree:{' '}
+                    <Text style={styles.fileDetail}>{file.metadata.highestDegree}</Text>
+                  </Text>
+                )}
+                {file.metadata && file.metadata.verificationQuestion && (
+                  <Text style={styles.fileStatusDetail}>
+                    First Verification Question:{' '}
+                    <Text style={styles.fileDetail}>{file.metadata.verificationQuestion}</Text>
+                  </Text>
+                )}
+                {file.metadata && file.metadata.randomQuestion && (
+                  <Text style={styles.fileStatusDetail}>
+                    Second Verification Question:{' '}
+                    <Text style={styles.fileDetail}>{file.metadata.randomQuestion}</Text>
+                  </Text>
+                )}
+                {file.metadata && file.metadata.verificationImages && (
+                  <Text style={styles.fileStatusDetail}>
+                    <View>
+                      {file.metadata.verificationImages.map((file, index) => (
+                        <Text>
+                          Image {index + 1}:{' '}
+                          <TouchableOpacity
+                            style={styles.imageText}
+                            onPress={() => downloadTutorImage(file.filename)}
+                          >
+                            {file.filename}
+                          </TouchableOpacity>
+                        </Text>
+                      ))}
+                    </View>
+                  </Text>
+                )}
                 <View style={styles.divider}></View>
                 <View style={styles.buttons}>
                   <TouchableOpacity
@@ -335,6 +347,7 @@ const useStyles = CreateResponsiveStyle(
     fileDetail: {
       color: 'grey',
       fontSize: 14,
+      fontWeight: 'normal',
     },
     fileStatusDetail: {
       color: 'grey',
@@ -344,6 +357,9 @@ const useStyles = CreateResponsiveStyle(
     statusText: {
       color: 'blue',
       fontStyle: 'italic',
+    },
+    imageText: {
+      color: '#4F85FF',
     },
     divider: {
       borderBottomWidth: 1,
