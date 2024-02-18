@@ -80,7 +80,7 @@ const LoginScreen = ({ navigation }) => {
 
   const sendLoginData = async (loginData) => {
     try {
-      console.log('loginData:', loginData);
+      // console.log('loginData:', loginData);
       const response = await fetch(
         'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userLogin',
         {
@@ -104,7 +104,7 @@ const LoginScreen = ({ navigation }) => {
             navigation.navigate('SuspendedUser');
           } else {
             // If the user is not suspended, proceed with regular navigation
-            console.log('User successfully logged in!', user);
+            // console.log('User successfully logged in!', user);
             setDisplayMsg(
               'Credentials are valid, welcome back' +
                 ' ' +
