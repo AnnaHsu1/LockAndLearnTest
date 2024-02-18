@@ -197,7 +197,7 @@ const LandingPage = ({ navigation }) => {
         }
       }
       setRefresh(true);
-      navigation.navigate('TutorImageUpload')
+      navigation.navigate('TutorImageUpload');
     } catch (error) {
       console.error('An error occurred:', error);
     }
@@ -283,10 +283,6 @@ const LandingPage = ({ navigation }) => {
     );
   };
 
-  const goMainMenu = () => {
-    setStatus('accepted');
-  };
-
   useEffect(() => {
     getUserToken();
   }, []);
@@ -316,13 +312,13 @@ const LandingPage = ({ navigation }) => {
             onPress={() => navigation.navigate('ViewUploads', { newFilesAdded: undefined })}
           >
             <Text style={styles.text}>My files</Text>
-                  </TouchableOpacity>
-        <TouchableOpacity
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.content}
             onPress={() => navigation.navigate('FinanceInstructor')}
-        >
+          >
             <Text style={styles.text}>My finance</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.containerFile}>
@@ -403,9 +399,6 @@ const LandingPage = ({ navigation }) => {
                 <Text style={styles.buttonText}>Next</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => goMainMenu()}>
-              <Text>Go to main menu</Text>
-          </TouchableOpacity>
           </View>
         </View>
       )}
