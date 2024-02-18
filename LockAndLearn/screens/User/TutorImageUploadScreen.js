@@ -149,7 +149,7 @@ const TutorImageUploadScreen = ({ navigation }) => {
           toast.success('Pictures uploaded successfully!');
           setTimeout(() => {
             navigation.navigate('UserLandingPage');
-          }, 2000);
+          });
         } else {
           console.error('Request failed:', response.status, response.statusText);
         }
@@ -234,7 +234,7 @@ const TutorImageUploadScreen = ({ navigation }) => {
           closeOnClick
           theme="dark"
           style={{ marginTop: '70px' }}
-          autoClose={7000}
+          autoClose={2000}
         />
         <Text style={styles.pictureTitle}>
           Please upload two pictures of yourself for authentication purposes
