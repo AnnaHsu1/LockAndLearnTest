@@ -93,6 +93,24 @@ const AdminCertificates = () => {
     }
   };
 
+  // Function to download tutor images
+  const downloadTutorImage = async (imageName) => {
+    const response = await fetch(`http://localhost:4000/certificates/uploadImages/${imageName}`, {
+      method: 'GET',
+    });
+
+    if (response.ok) {
+      const test = await response.blob(); // Convert the response to a blob
+      const url = URL.createObjectURL(test); // Create a URL for the blob
+      const a = document.createElement('a'); // Create anchor element to trigger the download
+      a.href = url;
+      a.download = `${imageName}`;
+      a.click();
+    } else {
+      console.error('Failed to download image: ', response.status);
+    }
+  };
+
   // Function to open the reject modal
   const openRejectModal = (fileId) => {
     setCertificateId(fileId);
@@ -126,30 +144,46 @@ const AdminCertificates = () => {
           {certificates.length > 0 ? (
             certificates.map((file, index) => (
               <View key={index} style={styles.fileContainer}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   testID={`certificateContainerTest-${index}`}
                   onPress={() => downloadCertificate(file.filename)}
+                > */}
+                <TouchableOpacity
+                  testID={`certificateContainerTest-${index}`}
+                  style={styles.fileName}
+                  onPress={() => downloadCertificate(file.filename)}
                 >
-                  <Text style={styles.fileName}>{file.filename}</Text>
-                  <Text style={styles.fileDetail}>Certificate ID: {file._id}</Text>
-                  <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
-                  {file.metadata && file.metadata.userId && (
-                    <Text style={styles.fileDetail}>Tutor ID: {file.metadata.userId}</Text>
-                  )}
-                  {file.metadata && file.metadata.fullName && (
-                    <Text style={styles.fileDetail}>Name: {file.metadata.fullName}</Text>
-                  )}
-                  {file.metadata && file.metadata.highestDegree && (
-                    <Text style={styles.fileDetail}>
-                      Highest Degree: {file.metadata.highestDegree}
-                    </Text>
-                  )}
-                  {file.metadata && file.metadata.status && (
-                    <Text style={styles.fileStatusDetail}>
-                      Status: <Text style={styles.statusText}>{file.metadata.status}</Text>
-                    </Text>
-                  )}
+                  {file.filename}
                 </TouchableOpacity>
+                <Text style={styles.fileDetail}>Certificate ID: {file._id}</Text>
+                <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
+                {file.metadata && file.metadata.userId && (
+                  <Text style={styles.fileDetail}>Tutor ID: {file.metadata.userId}</Text>
+                )}
+                {file.metadata && file.metadata.fullName && (
+                  <Text style={styles.fileDetail}>Name: {file.metadata.fullName}</Text>
+                )}
+                {file.metadata && file.metadata.highestDegree && (
+                  <Text style={styles.fileDetail}>
+                    Highest Degree: {file.metadata.highestDegree}
+                  </Text>
+                )}
+                {file.metadata && file.metadata.verificationImages && (
+                  <Text style={styles.fileDetail}>
+                    Images:
+                    {file.metadata.verificationImages.map((file) => (
+                      <TouchableOpacity onPress={() => downloadTutorImage(file.filename)}>
+                        {file.filename}
+                      </TouchableOpacity>
+                    ))}
+                  </Text>
+                )}
+                {file.metadata && file.metadata.status && (
+                  <Text style={styles.fileStatusDetail}>
+                    Status: <Text style={styles.statusText}>{file.metadata.status}</Text>
+                  </Text>
+                )}
+                {/* </TouchableOpacity> */}
                 <View style={styles.divider}></View>
                 <View style={styles.buttons}>
                   <TouchableOpacity
