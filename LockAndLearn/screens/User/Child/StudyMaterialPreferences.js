@@ -20,6 +20,10 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
     fetchSubcategories();
   }, []);
 
+  useEffect(() => {
+    showCheckedSubjects();
+  }, [subcategories]);
+
   //fetching all the subcategories
   const fetchSubcategories = async () => {
     try {
@@ -33,6 +37,14 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
     } catch (error) {
       console.error('Error fetching subcategories:', error);
     }
+  };
+
+  const showCheckedSubjects = () => {
+    const selectedPreferences = {};
+    subcategories.forEach((item) => {
+      selectedPreferences[item._id] = childInfo.preferences.includes(item.name);
+    });
+    setCheckedboxItems(selectedPreferences);
   };
 
   const [checkedboxItems, setCheckedboxItems] = useState({});
