@@ -2,6 +2,7 @@ const express = require('express');
 const { parseISO, isBefore, differenceInYears, startOfDay } = require('date-fns');
 const bcrypt = require('bcrypt');
 const User = require('../schema/userSchema.js');
+const contact = require('../schema/contactUsSchema.js');
 const { createUser, getUserByEmail } = require('../manager/userManager.js');
 const router = express.Router();
 
@@ -328,6 +329,39 @@ router.put('/suspendUser/:id', async (req, res) => {
     console.error('Error suspending user:', error);
     res.status(500).json({ error: 'An error occurred while suspending the user.' });
   }
+});
+
+
+router.post('/createContactUs', async (req, res) => {
+    const userId = req.body.userID;
+    const email = req.body.email;
+    const name = req.body.name;
+    const subject = req.body.subject;
+    const message = req.body.message;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Call the createUser function to create a new user
+        const contact = await createUser({
+            email,
+            name,
+            subject,
+            message,
+            userID: userId,
+        });
+
+        await contact.save();
+
+        res.status(200).json({ message: 'contact us inquiry create successfully', user: user });
+    } catch (error) {
+        console.error('Error creating contact us inquiry:', error);
+        res.status(500).json({ error: 'An error occurred while creating contact us inquiry.' });
+    }
 });
 
 
