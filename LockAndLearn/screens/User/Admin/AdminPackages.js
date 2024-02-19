@@ -5,8 +5,6 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 const AdminPackages = ({ route, navigation }) => {
   const styles = useStyles();
   const [packages, setPackages] = useState([]);
-  const [instructors, setInstructors] = useState({});
-  const [quizzes, setQuizzes] = useState({});
   const [selectedWorkPackage, setSelectedWorkPackage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [password, setPassword] = useState('');
@@ -29,24 +27,6 @@ const AdminPackages = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Error fetching work packages:', error);
-    }
-  };
-
-  // to be deleted if not used
-  const fetchQuizById = async (quizId) => {
-    try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setQuizzes((prevQuizzes) => ({ ...prevQuizzes, [quizId]: data }));
-        return data;
-      } else {
-        console.error(`Failed to fetch quiz for ID ${quizId}:`, response.status);
-        return null;
-      }
-    } catch (error) {
-      console.error(`Error fetching quiz for ID ${quizId}:`, error);
-      return null;
     }
   };
 
@@ -120,10 +100,7 @@ const AdminPackages = ({ route, navigation }) => {
           {packages.length > 0 ? (
             packages.map((packageInfo, index) => (
               <View key={index} style={styles.workPackageContainer}>
-
-                <Text style={styles.workPackageTitle}>
-                  {packageInfo.subcategory}
-                </Text>
+                <Text style={styles.workPackageTitle}>{packageInfo.subcategory}</Text>
 
                 <View style={styles.instructorInfoContainer}>
                   <View style={styles.divider}></View>
@@ -153,7 +130,9 @@ const AdminPackages = ({ route, navigation }) => {
                   )}
                 </View>
                 <TouchableOpacity onPress={() => openModal(packageInfo._id)}>
-                  <Text style={styles.deleteButton} testID='delete'>Delete</Text>
+                  <Text style={styles.deleteButton} testID="delete">
+                    Delete
+                  </Text>
                 </TouchableOpacity>
               </View>
             ))
