@@ -21,7 +21,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('http://localhost:4000/users/allUsers');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/allUsers');
       if (response.ok) {
         const data = await response.json();
         // Filter out the admin account
