@@ -67,24 +67,26 @@ const CreatePackage = ({ route }) => {
       const user = JSON.parse(token);
       const userId = user._id;
       if (userId) {
-        const response = await fetch('http://localhost:4000/packages/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            workPackageID: _id,
-            subcategory: selectedSubcategory,
-            instructorID: userId,
-            description: packageDescription,
-          }),
+        const response = await fetch(
+          'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createPackage',
+          { 
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              workPackageID: _id,
+              subcategory: selectedSubcategory,
+              instructorID: userId,
+              description: packageDescription,
+            }),
         });
         if (response.status === 200 || 201) {
           const data = await response.json();
           if (buttonPressed === 'addMaterial') {
             navigation.navigate('SelectStudyMaterialToAdd', {
               package: {
-                p_id: data._id,
+                p_id: data.insertedId,
                 p_quizzes: [],
                 p_materials: [],
                 subcategory: selectedSubcategory,
@@ -100,7 +102,7 @@ const CreatePackage = ({ route }) => {
           } else if (buttonPressed === 'addQuiz') {
             navigation.navigate('SelectQuizToAdd', {
               package: {
-                p_id: data._id,
+                p_id: data.insertedId,
                 p_quizzes: [],
                 p_materials: [],
                 subcategory: selectedSubcategory,
@@ -125,6 +127,7 @@ const CreatePackage = ({ route }) => {
       }
     } catch (error) {
       console.error('Network error');
+      console.log(error);
     }
   };
 
