@@ -11,22 +11,34 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
 
   const getWorkPackages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/workPackages/getWorkPackages/' + userId, {
+      // Construct the new URL with the userId as a query parameter if needed
+      // Adjust this URL to match the expected endpoint format
+      const url = `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getWorkPackagesByInstructorId?instructorID=${userId}`;
+  
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          // Add any required headers for authentication if your API requires them
         },
       });
+  
       let data = await response.json();
+  
       if (response.status === 200) {
-        // // if tutor deleted workpackage, don't display it
+        // Assuming the new API also returns data that may include a 'deletedByTutor' field
+        // If the response structure is different, adjust this accordingly
         data = data.filter((workpackage) => !workpackage.deletedByTutor);
         setWorkPackages(data);
+      } else {
+        // Handle non-200 responses if needed
+        console.error('Failed to fetch work packages:', data.message || 'Unknown error');
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error fetching work packages:', error);
     }
   };
+  
 
   const getGradeSuffix = (grade) => {
     if (grade >= 11 && grade <= 13) {
