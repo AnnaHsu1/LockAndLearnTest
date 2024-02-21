@@ -200,7 +200,7 @@ const EditPackage = () => {
 
   const saveChanges = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/update/${p_id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updatePackage?id=${p_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
