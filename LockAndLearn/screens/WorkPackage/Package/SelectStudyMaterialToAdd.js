@@ -50,10 +50,10 @@ const SelectStudyMaterialToAdd = () => {
     setDataFile(formattedFiles);
 
     // set checked (true) to checkboxes that are already selected in the package 
-    const materialsInDb = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchMaterials?id=${p_id}`, {
+    const materialsInDb = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchPackageMaterials?id=${p_id}`, {
       method: 'GET',
     });
-    
+
     if (materialsInDb.status === 200 || materialsInDb.status === 201) {
       const selectedFiles = await materialsInDb.json();
       const checkedboxItems = {};
@@ -119,7 +119,6 @@ const SelectStudyMaterialToAdd = () => {
       );
       if (response.status === 200) {
         const files = await response.json();
-        console.log('Files added to the work package:', files);
         navigation.navigate('EditPackage', { 
           package: {
             p_id: p_id,
