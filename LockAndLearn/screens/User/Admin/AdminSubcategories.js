@@ -57,7 +57,7 @@ const AdminSubcategories = ({ navigation }) => {
       if (response.ok) {
         // Admin password check successful, proceed with subcategory deletion
         const responseDelete = await fetch(
-          `http://localhost:4000/subcategories/delete/${selectedSubcategory}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteSelectedSubcategory?subcategoryId=${selectedSubcategory}`,
           {
             method: 'DELETE',
           }
