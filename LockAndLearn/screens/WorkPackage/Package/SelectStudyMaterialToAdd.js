@@ -99,7 +99,7 @@ const SelectStudyMaterialToAdd = () => {
         .filter(([key, value]) => value)
         .map(([key, value]) => dataFile.find(file => file.id === parseInt(key)).originalId);
       const response = await fetch(
-        `http://localhost:4000/packages/addContent/${p_id}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addContentPackage?id=${p_id}`, 
         {
           method: 'PUT',
           headers: {
@@ -113,6 +113,7 @@ const SelectStudyMaterialToAdd = () => {
       );
       if (response.status === 200) {
         const files = await response.json();
+        console.log('Files added to the work package:', files);
         navigation.navigate('EditPackage', { 
           package: {
             p_id: p_id,

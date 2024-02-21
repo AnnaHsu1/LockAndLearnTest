@@ -63,7 +63,7 @@ const SelectQuizToAdd = () => {
   // Function to add selected quizzes to the work package
   const addQuizzesToWorkPackage = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/addContent/${p_id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addContentPackage?id=${p_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
