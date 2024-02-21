@@ -185,7 +185,7 @@ const SignupScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     if (validateInputs() == false) return;
     else {
-      console.log('fdata:', fdata);
+      // console.log('fdata:', fdata);
       // Ensure that the first name and last name start with a capital letter
       const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -220,12 +220,12 @@ const SignupScreen = ({ navigation }) => {
         const data = await response.json();
         if (response.status === 201) {
           // User created successfully
-          console.log('User created successfully in database!', data);
+          // console.log('User created successfully in database!', data);
           await setUserTokenWithExpiry('@token', data.user);
           //Add redirect
           {
             data?.isParent
-              ? navigation.navigate('ParentAccount')
+              ? navigation.navigate('ParentHomeScreen')
               : navigation.navigate('UserLandingPage');
           }
         } else {

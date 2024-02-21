@@ -143,22 +143,6 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Handle user logout
-router.post('/logout', async (req, res) => {
-  try {
-    // Delete session from the DB // DOESN'T WORK
-    req.session.destroy();
-
-    // Clear the user's cookie
-    res.clearCookie('userSession', { httpOnly: true });
-
-    res.status(201).json({ msg: 'Logout successful.' });
-  } catch (error) {
-    console.error('Error logging out user:', error);
-    res.status(500).json({ error: 'Unable to logout' });
-  }
-});
-
 // Fetch all users
 router.get('/allUsers', async (req, res) => {
   try {
@@ -250,56 +234,56 @@ router.delete('/deleteUser/:id', async (req, res) => {
   }
 });
 
-router.post('/createPIN/:id', async (req, res) => {
-  const userId = req.params.id;
-  const pin = req.body.pin;
+// router.post('/createPIN/:id', async (req, res) => {
+//   const userId = req.params.id;
+//   const pin = req.body.pin;
 
-  try {
-    const user = await User.findById(userId);
+//   try {
+//     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
 
-    //Encrypt the input password
-    const salt = await bcrypt.genSalt();
-    const pinEncrypted = await bcrypt.hash(pin, salt);
-    console.log(pinEncrypted);
+//     //Encrypt the input password
+//     const salt = await bcrypt.genSalt();
+//     const pinEncrypted = await bcrypt.hash(pin, salt);
+//     console.log(pinEncrypted);
 
-    user.parentalAccessPIN = pinEncrypted;
+//     user.parentalAccessPIN = pinEncrypted;
 
-    await user.save();
+//     await user.save();
 
-    res.status(200).json({ message: 'PIN created successfully', user: user });
-  } catch (error) {
-    console.error('Error creating PIN:', error);
-    res.status(500).json({ error: 'An error occurred while creating the PIN.' });
-  }
-});
+//     res.status(200).json({ message: 'PIN created successfully', user: user });
+//   } catch (error) {
+//     console.error('Error creating PIN:', error);
+//     res.status(500).json({ error: 'An error occurred while creating the PIN.' });
+//   }
+// });
 
-router.post('/getPIN/:id', async (req, res) => {
-  const userId = req.params.id;
-  const pin = req.body.pin;
-  console.log(pin);
-  try {
-    const user = await User.findById(userId);
+// router.post('/getPIN/:id', async (req, res) => {
+//   const userId = req.params.id;
+//   const pin = req.body.pin;
+//   console.log(pin);
+//   try {
+//     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
 
-    // Password check with the input using bcrypt
-    const isMatch = await bcrypt.compare(pin, user.parentalAccessPIN);
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid PIN.' });
-    }
+//     // Password check with the input using bcrypt
+//     const isMatch = await bcrypt.compare(pin, user.parentalAccessPIN);
+//     if (!isMatch) {
+//       return res.status(400).json({ msg: 'Invalid PIN.' });
+//     }
 
-    res.status(200).json({ message: 'PIN retrieved successfully', user: user });
-  } catch (error) {
-    console.error('Error getting PIN:', error);
-    res.status(500).json({ error: 'An error occurred while getting the PIN.' });
-  }
-});
+//     res.status(200).json({ message: 'PIN retrieved successfully', user: user });
+//   } catch (error) {
+//     console.error('Error getting PIN:', error);
+//     res.status(500).json({ error: 'An error occurred while getting the PIN.' });
+//   }
+// });
 
 // Suspend user by ID
 router.put('/suspendUser/:id', async (req, res) => {
@@ -329,6 +313,5 @@ router.put('/suspendUser/:id', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while suspending the user.' });
   }
 });
-
 
 module.exports = router;
