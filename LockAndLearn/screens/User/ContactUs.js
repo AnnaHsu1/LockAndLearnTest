@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     ImageBackground,
     StyleSheet,
     Text,
     View,
     TouchableOpacity,
-    Image
+    Image,
+    TextInput
 } from 'react-native';
-
+import { getItem } from '../../components/AsyncStorage';
 
 const ContactUs = ({ navigation, route }) => {
     const [fdata, setFdata] = useState({
@@ -16,6 +17,8 @@ const ContactUs = ({ navigation, route }) => {
         subject: '',
         message: '',
     });
+    const [errors, setErrors] = useState('');
+
     const handleSubmit = async () => {
         const token = await getItem('@token');
         const user = JSON.parse(token);
@@ -28,21 +31,26 @@ const ContactUs = ({ navigation, route }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ fdata, userID: userId, }), // Send user data as JSON
+                body: JSON.stringify({
+                    ...fdata, 
+                    userID: userId, 
+                }),
             });
             const data = await response.json();
             // console.log(response.status);
-            if (response.status === 201) {
+            if (response.status === 200) {
+                setErrors('');
                 // User created successfully
-                console.log('User created successfully in database!', data);
-                await setUserTokenWithExpiry('@token', data.user);
+                console.log('Inquiry created successfully in database!', data);
                 //Add redirect
                 {
                     data?.user.isParent
                         ? navigation.navigate('ParentAccount')
                         : navigation.navigate('UserLandingPage');
                 }
-            }
+            } else {
+            setErrors(data.msg);
+        }
         } catch (error) {
             console.error('Submitting error when creating user:', error);
         }
@@ -55,7 +63,16 @@ const ContactUs = ({ navigation, route }) => {
         >
             <View style={styles.container}>
                 <Text style={styles.title}>Contact Us</Text>
+                <Text style={styles.titleDescription}>Need to get in touch with us? Please fill out the form with your inquiry or contact us directly at admin@lockandlearn.ca</Text>
+                {errors ? <Text style={[styles.box, styles.full_width]}>{errors}</Text> : null}
                 <View style={styles.item}>
+                    <Text style={styles.field}>Name</Text>
+                    <TextInput
+                        testID="email-input"
+                        style={[styles.textbox, styles.full_width]}
+                        value={fdata.name}
+                        onChangeText={(newText) => setFdata({ ...fdata, name: newText })}
+                    />
                     <Text style={styles.field}>Email</Text>
                     <TextInput
                         testID="email-input"
@@ -63,8 +80,30 @@ const ContactUs = ({ navigation, route }) => {
                         value={fdata.email}
                         onChangeText={(newText) => setFdata({ ...fdata, email: newText })}
                     />
+                    <Text style={styles.field}>Subject</Text>
+                    <TextInput
+                        testID="email-input"
+                        style={[styles.textbox, styles.full_width]}
+                        value={fdata.subject}
+                        onChangeText={(newText) => setFdata({ ...fdata, subject: newText })}
+                    />
+                    <Text style={styles.field}>Message</Text>
+                    <TextInput
+                        testID="email-input"
+                        multiline={true}
+                        style={[styles.textbox, styles.full_width, styles.MessageInputText]}
+                        value={fdata.message}
+                        onChangeText={(newText) => setFdata({ ...fdata, message: newText })}
+                    />
                 </View>
-               
+                <TouchableOpacity
+                    style={styles.buttonSend}
+                    onPress={() => {
+                        handleSubmit();
+                    }}
+                >
+                    <Text style={styles.textSend}>Send</Text>
+                </TouchableOpacity>
             </View>
 
         </ImageBackground>
@@ -93,15 +132,22 @@ const styles = StyleSheet.create({
         color: '#4F85FF',
         fontSize: 24,
         textAlign: 'center',
+        paddingBottom: 15,
+    },
+    titleDescription: {
+        color: '#696969',
+        fontSize: 16,
+        textAlign: 'center',
         paddingBottom: 20,
     },
     item: {
         display: 'flex',
-        width: '100%',
+        width: '50%',
         paddingVertical: 10,
     },
     field: {
         color: '#ADADAD',
+        marginTop: '1%',
     },
     textbox: {
         display: 'flex',
@@ -121,7 +167,26 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     full_width: {
-        minWidth: '100%',
+        minWidth: '50%',
+    },
+    MessageInputText: {
+        height: 200,
+    },
+    buttonSend: {
+        width: 190,
+        height: 35,
+        backgroundColor: '#407BFF',
+        borderRadius: 9,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '2%',
+        marginBottom: '2%'
+    },
+    textSend: {
+        color: '#FFFFFF',
+        alignItems: 'center',
+        fontSize: 15,
+        fontWeight: '500'
     },
 });
 

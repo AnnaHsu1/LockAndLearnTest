@@ -3,7 +3,7 @@ const { parseISO, isBefore, differenceInYears, startOfDay } = require('date-fns'
 const bcrypt = require('bcrypt');
 const User = require('../schema/userSchema.js');
 const contact = require('../schema/contactUsSchema.js');
-const { createUser, getUserByEmail } = require('../manager/userManager.js');
+const { createUser, getUserByEmail, createContact } = require('../manager/userManager.js');
 const router = express.Router();
 
 //Handle user sign in
@@ -340,14 +340,18 @@ router.post('/createContactUs', async (req, res) => {
     const message = req.body.message;
 
     try {
-        const user = await User.findById(userId);
+        // Input validations
+        if (!name || !email || !subject || !message) {
+            return res.status(400).json({ msg: 'All fields must be filled.' });
+        }
 
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
         // Call the createUser function to create a new user
-        const contact = await createUser({
+        const contact = await createContact({
             email,
             name,
             subject,
@@ -355,6 +359,7 @@ router.post('/createContactUs', async (req, res) => {
             userID: userId,
         });
 
+        console.log("prepare to save");
         await contact.save();
 
         res.status(200).json({ message: 'contact us inquiry create successfully', user: user });
