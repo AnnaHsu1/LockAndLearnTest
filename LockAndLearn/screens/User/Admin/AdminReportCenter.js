@@ -82,7 +82,7 @@ const AdminReportCenter = ({ route, navigation }) => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getUserByid?userId=${userId}`);
       if (response.status === 200) {
         const instructor = await response.json();
         return instructor;
