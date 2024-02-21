@@ -25,9 +25,16 @@ const ChildProfileScreen = ({ route, navigation }) => {
   // API request to delete child
   const deleteChild = async () => {
     try {
-      const response = await fetch('http://localhost:4000/child/deletechild/' + child._id, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteChild',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ childId: child._id }),
+        }
+      );
       if (response.status === 200) {
         navigation.navigate('ParentAccount', {
           updatedChildren: null,
@@ -64,7 +71,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
             testID="start-session"
             mode="contained"
             onPress={() => {
-              navigation.navigate('Locking',{ child_ID: child._id });
+              navigation.navigate('Locking', { child_ID: child._id });
             }}
             style={[styles.button, styles.full_width]}
           >

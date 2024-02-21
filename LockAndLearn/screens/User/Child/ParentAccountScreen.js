@@ -30,10 +30,16 @@ const ParentAccountScreen = ({ navigation }) => {
       const token = await getItem('@token');
       if (token) {
         const user = JSON.parse(token);
-        const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
-        });
+        const response = await fetch(
+          'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getChildren',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: user._id }),
+          }
+        );
         const data = await response.json();
 
         setUser(user);

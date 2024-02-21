@@ -15,102 +15,102 @@ const express = require('express');
 const router = express.Router();
 
 // Handle child creation
-router.post('/addchild', async (req, res) => {
-  try {
-    // Extract user data from the request body
-    // console.log(req.body);
-    const { FirstName, LastName, Grade, PassingGrade, ParentId, Preferences } = req.body;
-    // console.log(FirstName, LastName, Grade, PassingGrade, ParentId, Preferences);
+// router.post('/addchild', async (req, res) => {
+//   try {
+//     // Extract user data from the request body
+//     // console.log(req.body);
+//     const { FirstName, LastName, Grade, PassingGrade, ParentId, Preferences } = req.body;
+//     // console.log(FirstName, LastName, Grade, PassingGrade, ParentId, Preferences);
 
-    // Input validations
-    if (!FirstName || !LastName || !Grade || !ParentId) {
-      return res.status(400).json({ msg: 'All fields must be filled.' });
-    }
+//     // Input validations
+//     if (!FirstName || !LastName || !Grade || !ParentId) {
+//       return res.status(400).json({ msg: 'All fields must be filled.' });
+//     }
 
-    if (Grade < 1 || Grade > 13) {
-      return res.status(400).json({ msg: 'Grade must be between 1 and 12.' });
-    }
+//     if (Grade < 1 || Grade > 13) {
+//       return res.status(400).json({ msg: 'Grade must be between 1 and 12.' });
+//     }
 
-    if (!FirstName.match(/^[a-zA-Z]+$/) && !LastName.match(/^[a-zA-Z]+$/)) {
-      return res.status(400).json({ msg: 'First and last name must only contain letters.' });
-    }
+//     if (!FirstName.match(/^[a-zA-Z]+$/) && !LastName.match(/^[a-zA-Z]+$/)) {
+//       return res.status(400).json({ msg: 'First and last name must only contain letters.' });
+//     }
 
-    // Call the createUser function to create a new user
-    const child = await createChild({
-      FirstName,
-      LastName,
-      Grade,
-      PassingGrade,
-      ParentId,
-      Preferences,
-    });
+//     // Call the createUser function to create a new user
+//     const child = await createChild({
+//       FirstName,
+//       LastName,
+//       Grade,
+//       PassingGrade,
+//       ParentId,
+//       Preferences,
+//     });
 
-    // Respond with the newly created user
-    res.status(201).json({ message: 'Successfully added child' });
-  } catch (error) {
-    // Handle errors if createUser function fails
-    console.error('Error adding child:', error);
-    res.status(500).json({ error: 'Unable to add child' });
-  }
-});
+//     // Respond with the newly created user
+//     res.status(201).json({ message: 'Successfully added child' });
+//   } catch (error) {
+//     // Handle errors if createUser function fails
+//     console.error('Error adding child:', error);
+//     res.status(500).json({ error: 'Unable to add child' });
+//   }
+// });
 
-// Handle child retrieval
-router.get('/getchildren/:id', async (req, res) => {
-  try {
-    const children = await getChildrenByParentId(req.params.id);
-    res.status(200).json(children);
-  } catch (error) {
-    console.error('Error getting children:', error);
-    res.status(500).json({ error: 'Unable to get children' });
-  }
-});
+// // Handle child retrieval
+// router.get('/getchildren/:id', async (req, res) => {
+//   try {
+//     const children = await getChildrenByParentId(req.params.id);
+//     res.status(200).json(children);
+//   } catch (error) {
+//     console.error('Error getting children:', error);
+//     res.status(500).json({ error: 'Unable to get children' });
+//   }
+// });
 
 // Handle child update
-router.put('/updatechild/:id', async (req, res) => {
-  try {
-    const childId = req.params.id;
-    const { FirstName, LastName, Grade, PassingGrade, ParentId, Preferences } = req.body;
+// router.put('/updatechild/:id', async (req, res) => {
+//   try {
+//     const childId = req.params.id;
+//     const { FirstName, LastName, Grade, PassingGrade, ParentId, Preferences } = req.body;
 
-    if (!FirstName || !LastName || !Grade || !ParentId) {
-      return res.status(400).json({ msg: 'All fields must be filled.' });
-    }
+//     if (!FirstName || !LastName || !Grade || !ParentId) {
+//       return res.status(400).json({ msg: 'All fields must be filled.' });
+//     }
 
-    if (Grade < 1 || Grade > 12 || !/^\d+$/.test(Grade)) {
-      return res.status(400).json({ msg: 'Grade must be a digit between 1 and 12.' });
-    }
+//     if (Grade < 1 || Grade > 12 || !/^\d+$/.test(Grade)) {
+//       return res.status(400).json({ msg: 'Grade must be a digit between 1 and 12.' });
+//     }
 
-    if (!FirstName.match(/^[a-zA-Z]+$/) || !LastName.match(/^[a-zA-Z]+$/)) {
-      return res.status(400).json({ msg: 'First and last name must only contain letters.' });
-    }
+//     if (!FirstName.match(/^[a-zA-Z]+$/) || !LastName.match(/^[a-zA-Z]+$/)) {
+//       return res.status(400).json({ msg: 'First and last name must only contain letters.' });
+//     }
 
-    const child = await updateChild({
-      FirstName,
-      LastName,
-      Grade,
-      PassingGrade,
-      ParentId,
-      _id: childId,
-      Preferences,
-    });
+//     const child = await updateChild({
+//       FirstName,
+//       LastName,
+//       Grade,
+//       PassingGrade,
+//       ParentId,
+//       _id: childId,
+//       Preferences,
+//     });
 
-    res.status(200).json(child);
-  } catch (error) {
-    console.error('Error updating child:', error);
-    res.status(500).json({ error: 'Unable to update child' });
-  }
-});
+//     res.status(200).json(child);
+//   } catch (error) {
+//     console.error('Error updating child:', error);
+//     res.status(500).json({ error: 'Unable to update child' });
+//   }
+// });
 
 // Handle child deletion
-router.delete('/deletechild/:id', async (req, res) => {
-  try {
-    const childId = req.params.id;
-    const child = await deleteChild(childId);
-    res.status(200).json(child);
-  } catch (error) {
-    console.error('Error deleting child:', error);
-    res.status(500).json({ error: 'Unable to delete child' });
-  }
-});
+// router.delete('/deletechild/:id', async (req, res) => {
+//   try {
+//     const childId = req.params.id;
+//     const child = await deleteChild(childId);
+//     res.status(200).json(child);
+//   } catch (error) {
+//     console.error('Error deleting child:', error);
+//     res.status(500).json({ error: 'Unable to delete child' });
+//   }
+// });
 
 // updates/adds subjects passing grade to child collection
 router.put('/updateUserSubjectsPassingGrade/:id', async (req, res) => {
@@ -183,8 +183,7 @@ router.get('/getPackagesInfo/:id', async (req, res) => {
     // when no package found
     if (packageInfo === null) {
       res.status(400).json({ error: 'no package found' });
-    }
-    else {
+    } else {
       res.status(200).json(packageInfo);
     }
   } catch (err) {

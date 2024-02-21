@@ -34,13 +34,23 @@ const EditChildProfileScreen = ({ route, navigation }) => {
 
   // API request to update child
   const editChild = async () => {
-    const response = await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(fdata),
-    });
+    // const response = await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
+    const response = await fetch(
+      'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateChild',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          childId: childInfo._id,
+          FirstName: fdata.FirstName,
+          LastName: fdata.LastName,
+          Grade: fdata.Grade,
+          PassingGrade: fdata.PassingGrade,
+        }),
+      }
+    );
     const data = await response.json();
 
     if (response.status === 200) {
