@@ -27,7 +27,7 @@ const AdminFiles = ({ route, navigation }) => {
 
   const deleteFile = async (fileId) => {
     try {
-      const response = await fetch(`http://localhost:4000/files/deleteUploadFiles/${fileId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteUploadFiles?fileId=${fileId}`, {
         method: 'DELETE',
       });
 
