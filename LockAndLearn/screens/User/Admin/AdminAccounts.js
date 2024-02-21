@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import PropTypes from 'prop-types';
+import { Alert } from 'react-native';
+
 
 const AdminAccount = ({ route, navigation }) => {
   const styles = useStyles();
