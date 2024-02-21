@@ -192,16 +192,16 @@ router.get('/getPackagesInfo/:id', async (req, res) => {
   }
 });
 
-router.get('/getPreferences/:id', async (req, res) => {
-  try {
-    const childId = req.params.id;
-    const preferences = await getPreferences(childId);
-    // console.log('preferences:', preferences);
-    res.status(200).json(preferences);
-  } catch (error) {
-    console.error('Error getting preferences:', error);
-    res.status(500).json({ error: 'Unable to get preferences' });
-  }
-});
+// router.get('/getPreferences/:id', async (req, res) => {
+//   try {
+//     const childId = req.params.id;
+//     const preferences = await getPreferences(childId);
+//     // console.log('preferences:', preferences);
+//     res.status(200).json(preferences);
+//   } catch (error) {
+//     console.error('Error getting preferences:', error);
+//     res.status(500).json({ error: 'Unable to get preferences' });
+//   }
+// });
 
 module.exports = router;

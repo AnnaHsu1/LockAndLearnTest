@@ -65,22 +65,28 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
 
   const savePreferencesHandler = async () => {
     try {
-      const updatedFdata = {
-        ...fdata,
-        Preferences: selectedLabels,
-      };
-      await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedFdata),
-      });
+      const response = await fetch(
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updatePreferences`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            childId: childInfo._id,
+            Preferences: selectedLabels,
+          }),
+        }
+      );
 
-      toast.success('Preferences saved successfully!');
-      setTimeout(() => {
-        navigation.navigate('ParentAccount');
-      }, 1000);
+      if (!response.ok) {
+        throw new Error('Failed to save preferences');
+      } else {
+        toast.success('Preferences saved successfully!');
+        setTimeout(() => {
+          navigation.navigate('ParentAccount');
+        }, 1000);
+      }
     } catch (error) {
       toast.error('Failed to save preferences.');
     }
