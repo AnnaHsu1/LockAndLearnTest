@@ -16,19 +16,29 @@ const AdminCertificates = () => {
   }, []);
 
   // Fetch all pending certificates from the server
-  const fetchAllPendingCertificates = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/certificates/uploadCertificates/pending');
-      if (response.ok) {
-        const data = await response.json();
-        setCertificates(data.uploadedPendingCertificates);
-      } else {
-        console.error('Failed to fetch certificates:', response.status);
+  // Fetch all pending certificates from the server
+const fetchAllPendingCertificates = async () => {
+  try {
+    // Correctly formatted fetch request
+    const url = 'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/uploadCertificates/pending';
+    const response = await fetch(url, {
+      method: 'GET', // Specify the request method if necessary, GET is default
+      headers: {
+        'Content-Type': 'application/json', // Set appropriate headers if required by the endpoint
       }
-    } catch (error) {
-      console.error('Error fetching certificates:', error);
+    });
+
+    if (response.ok) {
+      const data = await response.json(); // Parse the JSON response
+      setCertificates(data.uploadedPendingCertificates); // Use the data as needed
+    } else {
+      console.error('Failed to fetch certificates:', response.status);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+  }
+};
+
 
   // Function to handle accepting a certificate
   const handleAcceptCertificate = async (userId) => {
