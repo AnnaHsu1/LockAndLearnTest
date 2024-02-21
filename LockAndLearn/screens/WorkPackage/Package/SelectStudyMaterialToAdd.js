@@ -50,19 +50,25 @@ const SelectStudyMaterialToAdd = () => {
     setDataFile(formattedFiles);
 
     // set checked (true) to checkboxes that are already selected in the package 
-    const materialsInDb = await fetch(`http://localhost:4000/packages/fetchMaterials/${p_id}`, {
+    const materialsInDb = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchMaterials?id=${p_id}`, {
       method: 'GET',
     });
-    const selectedFiles = await materialsInDb.json();
-    const checkedboxItems = {};
-
-    selectedFiles.forEach((material) => {
-      const index = formattedFiles.findIndex((file) => file.originalId === material);
-      if (index !== -1) {
-        checkedboxItems[formattedFiles[index].id] = true;
-      }
-    });
-    setCheckedboxItems(checkedboxItems);
+    
+    if (materialsInDb.status === 200 || materialsInDb.status === 201) {
+      const selectedFiles = await materialsInDb.json();
+      const checkedboxItems = {};
+  
+      selectedFiles.forEach((material) => {
+        const index = formattedFiles.findIndex((file) => file.originalId === material);
+        if (index !== -1) {
+          checkedboxItems[formattedFiles[index].id] = true;
+        }
+      });
+      setCheckedboxItems(checkedboxItems);
+    }
+    else {
+      console.error('Error fetching materials');
+    }
   };
 
   // function to download file
