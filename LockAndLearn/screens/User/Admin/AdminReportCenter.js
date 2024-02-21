@@ -65,7 +65,7 @@ const AdminReportCenter = ({ route, navigation }) => {
   const fetchWorkPackage = async (workPackageId) => {
     try {
       const response = await fetch(
-        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackageById${workPackageId}`
+        `http://localhost:4000/workPackages/fetchWorkPackageById/${workPackageId}`
       );
       if (response.status === 200) {
         const data = await response.json();
