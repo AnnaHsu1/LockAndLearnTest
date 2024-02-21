@@ -61,26 +61,33 @@ const fetchAllPendingCertificates = async () => {
     }
   };
 
-  // Function to handle rejecting a certificate
   const handleRejectCertificate = async (certificateId) => {
-    const response = await fetch(
-      `http://localhost:4000/certificates/rejectCertificate/${certificateId}`,
-      {
-        method: 'PUT',
+    // Updated URL with the new MongoDB Realm endpoint and appending the certificateId as a query parameter
+    const url = `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/rejectCertificate?id=${certificateId}`;
+  
+    try {
+      const response = await fetch(url, {
+        method: 'PUT', // Ensure the method is set to 'PUT' as required by your MongoDB Realm function
+        headers: {
+          'Content-Type': 'application/json', // Set the Content-Type header if needed
+        }
+      });
+  
+      if (response.ok) {
+        // Remove rejected certificate from the list
+        const updatedCertificates = certificates.filter(certificate => certificate._id !== certificateId);
+        setCertificates(updatedCertificates);
+        closeRejectModal();
+      } else {
+        // Log the error status if the request was not successful
+        console.error('Failed to delete certificate:', response.status);
       }
-    );
-
-    if (response.ok) {
-      // Remove rejected certificate from the list
-      const updatedCertificates = certificates.filter(
-        (certificate) => certificate._id !== certificateId
-      );
-      setCertificates(updatedCertificates);
-      closeRejectModal();
-    } else {
-      console.error('Failed to delete certificate:', response.status);
+    } catch (error) {
+      // Catch and log any errors in the fetch operation
+      console.error('Error rejecting certificate:', error);
     }
   };
+  
 
   // Function to download certificate
   const downloadCertificate = async (fileName) => {
