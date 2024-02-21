@@ -67,7 +67,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const suspendUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/suspendUser/${userId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/suspendUser?userId=${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
