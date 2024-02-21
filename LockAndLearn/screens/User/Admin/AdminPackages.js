@@ -18,7 +18,7 @@ const AdminPackages = ({ route, navigation }) => {
 
   const fetchPackages = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchPackagesInfo/${wpID}`);
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchPackagesInfo?id=${wpID}`);
       if (response.ok) {
         const data = await response.json();
         setPackages(data);
@@ -137,7 +137,7 @@ const AdminPackages = ({ route, navigation }) => {
               </View>
             ))
           ) : (
-            <Text style={styles.noWorkPackagesText}>No work packages available</Text>
+            <Text style={styles.noWorkPackagesText}>No packages available</Text>
           )}
         </ScrollView>
         {/* Modal for deletion confirmation */}
