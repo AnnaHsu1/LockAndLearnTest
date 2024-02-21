@@ -18,7 +18,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
 
   const fetchWorkPackages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/workPackages/allWorkPackages');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/allWorkPackages');
       if (response.ok) {
         const data = await response.json();
         setWorkPackages(data);
