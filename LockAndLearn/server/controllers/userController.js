@@ -295,14 +295,11 @@ router.put('/suspendUser/:id', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Check if 'isSuspended' field exists, if not, create it
     if (user.suspended === undefined) {
-      // Assuming you are using Mongoose
-      user.schema.add({ isSuspended: Boolean });
+      user.schema.add({ suspended: Boolean });
       user.suspended = true;
     } else {
-      user.suspended = true; // Assuming your User schema has an 'isSuspended' field
+      user.suspended = true;
     }
 
     await user.save();
