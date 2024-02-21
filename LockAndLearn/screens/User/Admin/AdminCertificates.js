@@ -16,7 +16,6 @@ const AdminCertificates = () => {
   }, []);
 
   // Fetch all pending certificates from the server
-  // Fetch all pending certificates from the server
 const fetchAllPendingCertificates = async () => {
   try {
     // Correctly formatted fetch request
@@ -92,7 +91,7 @@ const fetchAllPendingCertificates = async () => {
   // Function to download certificate
   const downloadCertificate = async (fileName) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/uploadCertificates/${fileName}`,
+      `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/uploadCertificates?filename=${fileName}`,
       {
         method: 'GET',
       }
