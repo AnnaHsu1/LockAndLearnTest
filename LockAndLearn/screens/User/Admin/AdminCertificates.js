@@ -43,7 +43,7 @@ const fetchAllPendingCertificates = async () => {
   // Function to handle accepting a certificate
   const handleAcceptCertificate = async (userId) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/acceptUserCertificates/${userId}`,
+      `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/acceptUserCertificates?userId=${userId}`,
       {
         method: 'PUT',
       }
