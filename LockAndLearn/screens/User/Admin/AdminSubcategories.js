@@ -29,7 +29,6 @@ const AdminSubcategories = ({ navigation }) => {
 
   const fetchSubcategories = async () => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/fetchAll');
       const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchAllSubcategories');
       if (response.ok) {
         const data = await response.json();
@@ -87,7 +86,7 @@ const AdminSubcategories = ({ navigation }) => {
   const handleCreatePress = async () => {
     try {
       // Call the createCourse endpoint with the new subcategory name
-      const response = await fetch('http://localhost:4000/subcategories/createCourse', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createCourseAdmin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +115,7 @@ const AdminSubcategories = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:4000/subcategories/addSubcategoryToGrade', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addSubcategoryToGrade', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
