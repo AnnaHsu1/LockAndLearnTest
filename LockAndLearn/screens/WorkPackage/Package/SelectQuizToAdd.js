@@ -33,11 +33,16 @@ const SelectQuizToAdd = () => {
         const data = await response.json();
         setQuizzes(data);
         // set checked (true) to checkboxes that are already selected in the package
-        const quizzesInDb = await fetch(`http://localhost:4000/packages/fetchQuizzes/${p_id}`, {
+        const quizzesInDb = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchPackageQuizzes?id=${p_id}`, {
           method: 'GET',
         });
-        const selectedQuizzesDb = await quizzesInDb.json();
-        setSelectedQuizzes(selectedQuizzesDb);
+        if (quizzesInDb.status === 200) {
+          const selectedQuizzesDb = await quizzesInDb.json();
+          setSelectedQuizzes(selectedQuizzesDb);
+        }
+        else {
+          console.error('Error fetching quizzes from the package');
+        }
       } else {
         console.error('Error fetching quizzes');
       }
