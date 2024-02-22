@@ -158,13 +158,15 @@ const PackageOverview = ({ props }) => {
   const confirmDelete = async () => {
     if (selectedPackageId) {
       try {
-        const response = await fetch(`http://localhost:4000/packages/delete/${selectedPackageId}`, {
+        const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deletePackage?p_id=${selectedPackageId}&wp_id=${_id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           },
         });
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 201) {
+          const data = await response.json();
+          console.log(data.message);
           setDeleteConfirmationModalVisible(false);
           fetchPackages();
         } else {

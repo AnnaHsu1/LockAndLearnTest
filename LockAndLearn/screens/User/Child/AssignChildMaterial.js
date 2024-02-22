@@ -12,6 +12,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { width } = useWindowDimensions();
   const child = route.params?.child;
+  console.log(child._id);
   const [statusWps, setStatusWps] = useState([]);
 
     // inital fetch
@@ -46,7 +47,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   // function get workpackage id from quiz id
   const findWpIDfromQuizIDandPackageID = async (quizId, packageId) => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchWpByQuizAndPackage/${quizId}/${packageId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWpByQuizAndPackage?quizId=${quizId}&packageId=${packageId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const statuses = statusWps[workPackageId];
   
     // Check if there are no statuses
-    if (!statuses || statuses.length === 0 || statuses === "not started") {
+    if (!statuses || statuses.length === 0 || statuses === "not started" || statuses === undefined) {
       return "Not started";
     }
   
@@ -190,9 +191,9 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
   // function to display the work package information
   const renderWorkPackage = (workPackage) => {
-    {if (statusWps[workPackage._id] === undefined) {
-      statusWps[workPackage._id] = 'not started'
-    }}
+    // {if (statusWps[workPackage._id] === undefined) {
+    //   statusWps[workPackage._id] = 'not started'
+    // }}
     return (
       // if statuswp is undefined, display not started
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
