@@ -33,14 +33,16 @@ const ParentHomeScreen = ({ navigation }) => {
   const isLockingTime = async (child) => {
     try {
       // console.log(child);
-      const response = await fetch('http://localhost:4000/timeframes/gettimeframes/' + child._id, {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getTimeframes?childId=${child._id}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
 
       // Array of timeframes
       const data = await response.json();
-      // console.log(data);
 
       if (response.status != 200) {
         // Error with request
@@ -190,7 +192,6 @@ const ParentHomeScreen = ({ navigation }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
       if (response.status != 200) {
         setError('Children not found');
         return;

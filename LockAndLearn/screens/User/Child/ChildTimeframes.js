@@ -149,11 +149,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const getChildTimeframes = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/timeframes/gettimeframes/' + childSelected._id,
-        {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
-        }
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getTimeframes?childId=${childSelected._id}`
       );
       const data = await response.json();
       if (response.status != 200) {
@@ -181,7 +177,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (response.status != 200) {
         console.log(data.msg);
       } else {
-        console.log(data);
+        // console.log(data);
         data.forEach((preference) => {
           const preferenceObj = {
             label: preference,
