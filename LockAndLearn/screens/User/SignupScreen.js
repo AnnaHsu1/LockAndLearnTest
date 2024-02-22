@@ -221,7 +221,7 @@ const SignupScreen = ({ navigation }) => {
         if (response.status === 201) {
           // User created successfully
           // console.log('User created successfully in database!', data);
-          await setUserTokenWithExpiry('@token', data.user);
+          await setUserTokenWithExpiry('@token', data);
           //Add redirect
           {
             data?.isParent
