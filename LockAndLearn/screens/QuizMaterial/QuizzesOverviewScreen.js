@@ -13,7 +13,6 @@ import { getUser } from '../../components/AsyncStorage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 
-
 const QuizzesOverviewScreen = ({ route }) => {
   const navigation = useNavigation();
   const user = route.params.userId;
@@ -93,7 +92,7 @@ const QuizzesOverviewScreen = ({ route }) => {
 
   const fetchBadWordFilter = async (contentToCheck) => {
     const lowercasedContent = contentToCheck.toLowerCase();
-  
+
     const url = 'https://profanity-cleaner-bad-word-filter.p.rapidapi.com/profanity';
     const options = {
       method: 'POST',
@@ -108,7 +107,7 @@ const QuizzesOverviewScreen = ({ route }) => {
         language: 'en',
       }),
     };
-  
+
     try {
       const response = await fetch(url, options);
       return await response.text();
@@ -116,42 +115,42 @@ const QuizzesOverviewScreen = ({ route }) => {
       console.error('Error fetching bad word filter response:', error);
       return '';
     }
-  };  
+  };
 
   const fetchAIResponse = async (quiz) => {
     const introText = `Analyze the following quiz content for inappropriate material suitable for children. If any inappropriate content is detected, say "true"; otherwise, say "false". Only say one word.`;
-  
+
     const allQuizContent = getAllQuizContent(quiz);
     console.log('All Quiz Content:', allQuizContent);
-  
+
     const contentToCheck = `${introText} Quiz Content: ${allQuizContent}`;
-  
+
     try {
       const badWordFilterResult = await fetchBadWordFilter(allQuizContent);
       console.log('Bad Word Filter Result:', badWordFilterResult);
-  
+
       const nsfwTextDetectionResult = await fetchNSFWTextDetection(contentToCheck);
       console.log('NSFW Text Detection Result:', nsfwTextDetectionResult);
-  
+
       // Check if neither response contains "true" (ignoring case)
       const isProfane =
         JSON.parse(badWordFilterResult).profanities.length > 0 ||
         nsfwTextDetectionResult.toLowerCase().includes('true');
-  
+
       // Update the quiz's approved status in the backend
       await updateQuizApproval(quiz._id, !isProfane);
-  
+
       // Update the quiz's approved status in the state
       const updatedQuizzes = quizzes.map((q) =>
         q._id === quiz._id ? { ...q, approved: !isProfane } : q
       );
       setQuizzes(updatedQuizzes);
-  
+
       setAIResponse(badWordFilterResult);
     } catch (error) {
       console.error('Error fetching AI response:', error);
     }
-  };  
+  };
 
   const updateQuizApproval = async (quizId, approved) => {
     const url = `http://localhost:4000/quizzes/${quizId}`;
@@ -241,12 +240,18 @@ const QuizzesOverviewScreen = ({ route }) => {
                 >
                   <Text style={styles.quizItem}>{quiz.name}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => fetchAIResponse(quiz)}>
-                  {quiz.approved ? (
-                    <MaterialIcons name="check-circle" size={40} color="green" />
-                  ) : (
-                    <MaterialIcons name="published-with-changes" size={40} color="orange" />
-                  )}
+                <TouchableOpacity
+                  onPress={() => fetchAIResponse(quiz)}
+                  style={quiz.approved ? styles.approvedButton : styles.notApprovedButton}
+                >
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      quiz.approved ? styles.approvedText : styles.notApprovedText,
+                    ]}
+                  >
+                    {quiz.approved ? 'Approved' : 'Click to Approve'}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => deleteQuiz(quiz._id)}>
                   <MaterialIcons testID="delete-button-x" name="delete" size={40} color="red" />
@@ -300,6 +305,30 @@ const QuizzesOverviewScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+  approvedButton: {
+    borderWidth: 2,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    borderColor: 'green',
+  },
+  notApprovedButton: {
+    borderWidth: 2,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    borderColor: 'orange',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  approvedText: {
+    color: 'green',
+  },
+  notApprovedText: {
+    color: 'orange',
+  },
   deleteConfirmationModal: {
     width: '50%',
     backgroundColor: 'white',
