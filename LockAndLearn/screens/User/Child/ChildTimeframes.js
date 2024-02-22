@@ -400,7 +400,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const handleDeleteTimeframe = async (timeframeId) => {
     try {
       const response = await fetch(
-        'http://localhost:4000/timeframes/deletetimeframe/' + timeframeId,
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteTimeframe?id=' + timeframeId,
         {
           method: 'DELETE',
           credentials: 'include', // Include cookies in the request
