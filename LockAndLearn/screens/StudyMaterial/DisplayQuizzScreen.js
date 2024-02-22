@@ -135,7 +135,7 @@ const DisplayQuizzScreen = ({ route }) => {
   const fetchQuestion = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/quizzes/getQuestion/${quizId}/${questionIndex}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuestion?quizId=${quizId}&questionIndex=${questionIndex}`,
         {
           method: 'GET',
           headers: {
