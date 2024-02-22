@@ -177,6 +177,7 @@ const ParentHomeScreen = ({ navigation }) => {
   const getChildren = async () => {
     try {
       const user = await getUser();
+      setUser(user);
       const response = await fetch(
         'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getChildren',
         {
@@ -189,10 +190,11 @@ const ParentHomeScreen = ({ navigation }) => {
       );
       const data = await response.json();
       if (response.status != 200) {
-        setError('Children not found');
+        setError(
+          'No child found. Please create a PIN to access parental controls and to create a child.'
+        );
         return;
       } else {
-        setUser(user);
         setChildren(data);
       }
     } catch (error) {
@@ -218,7 +220,7 @@ const ParentHomeScreen = ({ navigation }) => {
         <Text style={styles.title}>Welcome back</Text>
       )}
       {/* Is parent requesting parental access, if yes then show the pin inputs, else show children */}
-      {parentalAccess ? (
+      {parentalAccess || children.length == 0 ? (
         <View style={[styles.container, { alignItems: 'center' }]}>
           {error ? (
             <View style={styles.errorContainer}>
@@ -236,7 +238,7 @@ const ParentHomeScreen = ({ navigation }) => {
 
               <View style={[styles.pin]}>
                 {/* First time access */}
-                {user?.parentalAccessPIN ? (
+                {user?.parentalAccessPIN != '' ? (
                   <>
                     {/* Returning access */}
                     <Text style={styles.requestAccessText}>Enter PIN</Text>
@@ -357,9 +359,9 @@ const ParentHomeScreen = ({ navigation }) => {
       ) : (
         // Show children
         <View style={styles.container}>
-          {children ? (
+          {children.length != 0 ? (
             <>
-              <Text style={styles.text}>Select a Child </Text>
+              <Text style={styles.text}>Select a Child</Text>
               {children.map((child) => (
                 <Button
                   key={child._id}

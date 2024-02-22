@@ -95,26 +95,29 @@ const ParentAccountScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        {children.map((child) => (
-          <Button
-            key={child._id}
-            testID={`child-${child._id}`}
-            mode="contained"
-            contentStyle={{
-              minWidth: '90%',
-              maxWidth: '90%',
-              minHeight: 80,
-              justifyContent: 'flex-start',
-            }}
-            onPress={() => {
-              selectChild(child);
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Icon source="account-circle" color="#fff" size={20} />
-            <Text style={styles.child}>{child.firstName}</Text>
-          </Button>
-        ))}
+        {console.log('Children:', children)}
+        {children.length != 0
+          ? children.map((child) => (
+              <Button
+                key={child._id}
+                testID={`child-${child._id}`}
+                mode="contained"
+                contentStyle={{
+                  minWidth: '90%',
+                  maxWidth: '90%',
+                  minHeight: 80,
+                  justifyContent: 'flex-start',
+                }}
+                onPress={() => {
+                  selectChild(child);
+                }}
+                style={[styles.button, styles.full_width]}
+              >
+                <Icon source="account-circle" color="#fff" size={20} />
+                <Text style={styles.child}>{child.firstName}</Text>
+              </Button>
+            ))
+          : null}
         <StatusBar style="auto" />
         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
         <Text style={styles.text}>Work Packages</Text>
