@@ -12,7 +12,7 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 import { setUserTokenWithExpiry } from '../../components/AsyncStorage';
 import PropTypes from 'prop-types';
 import { FcGoogle } from 'react-icons/fc';
-import { parseISO, isBefore, startOfDay, differenceInYears } from 'date-fns';
+import { parseISO, isBefore, startOfDay, differenceInYears, set } from 'date-fns';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -81,6 +81,15 @@ const SignupScreen = ({ navigation }) => {
   }, [checked]);
 
   const validateInputs = async () => {
+    setErrors({
+      Fields: '',
+      Name: '',
+      Email: '',
+      Password: '',
+      CPassword: '',
+      DOB: '',
+      Other: '',
+    });
     // Input validations
     if (
       !fdata.FirstName ||
@@ -133,6 +142,7 @@ const SignupScreen = ({ navigation }) => {
       }));
       return false;
     }
+
     const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!fdata.DOB || !dobRegex.test(fdata.DOB)) {
       setErrors((prevErrors) => ({
@@ -183,7 +193,8 @@ const SignupScreen = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    if (validateInputs() == false) return;
+    const valid = await validateInputs();
+    if (!valid) return;
     else {
       // console.log('fdata:', fdata);
       // Ensure that the first name and last name start with a capital letter

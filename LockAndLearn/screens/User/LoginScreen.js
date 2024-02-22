@@ -124,7 +124,7 @@ const LoginScreen = ({ navigation }) => {
         }
       } else {
         // Store the error message in state
-        setErrorMsg(data.msg);
+        setErrorMsg(user.msg);
       }
     } catch (error) {
       console.error('Error logging user:', error);
