@@ -67,7 +67,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     };
     if (userId) {
       try {
-        const response = await fetch(
+        /* const response = await fetch(
           'http://localhost:4000/workPackages/updateWorkPackage/' + workPackage._id,
           {
             method: 'PUT',
@@ -82,7 +82,25 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
               ratings: ratingItem,
             }),
           }
+        ); */
+
+        const response = await fetch(
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateWorkPackage?workPackageId=${workPackage._id}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: workPackage.name,
+              grade: workPackage.grade,
+              description: workPackage.description,
+              price: workPackage.price,
+              ratings: ratingItem,
+            }),
+          }
         );
+
         if (response.status === 200) {
           const data = await response.json();
           console.log('Updated work package:', data);
