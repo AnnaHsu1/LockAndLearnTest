@@ -40,7 +40,7 @@ const DisplayStudyMaterial = ({}) => {
   // function to get all study material info
   const fetchPackageInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getPackagesInfo?childID=${childID}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const DisplayStudyMaterial = ({}) => {
         console.error('No package found for child with ID:', childID);
       }
       else {
-        console.error('Error fetching study material');
+        console.error('Error fetching study material', childID);
       }
     } catch (error) {
       console.error('Network error:', error);
