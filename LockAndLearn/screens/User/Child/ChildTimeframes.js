@@ -324,7 +324,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (Object.keys(toggleSwitchItem).length === 0) {
         return;
       }
-      const response = await fetch('http://localhost:4000/timeframes/updateTimeframe', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updatetimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
