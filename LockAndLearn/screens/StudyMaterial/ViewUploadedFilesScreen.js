@@ -90,24 +90,26 @@ const ViewUploadedFilesScreen = () => {
     setDeleteDataFile([]);
     if (userId) {
       try {
-        const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
-          method: 'GET',
-        });
+        const response = await fetch(
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getSpecificUploadFilesByUserId?requestUserId=${userId}`,
+          {
+            method: 'GET',
+          }
+        );
         const files = await response.json();
         setDeleteDataFile(files.uploadedFiles);
-        setDataFile(prevDataFile => [
+        setDataFile((prevDataFile) => [
           ...prevDataFile,
           ...files.uploadedFiles.map((file, index) => ({
             id: 1 + index,
             originalname: file.filename,
             description: file.metadata.description,
-          }))
+          })),
         ]);
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error);
-      };
-    };
+      }
+    }
   };
 
   // function to toggle the pop up modal for filter section
@@ -128,7 +130,9 @@ const ViewUploadedFilesScreen = () => {
   const handleDelete = async (itemId) => {
     try {
       const response = await fetch(
-        `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[itemId - 1]._id}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteUploadFiles?fileId=${
+          deleteDataFile[itemId - 1]._id
+        }`,
         {
           method: 'DELETE',
         }
@@ -225,7 +229,6 @@ const ViewUploadedFilesScreen = () => {
 
   // function to render each row (which is a file)
   const renderFile = (file, index, totalItems) => (
-
     <TouchableOpacity
       key={index.toString()}
       style={styles.card}
@@ -235,7 +238,13 @@ const ViewUploadedFilesScreen = () => {
       <View style={styles.cardContent}>
         <View style={[{ justifyContent: 'space-between' }]}>
           <View style={[styles.carRow, { justifyContent: 'space-between' }]}>
-            <Text numberOfLines={1} ellipsizeMode='middle' style={[styles.carHeader, { maxWidth: maxTextWidth, marginTop: 5 }]}>{file.originalname}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={[styles.carHeader, { maxWidth: maxTextWidth, marginTop: 5 }]}
+            >
+              {file.originalname}
+            </Text>
             <View style={styles.carRow}>
               <TouchableOpacity
                 testID={`deleteButton-${index}`}
@@ -244,7 +253,7 @@ const ViewUploadedFilesScreen = () => {
                   setFileId(file.id);
                   setFileName(file.originalname);
                 }}
-              // style={{justifyContent: 'center'}} //to add if want to center the delete button with title text
+                // style={{justifyContent: 'center'}} //to add if want to center the delete button with title text
               >
                 <View>
                   <Icon source="delete-outline" size={20} color={'#F24E1E'} />
@@ -252,7 +261,13 @@ const ViewUploadedFilesScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.carText, { maxWidth: maxDescriptionTextWidth, paddingTop: 10 }]}>{file.description}</Text>
+          <Text
+            numberOfLines={2}
+            ellipsizeMode="middle"
+            style={[styles.carText, { maxWidth: maxDescriptionTextWidth, paddingTop: 10 }]}
+          >
+            {file.description}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -313,9 +328,7 @@ const ViewUploadedFilesScreen = () => {
         </TouchableOpacity>
         {/* display the preview file */}
         {pdf && (
-          <View
-            style={styles.pdfViewContainer}
-          >
+          <View style={styles.pdfViewContainer}>
             <View style={styles.pdfContainer}>
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
                 <Viewer fileUrl={pdf} plugins={[newPlugin]} defaultScale={1} />
@@ -345,7 +358,13 @@ const ViewUploadedFilesScreen = () => {
             {/* display modal */}
             <View style={styles.modalView1}>
               <Text style={styles.text}>Are you sure you want to delete</Text>
-              <Text numberOfLines={2} ellipsizeMode='middle' style={[styles.textName, { width: maxDeleteTextWidth }]}>{fileName} ?</Text>
+              <Text
+                numberOfLines={2}
+                ellipsizeMode="middle"
+                style={[styles.textName, { width: maxDeleteTextWidth }]}
+              >
+                {fileName} ?
+              </Text>
               <View style={styles.modalView}>
                 <Button
                   style={styles.modalNoButton}
@@ -372,9 +391,9 @@ const ViewUploadedFilesScreen = () => {
             </View>
           </View>
         </Modal>
-      </View >
+      </View>
       {/* display pop up modal for filter section */}
-      < Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={modalFilterVisible}
@@ -387,25 +406,16 @@ const ViewUploadedFilesScreen = () => {
               <Icon source="close" size={20} color={'#696969'} />
             </TouchableOpacity>
           </View>
-          <View
-            style={styles.containerContentModalFilter}
-          >
+          <View style={styles.containerContentModalFilter}>
             {/* display title of modal */}
-            <View
-              style={styles.containerFilterTextTitle}
-            >
+            <View style={styles.containerFilterTextTitle}>
               <Text style={styles.filterTextTitle}>Filter</Text>
               <Icon source="filter-outline" size={30} color={'#696969'} borderWidth={1} />
             </View>
-            <View
-              style={styles.containerSearchBar}
-            >
+            <View style={styles.containerSearchBar}>
               {/* display search bar */}
               {/* to be implemented function to filter search item entered by user */}
-              <TextInput
-                placeholder="Search"
-                style={styles.textInputSearch}
-              />
+              <TextInput placeholder="Search" style={styles.textInputSearch} />
             </View>
             {/* display each row with checkbox and filter text */}
             <FlatList
@@ -425,8 +435,8 @@ const ViewUploadedFilesScreen = () => {
             />
           </View>
         </View>
-      </Modal >
-    </ImageBackground >
+      </Modal>
+    </ImageBackground>
   );
 };
 
@@ -477,7 +487,7 @@ const styles = StyleSheet.create({
   filterTextTitle: {
     fontSize: 20,
     color: '#696969',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   containerFilterTextTitle: {
     alignItems: 'center',
@@ -514,7 +524,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     alignItems: 'center',
     fontSize: 15,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   buttonUploadFiles: {
     width: 190,
@@ -524,12 +534,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '2%',
-    marginBottom: '2%'
+    marginBottom: '2%',
   },
   filterText: {
     fontSize: 20,
     color: '#696969',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   buttonFilter: {
     paddingRight: '15%',
@@ -655,7 +665,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "#FAFAFA"
+    backgroundColor: '#FAFAFA',
   },
   pdfContainer: {
     width: '75%',
