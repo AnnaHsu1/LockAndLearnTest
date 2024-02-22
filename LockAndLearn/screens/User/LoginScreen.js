@@ -133,26 +133,29 @@ const LoginScreen = ({ navigation }) => {
 
   const sendLoginDataAdmin = async (loginData) => {
     try {
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userLogin',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(loginData),
+        }
+      );
+      const user = await response.json();
+      var isMatch = await bcrypt.compare(loginData.password, user.password);
 
-      const data = await response.json();
-
-      if (response.status === 201) {
+      if (response.status === 200 && isMatch) {
         setErrorMsg(null);
-        console.log('Admin successfully logged in!', data);
+        console.log('Admin successfully logged in!', user);
         setDisplayMsg('Admin login successful.');
 
         // Store the user data in AsyncStorage
-        await setUserTokenWithExpiry('@token', data.user);
+        await setUserTokenWithExpiry('@token', user);
         navigation.navigate('AdminMenu');
       } else {
-        setErrorMsg(data.msg);
+        setErrorMsg(user.msg);
       }
     } catch (error) {
       console.error('Error logging admin:', error);

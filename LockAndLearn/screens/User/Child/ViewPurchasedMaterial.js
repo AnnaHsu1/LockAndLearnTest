@@ -15,7 +15,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     const userId = user._id;
     if (userId) {
       try {
-        const response = await fetch(
+        /* const response = await fetch(
           `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
           {
             method: 'GET',
@@ -23,7 +23,19 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
               'Content-Type': 'application/json',
             },
           }
+        ); */
+
+        const response = await fetch(
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackagesParent?parentId=${userId}&displayOwned=${displayOwned}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
         );
+
+
         if (response.status === 200) {
           const data = await response.json();
           setWorkPackages(data);
