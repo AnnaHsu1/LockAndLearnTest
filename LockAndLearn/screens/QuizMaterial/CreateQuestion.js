@@ -79,7 +79,7 @@ const CreateQuestion = ({ route }) => {
 
     // Make a POST request to your server to create the question
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/addQuestion/${quizId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createQuestion?quizId=${quizId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,6 +89,7 @@ const CreateQuestion = ({ route }) => {
       // console.log(response);
 
       if (response.ok) {
+        console.log('Raw Response:', response);
         await updateQuizApproval(quizId, false);
         const result = await response.json();
         console.log('Question created:', result);
@@ -120,7 +121,8 @@ const CreateQuestion = ({ route }) => {
 
   const updateQuizApproval = async (quizId, approved) => {
     try {
-      const updateQuizResponse = await fetch(`http://localhost:4000/quizzes/${quizId}`, {
+        const updateQuizResponse = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateQuiz?quizId=${quizId}`, {
+
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
