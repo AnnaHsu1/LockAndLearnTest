@@ -347,7 +347,6 @@ const StackNavigation = () => {
           component={EditWorkPackage}
           options={{ title: 'Edit work package' }}
         />
-        <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
         <Stack.Screen
           name="DisplayStudyMaterial"
           component={DisplayStudyMaterial}
