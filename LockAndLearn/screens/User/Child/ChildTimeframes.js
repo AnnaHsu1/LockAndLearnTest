@@ -227,8 +227,46 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   // Add a new timeframe
   const addTimeframe = async () => {
+    // Input validations
+    if (!selectedDay) {
+      setError('Day must be selected.');
+      return;
+    }
+    if (!starthour || !startminute || !endhour || !endminute) {
+      setError('Start and end time must be filled.');
+      return;
+    }
+    if (starthour < 0 || starthour > 23 || endhour < 0 || endhour > 23) {
+      setError('Hours must be between 00 and 23.');
+      return;
+    }
+    if (startminute < 0 || startminute > 59 || endminute < 0 || endminute > 59) {
+      setError('Minutes must be between 00 and 59.');
+      return;
+    }
+    if (starthour > endhour || (starthour === endhour && startminute >= endminute)) {
+      setError('Start time must be before end time.');
+      return;
+    }
+    if (!selectedSubject) {
+      setError('Subject must be selected.');
+      return;
+    }
+    // regex validation for hours and minutes
+    const integerHoursCheck = new RegExp('^[0-9]+$');
+    if (!integerHoursCheck.test(starthour) || !integerHoursCheck.test(endhour)) {
+      setError('Hour must be an integer between 00 and 23.');
+      return;
+    }
+    const integerMinsCheck = new RegExp('^[0-5][0-9]$');
+    if (!integerMinsCheck.test(startminute) || !integerMinsCheck.test(endminute)) {
+      setError('Minute must be an integer between 00 and 59.');
+      return;
+    }
+
+    // Send the new timeframe to the database
     try {
-      const response = await fetch('http://localhost:4000/timeframes/addtimeframe', {
+        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addtimeframe', {
         method: 'POST',
         credentials: 'include', // Include cookies in the request
         headers: {
