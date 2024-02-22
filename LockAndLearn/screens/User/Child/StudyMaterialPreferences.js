@@ -23,7 +23,9 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
   //fetching all the subcategories
   const fetchSubcategories = async () => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/fetchAll');
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchAllSubcategories'
+      );
       if (response.ok) {
         const data = await response.json();
         setSubcategories(data);
