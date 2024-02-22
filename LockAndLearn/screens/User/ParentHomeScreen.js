@@ -34,16 +34,12 @@ const ParentHomeScreen = ({ navigation }) => {
     try {
       // console.log(child);
       const response = await fetch(
-        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getTimeframes?childId=${child._id}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        }
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getTimeframes?childId=${child._id}`
       );
 
       // Array of timeframes
       const data = await response.json();
-
+      console.log(data);
       if (response.status != 200) {
         // Error with request
         setError('Error with request');
