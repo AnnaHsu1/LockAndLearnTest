@@ -114,8 +114,53 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   // Save the edited timeframes
   const saveEditTimeframes = async () => {
+    // input validations
+    for (const key in editStartHour) {
+      if (
+        !editStartHour[key] ||
+        !editStartMinute[key] ||
+        !editEndHour[key] ||
+        !editEndMinute[key] ||
+        !editSubject[key]
+      ) {
+        setError('All fields must be filled.');
+        return;
+      }
+      if (editStartHour[key] < 0 || editStartHour[key] > 23 || editEndHour[key] < 0 || editEndHour[key] > 23) {
+        setError('Hours must be between 00 and 23.');
+        return;
+      }
+      if (
+        editStartMinute[key] < 0 ||
+        editStartMinute[key] > 59 ||
+        editEndMinute[key] < 0 ||
+        editEndMinute[key] > 59
+      ) {
+        setError('Minutes must be between 00 and 59.');
+        return;
+      }
+      if (
+        editStartHour[key] > editEndHour[key] ||
+        (editStartHour[key] === editEndHour[key] && editStartMinute[key] >= editEndMinute[key])
+      ) {
+        setError('Start time must be before end time.');
+        return;
+      }
+      // regex validation for hours and minutes
+      const integerHoursCheck = new RegExp('^[0-9]+$');
+      if (!integerHoursCheck.test(editStartHour[key]) || !integerHoursCheck.test(editEndHour[key])) {
+        setError('Hour must be an integer between 00 and 23.');
+        return;
+      }
+      const integerMinsCheck = new RegExp('^[0-5][0-9]$');
+      if (!integerMinsCheck.test(editStartMinute[key]) || !integerMinsCheck.test(editEndMinute[key])) {
+        setError('Minute must be an integer between 00 and 59.');
+        return;
+      }
+    }
+    // send the edited timeframes to the database
     try {
-      const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateEditTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -711,6 +756,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                       timePeriods.push(
                         <View key={`${day}-${index}`} style={styles.timePeriod}>
                           <View>
+                          {console.log('subject', subject, index, subject[index], day, timeframes[day][index]._id)}
                             <Text style={{ fontSize: 16, fontWeight: '600', color: '#407BFF' }}>
                               {subject[index] ? subject[index] : 'No subject'}
                             </Text>
