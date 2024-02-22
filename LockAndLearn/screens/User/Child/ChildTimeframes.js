@@ -307,7 +307,7 @@ const ChildTimeframes = ({ route, navigation }) => {
 
     // Send the new timeframe to the database
     try {
-        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addtimeframe', {
+        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addTimeframe', {
         method: 'POST',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -369,7 +369,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (Object.keys(toggleSwitchItem).length === 0) {
         return;
       }
-      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updatetimeframe', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
