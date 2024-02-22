@@ -130,8 +130,8 @@ const DisplayStudyMaterial = ({}) => {
       quizLength: quiz.questions.length,
       questionIndex: 0,
       child_ID: childID,
-      subject: packageInfo.name,
-      packageId: packageInfo.package_id,
+      subject: packageInfo.subcategory,
+      packageId: packageInfo._id,
     });
   };
 
