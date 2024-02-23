@@ -66,7 +66,7 @@ const WorkPackagePreview = () => {
           reason
         );
 
-        const response = await fetch('http://localhost:4000/reports/create-report', {
+        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createReport', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
