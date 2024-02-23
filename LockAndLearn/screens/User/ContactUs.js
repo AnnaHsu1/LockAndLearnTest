@@ -47,7 +47,7 @@ const ContactUs = ({ navigation, route }) => {
                 console.log('Inquiry created successfully in database!', data);
                 //Add redirect
                 {
-                    data?.user.isParent
+                    data?.isParent
                         ? navigation.navigate('ParentAccount')
                         : navigation.navigate('UserLandingPage');
                 }
