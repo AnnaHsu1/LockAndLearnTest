@@ -35,7 +35,7 @@ const CreatePackage = ({ route }) => {
     try {
       // Fetch subcategories from the server
       const response = await fetch(
-        `http://localhost:4000/subcategories/fetchSubcategories/${name}/${grade}`
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchSubcategoriesBasedGradeSubject?subject=${name}&grade=${grade}`
       );
       console.log(name, grade);
       if (response.status === 200) {
