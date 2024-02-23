@@ -35,7 +35,7 @@ const SelectStudyMaterialToAdd = () => {
     const token = await getItem('@token');
     const user = JSON.parse(token);
     const userId = user._id;
-    const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
+    const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getSpecificUploadFilesByUserId?requestUserId=${userId}`, {
       method: 'GET',
     });
     const files = await response.json();
