@@ -109,7 +109,6 @@ const ParentHomeScreen = ({ navigation }) => {
       try {
         const salt = await bcrypt.genSalt();
         const pinEncrypted = await bcrypt.hash(confirmPin, salt);
-        // const response = await fetch('http://localhost:4000/users/createPIN/' + user._id, {
         const response = await fetch(
           'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createParentPIN',
           {
@@ -138,7 +137,6 @@ const ParentHomeScreen = ({ navigation }) => {
         return;
       } else {
         try {
-          // const response = await fetch('http://localhost:4000/users/getPIN/' + user._id, {
           const response = await fetch(
             'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getParentPIN',
             {

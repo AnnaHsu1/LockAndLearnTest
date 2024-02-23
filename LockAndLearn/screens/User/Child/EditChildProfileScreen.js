@@ -34,7 +34,6 @@ const EditChildProfileScreen = ({ route, navigation }) => {
 
   // API request to update child
   const editChild = async () => {
-    // const response = await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
     const response = await fetch(
       'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateChild',
       {
