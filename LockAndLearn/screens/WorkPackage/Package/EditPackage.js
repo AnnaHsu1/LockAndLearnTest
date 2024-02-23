@@ -70,7 +70,7 @@ const EditPackage = () => {
   // Function to fetch and display the quiz name
   async function fetchQuizName(quizId) {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizById?quizId=${quizId}`);
       if (response.status === 200 || 201) {
         const data = await response.json();
         return data.name;
@@ -88,7 +88,7 @@ const EditPackage = () => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:4000/files/filesName/${fileId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getFilesName?id=${fileId}`, {
         method: 'GET',
       });
       if (response.status === 201) {
