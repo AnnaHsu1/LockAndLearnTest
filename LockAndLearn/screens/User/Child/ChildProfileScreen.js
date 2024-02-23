@@ -18,33 +18,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
     setChild(childSelected);
   }, []);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
-  // API request to delete child
-  const deleteChild = async () => {
-    try {
-      const response = await fetch(
-        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteChild',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ childId: child._id }),
-        }
-      );
-      if (response.status === 200) {
-        navigation.navigate('ParentAccount', {
-          updatedChildren: null,
-        });
-      }
-    } catch (error) {
-      console.error('Error deleting child:', error);
-    }
-  };
-
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -122,65 +95,6 @@ const ChildProfileScreen = ({ route, navigation }) => {
           </Button>
         </View>
       </View>
-      {/* Delete child link */}
-      <Button
-        testID="delete-child-link"
-        style={styles.link}
-        onPress={() => {
-          toggleModal();
-        }}
-      >
-        <Text style={styles.linkText}>Delete {child.firstName}'s account</Text>
-      </Button>
-      {/* Modal to confirm the deletion of a child */}
-      <Modal
-        testID="delete-child-modal"
-        isVisible={isModalVisible}
-        onRequestClose={toggleModal}
-        transparent={true}
-        style={{ justifyContent: 'center', alignItems: 'center' }}
-      >
-        <View
-          style={{
-            backgroundColor: 'white',
-            borderRadius: 20,
-            padding: 20,
-          }}
-        >
-          <Text style={styles.text}>
-            Are you sure you want to delete {child.firstName}'s account?
-          </Text>
-
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            {/* Confirm child deletion */}
-            <Button
-              testID="delete-child-button"
-              style={[styles.modalButtons, styles.bgRed]}
-              title="Delete child"
-              mode="contained"
-              onPress={() => {
-                toggleModal();
-                deleteChild();
-              }}
-            >
-              <Text style={{ color: '#FF0000', fontSize: 20 }}>Yes</Text>
-            </Button>
-
-            {/* Cancel */}
-            <Button
-              testID="close-modal-button"
-              style={[styles.modalButtons, styles.bgWhite]}
-              title="Hide modal"
-              mode="contained"
-              onPress={() => {
-                toggleModal();
-              }}
-            >
-              <Text style={{ color: '#4F85FF', fontSize: 20 }}>No</Text>
-            </Button>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };

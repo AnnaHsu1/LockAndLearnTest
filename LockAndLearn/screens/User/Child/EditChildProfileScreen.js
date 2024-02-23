@@ -16,6 +16,7 @@ const EditChildProfileScreen = ({ route, navigation }) => {
   const deviceSize = useDeviceSize();
   const [text, setText] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [updatedChildrenData, setUpdatedChildrenData] = useState([]);
   const childInfo = route.params.child;
   const [fdata, setFdata] = useState({
@@ -26,6 +27,33 @@ const EditChildProfileScreen = ({ route, navigation }) => {
     ParentId: childInfo.parentId,
   });
   const [errors, setErrors] = useState('');
+
+  const toggleDeleteModal = () => {
+    setDeleteModalVisible(!isDeleteModalVisible);
+  };
+
+  // API request to delete child
+  const deleteChild = async () => {
+    try {
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteChild',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ childId: childInfo._id }),
+        }
+      );
+      if (response.status === 200) {
+        navigation.navigate('ParentAccount', {
+          updatedChildren: null,
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting child:', error);
+    }
+  };
 
   // Toggle modal
   const toggleModal = () => {
@@ -177,6 +205,65 @@ const EditChildProfileScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           </View>
         </Modal>
+        {/* Delete child link */}
+        <TouchableOpacity
+          testID="delete-child-link"
+          style={styles.link}
+          onPress={() => {
+            toggleDeleteModal();
+          }}
+        >
+          <Text style={styles.linkText}>Delete {childInfo.firstName}'s account</Text>
+        </TouchableOpacity>
+        {/* Modal to confirm the deletion of a child */}
+        <Modal
+          testID="delete-child-modal"
+          isVisible={isDeleteModalVisible}
+          onRequestClose={toggleDeleteModal}
+          transparent={true}
+          style={{ justifyContent: 'center', alignItems: 'center' }}
+        >
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 20,
+            }}
+          >
+            <Text style={styles.text}>
+              Are you sure you want to delete {childInfo.firstName}'s account?
+            </Text>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+              {/* Confirm child deletion */}
+              <Button
+                testID="delete-child-button"
+                style={[styles.modalButtons, styles.bgRed]}
+                title="Delete child"
+                mode="contained"
+                onPress={() => {
+                  toggleDeleteModal();
+                  deleteChild();
+                }}
+              >
+                <Text style={{ color: '#FF0000', fontSize: 20 }}>Yes</Text>
+              </Button>
+
+              {/* Cancel */}
+              <Button
+                testID="close-modal-button"
+                style={[styles.modalButtons, styles.bgWhite]}
+                title="Hide modal"
+                mode="contained"
+                onPress={() => {
+                  toggleDeleteModal();
+                }}
+              >
+                <Text style={{ color: '#4F85FF', fontSize: 20 }}>No</Text>
+              </Button>
+            </View>
+          </View>
+        </Modal>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
@@ -222,6 +309,11 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       paddingBottom: 20,
     },
+    text: {
+      color: '#4F85FF',
+      fontSize: 20,
+      padding: 5,
+    },
     button: {
       color: '#ffffff',
       backgroundColor: '#4F85FF',
@@ -260,6 +352,35 @@ const useStyles = CreateResponsiveStyle(
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: 1,
+    },
+    modalButtons: {
+      borderRadius: 10,
+      marginVertical: 10,
+      height: 50,
+      justifyContent: 'center',
+      minWidth: 100,
+    },
+    bgRed: {
+      borderColor: '#FF0000',
+      borderWidth: 1,
+      borderRadius: 10,
+      backgroundColor: '#ffffff',
+    },
+    bgWhite: {
+      backgroundColor: '#ffffff',
+    },
+    linkText: {
+      color: 'red',
+      fontSize: 12,
+    },
+    link: {
+      borderRadius: 10,
+      minHeight: 20,
+      justifyContent: 'center',
+      minWidth: 100,
+      fontSize: 12,
+      textAlign: 'center',
+      backgroundColor: 'white',
     },
   },
   {
