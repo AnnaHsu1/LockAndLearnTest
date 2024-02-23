@@ -58,8 +58,12 @@ const FinanceInstructor = ({ navigation, route }) => {
       const token = await getItem('@token');
       const user = JSON.parse(token);
       const userId = user._id;
-      const response = await fetch(`http://localhost:4000/payment/checkStripeCapabilities/${userId}`); // Replace 'currentUserId' with the actual user ID
+      //const response = await fetch(`http://localhost:4000/payment/checkStripeCapabilities/${userId}`); // Replace 'currentUserId' with the actual user ID
+      
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/checkStripeEligibility?instructorId=${userId}`);
+
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok) {
         const { hasCardPaymentsCapability, hasTransfersCapability } = data;
