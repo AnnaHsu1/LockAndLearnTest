@@ -33,7 +33,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
   // function to get all previously assigned work packages from the child
   const fetchPreviouslyAssignedWorkPackages = async () => {
-    const response = await fetch(`http://localhost:4000/child/getWorkPackages/${child._id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getWorkPackagesByChildId?id=${child._id}`, {
+
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -149,7 +150,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
       .filter(([key, value]) => value)
       // only take the key (wp id)
       .map(([key, value]) => key);
-    const response = await fetch(`http://localhost:4000/child/addChildMaterial/${child._id}`, {
+    const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addChildMaterialByChildId?id=${child._id}`, {
+
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
