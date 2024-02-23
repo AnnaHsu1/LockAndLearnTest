@@ -99,7 +99,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const userId = user._id;
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackagesParent?parentId=${userId}&displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
