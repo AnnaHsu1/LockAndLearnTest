@@ -23,7 +23,7 @@ const SelectQuizToAdd = () => {
   const getQuizzes = async () => {
     const user = await getUser();
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes/' + user._id, {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizzesByUserId?userId=' + user._id, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
