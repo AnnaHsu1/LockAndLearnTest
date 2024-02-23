@@ -113,7 +113,19 @@ const AdminMenu = ({ route, navigation }) => {
             style={[styles.button, styles.full_width]}
           >
             <Text style={styles.text}>Report Center</Text>
-          </Button>
+        </Button>
+
+        {/* Contact Us */}
+        <Button
+            testID="admin-contactus"
+            mode="contained"
+            onPress={() => {
+                navigation.navigate('AdminContactUs');
+            }}
+            style={[styles.button, styles.full_width]}
+        >
+            <Text style={styles.text}>Inquiries</Text>
+        </Button>
         </ScrollView>
       </View>
 

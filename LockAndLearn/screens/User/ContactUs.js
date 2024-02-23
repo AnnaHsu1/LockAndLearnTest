@@ -26,19 +26,22 @@ const ContactUs = ({ navigation, route }) => {
         // console.log(fdata);
         // Package the user data into a JSON format and ship it to the backend
         try {
-            const response = await fetch('http://localhost:4000/users/createContactUs', {
+            const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createContactUs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    ...fdata, 
+                    email: fdata.email,
+                    name: fdata.name,
+                    subject: fdata.subject,
+                    message: fdata.message,
                     userID: userId, 
                 }),
             });
             const data = await response.json();
             // console.log(response.status);
-            if (response.status === 200) {
+            if (response.status === 201) {
                 setErrors('');
                 // User created successfully
                 console.log('Inquiry created successfully in database!', data);
