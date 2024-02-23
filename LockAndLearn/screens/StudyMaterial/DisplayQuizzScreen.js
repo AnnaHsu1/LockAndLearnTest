@@ -253,6 +253,10 @@ const DisplayQuizzScreen = ({ route }) => {
       if (response.status === 201 || response.status === 200) {
         console.log('newChildQuizResult successfully saved in database!');
       }
+      else {
+        const data = await response.json();
+        console.log('Error creating newChildQuizResult:', data);
+      }
     } catch (error) {
       console.error('Error creating newChildQuizResult:', error);
       // Handle network errors or server issues
