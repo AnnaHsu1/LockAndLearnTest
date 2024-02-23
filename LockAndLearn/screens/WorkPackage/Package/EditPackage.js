@@ -50,7 +50,7 @@ const EditPackage = () => {
   // Function to display the subcategory selected by the user
   const handleGradeAndSubjectChange = async () => {
     try {
-      const allSubcategories = await fetch('http://localhost:4000/subcategories/fetchAll');
+      const allSubcategories = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchAllSubcategories');
       if (allSubcategories.status === 200 || 201) {
         const data = await allSubcategories.json();
         const subcategories = data.filter((subcategory) => subcategory.name === name);
