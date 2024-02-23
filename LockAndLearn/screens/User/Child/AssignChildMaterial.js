@@ -12,7 +12,6 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { width } = useWindowDimensions();
   const child = route.params?.child;
-  console.log(child._id);
   const [statusWps, setStatusWps] = useState([]);
 
     // inital fetch
@@ -66,18 +65,16 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const childQuizResults = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/childQuizResults/getQuizResults/${child._id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizResults?id=${child._id}`
       );
       const data = await response.json();
-      if (response.status === 200 || response.status === 201) {
+      if (response.status == 201) {
         data.quizResults.forEach(async (result) => {
           const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
+          // if result.status is not an array, convert it to an array
+          if (!Array.isArray(result.status)) {
+            result.status = [result.status];
+          }
           if (statusWps[wpID]) {
               // If statusWps[wpID] already exists, append the new status
               statusWps[wpID].push(result.status[result.status.length - 1]);
@@ -86,6 +83,10 @@ const AssignChildMaterial = ({ route, navigation }) => {
               statusWps[wpID] = [result.status[result.status.length - 1]];
           }
         })
+      }
+      else if (response.status == 200) {
+        // Display when no quiz results are found
+        console.log(data.msg);
       }
     } catch (error) {
       console.error('Network error:', error);
