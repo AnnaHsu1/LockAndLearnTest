@@ -6,9 +6,12 @@ import {
     View,
     TouchableOpacity,
     Image,
-    TextInput
+    TextInput,
+    Pressable,
+    Button
 } from 'react-native';
 import { getItem } from '../../components/AsyncStorage';
+import Modal from 'react-native-modal';
 
 const ContactUs = ({ navigation, route }) => {
     const [fdata, setFdata] = useState({
@@ -18,11 +21,27 @@ const ContactUs = ({ navigation, route }) => {
         message: '',
     });
     const [errors, setErrors] = useState('');
+    const [isModalVisible, setModalVisible] = useState(false);
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
     const handleSubmit = async () => {
         const token = await getItem('@token');
         const user = JSON.parse(token);
         const userId = user._id;
+
+        // Validations
+        if (!fdata.name.trim() || !fdata.email.trim() || !fdata.subject.trim() || !fdata.message.trim()) {
+            setErrors('All fields are required');
+            return;
+        }
+
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(fdata.email)) {
+            setErrors('Invalid email format');
+            return;
+        }
+
         // console.log(fdata);
         // Package the user data into a JSON format and ship it to the backend
         try {
@@ -43,13 +62,14 @@ const ContactUs = ({ navigation, route }) => {
             // console.log(response.status);
             if (response.status === 201) {
                 setErrors('');
+                setModalVisible(true); // Show the modal
                 // User created successfully
                 console.log('Inquiry created successfully in database!', data);
                 //Add redirect
                 {
-                    data?.isParent
-                        ? navigation.navigate('ParentAccount')
-                        : navigation.navigate('UserLandingPage');
+                    //data?.isParent
+                    //    ? navigation.navigate('ParentAccount')
+                    //    : navigation.navigate('UserLandingPage');
                 }
             } else {
             setErrors(data.msg);
@@ -107,6 +127,36 @@ const ContactUs = ({ navigation, route }) => {
                 >
                     <Text style={styles.textSend}>Send</Text>
                 </TouchableOpacity>
+
+                <Modal
+                    isVisible={isModalVisible}
+                    onRequestClose={toggleModal}
+                    transparent={true}
+                    style={{ justifyContent: 'center', alignItems: 'center' }}
+                >
+                    <View
+                        style={{
+                            backgroundColor: 'white',
+                            borderRadius: 20,
+                            padding: 20,
+                        }}
+                    >
+                        <Text style={styles.title}>
+                            The inquiry has been sent successfully!
+                        </Text>
+                        <Button
+                            style={styles.button}
+                            title="Close"
+                            onPress={() => {
+                                toggleModal();
+                                //navigation.navigate('ParentAccount', {
+                                //});
+                            }}
+                        >
+                            <Text style={styles.close}>Close</Text>
+                        </Button>
+                    </View>
+                </Modal>
             </View>
 
         </ImageBackground>
@@ -190,6 +240,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         fontSize: 15,
         fontWeight: '500'
+    },
+    button: {
+        color: '#ffffff',
+        backgroundColor: '#4F85FF',
+        borderRadius: 10,
+    },
+    close: {
+        color: 'white',
     },
 });
 
