@@ -230,6 +230,7 @@ const useStyles = CreateResponsiveStyle(
       padding: 10,
       borderRadius: 10,
       marginTop: 15,
+      width: 60,
     },
     closeButtonText: {
       color: 'white',
