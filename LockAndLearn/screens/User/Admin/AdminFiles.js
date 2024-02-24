@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, Alert, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { Icon } from 'react-native-paper';
+import { Worker, Viewer } from '@react-pdf-viewer/core';
 
 const AdminFiles = ({ route, navigation }) => {
   const styles = useStyles();
@@ -12,6 +16,33 @@ const AdminFiles = ({ route, navigation }) => {
   const [passwordError, setPasswordError] = useState('');
   const [fileCreator, setFileCreator] = useState(null);
   const [isFileDetailsModalVisible, setIsFileDetailsModalVisible] = useState(false);
+  const [pdf, setPdf] = useState(null);
+  const [isPdfModalVisible, setPdfModalVisible] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState(null);
+
+  const newPlugin = defaultLayoutPlugin({
+    innerContainer: styles.customInnerContainer, // Customize inner container styles if needed
+  });
+
+  /**
+   * Function to display a file.
+   * Fetches a file from the server based on the provided file name and displays it.
+   * It sets the state for the PDF URL and makes the PDF modal visible for viewing the file.
+   * @param {string} fileName - The name of the file to be fetched and displayed.
+   */
+  const displayFile = async () => {
+    if (selectedFileName) {
+      const response = await fetch(`http://localhost:4000/files/uploadFiles/${selectedFileName}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        const test = await response.blob();
+        const url = URL.createObjectURL(test);
+        setPdf(url);
+        setPdfModalVisible(true);
+      }
+    }
+  };
 
   // Function to fetch user by ID
   const fetchUserById = async (userId) => {
@@ -74,19 +105,20 @@ const AdminFiles = ({ route, navigation }) => {
   };
 
   // New functions for file details modal
-  const openFileDetailsModal = async (fileId) => {
-    setSelectedFile(fileId);
+  const openFileDetailsModal = (fileName) => {
+    setSelectedFileName(fileName);
     setIsFileDetailsModalVisible(true);
 
     // Fetch creator info when file details modal opens
-    const file = files.find((file) => file._id === fileId);
+    const file = files.find((file) => file.filename === fileName);
     if (file && file.metadata && file.metadata.userId) {
-      await fetchUserById(file.metadata.userId);
+      fetchUserById(file.metadata.userId);
     }
   };
 
   const closeFileDetailsModal = () => {
     setIsFileDetailsModalVisible(false);
+    setSelectedFileName(null);
   };
 
   const handleDeletePress = async () => {
@@ -131,7 +163,7 @@ const AdminFiles = ({ route, navigation }) => {
           {files.length > 0 ? (
             files.map((file, index) => (
               <View key={index} style={styles.fileContainer}>
-                <TouchableOpacity onPress={() => openFileDetailsModal(file._id)}>
+                <TouchableOpacity onPress={() => openFileDetailsModal(file.filename)}>
                   <Text style={styles.fileName}>{file.filename}</Text>
                 </TouchableOpacity>
                 <Text style={styles.fileDetail}>ID: {file._id}</Text>
@@ -193,17 +225,50 @@ const AdminFiles = ({ route, navigation }) => {
               {/* Display user details */}
               {fileCreator && (
                 <View style={styles.fileCreatorDetails}>
-                  <Text style={styles.fileDetail}>Creator Name: {fileCreator.firstName} {fileCreator.lastName}</Text>
+                  <Text style={styles.fileDetail}>
+                    Creator Name: {fileCreator.firstName} {fileCreator.lastName}
+                  </Text>
                   <Text style={styles.fileDetail}>Creator Email: {fileCreator.email}</Text>
-                  <Text style={styles.fileDetail}>Creator Email: {fileCreator._id}</Text>
+                  <Text style={styles.fileDetail}>Creator ID: {fileCreator._id}</Text>
                 </View>
               )}
 
               <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  onPress={() => displayFile(selectedFileName)}
+                  style={styles.viewFileButton}
+                >
+                  <Text style={styles.viewFileButtonText}>View File</Text>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={closeFileDetailsModal} style={styles.cancelButton}>
                   <Text style={styles.cancelButtonText}>Close</Text>
                 </TouchableOpacity>
               </View>
+            </View>
+          </View>
+        </Modal>
+        {/* PDF Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isPdfModalVisible}
+          onRequestClose={() => setPdfModalVisible(false)}
+        >
+          <View style={styles.pdfModalContainer}>
+            <View style={styles.pdfModalContent}>
+              <TouchableOpacity
+                onPress={() => setPdfModalVisible(false)}
+                style={styles.CloseButton}
+              >
+                <Icon source="close-circle-outline" size={23} color={'#F24E1E'} />
+              </TouchableOpacity>
+              {pdf && (
+                <View style={styles.pdfContainer}>
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.0.279/build/pdf.worker.min.js">
+                    <Viewer fileUrl={pdf} plugins={[newPlugin]} defaultScale={1} />
+                  </Worker>
+                </View>
+              )}
             </View>
           </View>
         </Modal>
@@ -214,6 +279,18 @@ const AdminFiles = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    viewFileButton: {
+      backgroundColor: '#4CAF50',
+      padding: 10,
+      borderRadius: 5,
+      marginTop: 10,
+      alignItems: 'center',
+    },
+    viewFileButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 16,
+    },
     fileCreatorDetails: {
       marginTop: 5,
       marginBottom: 10,
