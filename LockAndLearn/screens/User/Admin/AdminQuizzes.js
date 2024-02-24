@@ -161,8 +161,9 @@ const AdminQuizzes = ({ route, navigation }) => {
                   {selectedQuiz.questions.map((question, index) => (
                     <View key={index}>
                       <Text style={styles.questionText}>
-                        Question {index + 1}: {question.questionText}
+                        Question {index + 1}
                       </Text>
+                      <Text style={styles.questionDetail}>Question: {question.questionText}</Text>
                       <Text style={styles.questionDetail}>Type: {question.questionType}</Text>
                       <Text style={styles.questionDetail}>Answer: {question.answer}</Text>
                       <View style={styles.separator}></View>
@@ -189,6 +190,51 @@ const AdminQuizzes = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    modalPreviewContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    },
+    modalPreviewContent: {
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      padding: 20,
+      width: '80%',
+      maxHeight: '80%',
+      alignItems: 'center',
+    },
+    modalPreviewText: {
+      fontSize: 23,
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    questionText: {
+      fontSize: 18,
+      marginBottom: 10,
+      fontWeight: 'bold',
+    },
+    questionDetail: {
+      fontSize: 14,
+      marginBottom: 5,
+      color: '#555',
+    },
+    separator: {
+      height: 1,
+      backgroundColor: '#ddd',
+      width: '100%',
+      marginVertical: 10,
+    },
+    closeButton: {
+      backgroundColor: '#407BFF',
+      padding: 10,
+      borderRadius: 10,
+      marginTop: 15,
+    },
+    closeButtonText: {
+      color: 'white',
+      fontWeight: 'bold',
+    },
     passwordInput: {
       height: 40,
       borderColor: 'gray',
