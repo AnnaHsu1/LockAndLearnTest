@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Modal, Alert, TextInput  } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Modal, Alert, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import { Icon } from 'react-native-paper';
 
@@ -10,6 +10,23 @@ const AdminFiles = ({ route, navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [fileCreator, setFileCreator] = useState(null);
+  const [isFileDetailsModalVisible, setIsFileDetailsModalVisible] = useState(false);
+
+  // Function to fetch user by ID
+  const fetchUserById = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
+      if (response.ok) {
+        const user = await response.json();
+        setFileCreator(user);
+      } else {
+        console.error('Failed to fetch user details:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  };
 
   const fetchFiles = async () => {
     try {
@@ -56,6 +73,22 @@ const AdminFiles = ({ route, navigation }) => {
     setPasswordError('');
   };
 
+  // New functions for file details modal
+  const openFileDetailsModal = async (fileId) => {
+    setSelectedFile(fileId);
+    setIsFileDetailsModalVisible(true);
+
+    // Fetch creator info when file details modal opens
+    const file = files.find((file) => file._id === fileId);
+    if (file && file.metadata && file.metadata.userId) {
+      await fetchUserById(file.metadata.userId);
+    }
+  };
+
+  const closeFileDetailsModal = () => {
+    setIsFileDetailsModalVisible(false);
+  };
+
   const handleDeletePress = async () => {
     try {
       // Call the admin password check endpoint
@@ -98,11 +131,13 @@ const AdminFiles = ({ route, navigation }) => {
           {files.length > 0 ? (
             files.map((file, index) => (
               <View key={index} style={styles.fileContainer}>
-                <Text style={styles.fileName}>{file.filename}</Text>
+                <TouchableOpacity onPress={() => openFileDetailsModal(file._id)}>
+                  <Text style={styles.fileName}>{file.filename}</Text>
+                </TouchableOpacity>
                 <Text style={styles.fileDetail}>ID: {file._id}</Text>
                 <Text style={styles.fileDetail}>Uploaded: {file.uploadDate}</Text>
                 {file.metadata && file.metadata.userId && (
-                  <Text style={styles.fileDetail}>Create by: {file.metadata.userId}</Text>
+                  <Text style={styles.fileDetail}>Created by: {file.metadata.userId}</Text>
                 )}
                 <TouchableOpacity onPress={() => openModal(file._id)}>
                   <Text style={styles.deleteButton}>Delete</Text>
@@ -144,6 +179,34 @@ const AdminFiles = ({ route, navigation }) => {
             </View>
           </View>
         </Modal>
+        {/* Modal for file details */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isFileDetailsModalVisible}
+          onRequestClose={closeFileDetailsModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>File Details</Text>
+
+              {/* Display user details */}
+              {fileCreator && (
+                <View style={styles.fileCreatorDetails}>
+                  <Text style={styles.fileDetail}>Creator Name: {fileCreator.firstName} {fileCreator.lastName}</Text>
+                  <Text style={styles.fileDetail}>Creator Email: {fileCreator.email}</Text>
+                  <Text style={styles.fileDetail}>Creator Email: {fileCreator._id}</Text>
+                </View>
+              )}
+
+              <View style={styles.modalButtons}>
+                <TouchableOpacity onPress={closeFileDetailsModal} style={styles.cancelButton}>
+                  <Text style={styles.cancelButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -151,6 +214,13 @@ const AdminFiles = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
   {
+    fileCreatorDetails: {
+      marginTop: 5,
+      marginBottom: 10,
+      borderTopWidth: 1,
+      borderTopColor: '#ddd',
+      paddingTop: 10,
+    },
     passwordInput: {
       height: 40,
       borderColor: 'gray',
@@ -167,7 +237,7 @@ const useStyles = CreateResponsiveStyle(
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
       backgroundColor: '#fff',
@@ -178,7 +248,7 @@ const useStyles = CreateResponsiveStyle(
     },
     modalText: {
       fontSize: 18,
-      marginBottom: 20,
+      marginBottom: 5,
       textAlign: 'center',
     },
     modalTextConfirm: {
