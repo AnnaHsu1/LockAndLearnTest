@@ -6,6 +6,8 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 const AdminContactUs = ({ route, navigation }) => {
     const styles = useStyles();
     const [inquiries, setInquiries] = useState([]);
+    const [selectedInquiry, setSelectedInquiry] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     // Fetch contact us inquiries 
     useEffect(() => {
         fetchContactUs();
@@ -34,25 +36,35 @@ const AdminContactUs = ({ route, navigation }) => {
             console.error('Error fetching contact us inquiries:', error);
         }
     };
-    const deleteContactUs = async (fileId) => {
+
+    const openModal = (inquiry) => {
+        setSelectedInquiry(inquiry);
+        setIsModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setSelectedInquiry(null);
+        setIsModalVisible(false);
+    };
+    const handleDeletePress = async () => {
+        if (!selectedInquiry) return;
+
         try {
-            const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteContactUs`, {
+            const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteContactUs?id=${selectedInquiry._id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
-                // File deleted successfully, update the files state
-                const updatedFiles = files.filter((file) => file._id !== fileId);
-                setFiles(updatedFiles);
+                const updatedInquiries = inquiries.filter((inquiry) => inquiry._id !== selectedInquiry._id);
+                setInquiries(updatedInquiries);
                 closeModal();
             } else {
-                console.error('Failed to delete file:', response.status);
+                console.error('Failed to delete inquiry:', response.status);
             }
         } catch (error) {
-            console.error('Error deleting file:', error);
+            console.error('Error deleting inquiry:', error);
         }
     };
-
 
     return (
         <View style={styles.page} testID="main-view">
@@ -70,19 +82,44 @@ const AdminContactUs = ({ route, navigation }) => {
                                         <Text style={styles.field}>Email: {inquiry.email}</Text>
                                         <Text style={styles.field}>Subject: {inquiry.subject}</Text>
                                         <Text style={styles.field}>Message: {inquiry.message}</Text>
-                                       
+                                        <TouchableOpacity onPress={() => openModal(inquiry)}>
+                                            <Text style={styles.deleteButton}>Delete</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 ))}
-                            <TouchableOpacity onPress={() => openModal(inquiries._id)}>
-                                <Text style={styles.deleteButton}>Delete</Text>
-                            </TouchableOpacity>
+                           
                             </View>
                         )
                      : (
                         <Text style={styles.emptyCertificatesList}>No certificates to approve</Text>
                     )}
                 </ScrollView>
-
+                {/* Modal for deletion confirmation */}
+                <Modal
+                    isVisible={isModalVisible}
+                    onRequestClose={closeModal}
+                    transparent={true}
+                    style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
+                >
+                    <View style={styles.deleteConfirmationModal}>
+                        <Text style={styles.confirmationText}>Are you sure you want to delete this inquiry?</Text>
+                        <View style={styles.confirmationButtons}>
+                            <TouchableOpacity
+                                testID="deleteConfirmationModal"
+                                onPress={handleDeletePress}
+                                style={[styles.confirmButton, { marginRight: 10 }]}
+                            >
+                                <Text style={styles.confirmButtonText}>Delete</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={closeModal}
+                                style={styles.cancelButton}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </View>
         </View>
     );
@@ -154,6 +191,45 @@ const useStyles = CreateResponsiveStyle(
         deleteButton: {
             color: 'red',
             marginTop: 10,
+        },
+
+        boldText: {
+            fontWeight: 'bold',
+        },
+        deleteConfirmationModal: {
+            width: '50%',
+            backgroundColor: 'white',
+            borderRadius: 10,
+            padding: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        confirmationText: {
+            fontSize: 18,
+            marginBottom: 20,
+            textAlign: 'center',
+        },
+        confirmationButtons: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+        },
+        confirmButton: {
+            backgroundColor: '#F24E1E',
+            padding: 10,
+            borderRadius: 10,
+        },
+        confirmButtonText: {
+            color: 'white',
+            fontWeight: 'bold',
+        },
+        cancelButton: {
+            backgroundColor: '#407BFF',
+            padding: 10,
+            borderRadius: 10,
+        },
+        cancelButtonText: {
+            color: 'white',
+            fontWeight: 'bold',
         },
     },
     {

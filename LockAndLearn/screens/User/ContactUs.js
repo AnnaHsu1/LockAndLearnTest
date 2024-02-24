@@ -63,6 +63,12 @@ const ContactUs = ({ navigation, route }) => {
             if (response.status === 201) {
                 setErrors('');
                 setModalVisible(true); // Show the modal
+                setFdata({
+                    email: '',
+                    name: '',
+                    subject: '',
+                    message: '',
+                });
                 // User created successfully
                 console.log('Inquiry created successfully in database!', data);
                 //Add redirect
@@ -127,34 +133,24 @@ const ContactUs = ({ navigation, route }) => {
                 >
                     <Text style={styles.textSend}>Send</Text>
                 </TouchableOpacity>
-
                 <Modal
                     isVisible={isModalVisible}
                     onRequestClose={toggleModal}
                     transparent={true}
-                    style={{ justifyContent: 'center', alignItems: 'center' }}
+                    style={{ elevation: 20, justifyContent: 'center', alignItems: 'center' }}
                 >
-                    <View
-                        style={{
-                            backgroundColor: 'white',
-                            borderRadius: 20,
-                            padding: 20,
-                        }}
-                    >
+                    <View style={styles.deleteConfirmationModal}>
                         <Text style={styles.title}>
                             The inquiry has been sent successfully!
                         </Text>
-                        <Button
-                            style={styles.button}
-                            title="Close"
-                            onPress={() => {
-                                toggleModal();
-                                //navigation.navigate('ParentAccount', {
-                                //});
-                            }}
-                        >
-                            <Text style={styles.close}>Close</Text>
-                        </Button>
+                        <View style={styles.confirmationButtons}>
+                            <TouchableOpacity
+                                onPress={toggleModal}
+                                style={styles.cancelButton}
+                            >
+                                <Text style={styles.cancelButtonText}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </Modal>
             </View>
@@ -248,6 +244,41 @@ const styles = StyleSheet.create({
     },
     close: {
         color: 'white',
+    },
+    deleteConfirmationModal: {
+        width: '50%',
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    confirmationText: {
+        fontSize: 18,
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    confirmationButtons: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    confirmButton: {
+        backgroundColor: '#F24E1E',
+        padding: 10,
+        borderRadius: 10,
+    },
+    confirmButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    cancelButton: {
+        backgroundColor: '#407BFF',
+        padding: 10,
+        borderRadius: 10,
+    },
+    cancelButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 
