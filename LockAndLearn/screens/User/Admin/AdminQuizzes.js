@@ -155,7 +155,7 @@ const AdminQuizzes = ({ route, navigation }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              {selectedQuiz ? (
+              {selectedQuiz && selectedQuiz.questions ? (
                 <>
                   <Text style={styles.modalText}>Preview Questions for {selectedQuiz.name}</Text>
                   {selectedQuiz.questions.map((question, index) => (
@@ -172,6 +172,7 @@ const AdminQuizzes = ({ route, navigation }) => {
               ) : (
                 <Text style={styles.modalText}>No quiz selected for preview</Text>
               )}
+
               <TouchableOpacity
                 onPress={() => setIsModalPreviewVisible(false)}
                 style={styles.closeButton}
