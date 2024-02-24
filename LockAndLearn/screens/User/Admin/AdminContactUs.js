@@ -5,8 +5,53 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 
 const AdminContactUs = ({ route, navigation }) => {
     const styles = useStyles();
+    const [inquiries, setInquiries] = useState([]);
+    // Fetch contact us inquiries 
+    useEffect(() => {
+        fetchContactUs();
+    }, []);
 
+    // Fetch all inquiries
+    const fetchContactUs = async () => {
+        try {
+            // Correctly formatted fetch request
+            const url = 'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getContactUs';
+            const response = await fetch(url, {
+                method: 'GET', // Specify the request method if necessary, GET is default
+                headers: {
+                    'Content-Type': 'application/json', // Set appropriate headers if required by the endpoint
+                }
+            });
 
+            if (response.ok) {
+                const data = await response.json(); // Parse the JSON response
+                console.log("data logged", data);
+                setInquiries(data); // Set inquiries state with the fetched data
+            } else {
+                console.error('Failed to contact us inquiries:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching contact us inquiries:', error);
+        }
+    };
+    const deleteContactUs = async (fileId) => {
+        try {
+            const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteContactUs`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                // File deleted successfully, update the files state
+                const updatedFiles = files.filter((file) => file._id !== fileId);
+                setFiles(updatedFiles);
+                closeModal();
+            } else {
+                console.error('Failed to delete file:', response.status);
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    };
 
 
     return (
@@ -15,6 +60,29 @@ const AdminContactUs = ({ route, navigation }) => {
                 <View style={styles.header}>
                     <Text style={styles.title}>Inquiries</Text>
                 </View>
+
+                <ScrollView>
+                    {inquiries.length > 0 ? (
+                            <View style={styles.inquiriesContainer}>
+                                {inquiries.map((inquiry, index) => (
+                                    <View key={index} style={styles.inquiryItem}>
+                                        <Text style={styles.field}>Name: {inquiry.name}</Text>
+                                        <Text style={styles.field}>Email: {inquiry.email}</Text>
+                                        <Text style={styles.field}>Subject: {inquiry.subject}</Text>
+                                        <Text style={styles.field}>Message: {inquiry.message}</Text>
+                                       
+                                    </View>
+                                ))}
+                            <TouchableOpacity onPress={() => openModal(inquiries._id)}>
+                                <Text style={styles.deleteButton}>Delete</Text>
+                            </TouchableOpacity>
+                            </View>
+                        )
+                     : (
+                        <Text style={styles.emptyCertificatesList}>No certificates to approve</Text>
+                    )}
+                </ScrollView>
+
             </View>
         </View>
     );
@@ -22,24 +90,8 @@ const AdminContactUs = ({ route, navigation }) => {
 
 const useStyles = CreateResponsiveStyle(
     {
-        subText: {
-            fontSize: 18,
-            color: '#696969',
-        },
-        subTitle: {
-            fontSize: 20,
-            fontWeight: 'bold',
-        },
-        boldText: {
-            fontSize: 25,
-            fontWeight: 'bold',
-        },
-        reportItem: {
-            backgroundColor: '#ffffff',
-            borderRadius: 10,
-            marginVertical: 10,
-            padding: 15,
-        },
+
+   
         page: {
             backgroundColor: '#ffffff',
             maxWidth: '100%',
@@ -79,19 +131,6 @@ const useStyles = CreateResponsiveStyle(
             justifyContent: 'center',
             minWidth: 100,
         },
-        modalButtons: {
-            borderRadius: 10,
-            marginVertical: 10,
-            height: 50,
-            justifyContent: 'center',
-            minWidth: 100,
-        },
-        bgRed: {
-            backgroundColor: '#FF0000',
-        },
-        bgWhite: {
-            backgroundColor: '#ffffff',
-        },
         full_width: {
             minWidth: '100%',
         },
@@ -106,21 +145,15 @@ const useStyles = CreateResponsiveStyle(
             color: '#4F85FF',
             fontSize: 20,
         },
-        options: {
-            flex: 0.75,
-            justifyContent: 'space-around',
-            alignItems: 'center',
+        inquiryItem: {
+            backgroundColor: '#ffffff',
+            borderRadius: 10,
+            marginVertical: 10,
+            padding: 10,
         },
-        link: {
-            color: '#ffffff',
-            fontSize: 12,
-            textAlign: 'center',
-            justifyContent: 'flex-end',
-        },
-        // Add a style for the ScrollView container
-        scrollViewContainer: {
-            flexGrow: 1,
-            paddingRight: 20,
+        deleteButton: {
+            color: 'red',
+            marginTop: 10,
         },
     },
     {
