@@ -308,7 +308,7 @@ const useStyles = CreateResponsiveStyle(
       borderRadius: 10,
       padding: 20,
       width: '50%',
-      alignItems: 'center',
+      alignItems: 'left',
     },
     modalText: {
       fontSize: 23,
