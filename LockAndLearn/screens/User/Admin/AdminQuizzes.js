@@ -123,7 +123,6 @@ const AdminQuizzes = ({ route, navigation }) => {
   useEffect(() => {
     fetchCreatorInfo();
   }, [selectedQuiz]);
-  
 
   return (
     <View style={styles.page}>
@@ -192,22 +191,25 @@ const AdminQuizzes = ({ route, navigation }) => {
             <View style={styles.modalContent}>
               {selectedQuiz ? (
                 <>
-                  <Text style={styles.modalText}>Preview Questions for {selectedQuiz.name}</Text>
+                  <Text style={styles.modalText}>Details of {selectedQuiz.name}</Text>
 
                   {/* Quiz details section */}
                   <View style={styles.quizDetailsContainer}>
                     <Text style={styles.quizDetailTitle}>Quiz Details:</Text>
                     {selectedQuiz && (
                       <>
-                        <Text style={styles.quizDetail}>ID: {selectedQuiz._id}</Text>
+                        <Text style={styles.quizDetail}>Quiz ID: {selectedQuiz._id}</Text>
                         {selectedQuiz.userId && creatorInfo && (
+                          <Text style={styles.quizDetail}>Creator Email: {creatorInfo.email}</Text>
+                        )}
+                        {creatorInfo && (
                           <Text style={styles.quizDetail}>
-                            Created by: {creatorInfo.email}
+                            Creator Name: {creatorInfo.firstName} {creatorInfo.lastName}
                           </Text>
                         )}
                         {creatorInfo && (
                           <Text style={styles.quizDetail}>
-                            Creator: {creatorInfo.firstName} {creatorInfo.lastName}
+                            Creator ID: {creatorInfo._id}
                           </Text>
                         )}
                       </>
@@ -267,7 +269,7 @@ const useStyles = CreateResponsiveStyle(
     questionText: {
       fontSize: 18,
       marginBottom: 10,
-      fontWeight: 'bold',
+      fontWeight: '600',
       color: '#407BFF',
     },
     questionDetail: {
@@ -309,9 +311,9 @@ const useStyles = CreateResponsiveStyle(
     },
     quizDetailTitle: {
       fontSize: 18,
-      fontWeight: 'bold',
+      fontWeight: '600',
       marginBottom: 10,
-      color: '#333',
+      color: '#407BFF',
     },
     quizDetail: {
       fontSize: 14,
@@ -381,7 +383,9 @@ const useStyles = CreateResponsiveStyle(
     modalText: {
       fontSize: 23,
       marginBottom: 20,
-      textAlign: 'center',
+      textAlign: 'left',
+      fontWeight: 'bold',
+      color: '#575757',
     },
     modalTextConfirm: {
       fontSize: 14,
