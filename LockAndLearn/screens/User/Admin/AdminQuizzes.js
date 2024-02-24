@@ -10,6 +10,7 @@ const AdminQuizzes = ({ route, navigation }) => {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isModalPreviewVisible, setIsModalPreviewVisible] = useState(false);
+  const [creatorInfo, setCreatorInfo] = useState(null);
 
   //fetching quizzes to be able to view
   const fetchQuizzes = async () => {
@@ -40,6 +41,24 @@ const AdminQuizzes = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Error deleting quiz:', error);
+    }
+  };
+
+  const getUserById = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
+
+      if (response.ok) {
+        const user = await response.json();
+        return user;
+      } else if (response.status === 404) {
+        throw new Error('User not found');
+      } else {
+        throw new Error('Failed to fetch user');
+      }
+    } catch (error) {
+      console.error('Error fetching user by ID:', error);
+      throw new Error('An error occurred while fetching the user by ID.');
     }
   };
 
@@ -89,6 +108,22 @@ const AdminQuizzes = ({ route, navigation }) => {
   useEffect(() => {
     fetchQuizzes();
   }, []);
+
+  const fetchCreatorInfo = async () => {
+    try {
+      if (selectedQuiz && selectedQuiz.userId) {
+        const user = await getUserById(selectedQuiz.userId);
+        setCreatorInfo(user);
+      }
+    } catch (error) {
+      console.error('Error fetching creator information:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCreatorInfo();
+  }, [selectedQuiz]);
+  
 
   return (
     <View style={styles.page}>
@@ -155,14 +190,34 @@ const AdminQuizzes = ({ route, navigation }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              {selectedQuiz && selectedQuiz.questions ? (
+              {selectedQuiz ? (
                 <>
                   <Text style={styles.modalText}>Preview Questions for {selectedQuiz.name}</Text>
+
+                  {/* Quiz details section */}
+                  <View style={styles.quizDetailsContainer}>
+                    <Text style={styles.quizDetailTitle}>Quiz Details:</Text>
+                    {selectedQuiz && (
+                      <>
+                        <Text style={styles.quizDetail}>ID: {selectedQuiz._id}</Text>
+                        {selectedQuiz.userId && creatorInfo && (
+                          <Text style={styles.quizDetail}>
+                            Created by: {creatorInfo.email}
+                          </Text>
+                        )}
+                        {creatorInfo && (
+                          <Text style={styles.quizDetail}>
+                            Creator: {creatorInfo.firstName} {creatorInfo.lastName}
+                          </Text>
+                        )}
+                      </>
+                    )}
+                  </View>
+
+                  {/* Questions section */}
                   {selectedQuiz.questions.map((question, index) => (
                     <View key={index}>
-                      <Text style={styles.questionText}>
-                        Question {index + 1}
-                      </Text>
+                      <Text style={styles.questionText}>Question {index + 1}</Text>
                       <Text style={styles.questionDetail}>Question: {question.questionText}</Text>
                       <Text style={styles.questionDetail}>Type: {question.questionType}</Text>
                       <Text style={styles.questionDetail}>Answer: {question.answer}</Text>
@@ -213,6 +268,7 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 18,
       marginBottom: 10,
       fontWeight: 'bold',
+      color: '#407BFF',
     },
     questionDetail: {
       fontSize: 14,
@@ -248,9 +304,19 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 14,
       marginBottom: 10,
     },
+    quizDetailsContainer: {
+      marginBottom: 20,
+    },
+    quizDetailTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      color: '#333',
+    },
     quizDetail: {
-      color: 'grey',
       fontSize: 14,
+      marginBottom: 5,
+      color: '#555',
     },
     page: {
       backgroundColor: '#ffffff',
@@ -291,6 +357,7 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 18,
       marginBottom: 5,
       fontWeight: 'bold',
+      textDecorationLine: 'underline',
     },
     noQuizzesText: {
       color: '#ffffff',
@@ -302,7 +369,7 @@ const useStyles = CreateResponsiveStyle(
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
       backgroundColor: '#fff',
