@@ -9,6 +9,7 @@ const AdminQuizzes = ({ route, navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [isModalPreviewVisible, setIsModalPreviewVisible] = useState(false);
 
   //fetching quizzes to be able to view
   const fetchQuizzes = async () => {
@@ -47,13 +48,17 @@ const AdminQuizzes = ({ route, navigation }) => {
     setIsModalVisible(true);
   };
 
+  const openModalPreview = (quiz) => {
+    setSelectedQuiz(quiz);
+    setIsModalPreviewVisible(true);
+  };
+
   const closeModal = () => {
     setSelectedQuiz(null);
     setIsModalVisible(false);
     setPassword('');
     setPasswordError('');
   };
-
 
   const handleDeletePress = async () => {
     try {
@@ -81,8 +86,6 @@ const AdminQuizzes = ({ route, navigation }) => {
     }
   };
 
-
-
   useEffect(() => {
     fetchQuizzes();
   }, []);
@@ -99,7 +102,9 @@ const AdminQuizzes = ({ route, navigation }) => {
           {quizzes.length > 0 ? (
             quizzes.map((quiz, index) => (
               <View key={index} style={styles.quizContainer}>
-                <Text style={styles.quizTitle}>{quiz.name}</Text>
+                <TouchableOpacity onPress={() => openModalPreview(quiz)}>
+                  <Text style={styles.quizTitle}>{quiz.name}</Text>
+                </TouchableOpacity>
                 <Text style={styles.quizDetail}>ID: {quiz._id}</Text>
                 <Text style={styles.quizDetail}>Created by: {quiz.userId}</Text>
                 <TouchableOpacity onPress={() => openModal(quiz._id)}>
@@ -138,6 +143,41 @@ const AdminQuizzes = ({ route, navigation }) => {
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
+            </View>
+          </View>
+        </Modal>
+        {/* Modal to preview quiz content */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalPreviewVisible}
+          onRequestClose={() => setIsModalPreviewVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              {selectedQuiz ? (
+                <>
+                  <Text style={styles.modalText}>Preview Questions for {selectedQuiz.name}</Text>
+                  {selectedQuiz.questions.map((question, index) => (
+                    <View key={index}>
+                      <Text style={styles.questionText}>
+                        Question {index + 1}: {question.questionText}
+                      </Text>
+                      <Text style={styles.questionDetail}>Type: {question.questionType}</Text>
+                      <Text style={styles.questionDetail}>Answer: {question.answer}</Text>
+                      <View style={styles.separator}></View>
+                    </View>
+                  ))}
+                </>
+              ) : (
+                <Text style={styles.modalText}>No quiz selected for preview</Text>
+              )}
+              <TouchableOpacity
+                onPress={() => setIsModalPreviewVisible(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -270,7 +310,7 @@ const useStyles = CreateResponsiveStyle(
     },
     scrollView: {
       paddingRight: 20,
-    }
+    },
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
