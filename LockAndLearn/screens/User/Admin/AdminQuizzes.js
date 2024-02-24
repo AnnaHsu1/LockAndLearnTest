@@ -141,7 +141,7 @@ const AdminQuizzes = ({ route, navigation }) => {
                 </TouchableOpacity>
                 <Text style={styles.quizDetail}>ID: {quiz._id}</Text>
                 <Text style={styles.quizDetail}>Created by: {quiz.userId}</Text>
-                <TouchableOpacity onPress={() => openModal(quiz._id)}>
+                <TouchableOpacity onPress={() => openModal(quiz._id)} testID='delete-button-1'>
                   <Text style={styles.deleteButton}>Delete</Text>
                 </TouchableOpacity>
               </View>
