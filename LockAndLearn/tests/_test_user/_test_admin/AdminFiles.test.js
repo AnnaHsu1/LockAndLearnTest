@@ -32,5 +32,13 @@ describe('<AdminFiles />', () => {
     expect(getByPlaceholderText('Enter your password')).toBeTruthy();
   });
 
+  
+  it('opens file details modal on file name press', async () => {
+    const { getByText } = render(<AdminFiles />);
+    await waitFor(() => fireEvent.press(getByText('TestFile.pdf')));
+  
+    expect(getByText('File Details')).toBeTruthy();
+  });
+
 });
 
