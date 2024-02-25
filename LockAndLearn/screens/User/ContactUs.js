@@ -97,13 +97,15 @@ const ContactUs = ({ navigation, route }) => {
                 <View style={styles.item}>
                     <Text style={styles.field}>Name</Text>
                     <TextInput
-                        testID="email-input"
+                        placeholder="Name" // Ensure that placeholder is set to "Name"
+                        testID="name-input" // Optionally, set testID for easier testing
                         style={[styles.textbox, styles.full_width]}
                         value={fdata.name}
                         onChangeText={(newText) => setFdata({ ...fdata, name: newText })}
                     />
                     <Text style={styles.field}>Email</Text>
                     <TextInput
+                        placeholder="Email"
                         testID="email-input"
                         style={[styles.textbox, styles.full_width]}
                         value={fdata.email}
@@ -111,6 +113,7 @@ const ContactUs = ({ navigation, route }) => {
                     />
                     <Text style={styles.field}>Subject</Text>
                     <TextInput
+                        placeholder="Subject"
                         testID="email-input"
                         style={[styles.textbox, styles.full_width]}
                         value={fdata.subject}
@@ -118,6 +121,7 @@ const ContactUs = ({ navigation, route }) => {
                     />
                     <Text style={styles.field}>Message</Text>
                     <TextInput
+                        placeholder="Message"
                         testID="email-input"
                         multiline={true}
                         style={[styles.textbox, styles.full_width, styles.MessageInputText]}

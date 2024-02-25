@@ -78,10 +78,14 @@ const AdminContactUs = ({ route, navigation }) => {
                             <View style={styles.inquiriesContainer}>
                                 {inquiries.map((inquiry, index) => (
                                     <View key={index} style={styles.inquiryItem}>
-                                        <Text style={styles.field}>Name: {inquiry.name}</Text>
-                                        <Text style={styles.field}>Email: {inquiry.email}</Text>
-                                        <Text style={styles.field}>Subject: {inquiry.subject}</Text>
-                                        <Text style={styles.field}>Message: {inquiry.message}</Text>
+                                        <Text style={[styles.field, styles.boldText]}>Name: </Text>
+                                        <Text>{inquiry.name}</Text>
+                                        <Text style={[styles.field, styles.boldText]}>Email: </Text>
+                                        <Text>{inquiry.email}</Text>
+                                        <Text style={[styles.field, styles.boldText]}>Subject: </Text>
+                                        <Text>{inquiry.subject}</Text>
+                                        <Text style={[styles.field, styles.boldText]}>Message: </Text>
+                                        <Text>{inquiry.message}</Text>
                                         <TouchableOpacity onPress={() => openModal(inquiry)}>
                                             <Text style={styles.deleteButton}>Delete</Text>
                                         </TouchableOpacity>
