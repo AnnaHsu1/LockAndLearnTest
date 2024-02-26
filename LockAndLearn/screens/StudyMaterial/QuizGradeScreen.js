@@ -94,7 +94,9 @@ const QuizGradeScreen = ({ route }) => {
                 <Text style={styles.gradeText}>Your grade is {((grade/quizLength) * 100).toFixed(0)} %</Text>
                 <RenderResults />
                 {passOrFail =="passed"?
-                    <View></View> :
+                    <TouchableOpacity style={styles.doneButton} onPress={() => {navigation.navigate('FreeTimeSession');}}    >
+                        <Text style={styles.doneButtonText}>Finish Review</Text>
+                    </TouchableOpacity> :
                     <TouchableOpacity style={styles.doneButton} onPress={() => {navigation.navigate('DisplayStudyMaterial', { child_ID: childID, packageID: packageID});}}    >
                         <Text style={styles.doneButtonText}>Try Again?</Text>
                     </TouchableOpacity> 
