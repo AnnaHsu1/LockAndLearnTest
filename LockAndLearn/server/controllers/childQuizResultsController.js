@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ChildQuizResults = require('../schema/childQuizResultsSchema.js')
+const Package = require('../schema/packageSchema.js')
 
 // save new quiz result for child
 router.put('/addChildQuizResults', async (req, res) => {
@@ -77,6 +78,31 @@ router.get('/getQuizResults/:id', async (req, res) => {
           return res.status(404).json({ error: 'Quiz results not found' });
       }
       res.status(201).json({ quizResults: quizResults });
+  } catch (error) {
+      console.error('Error getting childQuizResults:', error);
+      res.status(500).json({ error: 'Unable to get childQuizResults' });
+  }
+});
+
+// get quiz results for a child based on childId and workpackageId
+router.get('/getQuizResultsGivenWpID/:id/:workpackageId', async (req, res) => {
+  try {
+      // Use query parameters for GET requests
+    const childID = req.params.id;
+    const workpackageId = req.params.workpackageId;
+    
+    // Fetch all packages from given workpackage
+    const packages = await Package.find({ workPackageID: workpackageId });
+    const childResults = [];
+    await Promise.all(packages.map(async (package) => {
+        const packageID = package._id;
+        
+        // Use find to retrieve all documents that match the criteria
+        const quizResults = await ChildQuizResults.find({ childID: childID, packageID: packageID });
+        if (quizResults.length > 0)
+            childResults.push(quizResults);
+    }));
+    res.status(201).json( childResults );
   } catch (error) {
       console.error('Error getting childQuizResults:', error);
       res.status(500).json({ error: 'Unable to get childQuizResults' });

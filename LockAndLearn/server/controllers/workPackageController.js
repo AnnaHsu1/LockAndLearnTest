@@ -4,6 +4,8 @@ const WorkPackage = require('../schema/workPackageSchema.js');
 const User = require('../schema/userSchema.js');
 
 const WorkPackage2 = require('../schema/workPackage.js');
+const Package = require('../schema/packageSchema.js');
+const Quiz = require('../schema/quizSchema.js');
 
 // Create a new work package
 router.post('/createWorkPackage', async (req, res) => {
@@ -559,6 +561,44 @@ router.put('/publishWorkPackage/:workpackageID', async (req, res) => {
   } catch (error) {
     console.error('Error publishing work package:', error);
     res.status(500).json({ error: 'An error occurred while publishing the work package.' });
+  }
+});
+
+// get questions for a work package
+router.get('/getQuestions/:workPackageId', async (req, res) => {
+  try {
+    const workPackageId = req.params.workPackageId;
+    const packages = await Package.find({ workPackageID: workPackageId });
+    const quizIDs = [];
+    packages.forEach((package) => {
+      const quiz = {
+        packageID: package._id,
+        quizzes: package.quizzes,
+      };
+      quizIDs.push(quiz);
+    });
+
+    const questions = [];
+    if (quizIDs.length > 0) {
+      await Promise.all( quizIDs.map(async (quiz) => {
+        await Promise.all(quiz.quizzes.map(async (quizID) => {
+          const foundQuestions = await Quiz.findById(quizID);
+          if (foundQuestions) {
+            const question = {
+              packageID: quiz.packageID,
+              questions: foundQuestions.questions,
+            };
+            console.log(question);
+            questions.push(question);
+          }
+        }));
+    }));
+    }
+    console.log(questions);
+    res.status(201).json(questions);
+  } catch (error) {
+    console.error('Error fetching questions for work package:', error);
+    res.status(500).json({ error: 'An error occurred while fetching questions for the work package.' });
   }
 });
 

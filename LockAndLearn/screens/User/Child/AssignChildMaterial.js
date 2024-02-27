@@ -254,7 +254,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
                 <TouchableOpacity
                   onPress={() => {
                     console.log('More info')
-                    // navigation.navigate('newPageToCreate[Details of results page]', { pass the childQuizResults ID });
+                    navigation.navigate('MoreInfo', {child, workPackage});
                   }}
                 >
                   {width < 350 
