@@ -586,15 +586,14 @@ router.get('/getQuestions/:workPackageId', async (req, res) => {
           if (foundQuestions) {
             const question = {
               packageID: quiz.packageID,
+              quizID: quizID,
               questions: foundQuestions.questions,
             };
-            console.log(question);
             questions.push(question);
           }
         }));
     }));
     }
-    console.log(questions);
     res.status(201).json(questions);
   } catch (error) {
     console.error('Error fetching questions for work package:', error);
