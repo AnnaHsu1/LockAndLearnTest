@@ -27,34 +27,47 @@ const MoreInfo = ({ route, navigation }) => {
   // function to child quiz results given work package id and child id
   const fetchChildQuizResults = async (workPackageId, childId) => {
     try {
-        const response = await fetch(`http://localhost:4000/childQuizResults/getQuizResultsGivenWpID/${childId}/${workPackageId}`, {
+        const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizResultsGivenWpID?id=${childId}&workpackageId=${workPackageId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         const data = await response.json();
+
         if (data.length > 0) {
           data.forEach((thisPackage) => {
-            thisPackage.forEach((result) => {
-              // store latest status for each package
-              const childStatus = {
-                packageID: result.packageID,
-                quizID: result.quizID,
-                status: result.status[result.status.length - 1],
-              };
+            // store latest status for each package
+            const childStatus = {
+              packageID: thisPackage.packageID,
+              quizID: thisPackage.quizID,
+              status: thisPackage.status[thisPackage.status.length - 1],
+            };
+            const childStatus2 = {
+              packageID: thisPackage.packageID,
+              quizID: thisPackage.quizID,
+              status: thisPackage.status,
+            };
+            if(Array.isArray(thisPackage.status)){
               status.push(childStatus);
-              // store latest grade for each package
-              grades.push(result.score[result.score.length - 1]);
-              // store child results for each package
-              const childAnswer = {
-                childAnswers: result.childAnswers,
-                packageID: result.packageID,
-                quizID: result.quizID,
-              }
-              childAnswers.push(childAnswer);
-            });
+            } else{
+              status.push(childStatus2);
+            }
+            status.push(childStatus);
+            // store latest grade for each package
+            if(Array.isArray(thisPackage.score)){
+              grades.push(thisPackage.score[thisPackage.score.length - 1]);
+            } else{
+              grades.push(thisPackage.score);
+            }
+            // store child results for each package
+            const childAnswer = {
+              childAnswers: thisPackage.childAnswers,
+              packageID: thisPackage.packageID,
+              quizID: thisPackage.quizID,
+            }
+            childAnswers.push(childAnswer);
           });
           setIsLoadingChildStatus(false);
           setIsLoadingGrade(false);
