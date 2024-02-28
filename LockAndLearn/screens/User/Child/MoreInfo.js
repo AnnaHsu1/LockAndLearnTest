@@ -1,36 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, FlatList } from 'react-native';
-import { Checkbox } from 'react-native-paper';
-import { getUser } from '../../../components/AsyncStorage';
+import { StyleSheet, Text, View, ImageBackground, ScrollView } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { Icon } from 'react-native-paper';
 
 const MoreInfo = ({ route, navigation }) => {
-  const [workPackages, setWorkPackages] = useState([]);
   const [deviceWidth, setDeviceWidth] = useState(0);
   const { width } = useWindowDimensions();
   const child = route.params?.child;
   const workPackage = route.params?.workPackage;
   const [grades, setGrades] = useState([]);
+  const [status, setStatus] = useState([]);
   const [childAnswers, setChildAnswers] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [questionsID, setQuestionsID] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingGrade, setIsLoadingGrade] = useState(true);
+  const [isLoadingChildAnswer, setIsLoadingChildAnswer] = useState(true);
+  const [isLoadingChildStatus, setIsLoadingChildStatus] = useState(true);
 
   // inital fetch
   useEffect(() => {
-    fetchChildQuizResults(workPackage._id, child._id);
     fetchQuestions(workPackage._id);
+    fetchChildQuizResults(workPackage._id, child._id);
   }, []);
-
-
 
   // function to child quiz results given work package id and child id
   const fetchChildQuizResults = async (workPackageId, childId) => {
     try {
-      const response = await fetch(`http://localhost:4000/childQuizResults/getQuizResultsGivenWpID/${childId}/${workPackageId}`, {
+        const response = await fetch(`http://localhost:4000/childQuizResults/getQuizResultsGivenWpID/${childId}/${workPackageId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -38,25 +35,30 @@ const MoreInfo = ({ route, navigation }) => {
       });
       if (response.status === 201) {
         const data = await response.json();
-        console.log(data);
         if (data.length > 0) {
           data.forEach((thisPackage) => {
-            // console.log(thisPackage);
             thisPackage.forEach((result) => {
+              // store latest status for each package
+              const childStatus = {
+                packageID: result.packageID,
+                quizID: result.quizID,
+                status: result.status[result.status.length - 1],
+              };
+              status.push(childStatus);
               // store latest grade for each package
               grades.push(result.score[result.score.length - 1]);
-              setIsLoadingGrade(false);
-              // setGrades((prevGrades) => ({
-              //   ...prevGrades,
-              //   [result.packageID]: result.score[result.score.length - 1],
-              // }));
               // store child results for each package
-              setChildAnswers((prevChildAnswers) => ({
-                ...prevChildAnswers,
-                [result.packageID]: result.childAnswers,
-            }));
+              const childAnswer = {
+                childAnswers: result.childAnswers,
+                packageID: result.packageID,
+                quizID: result.quizID,
+              }
+              childAnswers.push(childAnswer);
+            });
           });
-          });
+          setIsLoadingChildStatus(false);
+          setIsLoadingGrade(false);
+          setIsLoadingChildAnswer(false);
         }
     }
     } catch (error) {
@@ -67,7 +69,7 @@ const MoreInfo = ({ route, navigation }) => {
   // function to get questions for a work package
   const fetchQuestions = async (workPackageId) => {
     try {
-      const response = await fetch(`http://localhost:4000/workPackages/getQuestions/${workPackageId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuestions?id=${workPackageId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -76,24 +78,8 @@ const MoreInfo = ({ route, navigation }) => {
       if (response.status === 201) {
         const data = await response.json();
         if (data.length > 0) {
-          
-          // questions.push(data);
-          console.log(data);
           setQuestions(data);
           setIsLoading(false);
-          // data.forEach((result) => {
-          //   console.log(result);
-          //   result.questions.forEach((question) => {
-          //     console.log(question);
-          //     questions.push(question);
-          //   });
-          // });
-          // data.forEach((result) => {
-          //   setQuestions((prevQuestions) => ({
-          //     ...prevQuestions,
-          //     [result.packageID]: result.questions,
-          //   }));
-          // });
         }
       }
     } catch (error) {
@@ -107,59 +93,84 @@ const MoreInfo = ({ route, navigation }) => {
       resizeMode="cover"
       style={styles.container}
     >
-      <View style={styles.containerFile}>
-        {/* Display title and name of child */}
+      <ScrollView style={styles.containerFile}>
         <Text style={styles.selectFiles} testID='header'>Details for {child.firstName}</Text>
-        <Text style={styles.selectFiles2} testID='header'>on Subject - Grade 10</Text>
-        {/* Display overview details */}
+        <Text style={styles.grade} testID='header'>on Subject - Grade 10</Text>
+        {/* Display grade */}
         {isLoadingGrade ? (
-          <Text>Loading...</Text>
+          <Text style={{alignSelf:'center'}} >Loading grade...</Text>
         ) : (
-          <Text>Child's grade: {(grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(2)}</Text>
+          <Text style={styles.gradeText} >Child's grade: {(grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(2)}%</Text>
         )}
-        {console.log('Child Answers:', childAnswers)} 
-        <View style={{ marginTop: 5, width: '100%', backgroundColor: "pink" }}>
-          {isLoading ? (
-            <Text>Loading...</Text>
+        <View style={styles.quizContainer}>
+          {isLoading && isLoadingGrade && isLoadingChildAnswer && isLoadingChildStatus ? (
+            <Text style={{alignSelf:'center'}} >Loading quizzes...</Text>
           ) : (
-            questions.map((item, index) => (
-              <View key={index}>
-                {/* <Text>{item.packageID}</Text> */}
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    backgroundColor: 'lightblue',
-                    padding: 10,
-                    margin: 10,
-                  }}
+            questions.map((item, index) => {
+              const statusColor = status.find(aStatus => aStatus.packageID === item.packageID)?.status === 'passed' ? '#0FA958' : '#A90F0F';
+              return (
+                // Display each quiz with its questions and answers
+                <View 
+                  key={index}
+                  style={[styles.singleQuizContainer, {borderColor: statusColor}]}  
                 >
-                  <Text>Question</Text>
-                  <Icon name="plus" size={30} color="#900" />
-                </View>
-                {item.questions.map((qa, qIndex) => ( // Renaming 'question' to 'qa' for clarity
-                  <View key={qIndex}>
-                    <Text>Question</Text>
-                    <Text>{qa.questionText}</Text>
-                    <Text>Answer</Text>
-                    <Text>{qa.answer}</Text>
-                    <Text>Child's Answer</Text>
+                  <View
+                    style={styles.quizTitle}
+                  >
+                    {isLoadingGrade ? (
+                      <Text style={{alignSelf:'center'}} >Loading quiz...</Text>
+                    ) : (
+                      <Text style={styles.textTitleQuiz}>Quiz {index + 1}</Text>
+                    )}  
+                    {/* Display if child passed (#0FA958) or failed (#A90F0F) the quiz with icon */}
+                    <Icon source={statusColor === '#0FA958' ? "check-bold" : "close-thick"} size={22} color={statusColor === '#0FA958' ? "#0FA958" : "#A90F0F"} />
                   </View>
-                ))}
-              </View>
-            ))
+                  {/* Display the coresponding questions, answers and child's answers */}
+                  {item.questions.map((qa, qIndex) => {
+                    const matchingChildAnswer = childAnswers.find(answer => answer.packageID === item.packageID && answer.quizID === item.quizID);
+                    return (
+                      <View 
+                        key={qIndex}
+                        style={styles.singleQuestionAnswerContainer}
+                      >
+                        {qIndex !== 0 && (
+                          <View
+                            style={[styles.divider, {borderColor: statusColor}]} 
+                          />
+                        )}
+                        <Text style={[styles.subTitleQuiz, { paddingTop: qIndex !== 0 ? 10 : 5 }]}>Question {qIndex + 1}</Text>
+                        <Text>{qa.questionText}</Text>
+                        <Text style={styles.subTitleQuiz}>Answer</Text>
+                        <Text>{qa.answer}</Text>
+                        <Text style={styles.subTitleQuiz}>Child's Answer:</Text>
+                        {/* Handle child's answer */}
+                        {matchingChildAnswer && matchingChildAnswer.childAnswers && matchingChildAnswer.childAnswers.length > qIndex ? (
+                          matchingChildAnswer.childAnswers[qIndex] ? (
+                            <Text>{matchingChildAnswer.childAnswers[qIndex]}</Text>
+                          ) : (
+                            <Text>No answer</Text>
+                          )                          
+                        ) : (
+                          <Text>No answer</Text>
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
+              );
+            })
           )}
         </View>
-      </View>
+      </ScrollView>
     </ImageBackground>
-  );
+  );                 
 };
 
+// Prop type check
 MoreInfo.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      child: PropTypes.object.isRequired, // or more specific shape if you know the structure
+      child: PropTypes.object.isRequired,
     }),
   }).isRequired,
   navigation: PropTypes.shape({
@@ -168,32 +179,6 @@ MoreInfo.propTypes = {
 };
 
 const styles = StyleSheet.create({
-  statusText: {
-    marginVertical: 3,
-    color: 'white',
-    fontSize: 14,
-    alignSelf: 'center',
-    justifyContent:'center',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  buttonAddMaterial: {
-    backgroundColor: '#407BFF',
-    width: 190,
-    height: 35,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  disabledButton: {
-    backgroundColor: '#ccc',
-  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -205,7 +190,6 @@ const styles = StyleSheet.create({
   containerFile: {
     flex: 1,
     backgroundColor: '#FAFAFA',
-    alignItems: 'center',
     width: '100%',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
@@ -218,40 +202,49 @@ const styles = StyleSheet.create({
     marginTop: '2%',
     textAlign: 'center',
   },
-  selectFiles2: {
+  grade: {
     color: '#696969',
     fontSize: 25,
     marginTop: -5,
     fontWeight: '500',
     textAlign: 'center',
   },
-  workPackageItemContainer: {
+  gradeText: {
+    marginTop: 5,
+    alignSelf: 'center',
+    fontSize: 17
+  },
+  quizContainer: {
+    marginTop: 5,
+    width: '80%',
+    paddingHorizontal: 20,
+    alignSelf: 'center'
+  },
+  singleQuizContainer: {
+    borderWidth: 1,
+    borderRadius: 15,
+    padding: 10,
+    marginBottom: 15,
+  },
+  quizTitle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    paddingBottom: 10,
+  },
+  textTitleQuiz: {
+    fontSize:24,
+    fontWeight: 300
+  },
+  singleQuestionAnswerContainer: {
     paddingHorizontal: 20,
   },
-  workPackageItem: {
-    borderColor: '#407BFF',
-    borderWidth: 1,
-    padding: 13,
-    borderRadius: 15,
-    height: 150,
-    justifyContent: 'space-between',
+  divider: {
+    paddingTop: 10,
+    borderBottomWidth: 1,
   },
-  workPackageTitle: {
-    fontSize: 24,
-    color: '#407BFF',
-  },
-  workPackageText: {
-    fontSize: 14,
-    color: '#696969',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    alignItems: 'center',
-    fontSize: 15,
-    fontWeight: '500',
+  subTitleQuiz: {
+    fontSize: 20,
+    fontWeight: 450
   },
 });
 
