@@ -50,7 +50,7 @@ const EditWorkPackage = ({ route }) => {
     }
     try {
       const response = await fetch(
-        'http://localhost:4000/workPackages/updateWorkPackage/' + workpackage._id,
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateWorkPackage?workPackageId=${workpackage._id}',
         {
           method: 'PUT',
           headers: {
