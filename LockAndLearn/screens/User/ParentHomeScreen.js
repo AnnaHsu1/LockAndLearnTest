@@ -248,6 +248,7 @@ const ParentHomeScreen = ({ navigation }) => {
                     />
                     <TouchableOpacity
                       mode="contained"
+                      testID='confirm-button'
                       onPress={() => {
                         handleRequest(false);
                       }}
