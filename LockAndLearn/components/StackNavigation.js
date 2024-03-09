@@ -412,7 +412,7 @@ const StackNavigation = () => {
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}
-          options={{ title: `Forgot Password` }}
+          options={{ title: `Forgot Password`, headerRight: () => null }}
         />
       </Stack.Navigator>
     </NavigationContainer>
