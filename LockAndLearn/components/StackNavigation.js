@@ -63,6 +63,7 @@ import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfi
 import SuspendedUser from '../screens/User/SuspendedUser';
 import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
+import ForgotPassword from '../screens/User/ForgotPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -407,6 +408,11 @@ const StackNavigation = () => {
           name="SuspendedUser"
           component={SuspendedUser}
           options={{ title: `SuspendedUser` }}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPassword}
+          options={{ title: `Forgot Password` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
