@@ -68,9 +68,19 @@ import ResetPassword from '../screens/User/ResetPassword';
 
 const Stack = createNativeStackNavigator();
 
+const linking = {
+  prefixes: ['https://localhost:19006/', 'https://lockandlearn.com', 'lockandlearn://'],
+
+  config: {
+    screens: {
+      ResetPassword: 'forgotPassword/:email',
+    },
+  },
+};
+
 const StackNavigation = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
