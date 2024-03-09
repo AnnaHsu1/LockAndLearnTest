@@ -28,7 +28,7 @@ describe('view uploaded certificates tests', () => {
     expect(getByText(/Are you sure you want to reject this application?/i)).toBeDefined();
   });
 
-  it('make PUT request and test connection to server', async () => {
+  it('make PUT request and test file download connection to server', async () => {
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'Successfully downloaded certificate' }));
     const downloadCertificateHandler = async (userId) => {
       await fetchMock(`http://localhost:4000/certificates/acceptUserCertificates/${userId}`, {
@@ -94,5 +94,27 @@ describe('view uploaded certificates tests', () => {
       expect(getByTestId('certificateContainerTest-0')).toBeInTheDocument();
       expect(getByTestId('certificateContainerTest-0')).toHaveTextContent('certificate_1.pdf');
     });
+  });
+
+  it('make GET request and test image download connection to server', async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({ message: 'Successfully downloaded tutor image' }));
+    const downloadImage = async (imageName) => {
+      await fetchMock(`http://localhost:4000/certificates/uploadImages/${imageName}`, {
+        method: 'GET',
+      });
+    };
+    await downloadImage('face.jpg');
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://localhost:4000/certificates/uploadImages/face.jpg',
+      {
+        method: 'GET',
+      }
+    );
+    const response = await fetchMock('http://localhost:4000/certificates/uploadImages/face.jpg', {
+      method: 'GET',
+    });
+    if (response.status) {
+      expect(response.status).toBe(200);
+    }
   });
 });
