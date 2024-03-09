@@ -1,31 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
-import { Button, Icon } from 'react-native-paper';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
+import { CiCircleCheck } from 'react-icons/ci';
+import emailjs from '@emailjs/browser';
 
 const ForgotPassword = ({ route, navigation }) => {
-  const [child, setChild] = useState({});
-  const childSelected = route.params.child;
+  const [emailTo, setEmailTo] = useState('');
+  const [confirmationSent, setConfirmationSent] = useState(false);
 
-  // On page load, set child to child pass through route parameters
-  useEffect(() => {
-    setChild(childSelected);
-  }, []);
+  //   service_56mj9wl
 
-  return <View style={styles.page}></View>;
+  const sendEmail = async () => {
+    const templateParams = {
+      to_email: emailTo,
+    };
+
+    await emailjs.send('service_dli3uxv', 'template_xb5grlm', templateParams, '6c2FzSRkKYEfzJ5VA');
+    setConfirmationSent(true);
+  };
+
+  return (
+    <View style={styles.page}>
+      <View style={styles.container}>
+        {!confirmationSent ? (
+          // Enter email to send confirmation
+          <>
+            <Text style={styles.title}>Did you forget your password?</Text>
+            <View style={styles.inputContainer}>
+              <Text style={styles.text}>Please enter your email</Text>
+              <TextInput style={styles.textInput} value={emailTo} onChangeText={setEmailTo} />
+            </View>
+            <TouchableOpacity onPress={sendEmail} style={styles.button}>
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          //   Add time lag for message then back to screen
+          <>
+            <Text style={styles.title}>Confirmation email sent! Please wait patiently...</Text>
+            <CiCircleCheck color="green" size={100} />
+          </>
+        )}
+      </View>
+    </View>
+  );
 };
 
 ForgotPassword.propTypes = {
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      child: PropTypes.shape({
-        firstName: PropTypes.string,
-        lastName: PropTypes.string,
-        // Add other properties of 'child' object here with their respective types
-      }),
-    }).isRequired,
-  }).isRequired,
+  route: PropTypes.shape({}).isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     // Add other navigation functions and properties if they are used in your component
@@ -36,8 +58,51 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: '#ffffff',
     maxWidth: '100%',
-    flex: 1,
     alignItems: 'center',
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'flex-start',
+    paddingTop: 20,
+    paddingHorizontal: 30,
+    maxWidth: 500,
+  },
+  title: {
+    fontSize: 22,
+    color: '#ADADAD',
+  },
+  text: {
+    fontSize: 16,
+    color: '#ADADAD',
+  },
+  inputContainer: {
+    alignItems: 'flex-start',
+    height: 250,
+    justifyContent: 'center',
+  },
+  textInput: {
+    width: '100%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#407BFF',
+    borderRadius: 5,
+    padding: 10,
+  },
+  button: {
+    width: '100%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#407BFF',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#407BFF',
+    fontSize: 16,
   },
 });
 
