@@ -64,6 +64,7 @@ import SuspendedUser from '../screens/User/SuspendedUser';
 import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
 import ForgotPassword from '../screens/User/ForgotPassword';
+import ResetPassword from '../screens/User/ResetPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -413,6 +414,11 @@ const StackNavigation = () => {
           name="ForgotPassword"
           component={ForgotPassword}
           options={{ title: `Forgot Password`, headerRight: () => null }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{ title: `Reset Password`, headerRight: () => null }}
         />
       </Stack.Navigator>
     </NavigationContainer>
