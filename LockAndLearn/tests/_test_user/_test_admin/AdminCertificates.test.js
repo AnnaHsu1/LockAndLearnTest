@@ -21,11 +21,18 @@ global.fetch = jest.fn(() =>
 jest.mock('react-native/Libraries/Modal/Modal', () => 'Modal');
 
 describe('view uploaded certificates tests', () => {
-  test('modal appears when the button is clicked', () => {
+  test('reject modal appears when the button is clicked', () => {
     const { getByText } = render(<AdminCertificates />);
     fireEvent.press(getByText('Reject'));
     // reject confirmation message should appear when clicking on reject button
     expect(getByText(/Are you sure you want to reject this application?/i)).toBeDefined();
+  });
+
+  test('accept modal appears when the button is clicked', () => {
+    const { getByText } = render(<AdminCertificates />);
+    fireEvent.press(getByText('Accept'));
+    // accept confirmation message should appear when clicking on accept button
+    expect(getByText(/Are you sure you want to accept this application?/i)).toBeDefined();
   });
 
   it('make PUT request and test file download connection to server', async () => {
