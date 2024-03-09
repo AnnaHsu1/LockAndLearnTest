@@ -7,10 +7,32 @@ import emailjs from '@emailjs/browser';
 const ForgotPassword = ({ route, navigation }) => {
   const [emailTo, setEmailTo] = useState('');
   const [confirmationSent, setConfirmationSent] = useState(false);
+  const [error, setError] = useState('');
 
-  //   service_56mj9wl
+  const userExist = async () => {
+    try {
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getUserByEmail?email=' +
+          emailTo
+      );
+      if (response.status != 200) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      console.log(error.msg);
+    }
+  };
 
   const sendEmail = async () => {
+    const userExists = await userExist();
+    // User does not exist
+    if (!userExists) {
+      setError('User does not exist! Please try again...');
+      return;
+    }
+
     const templateParams = {
       to_email: emailTo,
     };
@@ -26,6 +48,7 @@ const ForgotPassword = ({ route, navigation }) => {
           // Enter email to send confirmation
           <>
             <Text style={styles.title}>Did you forget your password?</Text>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
             <View style={styles.inputContainer}>
               <Text style={styles.text}>Please enter your email</Text>
               <TextInput style={styles.textInput} value={emailTo} onChangeText={setEmailTo} />
@@ -36,10 +59,10 @@ const ForgotPassword = ({ route, navigation }) => {
           </>
         ) : (
           //   Add time lag for message then back to screen
-          <>
+          <View style={styles.message}>
             <Text style={styles.title}>Confirmation email sent! Please wait patiently...</Text>
             <CiCircleCheck color="green" size={100} />
-          </>
+          </View>
         )}
       </View>
     </View>
@@ -103,6 +126,20 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#407BFF',
     fontSize: 16,
+  },
+  message: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  error: {
+    color: 'red',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: 'red',
+    alignItems: 'center',
+    padding: 10,
+    marginTop: 20,
   },
 });
 
