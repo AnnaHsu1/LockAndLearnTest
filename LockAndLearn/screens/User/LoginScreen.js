@@ -287,7 +287,9 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           ) : null}
         </View>
-        <Text style={styles.link}>Forgot password?</Text>
+        <Text style={styles.link} onPress={() => navigation.navigate('ForgotPassword')}>
+          Forgot password?
+        </Text>
         <StatusBar style="auto" />
       </View>
       <Image style={styles.bottomCloud} source={require('../../assets/bottomClouds.png')} />
