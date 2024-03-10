@@ -55,6 +55,7 @@ const ResetPassword = ({ route, navigation }) => {
           <View style={{ width: '100%' }}>
             <Text style={styles.text}>Please enter your new password</Text>
             <TextInput
+              testID="password"
               style={styles.textInput}
               value={password}
               onChangeText={setPassword}
@@ -64,6 +65,7 @@ const ResetPassword = ({ route, navigation }) => {
           <View style={{ width: '100%' }}>
             <Text style={styles.text}>Please confirm your new password</Text>
             <TextInput
+              testID="confirmPassword"
               style={styles.textInput}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -71,7 +73,11 @@ const ResetPassword = ({ route, navigation }) => {
             />
           </View>
         </View>
-        <TouchableOpacity onPress={handleResetPassword} style={styles.button}>
+        <TouchableOpacity
+          onPress={handleResetPassword}
+          style={styles.button}
+          testID="submit-reset-password"
+        >
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
       </View>
