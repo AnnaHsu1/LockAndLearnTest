@@ -16,7 +16,7 @@ const mockRoute = {
 // Enable mock for fetch
 fetchMock.enableMocks();
 
-describe('LoginScreen Component', () => {
+describe('Reset Password Component', () => {
   test('Render reset password screen', async () => {
     const { getByTestId, findByText } = render(<ResetPassword route={mockRoute} />);
   });

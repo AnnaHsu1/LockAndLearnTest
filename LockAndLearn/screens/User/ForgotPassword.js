@@ -51,9 +51,14 @@ const ForgotPassword = ({ route, navigation }) => {
             {error ? <Text style={styles.error}>{error}</Text> : null}
             <View style={styles.inputContainer}>
               <Text style={styles.text}>Please enter your email</Text>
-              <TextInput style={styles.textInput} value={emailTo} onChangeText={setEmailTo} />
+              <TextInput
+                style={styles.textInput}
+                value={emailTo}
+                onChangeText={setEmailTo}
+                testID="email"
+              />
             </View>
-            <TouchableOpacity onPress={sendEmail} style={styles.button}>
+            <TouchableOpacity onPress={sendEmail} style={styles.button} testID="submit">
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
           </>
