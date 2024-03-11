@@ -63,8 +63,8 @@ import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfi
 import SuspendedUser from '../screens/User/SuspendedUser';
 import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
-import ForgotPassword from '../screens/User/ForgotPassword';
-import ResetPassword from '../screens/User/ResetPassword';
+import ForgotCredentials from '../screens/User/ForgotCredentials';
+import ResetCredentials from '../screens/User/ResetCredentials';
 
 const Stack = createNativeStackNavigator();
 
@@ -73,7 +73,7 @@ const linking = {
 
   config: {
     screens: {
-      ResetPassword: 'forgotPassword/:email',
+      ForgotCredentials: 'forgotPassword/:email',
     },
   },
 };
@@ -421,14 +421,14 @@ const StackNavigation = () => {
           options={{ title: `SuspendedUser` }}
         />
         <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPassword}
-          options={{ title: `Forgot Password`, headerRight: () => null }}
+          name="ForgotCredentials"
+          component={ForgotCredentials}
+          options={{ title: `Forgot Credentials`, headerRight: () => null }}
         />
         <Stack.Screen
-          name="ResetPassword"
-          component={ResetPassword}
-          options={{ title: `Reset Password`, headerRight: () => null }}
+          name="ResetCredentials"
+          component={ResetCredentials}
+          options={{ title: `Reset Credentials`, headerRight: () => null }}
         />
       </Stack.Navigator>
     </NavigationContainer>

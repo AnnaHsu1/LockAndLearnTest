@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { CiCircleCheck } from 'react-icons/ci';
 import emailjs from '@emailjs/browser';
 
-const ForgotPassword = ({ route, navigation }) => {
+const ForgotCredentials = ({ route, navigation }) => {
   const [emailTo, setEmailTo] = useState('');
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [error, setError] = useState('');
@@ -74,7 +74,7 @@ const ForgotPassword = ({ route, navigation }) => {
   );
 };
 
-ForgotPassword.propTypes = {
+ForgotCredentials.propTypes = {
   route: PropTypes.shape({}).isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
@@ -148,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPassword;
+export default ForgotCredentials;

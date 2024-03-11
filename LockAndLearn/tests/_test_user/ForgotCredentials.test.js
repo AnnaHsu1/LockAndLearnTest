@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach } from '@jest/globals';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import ForgotPassword from '../../screens/User/ForgotPassword';
+import ForgotCredentials from '../../screens/User/ForgotCredentials';
 import fetchMock from 'jest-fetch-mock';
 
 jest.mock('expo-status-bar', () => ({
@@ -10,13 +10,13 @@ jest.mock('expo-status-bar', () => ({
 // Enable mock for fetch
 fetchMock.enableMocks();
 
-describe('Forgot Password Component', () => {
-  test('Render forgot password screen', async () => {
-    const { getByTestId, findByText } = render(<ForgotPassword />);
+describe('Forgot Credential Component', () => {
+  test('Render forgot credential screen', async () => {
+    const { getByTestId, findByText } = render(<ForgotCredentials />);
   });
 
   test('Input new password w/ correct confirmation', async () => {
-    const { getByTestId } = render(<ForgotPassword />);
+    const { getByTestId } = render(<ForgotCredentials />);
 
     const email = getByTestId('email');
     fireEvent.changeText(email, 'test@test.ca');

@@ -287,7 +287,7 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           ) : null}
         </View>
-        <Text style={styles.link} onPress={() => navigation.navigate('ForgotPassword')}>
+        <Text style={styles.link} onPress={() => navigation.navigate('ForgotCredentials')}>
           Forgot password?
         </Text>
         <StatusBar style="auto" />
