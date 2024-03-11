@@ -67,7 +67,7 @@ const WorkPackageCart = () => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkpackagesCart?parentId=${userId}`,
           {
             method: 'GET',
             headers: {
@@ -95,7 +95,7 @@ const WorkPackageCart = () => {
     const userId = user._id;
     try {
       const response = await fetch(
-        `http://localhost:4000/workPackages/deleteFromCart/${userId}/${selectedWorkPackage}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteFromCart?userId=${userId}&workPackageId=${selectedWorkPackage}`,
         {
           method: 'DELETE',
         }

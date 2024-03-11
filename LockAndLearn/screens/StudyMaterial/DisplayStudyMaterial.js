@@ -40,12 +40,15 @@ const DisplayStudyMaterial = ({}) => {
   // function to get all study material info
   const fetchPackageInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getPackagesInfo?childID=${childID}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       if (response.status === 200) {
         const data = await response.json();
         setQuizLength(data.quizzes.length);
@@ -55,11 +58,9 @@ const DisplayStudyMaterial = ({}) => {
         data.materials.forEach((material) => {
           getPDFs(material);
         });
-      } 
-      else if (response.status === 400) {
+      } else if (response.status === 400) {
         console.error('No package found for child with ID:', childID);
-      }
-      else {
+      } else {
         console.error('Error fetching study material');
       }
     } catch (error) {
@@ -72,9 +73,13 @@ const DisplayStudyMaterial = ({}) => {
     try {
       console.log('materialIDs: ', materialID);
 
-      const response = await fetch(`http://localhost:4000/files/uploadFilesById/${materialID}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `http://localhost:4000/files/uploadFilesById/${materialID}`,
+        // `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getPDFs?requestFileId=${materialID}`,
+        {
+          method: 'GET',
+        }
+      );
       if (response.status === 200) {
         const fileBlob = await response.blob();
         const fileUrl = URL.createObjectURL(fileBlob);
@@ -94,12 +99,15 @@ const DisplayStudyMaterial = ({}) => {
   const fetchQuizById = async (quizId) => {
     console.log('Fetching Quiz with ID:', quizId);
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizById?quizId=${quizId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (response.status === 200) {
         const data = await response.json();
@@ -122,8 +130,8 @@ const DisplayStudyMaterial = ({}) => {
       quizLength: quiz.questions.length,
       questionIndex: 0,
       child_ID: childID,
-      subject: packageInfo.name,
-      packageId: packageInfo.package_id,
+      subject: packageInfo.subcategory,
+      packageId: packageInfo._id,
     });
   };
 

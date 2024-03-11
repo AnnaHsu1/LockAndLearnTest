@@ -29,7 +29,7 @@ const AdminSubcategories = ({ navigation }) => {
 
   const fetchSubcategories = async () => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/fetchAll');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchAllSubcategories');
       if (response.ok) {
         const data = await response.json();
         setSubcategories(data);
@@ -57,7 +57,7 @@ const AdminSubcategories = ({ navigation }) => {
       if (response.ok) {
         // Admin password check successful, proceed with subcategory deletion
         const responseDelete = await fetch(
-          `http://localhost:4000/subcategories/delete/${selectedSubcategory}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteSelectedSubcategory?subcategoryId=${selectedSubcategory}`,
           {
             method: 'DELETE',
           }
@@ -86,7 +86,7 @@ const AdminSubcategories = ({ navigation }) => {
   const handleCreatePress = async () => {
     try {
       // Call the createCourse endpoint with the new subcategory name
-      const response = await fetch('http://localhost:4000/subcategories/createCourse', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createCourseAdmin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const AdminSubcategories = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:4000/subcategories/addSubcategoryToGrade', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addSubcategoryToGrade', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -184,7 +184,7 @@ const AdminSubcategories = ({ navigation }) => {
       if (response.ok) {
         // Admin password check successful, proceed with subcategory deletion
         const responseDelete = await fetch(
-          `http://localhost:4000/subcategories/deleteSubcategoryFromGrade/${selectedSubcategoryToDelete.subcategoryId}/${selectedSubcategoryToDelete.grade}/${selectedSubcategoryToDelete.subcategoryIndex}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteSubcategoryFromGrade?subcategoryId=${selectedSubcategoryToDelete.subcategoryId}&grade=${selectedSubcategoryToDelete.grade}&index=${selectedSubcategoryToDelete.subcategoryIndex}`,
           {
             method: 'DELETE',
             headers: {

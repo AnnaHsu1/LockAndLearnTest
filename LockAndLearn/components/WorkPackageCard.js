@@ -19,7 +19,7 @@ export const WorkPackageCard = ({ props }) => {
   const deleteWorkPackage = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/workPackages/deleteWorkPackage/' + props._id,
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteWorkPackage?_id=${props._id}' ,
         {
           method: 'PUT',
           headers: {
@@ -40,7 +40,7 @@ export const WorkPackageCard = ({ props }) => {
     
     try {
       const response = await fetch(
-        `http://localhost:4000/workPackages/publishWorkPackage/${workPackageId}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/publishWorkPackage?workPackageId=${workPackageId}`,
         {
           method: 'PUT', // Use PUT since we're updating part of the resource
           headers: {

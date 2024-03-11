@@ -15,6 +15,8 @@ import {
   removeItem,
   setUserTokenWithExpiry,
 } from '../../components/AsyncStorage';
+import { parseISO, isBefore, startOfDay, differenceInYears } from 'date-fns';
+import bcrypt from 'bcryptjs';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -63,57 +65,140 @@ const GoogleSignUpScreen = ({ route, navigation }) => {
     // console.log('fdata', fdata);
   };
 
-  const handleSubmit = async () => {
-    configureFdata();
+  const validateInputs = async () => {
+    // Input validations
+    if (!fdata.DOB || !fdata.isParent) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Fields: 'All fields must be filled.',
+      }));
+      return false;
+    }
 
+    const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!fdata.DOB || !dobRegex.test(fdata.DOB)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'Invalid date format. Please use YYYY-MM-DD.',
+      }));
+      return false;
+    }
+
+    // Attempt to parse the date of birth
+    let dob;
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fdata), // Send user data as JSON
-      });
-      const data = await response.json();
-      if (response.status === 201) {
-        // User created successfully
-        console.log('User created successfully in database!', data);
-        // await setItem('@token', JSON.stringify(data.user));
-        await setUserTokenWithExpiry('@token', data.user);
-        //Add redirect
-        {
-          data?.user.isParent
-            ? navigation.navigate('ParentHomeScreen')
-            : navigation.navigate('UserLandingPage');
-        }
-      } else {
-        setErrors({
-          Fields: '',
-          DOB: '',
-        });
-        if (data.msg === 'All fields must be filled.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Fields: data.msg,
-          }));
-        } else if (
-          data.msg === 'Invalid email format.' ||
-          data.msg === 'Email is already in use.' ||
-          data.msg === 'Email is already in use.'
-        ) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Email: data.msg,
-          }));
-        } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            DOB: data.msg,
-          }));
-        }
-      }
+      dob = parseISO(fdata.DOB);
     } catch (error) {
-      console.error('Submitting error when creating google user:', error);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'Invalid date. Please provide a valid date in the format YYYY-MM-DD.',
+      }));
+      return false;
+    }
+
+    // Parse the current date
+    const currentDate = new Date();
+
+    // Check if the date of birth is a day before the current day
+    const isBeforeCurrentDay = isBefore(dob, startOfDay(currentDate));
+
+    if (!isBeforeCurrentDay) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'Invalid date of birth. Date cannot be ahead of today.',
+      }));
+      return false;
+    }
+
+    // Check if the user is older than 18
+    const isOlderThan18 = differenceInYears(currentDate, dob) >= 18;
+
+    if (!isOlderThan18) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'You must be at least 18 years old to register.',
+      }));
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    // Validate inputs
+    const isValid = await validateInputs();
+    if (!isValid) {
+      return;
+    } else {
+      setErrors({
+        Fields: '',
+        DOB: '',
+      });
+      configureFdata();
+      console.log('fdata', fdata);
+
+      try {
+        const salt = await bcrypt.genSalt();
+        const passwordHash = await bcrypt.hash(fdata.Password, salt);
+
+        const response = await fetch(
+          'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userSignup',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              FirstName: fdata.FirstName,
+              LastName: fdata.LastName,
+              isParent: fdata.isParent,
+              Email: fdata.Email,
+              Password: passwordHash,
+              DOB: fdata.DOB,
+            }), // Send user data as JSON
+          }
+        );
+        const data = await response.json();
+        if (response.status === 201) {
+          // User created successfully
+          console.log('User created successfully in database!', data);
+          // await setItem('@token', JSON.stringify(data.user));
+          await setUserTokenWithExpiry('@token', data);
+          //Add redirect
+          {
+            data?.isParent
+              ? navigation.navigate('ParentHomeScreen')
+              : navigation.navigate('UserLandingPage');
+          }
+        } else {
+          setErrors({
+            Fields: '',
+            DOB: '',
+          });
+          if (data.msg === 'All fields must be filled.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Fields: data.msg,
+            }));
+          } else if (
+            data.msg === 'Invalid email format.' ||
+            data.msg === 'Email is already in use.' ||
+            data.msg === 'Email is already in use.'
+          ) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Email: data.msg,
+            }));
+          } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              DOB: data.msg,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Submitting error when creating google user:', error);
+      }
     }
   };
 
