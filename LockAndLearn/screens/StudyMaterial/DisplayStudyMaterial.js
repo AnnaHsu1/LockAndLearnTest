@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import PropTypes from 'prop-types';
+import { getUser } from '../../components/AsyncStorage';
 
 const DisplayStudyMaterial = ({}) => {
   const route = useRoute();
@@ -35,6 +36,23 @@ const DisplayStudyMaterial = ({}) => {
   // when screen loads, get all work packages from the user & update when a new package is added
   useEffect(() => {
     fetchPackageInfo();
+  }, [params]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = await getUser();
+        console.log("User ID:", user);
+        console.log("User email:", user.email);
+  
+        // Continue with fetching other data
+        fetchPackageInfo();
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+  
+    fetchUserData();
   }, [params]);
 
   useEffect(() => {
