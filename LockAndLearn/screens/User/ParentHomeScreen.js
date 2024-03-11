@@ -246,7 +246,7 @@ const ParentHomeScreen = ({ navigation }) => {
                       onChangeText={(pin) => setPin(pin)}
                       value={pin}
                     />
-                    <Text style={styles.link} onPress={() => navigation.navigate('ForgotCredentials')}>
+                    <Text style={styles.link} onPress={() => navigation.navigate('ForgotCredentials', { credentials: 'pin' })}>
                       Forgot PIN?
                     </Text>
                     <TouchableOpacity

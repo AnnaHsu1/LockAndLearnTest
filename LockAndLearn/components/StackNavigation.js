@@ -73,7 +73,7 @@ const linking = {
 
   config: {
     screens: {
-      ForgotCredentials: 'forgotPassword/:email',
+      ResetCredentials: 'forgotPassword/:email',
     },
   },
 };
