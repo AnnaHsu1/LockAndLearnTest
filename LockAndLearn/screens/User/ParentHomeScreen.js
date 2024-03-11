@@ -246,6 +246,9 @@ const ParentHomeScreen = ({ navigation }) => {
                       onChangeText={(pin) => setPin(pin)}
                       value={pin}
                     />
+                    <Text style={styles.link} onPress={() => navigation.navigate('ForgotCredentials')}>
+                      Forgot PIN?
+                    </Text>
                     <TouchableOpacity
                       mode="contained"
                       testID='confirm-button'
@@ -496,6 +499,12 @@ const useStyles = CreateResponsiveStyle(
       marginBottom: 10,
       width: '100%',
       paddingLeft: 10,
+    },
+    link: {
+      color: '#fff',
+      fontSize: 12,
+      paddingBottom: 20,
+      textAlign: 'center',
     },
   },
   {

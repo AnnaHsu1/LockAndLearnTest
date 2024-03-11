@@ -95,7 +95,7 @@ const ParentAccountScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        {console.log('Children:', children)}
+        {/* {console.log('Children:', children)} */}
         {children.length != 0
           ? children.map((child) => (
               <Button
