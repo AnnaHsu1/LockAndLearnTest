@@ -5,6 +5,8 @@ import { CiCircleCheck } from 'react-icons/ci';
 import emailjs from '@emailjs/browser';
 
 const ForgotCredentials = ({ route, navigation }) => {
+  const credential = route.params?.credential;
+
   const [emailTo, setEmailTo] = useState('');
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [error, setError] = useState('');
@@ -37,8 +39,16 @@ const ForgotCredentials = ({ route, navigation }) => {
       to_email: emailTo,
     };
 
-    await emailjs.send('service_dli3uxv', 'template_xb5grlm', templateParams, '6c2FzSRkKYEfzJ5VA');
-    setConfirmationSent(true);
+    if(credential === 'password') {
+      // Send email forgot password
+      await emailjs.send('service_dli3uxv', 'template_xb5grlm', templateParams, '6c2FzSRkKYEfzJ5VA');
+      setConfirmationSent(true);
+    } else if(credential == 'pin') {
+      // Send email forgot PIN
+      await emailjs.send('service_7tt8qrc', 'template_98ikbxb', templateParams, 'yLk4-T5Ql27rmRllv');
+      setConfirmationSent(true);
+    }
+
   };
 
   return (
@@ -47,7 +57,7 @@ const ForgotCredentials = ({ route, navigation }) => {
         {!confirmationSent ? (
           // Enter email to send confirmation
           <>
-            <Text style={styles.title}>Did you forget your password?</Text>
+            <Text style={styles.title}>Did you forget your {credential == 'password' ? 'password' : 'parental PIN'}?</Text>
             {error ? <Text style={styles.error}>{error}</Text> : null}
             <View style={styles.inputContainer}>
               <Text style={styles.text}>Please enter your email</Text>

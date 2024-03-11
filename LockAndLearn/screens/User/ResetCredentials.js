@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 
-const ResetPassword = ({ route, navigation }) => {
+const ResetCredentials = ({ route, navigation }) => {
   var bcrypt = require('bcryptjs');
 
   const userEmail = route.params.email;
+  const credential = route.params.credential;
+  console.log(credential)
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -85,7 +87,7 @@ const ResetPassword = ({ route, navigation }) => {
   );
 };
 
-ResetPassword.propTypes = {
+ResetCredentials.propTypes = {
   route: PropTypes.shape({}).isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
@@ -145,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ResetPassword;
+export default ResetCredentials;
