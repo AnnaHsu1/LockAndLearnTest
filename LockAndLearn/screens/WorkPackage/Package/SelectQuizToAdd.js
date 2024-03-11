@@ -23,7 +23,7 @@ const SelectQuizToAdd = () => {
   const getQuizzes = async () => {
     const user = await getUser();
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes/' + user._id, {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizzesByUserId?userId=' + user._id, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -33,11 +33,16 @@ const SelectQuizToAdd = () => {
         const data = await response.json();
         setQuizzes(data);
         // set checked (true) to checkboxes that are already selected in the package
-        const quizzesInDb = await fetch(`http://localhost:4000/packages/fetchQuizzes/${p_id}`, {
+        const quizzesInDb = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchPackageQuizzes?id=${p_id}`, {
           method: 'GET',
         });
-        const selectedQuizzesDb = await quizzesInDb.json();
-        setSelectedQuizzes(selectedQuizzesDb);
+        if (quizzesInDb.status === 200) {
+          const selectedQuizzesDb = await quizzesInDb.json();
+          setSelectedQuizzes(selectedQuizzesDb);
+        }
+        else {
+          console.error('Error fetching quizzes from the package');
+        }
       } else {
         console.error('Error fetching quizzes');
       }
@@ -63,7 +68,7 @@ const SelectQuizToAdd = () => {
   // Function to add selected quizzes to the work package
   const addQuizzesToWorkPackage = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/addContent/${p_id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addContentPackage?id=${p_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -114,8 +114,53 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   // Save the edited timeframes
   const saveEditTimeframes = async () => {
+    // input validations
+    for (const key in editStartHour) {
+      if (
+        !editStartHour[key] ||
+        !editStartMinute[key] ||
+        !editEndHour[key] ||
+        !editEndMinute[key] ||
+        !editSubject[key]
+      ) {
+        setError('All fields must be filled.');
+        return;
+      }
+      if (editStartHour[key] < 0 || editStartHour[key] > 23 || editEndHour[key] < 0 || editEndHour[key] > 23) {
+        setError('Hours must be between 00 and 23.');
+        return;
+      }
+      if (
+        editStartMinute[key] < 0 ||
+        editStartMinute[key] > 59 ||
+        editEndMinute[key] < 0 ||
+        editEndMinute[key] > 59
+      ) {
+        setError('Minutes must be between 00 and 59.');
+        return;
+      }
+      if (
+        editStartHour[key] > editEndHour[key] ||
+        (editStartHour[key] === editEndHour[key] && editStartMinute[key] >= editEndMinute[key])
+      ) {
+        setError('Start time must be before end time.');
+        return;
+      }
+      // regex validation for hours and minutes
+      const integerHoursCheck = new RegExp('^[0-9]+$');
+      if (!integerHoursCheck.test(editStartHour[key]) || !integerHoursCheck.test(editEndHour[key])) {
+        setError('Hour must be an integer between 00 and 23.');
+        return;
+      }
+      const integerMinsCheck = new RegExp('^[0-5][0-9]$');
+      if (!integerMinsCheck.test(editStartMinute[key]) || !integerMinsCheck.test(editEndMinute[key])) {
+        setError('Minute must be an integer between 00 and 59.');
+        return;
+      }
+    }
+    // send the edited timeframes to the database
     try {
-      const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateEditTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -149,11 +194,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const getChildTimeframes = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/timeframes/gettimeframes/' + childSelected._id,
-        {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
-        }
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getTimeframes?childId=${childSelected._id}`
       );
       const data = await response.json();
       if (response.status != 200) {
@@ -175,11 +216,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const getChildPreferences = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/child/getPreferences/' + childSelected._id,
-        {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
-        }
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getPreferences?childId=${childSelected._id}`
       );
       const data = await response.json();
       if (response.status != 200) {
@@ -231,8 +268,46 @@ const ChildTimeframes = ({ route, navigation }) => {
 
   // Add a new timeframe
   const addTimeframe = async () => {
+    // Input validations
+    if (!selectedDay) {
+      setError('Day must be selected.');
+      return;
+    }
+    if (!starthour || !startminute || !endhour || !endminute) {
+      setError('Start and end time must be filled.');
+      return;
+    }
+    if (starthour < 0 || starthour > 23 || endhour < 0 || endhour > 23) {
+      setError('Hours must be between 00 and 23.');
+      return;
+    }
+    if (startminute < 0 || startminute > 59 || endminute < 0 || endminute > 59) {
+      setError('Minutes must be between 00 and 59.');
+      return;
+    }
+    if (starthour > endhour || (starthour === endhour && startminute >= endminute)) {
+      setError('Start time must be before end time.');
+      return;
+    }
+    if (!selectedSubject) {
+      setError('Subject must be selected.');
+      return;
+    }
+    // regex validation for hours and minutes
+    const integerHoursCheck = new RegExp('^[0-9]+$');
+    if (!integerHoursCheck.test(starthour) || !integerHoursCheck.test(endhour)) {
+      setError('Hour must be an integer between 00 and 23.');
+      return;
+    }
+    const integerMinsCheck = new RegExp('^[0-5][0-9]$');
+    if (!integerMinsCheck.test(startminute) || !integerMinsCheck.test(endminute)) {
+      setError('Minute must be an integer between 00 and 59.');
+      return;
+    }
+
+    // Send the new timeframe to the database
     try {
-      const response = await fetch('http://localhost:4000/timeframes/addtimeframe', {
+        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addTimeframe', {
         method: 'POST',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -294,7 +369,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (Object.keys(toggleSwitchItem).length === 0) {
         return;
       }
-      const response = await fetch('http://localhost:4000/timeframes/updateTimeframe', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -325,7 +400,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const handleDeleteTimeframe = async (timeframeId) => {
     try {
       const response = await fetch(
-        'http://localhost:4000/timeframes/deletetimeframe/' + timeframeId,
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteTimeframe?id=' + timeframeId,
         {
           method: 'DELETE',
           credentials: 'include', // Include cookies in the request
@@ -681,6 +756,7 @@ const ChildTimeframes = ({ route, navigation }) => {
                       timePeriods.push(
                         <View key={`${day}-${index}`} style={styles.timePeriod}>
                           <View>
+                          {console.log('subject', subject, index, subject[index], day, timeframes[day][index]._id)}
                             <Text style={{ fontSize: 16, fontWeight: '600', color: '#407BFF' }}>
                               {subject[index] ? subject[index] : 'No subject'}
                             </Text>

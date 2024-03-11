@@ -35,7 +35,7 @@ const SelectStudyMaterialToAdd = () => {
     const token = await getItem('@token');
     const user = JSON.parse(token);
     const userId = user._id;
-    const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
+    const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getSpecificUploadFilesByUserId?requestUserId=${userId}`, {
       method: 'GET',
     });
     const files = await response.json();
@@ -50,19 +50,25 @@ const SelectStudyMaterialToAdd = () => {
     setDataFile(formattedFiles);
 
     // set checked (true) to checkboxes that are already selected in the package 
-    const materialsInDb = await fetch(`http://localhost:4000/packages/fetchMaterials/${p_id}`, {
+    const materialsInDb = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchPackageMaterials?id=${p_id}`, {
       method: 'GET',
     });
-    const selectedFiles = await materialsInDb.json();
-    const checkedboxItems = {};
 
-    selectedFiles.forEach((material) => {
-      const index = formattedFiles.findIndex((file) => file.originalId === material);
-      if (index !== -1) {
-        checkedboxItems[formattedFiles[index].id] = true;
-      }
-    });
-    setCheckedboxItems(checkedboxItems);
+    if (materialsInDb.status === 200 || materialsInDb.status === 201) {
+      const selectedFiles = await materialsInDb.json();
+      const checkedboxItems = {};
+  
+      selectedFiles.forEach((material) => {
+        const index = formattedFiles.findIndex((file) => file.originalId === material);
+        if (index !== -1) {
+          checkedboxItems[formattedFiles[index].id] = true;
+        }
+      });
+      setCheckedboxItems(checkedboxItems);
+    }
+    else {
+      console.error('Error fetching materials');
+    }
   };
 
   // function to download file
@@ -99,7 +105,7 @@ const SelectStudyMaterialToAdd = () => {
         .filter(([key, value]) => value)
         .map(([key, value]) => dataFile.find(file => file.id === parseInt(key)).originalId);
       const response = await fetch(
-        `http://localhost:4000/packages/addContent/${p_id}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addContentPackage?id=${p_id}`, 
         {
           method: 'PUT',
           headers: {

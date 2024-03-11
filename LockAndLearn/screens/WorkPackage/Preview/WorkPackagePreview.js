@@ -66,7 +66,7 @@ const WorkPackagePreview = () => {
           reason
         );
 
-        const response = await fetch('http://localhost:4000/reports/create-report', {
+        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createReport', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -97,15 +97,21 @@ const WorkPackagePreview = () => {
   // function to get work package information
   const fetchPackages = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchPackages/${_id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchPackages?id=${_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         const data = await response.json();
-        setPackages(data);
+        // handle if data is an array or an object (for single package)
+        if (Array.isArray(data)) {
+          setPackages(data);
+        }
+        else {
+          setPackages([data]);
+        }
       } else {
         console.error('Error fetching workPackage');
       }
