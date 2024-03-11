@@ -13,7 +13,7 @@ const AdminQuizzes = ({ route, navigation }) => {
   //fetching quizzes to be able to view
   const fetchQuizzes = async () => {
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/allQuizzes');
       if (response.ok) {
         const data = await response.json();
         setQuizzes(data);
@@ -27,7 +27,7 @@ const AdminQuizzes = ({ route, navigation }) => {
 
   const deleteQuiz = async (quizId) => {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteQuizbyquizId?quizId=${quizId}`, {
         method: 'DELETE',
       });
       if (response.ok) {

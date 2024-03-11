@@ -10,10 +10,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-responsive-styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
 import { Button } from 'react-native-paper';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
@@ -29,6 +25,7 @@ import { FcGoogle } from 'react-icons/fc';
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = ({ navigation }) => {
+  var bcrypt = require('bcryptjs');
   const deviceSize = useDeviceSize();
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
@@ -83,73 +80,82 @@ const LoginScreen = ({ navigation }) => {
 
   const sendLoginData = async (loginData) => {
     try {
-      const response = await fetch('http://localhost:4000/users/login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
-  
-      const data = await response.json();
-  
-      if (response.status === 201) {
+      // console.log('loginData:', loginData);
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userLogin',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(loginData),
+        }
+      );
+      const user = await response.json();
+      if (response.status === 200) {
         setErrorMsg(null);
-  
-        if (data.user.suspended) {
-          // If the user is suspended, navigate to SuspendedUser screen
-          navigation.navigate('SuspendedUser');
+        var isMatch = await bcrypt.compare(loginData.password, user.password);
+
+        if (!isMatch) {
+          setErrorMsg('Invalid credentials, please try again.');
         } else {
-          // If the user is not suspended, proceed with regular navigation
-          console.log('User successfully logged in!', data);
-          setDisplayMsg(
-            'Credentials are valid, welcome back' +
-              ' ' +
-              data.user.firstName +
-              ' ' +
-              data.user.lastName +
-              '!'
-          );
-          await setUserTokenWithExpiry('@token', data.user);
-          
-          if (data.user.isParent) {
-            navigation.navigate('ParentHomeScreen');
+          if (user.suspended) {
+            // If the user is suspended, navigate to SuspendedUser screen
+            navigation.navigate('SuspendedUser');
           } else {
-            navigation.navigate('UserLandingPage');
+            // If the user is not suspended, proceed with regular navigation
+            // console.log('User successfully logged in!', user);
+            setDisplayMsg(
+              'Credentials are valid, welcome back' +
+                ' ' +
+                user.firstName +
+                ' ' +
+                user.lastName +
+                '!'
+            );
+            await setUserTokenWithExpiry('@token', user);
+
+            if (user.isParent) {
+              navigation.navigate('ParentHomeScreen');
+            } else {
+              navigation.navigate('UserLandingPage');
+            }
           }
         }
       } else {
         // Store the error message in state
-        setErrorMsg(data.msg);
+        setErrorMsg(user.msg);
       }
     } catch (error) {
       console.error('Error logging user:', error);
     }
-  };  
+  };
 
   const sendLoginDataAdmin = async (loginData) => {
     try {
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userLogin',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(loginData),
+        }
+      );
+      const user = await response.json();
+      var isMatch = await bcrypt.compare(loginData.password, user.password);
 
-      const data = await response.json();
-
-      if (response.status === 201) {
+      if (response.status === 200 && isMatch) {
         setErrorMsg(null);
-        console.log('Admin successfully logged in!', data);
+        console.log('Admin successfully logged in!', user);
         setDisplayMsg('Admin login successful.');
 
         // Store the user data in AsyncStorage
-        await setUserTokenWithExpiry('@token', data.user);
+        await setUserTokenWithExpiry('@token', user);
         navigation.navigate('AdminMenu');
       } else {
-        setErrorMsg(data.msg);
+        setErrorMsg(user.msg);
       }
     } catch (error) {
       console.error('Error logging admin:', error);

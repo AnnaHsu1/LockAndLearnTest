@@ -79,29 +79,25 @@ const EditQuestion = ({ route }) => {
   //Set approved field in quiz false when a question is edited
   const updateQuestionApproval = async (quizId) => {
     try {
-      const updateQuestionResponse = await fetch(
-        `http://localhost:4000/quizzes/${quizId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            approved: false,
-          }),
-        }
-      );
+        const updateQuizResponse = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateQuiz?quizId=${quizId}`, {
 
-      if (updateQuestionResponse.ok) {
-        console.log('Question approval status updated successfully.');
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          approved: false,
+        }),
+      });
+
+      if (updateQuizResponse.ok) {
+        const updatedQuiz = await updateQuizResponse.json();
+        console.log('Quiz updated:', updatedQuiz);
       } else {
-        console.error(
-          'Failed to update question approval status:',
-          updateQuestionResponse.statusText
-        );
+        console.error('Failed to update quiz:', updateQuizResponse.statusText);
       }
     } catch (error) {
-      console.error('Error updating question approval status:', error);
+      console.error('Error updating quiz:', error);
     }
   };
 
@@ -138,7 +134,7 @@ const EditQuestion = ({ route }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/quizzes/updateQuestion/${quizId}/${questionIndex}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateQuestion?quizId=${quizId}&questionIndex=${questionIndex}`,
         {
           method: 'PUT',
           headers: {
@@ -171,7 +167,8 @@ const EditQuestion = ({ route }) => {
   const fetchQuestion = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/quizzes/getQuestion/${quizId}/${questionIndex}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuestion?quizId=${quizId}&questionIndex=${questionIndex}`,
+
         {
           method: 'GET',
           headers: {

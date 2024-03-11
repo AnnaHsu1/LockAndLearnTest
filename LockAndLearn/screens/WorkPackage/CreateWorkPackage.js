@@ -63,7 +63,7 @@ const CreateWorkPackage = (route) => {
       const userId = user._id;
       if (userId) {
         // const response = await fetch('http://localhost:4000/workPackages/create', {
-        const response = await fetch('http://localhost:4000/workPackages/createWorkPackage', {
+        const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createWorkPackage', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

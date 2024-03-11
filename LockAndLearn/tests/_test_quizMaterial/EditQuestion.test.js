@@ -192,7 +192,7 @@ describe('EditQuestion Tests', () => {
     await waitFor(() => {
       // The second call to fetchMock (index 1) should be the PUT request
       const putCall = fetchMock.mock.calls[1];
-      expect(putCall[0]).toEqual(`http://localhost:4000/quizzes/updateQuestion/${mockRoute.params.quizId}/${mockRoute.params.questionIndex}`);
+      expect(putCall[0]).toEqual(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateQuestion?quizId=123&questionIndex=1`);
 
       // The body of the PUT request should match the mockQuestionData
       const putBody = JSON.parse(putCall[1].body);
