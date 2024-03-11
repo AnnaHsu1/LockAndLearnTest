@@ -38,30 +38,47 @@ const DisplayStudyMaterial = ({}) => {
   }, [params]);
 
   useEffect(() => {
-    // Only attempt to enter fullscreen mode on web platforms
     if (Platform.OS === 'web') {
       const enterFullScreen = async () => {
         if (document.documentElement.requestFullscreen) {
           await document.documentElement.requestFullscreen();
         } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
           await document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari, and Opera */
           await document.documentElement.webkitRequestFullscreen();
         } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
           await document.documentElement.msRequestFullscreen();
         }
       };
 
-      // Enter fullscreen
+      const onFullScreenChange = () => {
+        if (!document.fullscreenElement &&    // standard method
+            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) { // vendor prefixes
+          enterFullScreen(); // Try to re-enter fullscreen mode
+          console.log("off fullscreen"); // Log when exiting fullscreen
+        }
+      };
+
+      document.addEventListener("fullscreenchange", onFullScreenChange);
+      document.addEventListener("webkitfullscreenchange", onFullScreenChange);
+      document.addEventListener("mozfullscreenchange", onFullScreenChange);
+      document.addEventListener("MSFullscreenChange", onFullScreenChange);
+
+      // Enter fullscreen initially
       enterFullScreen();
 
-      // Cleanup function to exit fullscreen when component unmounts
+      // Cleanup function to remove event listeners and exit fullscreen
       return () => {
+        document.removeEventListener("fullscreenchange", onFullScreenChange);
+        document.removeEventListener("webkitfullscreenchange", onFullScreenChange);
+        document.removeEventListener("mozfullscreenchange", onFullScreenChange);
+        document.removeEventListener("MSFullscreenChange", onFullScreenChange);
+
         if (document.exitFullscreen) {
           document.exitFullscreen();
         } else if (document.mozCancelFullScreen) { /* Firefox */
           document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari, and Opera */
           document.webkitExitFullscreen();
         } else if (document.msExitFullscreen) { /* IE/Edge */
           document.msExitFullscreen();
