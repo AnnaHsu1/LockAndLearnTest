@@ -49,37 +49,36 @@ describe('LoginScreen Component', () => {
   });
 
   const mockLoginUser = {
-    Email: 'email@test.com',
-    Password: 'test123@',
+    email: 'email@test.com',
+    password: 'test123@',
   };
 
   test('sends a POST request to the server with correct data', async () => {
+    // Assume the new API endpoint for user login
+    const apiEndpoint = 'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userLogin';
+
     // Mock the response with the correct content type
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'User successfully logged in' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-  
-    // Perform the action you want to test
-    const response = await fetch('http://localhost:4000/users/login', {
-      method: 'POST',
-      body: JSON.stringify(mockLoginUser),
-      headers: { 'Content-Type': 'application/json' },
+
+    // Render the component with the mock navigation
+    const { getByTestId } = render(<LoginScreen navigation={mockNavigation} />);
+
+    // Simulate user input and login attempt
+    fireEvent.changeText(getByTestId('email-input'), mockLoginUser.email);
+    fireEvent.changeText(getByTestId('password-input'), mockLoginUser.password);
+    fireEvent.press(getByTestId('login-button'));
+
+    // Wait for the fetch to be called
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(apiEndpoint, {
+        method: 'POST',
+        body: JSON.stringify(mockLoginUser),
+        headers: { 'Content-Type': 'application/json' },
+      });
     });
-  
-    // Check that fetch was called with the correct parameters
-    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/users/login', {
-      method: 'POST',
-      body: JSON.stringify(mockLoginUser),
-      headers: { 'Content-Type': 'application/json' },
-    });
-  
-    // Check the response status and content
-    expect(response.status).toBe(200);
-    const contentType = response.headers.get('content-type');
-    expect(contentType).toContain('application/json');
-    const data = await response.json();
-    expect(data.message).toBe('User successfully logged in');
   });
   
 

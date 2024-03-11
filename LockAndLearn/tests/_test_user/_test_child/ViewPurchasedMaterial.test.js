@@ -11,7 +11,7 @@ jest.mock('../../../components/AsyncStorage', () => ({
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
-    json: () => Promise.resolve([]), // adjust the resolved value based on expected data
+    json: () => Promise.resolve(mockResponse),
   })
 );
 
@@ -25,30 +25,30 @@ describe('ViewPurchasedMaterial', () => {
   it('renders correctly', async () => {
     // Mocking getItem to return a valid JSON string
     getItem.mockImplementation(() => Promise.resolve(JSON.stringify({ _id: 'user123' })));
-    
+
     const { findByText } = render(<ViewPurchasedMaterial />);
-    
+
     // Assuming 'Owned Work Packages' is a text that appears after the component successfully renders
     const textElement = await findByText('Owned Work Packages');
     expect(textElement).toBeTruthy();
   });
 
-  it('fetches work packages on mount', async () => {
-    getItem.mockImplementation(() => Promise.resolve(JSON.stringify({ _id: '123' })));
+  test('fetches work packages on mount', async () => {
     render(<ViewPurchasedMaterial />);
-
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(fetch).toHaveBeenCalledWith(
-        expect.stringContaining('fetchWorkpackagesParent/123'),
+        expect.stringContaining('fetchWorkPackagesParent'),
         expect.objectContaining({
           method: 'GET',
-          headers: expect.objectContaining({
+          headers: {
             'Content-Type': 'application/json',
-          }),
+          },
         })
       );
     });
   });
+  
+
 });
 

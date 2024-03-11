@@ -45,7 +45,6 @@ import AdminReportCenter from '../screens/User/Admin/AdminReportCenter';
 import PurchasedMaterial from '../screens/User/Child/ViewPurchasedMaterial';
 import WorkPackageBrowsing from '../screens/WorkPackage/WorkPackageBrowsing';
 import WorkPackageCart from '../screens/WorkPackage/Payment/WorkPackageCart';
-import TakeQuiz from '../screens/User/Child/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
@@ -316,11 +315,11 @@ const StackNavigation = () => {
           name="WorkPackageBrowsing"
           component={WorkPackageBrowsing}
           options={{ title: 'Work Package Browsing' }}
-              />
+        />
         <Stack.Screen
-            name="FinanceInstructor"
-            component={FinanceInstructor}
-            options={{ title: 'Finance Instructor' }}
+          name="FinanceInstructor"
+          component={FinanceInstructor}
+          options={{ title: 'Finance Instructor' }}
         />
         <Stack.Screen
           name="WorkPackageCart"
@@ -348,7 +347,6 @@ const StackNavigation = () => {
           component={EditWorkPackage}
           options={{ title: 'Edit work package' }}
         />
-        <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
         <Stack.Screen
           name="DisplayStudyMaterial"
           component={DisplayStudyMaterial}

@@ -50,7 +50,7 @@ const EditPackage = () => {
   // Function to display the subcategory selected by the user
   const handleGradeAndSubjectChange = async () => {
     try {
-      const allSubcategories = await fetch('http://localhost:4000/subcategories/fetchAll');
+      const allSubcategories = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchAllSubcategories');
       if (allSubcategories.status === 200 || 201) {
         const data = await allSubcategories.json();
         const subcategories = data.filter((subcategory) => subcategory.name === name);
@@ -70,7 +70,7 @@ const EditPackage = () => {
   // Function to fetch and display the quiz name
   async function fetchQuizName(quizId) {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizById?quizId=${quizId}`);
       if (response.status === 200 || 201) {
         const data = await response.json();
         return data.name;
@@ -88,7 +88,7 @@ const EditPackage = () => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:4000/files/filesName/${fileId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getFilesName?id=${fileId}`, {
         method: 'GET',
       });
       if (response.status === 201) {
@@ -150,12 +150,13 @@ const EditPackage = () => {
   const handleDeleteFile = async (id, contentType) => {
     try {
       const response = await fetch(
-        `http://localhost:4000/packages/deleteContent/${contentType}/${p_id}/${id}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteContentPackage?contentType=${contentType}&p_id=${p_id}&contentId=${id}`,
         {
           method: 'DELETE',
         }
       );
-      if (response.ok) {
+      if (response.ok || response.status === 200 || response.status === 201) {
+        console.log('File deleted');
         setFiles(files.filter((file) => file.originalId !== id));
       } else {
         console.error('Failed to delete file');
@@ -173,13 +174,14 @@ const EditPackage = () => {
       setQuizzes(updatedQuizzes);
 
       const response = await fetch(
-        `http://localhost:4000/packages/deleteContent/${contentType}/${p_id}/${p_quizzes[id]}`,
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteContentPackage?contentType=${contentType}&p_id=${p_id}&contentId=${p_quizzes[id]}`,
         {
           method: 'DELETE',
         }
       );
-
-      if (!response.ok) {
+      if (response.ok || response.status === 200 || response.status === 201) {
+        console.log('Quiz deleted');
+      } else {
         setQuizzes([...updatedQuizzes, deletedQuizName]);
         console.error('Failed to delete quiz');
       }
@@ -200,7 +202,7 @@ const EditPackage = () => {
 
   const saveChanges = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/update/${p_id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updatePackage?id=${p_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

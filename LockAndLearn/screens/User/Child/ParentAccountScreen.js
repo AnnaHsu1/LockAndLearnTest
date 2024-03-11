@@ -30,10 +30,16 @@ const ParentAccountScreen = ({ navigation }) => {
       const token = await getItem('@token');
       if (token) {
         const user = JSON.parse(token);
-        const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
-        });
+        const response = await fetch(
+          'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getChildren',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: user._id }),
+          }
+        );
         const data = await response.json();
 
         setUser(user);
@@ -89,26 +95,29 @@ const ParentAccountScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        {children.map((child) => (
-          <Button
-            key={child._id}
-            testID={`child-${child._id}`}
-            mode="contained"
-            contentStyle={{
-              minWidth: '90%',
-              maxWidth: '90%',
-              minHeight: 80,
-              justifyContent: 'flex-start',
-            }}
-            onPress={() => {
-              selectChild(child);
-            }}
-            style={[styles.button, styles.full_width]}
-          >
-            <Icon source="account-circle" color="#fff" size={20} />
-            <Text style={styles.child}>{child.firstName}</Text>
-          </Button>
-        ))}
+        {console.log('Children:', children)}
+        {children.length != 0
+          ? children.map((child) => (
+              <Button
+                key={child._id}
+                testID={`child-${child._id}`}
+                mode="contained"
+                contentStyle={{
+                  minWidth: '90%',
+                  maxWidth: '90%',
+                  minHeight: 80,
+                  justifyContent: 'flex-start',
+                }}
+                onPress={() => {
+                  selectChild(child);
+                }}
+                style={[styles.button, styles.full_width]}
+              >
+                <Icon source="account-circle" color="#fff" size={20} />
+                <Text style={styles.child}>{child.firstName}</Text>
+              </Button>
+            ))
+          : null}
         <StatusBar style="auto" />
         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
         <Text style={styles.text}>Work Packages</Text>

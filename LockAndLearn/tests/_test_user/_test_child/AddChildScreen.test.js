@@ -43,10 +43,12 @@ describe('AddChildScreen', () => {
     fireEvent.changeText(getByTestId('first-name-input'), 'John');
     fireEvent.changeText(getByTestId('last-name-input'), 'Doe');
     fireEvent.changeText(getByTestId('passing-grade-input'), '60');
+    const gradePicker = getByTestId('grade-input');
+    fireEvent(gradePicker, 'onValueChange', '2');
     fireEvent.press(getByTestId('signup-button'));
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/child/addchild',
+      'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addChild',
       {
         method: 'POST',
         headers: {
@@ -55,7 +57,7 @@ describe('AddChildScreen', () => {
         body: JSON.stringify({
           FirstName: 'John',
           LastName: 'Doe',
-          Grade:'',
+          Grade:'2',
           PassingGrade: '60',
           ParentId: 'parent123',
         }),

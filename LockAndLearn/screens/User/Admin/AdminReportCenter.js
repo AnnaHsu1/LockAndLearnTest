@@ -30,7 +30,7 @@ const AdminReportCenter = ({ route, navigation }) => {
 
   const fetchReports = async () => {
     try {
-      const response = await fetch('http://localhost:4000/reports/all-reports');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/all_reports');
       if (response.status === 200) {
         const data = await response.json();
 
@@ -65,7 +65,7 @@ const AdminReportCenter = ({ route, navigation }) => {
   const fetchWorkPackage = async (workPackageId) => {
     try {
       const response = await fetch(
-        `http://localhost:4000/workPackages/fetchWorkPackageById/${workPackageId}`
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackageById?workPackageId=${workPackageId}`
       );
       if (response.status === 200) {
         const data = await response.json();
@@ -82,7 +82,7 @@ const AdminReportCenter = ({ route, navigation }) => {
 
   const fetchUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/getUser/${userId}`);
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getUserByid?userId=${userId}`);
       if (response.status === 200) {
         const instructor = await response.json();
         return instructor;
