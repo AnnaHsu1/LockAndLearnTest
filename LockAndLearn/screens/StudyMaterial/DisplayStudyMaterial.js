@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Platform} from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
@@ -36,6 +36,39 @@ const DisplayStudyMaterial = ({}) => {
   useEffect(() => {
     fetchPackageInfo();
   }, [params]);
+
+  useEffect(() => {
+    // Only attempt to enter fullscreen mode on web platforms
+    if (Platform.OS === 'web') {
+      const enterFullScreen = async () => {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+          await document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+          await document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+          await document.documentElement.msRequestFullscreen();
+        }
+      };
+
+      // Enter fullscreen
+      enterFullScreen();
+
+      // Cleanup function to exit fullscreen when component unmounts
+      return () => {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { /* Firefox */
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE/Edge */
+          document.msExitFullscreen();
+        }
+      };
+    }
+  }, []);
 
   // function to get all study material info
   const fetchPackageInfo = async () => {
