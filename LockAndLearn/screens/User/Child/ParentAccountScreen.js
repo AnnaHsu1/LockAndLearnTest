@@ -5,11 +5,11 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 import { Button, Icon } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
-import { Divider } from '@rneui/themed';
+// import { Divider } from '@rneui/themed';
 import { IoIosBrowsers } from 'react-icons/io';
 import { GiPayMoney } from 'react-icons/gi';
 import { IoPersonAdd } from 'react-icons/io5';
-import { color } from '@rneui/themed/dist/config';
+// import { color } from '@rneui/themed/dist/config';
 
 const ParentAccountScreen = ({ navigation }) => {
   const styles = useStyles();

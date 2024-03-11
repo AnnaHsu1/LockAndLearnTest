@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Button, Icon } from 'react-native-paper';
 import { useWindowDimensions } from 'react-native';
-import { Divider } from '@rneui/themed';
+// import { Divider } from '@rneui/themed';
 import PropTypes from 'prop-types';
 import DropDownPicker from 'react-native-dropdown-picker';
 
