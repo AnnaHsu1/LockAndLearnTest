@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { getItem } from '../../components/AsyncStorage';
 import Modal from 'react-native-modal';
+import emailjs from 'emailjs-com';
 
 const ContactUs = ({ navigation, route }) => {
     const [fdata, setFdata] = useState({
@@ -42,10 +43,24 @@ const ContactUs = ({ navigation, route }) => {
             return;
         }
 
-        // console.log(fdata);
-        // Package the user data into a JSON format and ship it to the backend
+        // Send email using EmailJS
         try {
-            const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createContactUs', {
+            console.log("name", fdata.name);
+            console.log("email", fdata.email);
+            const templateParams = {
+                from_name: fdata.name,
+                from_email: fdata.email,
+                subject: fdata.subject,
+                message: fdata.message
+            };
+            const response = await emailjs.send(
+                'service_dli3uxv', // Service ID from EmailJS dashboard
+                'template_563on8s', // Template ID from EmailJS dashboard
+                templateParams,
+                '6c2FzSRkKYEfzJ5VA' // User ID from EmailJS dashboard
+            );
+
+            const responseMongo = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createContactUs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,35 +70,27 @@ const ContactUs = ({ navigation, route }) => {
                     name: fdata.name,
                     subject: fdata.subject,
                     message: fdata.message,
-                    userID: userId, 
+                    userID: userId,
                 }),
             });
-            const data = await response.json();
-            // console.log(response.status);
-            if (response.status === 201) {
-                setErrors('');
-                setModalVisible(true); // Show the modal
-                setFdata({
-                    email: '',
-                    name: '',
-                    subject: '',
-                    message: '',
-                });
-                // User created successfully
-                console.log('Inquiry created successfully in database!', data);
-                //Add redirect
-                {
-                    //data?.isParent
-                    //    ? navigation.navigate('ParentAccount')
-                    //    : navigation.navigate('UserLandingPage');
-                }
-            } else {
-            setErrors(data.msg);
-        }
+            const data = await responseMongo.json();
+
+            console.log('Email sent successfully!', response);
+            setErrors('');
+            setModalVisible(true);
+            setFdata({
+                email: '',
+                name: '',
+                subject: '',
+                message: '',
+            });
         } catch (error) {
-            console.error('Submitting error when creating user:', error);
+            console.error('Error sending email:', error);
+            console.error('EmailJS error details:', error.text);
+            setErrors('Error sending email. Please try again later.');
         }
     };
+
     return (
         <ImageBackground
             source={require('../../assets/backgroundCloudyBlobsFull.png')}
@@ -97,9 +104,9 @@ const ContactUs = ({ navigation, route }) => {
                 <View style={styles.item}>
                     <Text style={styles.field}>Name</Text>
                     <TextInput
-                        placeholder="Name" // Ensure that placeholder is set to "Name"
+                        placeholder="Name" 
                         testID="name-input" // Optionally, set testID for easier testing
-                        style={[styles.textbox, styles.full_width]}
+                        style={[styles.textbox, styles.full_width, { placeholderTextColor: 'rgba(255, 255, 255, 0.1)' }]}
                         value={fdata.name}
                         onChangeText={(newText) => setFdata({ ...fdata, name: newText })}
                     />
@@ -107,7 +114,7 @@ const ContactUs = ({ navigation, route }) => {
                     <TextInput
                         placeholder="Email"
                         testID="email-input"
-                        style={[styles.textbox, styles.full_width]}
+                        style={[styles.textbox, styles.full_width, { placeholderTextColor: 'rgba(255, 255, 255, 0.1)' }]}
                         value={fdata.email}
                         onChangeText={(newText) => setFdata({ ...fdata, email: newText })}
                     />
@@ -115,7 +122,7 @@ const ContactUs = ({ navigation, route }) => {
                     <TextInput
                         placeholder="Subject"
                         testID="email-input"
-                        style={[styles.textbox, styles.full_width]}
+                        style={[styles.textbox, styles.full_width, { placeholderTextColor: 'rgba(255, 255, 255, 0.1)' }]}
                         value={fdata.subject}
                         onChangeText={(newText) => setFdata({ ...fdata, subject: newText })}
                     />
@@ -124,7 +131,7 @@ const ContactUs = ({ navigation, route }) => {
                         placeholder="Message"
                         testID="email-input"
                         multiline={true}
-                        style={[styles.textbox, styles.full_width, styles.MessageInputText]}
+                        style={[styles.textbox, styles.full_width, styles.MessageInputText, { placeholderTextColor: 'rgba(255, 255, 255, 0.1)' }]}
                         value={fdata.message}
                         onChangeText={(newText) => setFdata({ ...fdata, message: newText })}
                     />

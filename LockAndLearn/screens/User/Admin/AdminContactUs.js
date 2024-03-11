@@ -95,7 +95,7 @@ const AdminContactUs = ({ route, navigation }) => {
                             </View>
                         )
                      : (
-                        <Text style={styles.emptyCertificatesList}>No certificates to approve</Text>
+                        <Text style={styles.emptyCertificatesList}>No inquiries</Text>
                     )}
                 </ScrollView>
                 {/* Modal for deletion confirmation */}
