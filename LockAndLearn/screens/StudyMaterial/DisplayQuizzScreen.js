@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   CheckBox,
+  Platform,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -252,8 +253,7 @@ const DisplayQuizzScreen = ({ route }) => {
 
       if (response.status === 201 || response.status === 200) {
         console.log('newChildQuizResult successfully saved in database!');
-      }
-      else {
+      } else {
         const data = await response.json();
         console.log('Error creating newChildQuizResult:', data);
       }
@@ -268,6 +268,66 @@ const DisplayQuizzScreen = ({ route }) => {
   useEffect(() => {
     fetchQuestion();
   }, [questionIndex]);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      const enterFullScreen = async () => {
+        if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+          /* Firefox */
+          await document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          /* Chrome, Safari, and Opera */
+          await document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+          /* IE/Edge */
+          await document.documentElement.msRequestFullscreen();
+        }
+      };
+
+      const onFullScreenChange = () => {
+        if (
+          !document.fullscreenElement && // standard method
+          !document.mozFullScreenElement &&
+          !document.webkitFullscreenElement &&
+          !document.msFullscreenElement
+        ) {
+          // vendor prefixes
+          enterFullScreen(); // Try to re-enter fullscreen mode
+        }
+      };
+
+      document.addEventListener('fullscreenchange', onFullScreenChange);
+      document.addEventListener('webkitfullscreenchange', onFullScreenChange);
+      document.addEventListener('mozfullscreenchange', onFullScreenChange);
+      document.addEventListener('MSFullscreenChange', onFullScreenChange);
+
+      // Enter fullscreen initially
+      enterFullScreen();
+
+      // Cleanup function to remove event listeners and exit fullscreen
+      return () => {
+        document.removeEventListener('fullscreenchange', onFullScreenChange);
+        document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
+        document.removeEventListener('mozfullscreenchange', onFullScreenChange);
+        document.removeEventListener('MSFullscreenChange', onFullScreenChange);
+
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          /* Firefox */
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          /* Chrome, Safari, and Opera */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          /* IE/Edge */
+          document.msExitFullscreen();
+        }
+      };
+    }
+  }, []);
 
   return (
     <ImageBackground
