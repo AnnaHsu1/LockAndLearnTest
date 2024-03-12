@@ -10,6 +10,10 @@ import { IoIosBrowsers } from 'react-icons/io';
 import { GiPayMoney } from 'react-icons/gi';
 import { IoPersonAdd } from 'react-icons/io5';
 import { color } from '@rneui/themed/dist/config';
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 const ParentAccountScreen = ({ navigation }) => {
   const styles = useStyles();
