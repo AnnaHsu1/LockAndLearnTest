@@ -6,43 +6,68 @@ const ResetCredentials = ({ route, navigation }) => {
   var bcrypt = require('bcryptjs');
 
   const userEmail = route.params.email;
-  const credential = route.params.credential;
-  console.log(credential)
+  const credential = route.params.cred;
+  console.log(credential);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleResetPassword = async () => {
+  const handleReset = async () => {
     if (password === confirmPassword) {
       //   Send to server
       console.log('Password reset');
 
       const salt = bcrypt.genSaltSync();
       const hash = bcrypt.hashSync(password, salt);
-
-      try {
-        const response = await fetch(
-          'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/resetPassword',
-          {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: userEmail,
-              password: hash,
-            }),
+      if (credential == 'password') {
+        try {
+          const response = await fetch(
+            'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/resetPassword',
+            {
+              method: 'PUT',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: userEmail,
+                password: hash,
+              }),
+            }
+          );
+          const data = await response.json();
+          if (response.status != 200) {
+            console.log(data.msg);
+            setError(data.msg);
+          } else {
+            navigation.navigate('Login');
           }
-        );
-        const data = await response.json();
-        if (response.status != 200) {
-          console.log(data.msg);
-          setError(data.msg);
-        } else {
-          navigation.navigate('Login');
+        } catch (error) {
+          console.log(error.msg);
         }
-      } catch (error) {
-        console.log(error.msg);
+      } else if (credential == 'PIN') {
+        try {
+          const response = await fetch(
+            'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateParentalPIN',
+            {
+              method: 'PUT',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: userEmail,
+                password: hash,
+              }),
+            }
+          );
+          const data = await response.json();
+          if (response.status != 200) {
+            console.log(data.msg);
+            setError(data.msg);
+          } else {
+            navigation.navigate('ParentHomeScreen');
+          }
+        } catch (error) {}
       }
     } else {
       console.log('Passwords do not match');
@@ -52,10 +77,14 @@ const ResetCredentials = ({ route, navigation }) => {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Text style={styles.title}>Reset password for {userEmail}</Text>
+        <Text style={styles.title}>
+          Reset {credential == 'password' ? 'password' : 'PIN'} for {userEmail}
+        </Text>
         <View style={[styles.inputContainer, { gap: 10 }]}>
           <View style={{ width: '100%' }}>
-            <Text style={styles.text}>Please enter your new password</Text>
+            <Text style={styles.text}>
+              Please enter your new {credential == 'password' ? 'password' : 'PIN'}
+            </Text>
             <TextInput
               testID="password"
               style={styles.textInput}
@@ -65,7 +94,9 @@ const ResetCredentials = ({ route, navigation }) => {
             />
           </View>
           <View style={{ width: '100%' }}>
-            <Text style={styles.text}>Please confirm your new password</Text>
+            <Text style={styles.text}>
+              Please confirm your new {credential == 'password' ? 'password' : 'PIN'}
+            </Text>
             <TextInput
               testID="confirmPassword"
               style={styles.textInput}
@@ -76,7 +107,7 @@ const ResetCredentials = ({ route, navigation }) => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={handleResetPassword}
+          onPress={handleReset}
           style={styles.button}
           testID="submit-reset-password"
         >
