@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ImageBackground, Platform} from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Platform } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import PropTypes from 'prop-types';
 import { getUser } from '../../components/AsyncStorage';
+import emailjs from 'emailjs-com';
 
 const DisplayStudyMaterial = ({}) => {
   const route = useRoute();
@@ -18,6 +19,23 @@ const DisplayStudyMaterial = ({}) => {
   const [quiz, setQuiz] = useState([]);
   const [quizLength, setQuizLength] = useState([]);
   const [quizzesArray, setQuizzesArray] = useState([]);
+
+  // Add this function to send an email
+  const sendEmail = (toEmail, message) => {
+    const templateParams = {
+      to_email: toEmail,
+      message: message,
+    };
+
+    emailjs
+      .send('service_dli3uxv', 'template_xb5grlm', templateParams, '6c2FzSRkKYEfzJ5VA')
+      .then((response) => {
+        console.log('Email sent:', response);
+      })
+      .catch((error) => {
+        console.error('Error sending email:', error);
+      });
+  };
 
   const ProgressBar = ({ current, total }) => {
     const completionPercentage = (current / total) * 100;
@@ -42,16 +60,16 @@ const DisplayStudyMaterial = ({}) => {
     const fetchUserData = async () => {
       try {
         const user = await getUser();
-        console.log("User ID:", user);
-        console.log("User email:", user.email);
-  
+        console.log('User ID:', user);
+        console.log('User email:', user.email);
+
         // Continue with fetching other data
         fetchPackageInfo();
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
-  
+
     fetchUserData();
   }, [params]);
 
@@ -60,45 +78,60 @@ const DisplayStudyMaterial = ({}) => {
       const enterFullScreen = async () => {
         if (document.documentElement.requestFullscreen) {
           await document.documentElement.requestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+        } else if (document.documentElement.mozRequestFullScreen) {
+          /* Firefox */
           await document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari, and Opera */
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          /* Chrome, Safari, and Opera */
           await document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+        } else if (document.documentElement.msRequestFullscreen) {
+          /* IE/Edge */
           await document.documentElement.msRequestFullscreen();
         }
       };
 
       const onFullScreenChange = () => {
-        if (!document.fullscreenElement &&    // standard method
-            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) { // vendor prefixes
+        if (
+          !document.fullscreenElement && // standard method
+          !document.mozFullScreenElement &&
+          !document.webkitFullscreenElement &&
+          !document.msFullscreenElement
+        ) {
+          // vendor prefixes
           enterFullScreen(); // Try to re-enter fullscreen mode
-          console.log("off fullscreen"); // Log when exiting fullscreen
+          console.log('off fullscreen');
+
+          // Assuming you have the user's email address
+          const userEmail = 'user@example.com'; // Replace with the actual user's email address
+          sendEmail(userEmail, 'Fullscreen mode is off');
         }
       };
 
-      document.addEventListener("fullscreenchange", onFullScreenChange);
-      document.addEventListener("webkitfullscreenchange", onFullScreenChange);
-      document.addEventListener("mozfullscreenchange", onFullScreenChange);
-      document.addEventListener("MSFullscreenChange", onFullScreenChange);
+      document.addEventListener('fullscreenchange', onFullScreenChange);
+      document.addEventListener('webkitfullscreenchange', onFullScreenChange);
+      document.addEventListener('mozfullscreenchange', onFullScreenChange);
+      document.addEventListener('MSFullscreenChange', onFullScreenChange);
 
       // Enter fullscreen initially
       enterFullScreen();
 
       // Cleanup function to remove event listeners and exit fullscreen
       return () => {
-        document.removeEventListener("fullscreenchange", onFullScreenChange);
-        document.removeEventListener("webkitfullscreenchange", onFullScreenChange);
-        document.removeEventListener("mozfullscreenchange", onFullScreenChange);
-        document.removeEventListener("MSFullscreenChange", onFullScreenChange);
+        document.removeEventListener('fullscreenchange', onFullScreenChange);
+        document.removeEventListener('webkitfullscreenchange', onFullScreenChange);
+        document.removeEventListener('mozfullscreenchange', onFullScreenChange);
+        document.removeEventListener('MSFullscreenChange', onFullScreenChange);
 
         if (document.exitFullscreen) {
           document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { /* Firefox */
+        } else if (document.mozCancelFullScreen) {
+          /* Firefox */
           document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { /* Chrome, Safari, and Opera */
+        } else if (document.webkitExitFullscreen) {
+          /* Chrome, Safari, and Opera */
           document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE/Edge */
+        } else if (document.msExitFullscreen) {
+          /* IE/Edge */
           document.msExitFullscreen();
         }
       };
