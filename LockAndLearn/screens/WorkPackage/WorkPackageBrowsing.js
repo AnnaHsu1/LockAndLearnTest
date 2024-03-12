@@ -121,7 +121,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackagesParent?parentId=${userId}&displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -152,7 +152,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkpackagesCart?parentId=${userId}`,
           {
             method: 'GET',
             headers: {
@@ -186,7 +186,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackagesParent?parentId=${userId}&displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -285,13 +285,13 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         console.error('User ID or selected work package is missing');
         return;
       }
-      const response = await fetch(`http://localhost:4000/workPackages/addToCart/${userId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addToCart?userId=${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          CartWorkPackages: selectedWorkPackage,
+          workPackageId: selectedWorkPackage,
         }),
       });
       const data = await response.json();

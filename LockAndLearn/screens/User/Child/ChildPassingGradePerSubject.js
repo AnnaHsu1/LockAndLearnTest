@@ -20,16 +20,16 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
 
     const [fdata, setFdata] = useState({});
 
-    // function to get all previously assigned work packages from the child
+    // function to get all previously passing grades for child
     const fetchPrevPassingGrades = async () => {
-        const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childSelected._id}`, {
+        const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getPreviousPassingGrades?childId=${childSelected._id}`, {
+
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },
         });
         const data = await response.json();
-        console.log("DATAAAAAAA", data);
         return data;
         // setPrevPassingGradesArray(data);
     };
@@ -42,11 +42,11 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
         const user = JSON.parse(token);
         const userId = user._id;
         console.log("USER ID",userId);
-        console.log("PREVIOUS PASSING GRADES", prevPassingGradesArray);
+        console.log("PREVIOUS PASSING GRADES", prevPassingGradesArray); 
         if (userId) {
             try {
                 const response = await fetch( 
-                    `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+                    `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackagesParent?parentId=${userId}&displayOwned=${displayOwned}`,
                     {
                         method: 'GET',
                         headers: {
@@ -103,7 +103,7 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
             // Log the transformed subjects array
             console.log("Transformed SUBJECTS", transformedSubjects);
             console.log("CHILD IDDDD", childSelected._id);
-          const response = await fetch(`http://localhost:4000/child/updateUserSubjectsPassingGrade/${childSelected._id}`, {
+            const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateUserSubjectsPassingGrade?id=${childSelected._id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

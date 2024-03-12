@@ -61,7 +61,7 @@ const AdminFiles = ({ route, navigation }) => {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch('http://localhost:4000/files/allFiles');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/allFiles');
       if (response.ok) {
         const data = await response.json();
         setFiles(data.allFiles);
@@ -75,7 +75,7 @@ const AdminFiles = ({ route, navigation }) => {
 
   const deleteFile = async (fileId) => {
     try {
-      const response = await fetch(`http://localhost:4000/files/deleteUploadFiles/${fileId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteUploadFiles?fileId=${fileId}`, {
         method: 'DELETE',
       });
 

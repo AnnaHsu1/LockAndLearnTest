@@ -33,7 +33,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
   // function to get all previously assigned work packages from the child
   const fetchPreviouslyAssignedWorkPackages = async () => {
-    const response = await fetch(`http://localhost:4000/child/getWorkPackages/${child._id}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getWorkPackagesByChildId?id=${child._id}`, {
+
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   // function get workpackage id from quiz id
   const findWpIDfromQuizIDandPackageID = async (quizId, packageId) => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchWpByQuizAndPackage/${quizId}/${packageId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWpByQuizAndPackage?quizId=${quizId}&packageId=${packageId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -65,18 +66,16 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const childQuizResults = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/childQuizResults/getQuizResults/${child._id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizResults?id=${child._id}`
       );
       const data = await response.json();
-      if (response.status === 200 || response.status === 201) {
+      if (response.status == 201) {
         data.quizResults.forEach(async (result) => {
           const wpID = await findWpIDfromQuizIDandPackageID(result.quizID, result.packageID)
+          // if result.status is not an array, convert it to an array
+          if (!Array.isArray(result.status)) {
+            result.status = [result.status];
+          }
           if (statusWps[wpID]) {
               // If statusWps[wpID] already exists, append the new status
               statusWps[wpID].push(result.status[result.status.length - 1]);
@@ -85,6 +84,10 @@ const AssignChildMaterial = ({ route, navigation }) => {
               statusWps[wpID] = [result.status[result.status.length - 1]];
           }
         })
+      }
+      else if (response.status == 200) {
+        // Display when no quiz results are found
+        console.log(data.msg);
       }
     } catch (error) {
       console.error('Network error:', error);
@@ -97,7 +100,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const userId = user._id;
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/fetchWorkPackagesParent?parentId=${userId}&displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -147,7 +150,8 @@ const AssignChildMaterial = ({ route, navigation }) => {
       .filter(([key, value]) => value)
       // only take the key (wp id)
       .map(([key, value]) => key);
-    const response = await fetch(`http://localhost:4000/child/addChildMaterial/${child._id}`, {
+    const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addChildMaterialByChildId?id=${child._id}`, {
+
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -165,7 +169,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const statuses = statusWps[workPackageId];
   
     // Check if there are no statuses
-    if (!statuses || statuses.length === 0 || statuses === "not started") {
+    if (!statuses || statuses.length === 0 || statuses === "not started" || statuses === undefined) {
       return "Not started";
     }
   
@@ -190,9 +194,9 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
   // function to display the work package information
   const renderWorkPackage = (workPackage) => {
-    {if (statusWps[workPackage._id] === undefined) {
-      statusWps[workPackage._id] = 'not started'
-    }}
+    // {if (statusWps[workPackage._id] === undefined) {
+    //   statusWps[workPackage._id] = 'not started'
+    // }}
     return (
       // if statuswp is undefined, display not started
       <View key={workPackage._id} style={styles.workPackageItemContainer}>
