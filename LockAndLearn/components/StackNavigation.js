@@ -64,6 +64,8 @@ import SuspendedUser from '../screens/User/SuspendedUser';
 import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
 import MoreInfo from '../screens/User/Child/MoreInfo';
+import ContactUs from '../screens/User/ContactUs';
+import AdminContactUs from '../screens/User/Admin/AdminContactUs';
 
 const Stack = createNativeStackNavigator();
 
@@ -301,6 +303,11 @@ const StackNavigation = () => {
           name="AdminPackages"
           component={AdminPackages}
           options={{ title: 'AdminPackages' }}
+              />
+        <Stack.Screen
+            name="AdminContactUs"
+            component={AdminContactUs}
+            options={{ title: 'AdminContactUs' }}
         />
         <Stack.Screen
           name="AddChildMaterial"
@@ -413,6 +420,11 @@ const StackNavigation = () => {
           name="MoreInfo"
           component={MoreInfo}
           options={{ title: `MoreInfo` }}
+        />
+        <Stack.Screen
+          name="ContactUs"
+          component={ContactUs}
+          options={{ title: `ContactUs` }}
         />
       </Stack.Navigator>
     </NavigationContainer>

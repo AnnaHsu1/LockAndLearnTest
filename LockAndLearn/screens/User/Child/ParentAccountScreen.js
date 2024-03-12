@@ -5,11 +5,11 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize, useDeviceSize } from 'rn-
 import { Button, Icon } from 'react-native-paper';
 import { getItem } from '../../../components/AsyncStorage';
 import { useRoute } from '@react-navigation/native';
-// import { Divider } from '@rneui/themed';
+import { Divider } from '@rneui/themed';
 import { IoIosBrowsers } from 'react-icons/io';
 import { GiPayMoney } from 'react-icons/gi';
 import { IoPersonAdd } from 'react-icons/io5';
-// import { color } from '@rneui/themed/dist/config';
+import { color } from '@rneui/themed/dist/config';
 
 const ParentAccountScreen = ({ navigation }) => {
   const styles = useStyles();
@@ -162,7 +162,15 @@ const ParentAccountScreen = ({ navigation }) => {
             <GiPayMoney size={30} color="#4F85FF" />
             <Text style={[styles.child, { color: '#4F85FF', paddingLeft: 0 }]}>Purchased</Text>
           </TouchableOpacity>
-        </View>
+              </View>
+              <View>
+                  <TouchableOpacity
+                      style={[styles.button, styles.full_width, { justifyContent: 'center', }]}
+                      onPress={() => navigation.navigate('ContactUs')}
+                  >
+                      <Text style={[styles.child, { color: 'white' }]}>Contact Us</Text>
+                  </TouchableOpacity>
+              </View>
       </View>
       <Image style={styles.bottomCloud} source={require('../../../assets/bottomClouds.png')} />
     </View>
@@ -189,7 +197,7 @@ const useStyles = CreateResponsiveStyle(
       fontSize: 24,
       textAlign: 'center',
       paddingBottom: 20,
-    },
+        },
     button: {
       color: '#ffffff',
       backgroundColor: '#4F85FF',
@@ -216,7 +224,7 @@ const useStyles = CreateResponsiveStyle(
       textAlign: 'center',
       justifyContent: 'center',
       fontSize: 20,
-    },
+        },
   },
   {
     [minSize(DEVICE_SIZES.MD)]: {
