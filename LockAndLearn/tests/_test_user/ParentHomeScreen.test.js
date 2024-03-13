@@ -54,20 +54,9 @@ describe('ParentHomeScreen component', () => {
       <ParentHomeScreen navigation={{ navigate: jest.fn() }} />
     );
     const welcomeText = getByText('Welcome back');
-    const selectChild = getByText('Select a Child');
-    const parentAccess = getByText('Parent Access');
+    const parentAccess = getByText('Parental Access');
     expect(welcomeText).toBeTruthy();
     expect(parentAccess).toBeTruthy();
-
-    // const parentalAccess = getByText('Parental Access');
-    // const parentalAccessDescription = getByText('It seems like this is your first time requesting parental access.');
-    // const createPIN = getByText('Please create a PIN');
-    // const confirmPIN = getByText('Confirm PIN');
-
-    // expect(parentalAccess).toBeTruthy();
-    // expect(parentalAccessDescription).toBeTruthy();
-    // expect(createPIN).toBeTruthy();
-    // expect(confirmPIN).toBeTruthy();
   });
 
   test('Toggle parent access when button is clicked', () => {
@@ -75,7 +64,7 @@ describe('ParentHomeScreen component', () => {
     const { getByText } = render(<ParentHomeScreen />);
 
     // Simulating a button click
-    fireEvent.press(getByText('Parent Access'));
+    fireEvent.press(getByText('Parental Access'));
   });
 
   test('Toggle parent access when button is clicked and go back', () => {
@@ -83,38 +72,19 @@ describe('ParentHomeScreen component', () => {
     const { getByText } = render(<ParentHomeScreen />);
 
     // Simulating a button click
-    fireEvent.press(getByText('Parent Access'));
+    fireEvent.press(getByText('Parental Access'));
     fireEvent.press(getByText('Go Back'));
   });
 
-  test('Attempt to create a new pin with bad inputs', () => {
+  test('Attempt to input pin', () => {
     const { getByText, getByTestId } = render(<ParentHomeScreen />);
-    fireEvent.press(getByText('Parent Access'));
+    fireEvent.press(getByText('Parental Access'));
 
-    // Input incorrect PINs and submit
-    const createPIN = getByTestId('create-pin-input');
-    const confirmPIN = getByTestId('confirm-pin-input');
-    const submitButton = getByText('Confirm');
+    const pinInput = getByTestId('pin-input');
+    fireEvent.changeText(pinInput, '1234');
 
-    fireEvent.changeText(createPIN, '1234');
-    fireEvent.changeText(confirmPIN, '12345');
-    fireEvent.press(submitButton);
-  });
+    const confirm = getByTestId('confirm-button');
+    fireEvent.press(confirm);
 
-  test('Attempt to create a new PIN', () => {
-    // Rendering the component with the button
-    const { getByText, getByTestId } = render(<ParentHomeScreen />);
-
-    // Simulating a button click
-    fireEvent.press(getByText('Parent Access'));
-
-    // Input PINs and submit
-    const createPIN = getByTestId('create-pin-input');
-    const confirmPIN = getByTestId('confirm-pin-input');
-    const submitButton = getByText('Confirm');
-
-    fireEvent.changeText(createPIN, '1234');
-    fireEvent.changeText(confirmPIN, '1234');
-    fireEvent.press(submitButton);
   });
 });

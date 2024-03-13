@@ -2,7 +2,8 @@ const express = require('express');
 const { parseISO, isBefore, differenceInYears, startOfDay } = require('date-fns');
 const bcrypt = require('bcrypt');
 const User = require('../schema/userSchema.js');
-const { createUser, getUserByEmail } = require('../manager/userManager.js');
+const contact = require('../schema/contactUsSchema.js');
+const { createUser, getUserByEmail, createContact } = require('../manager/userManager.js');
 const router = express.Router();
 
 //Handle user sign in
@@ -143,22 +144,6 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Handle user logout
-router.post('/logout', async (req, res) => {
-  try {
-    // Delete session from the DB // DOESN'T WORK
-    req.session.destroy();
-
-    // Clear the user's cookie
-    res.clearCookie('userSession', { httpOnly: true });
-
-    res.status(201).json({ msg: 'Logout successful.' });
-  } catch (error) {
-    console.error('Error logging out user:', error);
-    res.status(500).json({ error: 'Unable to logout' });
-  }
-});
-
 // Fetch all users
 router.get('/allUsers', async (req, res) => {
   try {
@@ -250,56 +235,56 @@ router.delete('/deleteUser/:id', async (req, res) => {
   }
 });
 
-router.post('/createPIN/:id', async (req, res) => {
-  const userId = req.params.id;
-  const pin = req.body.pin;
+// router.post('/createPIN/:id', async (req, res) => {
+//   const userId = req.params.id;
+//   const pin = req.body.pin;
 
-  try {
-    const user = await User.findById(userId);
+//   try {
+//     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
 
-    //Encrypt the input password
-    const salt = await bcrypt.genSalt();
-    const pinEncrypted = await bcrypt.hash(pin, salt);
-    console.log(pinEncrypted);
+//     //Encrypt the input password
+//     const salt = await bcrypt.genSalt();
+//     const pinEncrypted = await bcrypt.hash(pin, salt);
+//     console.log(pinEncrypted);
 
-    user.parentalAccessPIN = pinEncrypted;
+//     user.parentalAccessPIN = pinEncrypted;
 
-    await user.save();
+//     await user.save();
 
-    res.status(200).json({ message: 'PIN created successfully', user: user });
-  } catch (error) {
-    console.error('Error creating PIN:', error);
-    res.status(500).json({ error: 'An error occurred while creating the PIN.' });
-  }
-});
+//     res.status(200).json({ message: 'PIN created successfully', user: user });
+//   } catch (error) {
+//     console.error('Error creating PIN:', error);
+//     res.status(500).json({ error: 'An error occurred while creating the PIN.' });
+//   }
+// });
 
-router.post('/getPIN/:id', async (req, res) => {
-  const userId = req.params.id;
-  const pin = req.body.pin;
-  console.log(pin);
-  try {
-    const user = await User.findById(userId);
+// router.post('/getPIN/:id', async (req, res) => {
+//   const userId = req.params.id;
+//   const pin = req.body.pin;
+//   console.log(pin);
+//   try {
+//     const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' });
+//     }
 
-    // Password check with the input using bcrypt
-    const isMatch = await bcrypt.compare(pin, user.parentalAccessPIN);
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid PIN.' });
-    }
+//     // Password check with the input using bcrypt
+//     const isMatch = await bcrypt.compare(pin, user.parentalAccessPIN);
+//     if (!isMatch) {
+//       return res.status(400).json({ msg: 'Invalid PIN.' });
+//     }
 
-    res.status(200).json({ message: 'PIN retrieved successfully', user: user });
-  } catch (error) {
-    console.error('Error getting PIN:', error);
-    res.status(500).json({ error: 'An error occurred while getting the PIN.' });
-  }
-});
+//     res.status(200).json({ message: 'PIN retrieved successfully', user: user });
+//   } catch (error) {
+//     console.error('Error getting PIN:', error);
+//     res.status(500).json({ error: 'An error occurred while getting the PIN.' });
+//   }
+// });
 
 // Suspend user by ID
 router.put('/suspendUser/:id', async (req, res) => {
@@ -311,14 +296,11 @@ router.put('/suspendUser/:id', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Check if 'isSuspended' field exists, if not, create it
     if (user.suspended === undefined) {
-      // Assuming you are using Mongoose
-      user.schema.add({ isSuspended: Boolean });
+      user.schema.add({ suspended: Boolean });
       user.suspended = true;
     } else {
-      user.suspended = true; // Assuming your User schema has an 'isSuspended' field
+      user.suspended = true;
     }
 
     await user.save();
@@ -328,6 +310,44 @@ router.put('/suspendUser/:id', async (req, res) => {
     console.error('Error suspending user:', error);
     res.status(500).json({ error: 'An error occurred while suspending the user.' });
   }
+});
+
+
+router.post('/createContactUs', async (req, res) => {
+    const userId = req.body.userID;
+    const email = req.body.email;
+    const name = req.body.name;
+    const subject = req.body.subject;
+    const message = req.body.message;
+
+    try {
+        // Input validations
+        if (!name || !email || !subject || !message) {
+            return res.status(400).json({ msg: 'All fields must be filled.' });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Call the createUser function to create a new user
+        const contact = await createContact({
+            email,
+            name,
+            subject,
+            message,
+            userID: userId,
+        });
+
+        console.log("prepare to save");
+        await contact.save();
+
+        res.status(200).json({ message: 'contact us inquiry create successfully', user: user });
+    } catch (error) {
+        console.error('Error creating contact us inquiry:', error);
+        res.status(500).json({ error: 'An error occurred while creating contact us inquiry.' });
+    }
 });
 
 

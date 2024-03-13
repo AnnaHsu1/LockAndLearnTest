@@ -16,24 +16,33 @@ const AdminCertificates = () => {
   }, []);
 
   // Fetch all pending certificates from the server
-  const fetchAllPendingCertificates = async () => {
-    try {
-      const response = await fetch('http://localhost:4000/certificates/uploadCertificates/pending');
-      if (response.ok) {
-        const data = await response.json();
-        setCertificates(data.uploadedPendingCertificates);
-      } else {
-        console.error('Failed to fetch certificates:', response.status);
+const fetchAllPendingCertificates = async () => {
+  try {
+    // Correctly formatted fetch request
+    const url = 'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/uploadCertificates/pending';
+    const response = await fetch(url, {
+      method: 'GET', // Specify the request method if necessary, GET is default
+      headers: {
+        'Content-Type': 'application/json', // Set appropriate headers if required by the endpoint
       }
-    } catch (error) {
-      console.error('Error fetching certificates:', error);
+    });
+
+    if (response.ok) {
+      const data = await response.json(); // Parse the JSON response
+      setCertificates(data.uploadedPendingCertificates); // Use the data as needed
+    } else {
+      console.error('Failed to fetch certificates:', response.status);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+  }
+};
+
 
   // Function to handle accepting a certificate
   const handleAcceptCertificate = async (userId) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/acceptUserCertificates/${userId}`,
+      `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/acceptUserCertificates?userId=${userId}`,
       {
         method: 'PUT',
       }
@@ -51,31 +60,38 @@ const AdminCertificates = () => {
     }
   };
 
-  // Function to handle rejecting a certificate
   const handleRejectCertificate = async (certificateId) => {
-    const response = await fetch(
-      `http://localhost:4000/certificates/rejectCertificate/${certificateId}`,
-      {
-        method: 'PUT',
+    // Updated URL with the new MongoDB Realm endpoint and appending the certificateId as a query parameter
+    const url = `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/rejectCertificate?id=${certificateId}`;
+  
+    try {
+      const response = await fetch(url, {
+        method: 'PUT', // Ensure the method is set to 'PUT' as required by your MongoDB Realm function
+        headers: {
+          'Content-Type': 'application/json', // Set the Content-Type header if needed
+        }
+      });
+  
+      if (response.ok) {
+        // Remove rejected certificate from the list
+        const updatedCertificates = certificates.filter(certificate => certificate._id !== certificateId);
+        setCertificates(updatedCertificates);
+        closeRejectModal();
+      } else {
+        // Log the error status if the request was not successful
+        console.error('Failed to delete certificate:', response.status);
       }
-    );
-
-    if (response.ok) {
-      // Remove rejected certificate from the list
-      const updatedCertificates = certificates.filter(
-        (certificate) => certificate._id !== certificateId
-      );
-      setCertificates(updatedCertificates);
-      closeRejectModal();
-    } else {
-      console.error('Failed to delete certificate:', response.status);
+    } catch (error) {
+      // Catch and log any errors in the fetch operation
+      console.error('Error rejecting certificate:', error);
     }
   };
+  
 
   // Function to download certificate
   const downloadCertificate = async (fileName) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/uploadCertificates/${fileName}`,
+      `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/uploadCertificates?filename=${fileName}`,
       {
         method: 'GET',
       }

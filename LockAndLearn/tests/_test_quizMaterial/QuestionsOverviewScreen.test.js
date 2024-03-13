@@ -59,7 +59,7 @@ describe('QuestionsOverviewScreen Tests', () => {
     fireEvent.press(deleteButton);
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/deleteQuestion/123/0', {
+      expect(fetchMock).toHaveBeenCalledWith('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteQuestion?quizId=123&questionIndex=0', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

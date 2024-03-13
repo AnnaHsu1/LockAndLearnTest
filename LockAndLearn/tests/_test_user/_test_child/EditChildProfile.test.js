@@ -74,17 +74,17 @@ describe('Edit Child Profile Screen test', () => {
 
     await waitFor(() =>
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/updatechild/' + mockChild._id,
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateChild',
         {
-          method: 'PUT',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            childId: mockChild._id,
             FirstName: 'Doe',
             LastName: 'John',
             Grade: '5',
-            ParentId: 'parent123',
           }),
         }
       )

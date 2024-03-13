@@ -132,8 +132,6 @@ router.delete('/deleteSubcategoryFromGrade/:subcategoryId/:grade/:index', async 
 router.delete('/delete/:subcategoryId', async (req, res) => {
   try {
     const subcategoryId = req.params.subcategoryId;
-
-    // Delete the subcategory by ID
     const deletedSubcategory = await Subcategories.findByIdAndDelete(subcategoryId);
 
     if (deletedSubcategory) {

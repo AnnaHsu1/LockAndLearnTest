@@ -26,7 +26,7 @@ describe('AdminPackages', () => {
     });
     
     const { getByText } = render(<AdminPackages route={{ params: {} }} navigation={{}} />);
-    const noWorkPackagesText = await getByText('No work packages available');
+    const noWorkPackagesText = await getByText('No packages available');
     expect(noWorkPackagesText).toBeDefined();
   });
 

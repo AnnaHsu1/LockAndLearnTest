@@ -319,6 +319,12 @@ const LandingPage = ({ navigation }) => {
           >
             <Text style={styles.text}>My finance</Text>
           </TouchableOpacity>
+        <TouchableOpacity
+            style={styles.content}
+            onPress={() => navigation.navigate('ContactUs')}
+        >
+            <Text style={styles.text}>Contact Us</Text>
+        </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.containerFile}>

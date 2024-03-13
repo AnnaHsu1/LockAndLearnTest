@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
 import PropTypes from 'prop-types';
+import { Alert } from 'react-native';
+
 
 const AdminAccount = ({ route, navigation }) => {
   const styles = useStyles();
@@ -21,7 +23,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('http://localhost:4000/users/allUsers');
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/allUsers');
       if (response.ok) {
         const data = await response.json();
         // Filter out the admin account
@@ -67,7 +69,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const suspendUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/suspendUser/${userId}`, {
+      const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/suspendUser?userId=${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
