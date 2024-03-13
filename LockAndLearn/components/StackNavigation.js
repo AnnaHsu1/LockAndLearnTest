@@ -65,6 +65,8 @@ import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
 import ForgotCredentials from '../screens/User/ForgotCredentials';
 import ResetCredentials from '../screens/User/ResetCredentials';
+import ContactUs from '../screens/User/ContactUs';
+import AdminContactUs from '../screens/User/Admin/AdminContactUs';
 
 const Stack = createNativeStackNavigator();
 
@@ -312,6 +314,11 @@ const StackNavigation = () => {
           name="AdminPackages"
           component={AdminPackages}
           options={{ title: 'AdminPackages' }}
+              />
+        <Stack.Screen
+            name="AdminContactUs"
+            component={AdminContactUs}
+            options={{ title: 'AdminContactUs' }}
         />
         <Stack.Screen
           name="AddChildMaterial"
@@ -429,6 +436,11 @@ const StackNavigation = () => {
           name="ResetCredentials"
           component={ResetCredentials}
           options={{ title: `Reset Credentials`, headerRight: () => null }}
+        />
+        <Stack.Screen
+          name="ContactUs"
+          component={ContactUs}
+          options={{ title: `ContactUs` }}
         />
       </Stack.Navigator>
     </NavigationContainer>
