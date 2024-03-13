@@ -83,7 +83,7 @@ const LoginScreen = ({ navigation }) => {
 
   const sendLoginData = async (loginData) => {
     try {
-      const response = await fetch('http://localhost:4000/users/login', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -130,7 +130,7 @@ const LoginScreen = ({ navigation }) => {
 
   const sendLoginDataAdmin = async (loginData) => {
     try {
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
