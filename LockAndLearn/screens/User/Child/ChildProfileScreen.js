@@ -25,7 +25,7 @@ const ChildProfileScreen = ({ route, navigation }) => {
   // API request to delete child
   const deleteChild = async () => {
     try {
-      const response = await fetch('http://localhost:4000/child/deletechild/' + child._id, {
+      const response = await fetch('https://lockandlearn.onrender.com/child/deletechild/' + child._id, {
         method: 'DELETE',
       });
       if (response.status === 200) {

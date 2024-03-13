@@ -95,7 +95,7 @@ describe('Child Profile Screen test', () => {
 
     await waitFor(() =>
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/deletechild/' + mockChild._id,
+        'https://lockandlearn.onrender.com/child/deletechild/' + mockChild._id,
         {
           method: 'DELETE',
         }

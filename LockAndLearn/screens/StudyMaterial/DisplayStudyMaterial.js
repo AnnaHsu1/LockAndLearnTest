@@ -40,7 +40,7 @@ const DisplayStudyMaterial = ({}) => {
   // function to get all study material info
   const fetchPackageInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/child/getPackagesInfo/${childID}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/child/getPackagesInfo/${childID}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const DisplayStudyMaterial = ({}) => {
     try {
       console.log('materialIDs: ', materialID);
 
-      const response = await fetch(`http://localhost:4000/files/uploadFilesById/${materialID}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/files/uploadFilesById/${materialID}`, {
         method: 'GET',
       });
       if (response.status === 200) {
@@ -94,7 +94,7 @@ const DisplayStudyMaterial = ({}) => {
   const fetchQuizById = async (quizId) => {
     console.log('Fetching Quiz with ID:', quizId);
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/quiz/${quizId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

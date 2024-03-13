@@ -20,7 +20,7 @@ const AdminPackages = ({ route, navigation }) => {
 
   const fetchPackages = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchPackagesInfo/${wpID}`);
+      const response = await fetch(`https://lockandlearn.onrender.com/packages/fetchPackagesInfo/${wpID}`);
       if (response.ok) {
         const data = await response.json();
         setPackages(data);
@@ -35,7 +35,7 @@ const AdminPackages = ({ route, navigation }) => {
   // to be deleted if not used
   const fetchQuizById = async (quizId) => {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/quiz/${quizId}`);
       if (response.ok) {
         const data = await response.json();
         setQuizzes((prevQuizzes) => ({ ...prevQuizzes, [quizId]: data }));
@@ -53,7 +53,7 @@ const AdminPackages = ({ route, navigation }) => {
   const deleteWorkPackage = async (workPackageId) => {
     // Assuming there's an endpoint for deleting work packages
     try {
-      const response = await fetch(`http://localhost:4000/workPackages/delete/${workPackageId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/workPackages/delete/${workPackageId}`, {
         method: 'DELETE',
       });
 
@@ -85,7 +85,7 @@ const AdminPackages = ({ route, navigation }) => {
   const handleDeletePress = async () => {
     try {
       // Call the admin password check endpoint
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

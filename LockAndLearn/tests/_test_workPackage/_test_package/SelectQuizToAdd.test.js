@@ -73,7 +73,7 @@ describe('SelectQuizToAdd', () => {
 
       // Assertions
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('http://localhost:4000/quizzes/deleteQuiz/1', {
+        expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/quizzes/deleteQuiz/1', {
           method: 'DELETE',
         });
         // Add other assertions as needed

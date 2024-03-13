@@ -18,7 +18,7 @@ const AdminCertificates = () => {
   // Fetch all pending certificates from the server
   const fetchAllPendingCertificates = async () => {
     try {
-      const response = await fetch('http://localhost:4000/certificates/uploadCertificates/pending');
+      const response = await fetch('https://lockandlearn.onrender.com/certificates/uploadCertificates/pending');
       if (response.ok) {
         const data = await response.json();
         setCertificates(data.uploadedPendingCertificates);
@@ -33,7 +33,7 @@ const AdminCertificates = () => {
   // Function to handle accepting a certificate
   const handleAcceptCertificate = async (userId) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/acceptUserCertificates/${userId}`,
+      `https://lockandlearn.onrender.com/certificates/acceptUserCertificates/${userId}`,
       {
         method: 'PUT',
       }
@@ -54,7 +54,7 @@ const AdminCertificates = () => {
   // Function to handle rejecting a certificate
   const handleRejectCertificate = async (certificateId) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/rejectCertificate/${certificateId}`,
+      `https://lockandlearn.onrender.com/certificates/rejectCertificate/${certificateId}`,
       {
         method: 'PUT',
       }
@@ -75,7 +75,7 @@ const AdminCertificates = () => {
   // Function to download certificate
   const downloadCertificate = async (fileName) => {
     const response = await fetch(
-      `http://localhost:4000/certificates/uploadCertificates/${fileName}`,
+      `https://lockandlearn.onrender.com/certificates/uploadCertificates/${fileName}`,
       {
         method: 'GET',
       }

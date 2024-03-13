@@ -19,7 +19,7 @@ export const WorkPackageCard = ({ props }) => {
   const deleteWorkPackage = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/workPackages/deleteWorkPackage/' + props._id,
+        'https://lockandlearn.onrender.com/workPackages/deleteWorkPackage/' + props._id,
         {
           method: 'PUT',
           headers: {
@@ -40,7 +40,7 @@ export const WorkPackageCard = ({ props }) => {
     
     try {
       const response = await fetch(
-        `http://localhost:4000/workPackages/publishWorkPackage/${workPackageId}`,
+        `https://lockandlearn.onrender.com/workPackages/publishWorkPackage/${workPackageId}`,
         {
           method: 'PUT', // Use PUT since we're updating part of the resource
           headers: {

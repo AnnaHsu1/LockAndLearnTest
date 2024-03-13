@@ -28,7 +28,7 @@ const AdminFinances = ({ route, navigation }) => {
    */
   const fetchAllTransactions = async () => {
     try {
-      const response = await fetch('http://localhost:4000/payment/transactions');
+      const response = await fetch('https://lockandlearn.onrender.com/payment/transactions');
       if (response.ok) {
         const data = await response.json();
         console.log('Updated transactions:', data);
@@ -52,7 +52,7 @@ const AdminFinances = ({ route, navigation }) => {
    */
   const fetchBalance = async () => {
     try {
-      const response = await fetch('http://localhost:4000/payment/balanceAdmin');
+      const response = await fetch('https://lockandlearn.onrender.com/payment/balanceAdmin');
       if (response.ok) {
         const data = await response.json();
 
@@ -84,7 +84,7 @@ const AdminFinances = ({ route, navigation }) => {
   const fetchMoreTransactionInfo = async (stripePurchaseId) => {
     try {
       const response = await fetch(
-        `http://localhost:4000/payment/getParentUserName/${stripePurchaseId}`
+        `https://lockandlearn.onrender.com/payment/getParentUserName/${stripePurchaseId}`
       );
       const data = await response.json();
 

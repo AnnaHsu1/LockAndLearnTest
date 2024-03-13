@@ -117,7 +117,7 @@ const UploadScreen = () => {
     // }
 
     try {
-      const response = await fetch('http://localhost:4000/files/uploadFiles', {
+      const response = await fetch('https://lockandlearn.onrender.com/files/uploadFiles', {
         method: 'POST',
         body: fileData,
       });
@@ -157,7 +157,7 @@ const UploadScreen = () => {
       fileData.append('description', findDescription(file.name));
     });
     try {
-      const response = await fetch('http://localhost:4000/files/overwriteFiles', {
+      const response = await fetch('https://lockandlearn.onrender.com/files/overwriteFiles', {
         method: 'PUT',
         body: fileData,
       });

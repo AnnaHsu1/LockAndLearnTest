@@ -25,7 +25,7 @@ const EditWorkPackage = ({ route }) => {
   // Extracted common function for fetching subjects
   const fetchSubjects = async (setSubjects) => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/allSubjects');
+      const response = await fetch('https://lockandlearn.onrender.com/subcategories/allSubjects');
       if (response.status === 200 || 201) {
         const data = await response.json();
         if (Array.isArray(data)) {
@@ -50,7 +50,7 @@ const EditWorkPackage = ({ route }) => {
     }
     try {
       const response = await fetch(
-        'http://localhost:4000/workPackages/updateWorkPackage/' + workpackage._id,
+        'https://lockandlearn.onrender.com/workPackages/updateWorkPackage/' + workpackage._id,
         {
           method: 'PUT',
           headers: {

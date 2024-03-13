@@ -24,12 +24,12 @@ jest.mock('../../../components/AsyncStorage', () => ({
 
 // Mock fetch API
 global.fetch = jest.fn((url) => {
-  if (url === 'http://localhost:4000/timeframes/addtimeframe') {
+  if (url === 'https://lockandlearn.onrender.com/timeframes/addtimeframe') {
     return Promise.resolve({
       json: () => Promise.resolve(),
       status: 201,
     });
-  } else if (url === 'http://localhost:4000/timeframes/gettimeframes/child1') {
+  } else if (url === 'https://lockandlearn.onrender.com/timeframes/gettimeframes/child1') {
     return Promise.resolve({
       json: () =>
         Promise.resolve([
@@ -92,7 +92,7 @@ global.fetch = jest.fn((url) => {
         ]),
       status: 200,
     });
-  } else if (url === 'http://localhost:4000/child/getPreferences/child1') {
+  } else if (url === 'https://lockandlearn.onrender.com/child/getPreferences/child1') {
     return Promise.resolve({
       json: () =>
         Promise.resolve({
@@ -160,11 +160,11 @@ describe('Child timeframe tests', () => {
     // Wait for the component to fetch data
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/timeframes/gettimeframes/child1',
+        'https://lockandlearn.onrender.com/timeframes/gettimeframes/child1',
         { credentials: 'include', method: 'GET' }
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/getPreferences/child1',
+        'https://lockandlearn.onrender.com/child/getPreferences/child1',
         { credentials: 'include', method: 'GET' }
       );
     });
@@ -216,11 +216,11 @@ describe('Child timeframe tests', () => {
     // Wait for the component to fetch data
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/timeframes/gettimeframes/child1',
+        'https://lockandlearn.onrender.com/timeframes/gettimeframes/child1',
         { credentials: 'include', method: 'GET' }
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/getPreferences/child1',
+        'https://lockandlearn.onrender.com/child/getPreferences/child1',
         { credentials: 'include', method: 'GET' }
       );
     });
@@ -253,11 +253,11 @@ describe('Child timeframe tests', () => {
     // Wait for the component to fetch data
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/timeframes/gettimeframes/child1',
+        'https://lockandlearn.onrender.com/timeframes/gettimeframes/child1',
         { credentials: 'include', method: 'GET' }
       );
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/getPreferences/child1',
+        'https://lockandlearn.onrender.com/child/getPreferences/child1',
         { credentials: 'include', method: 'GET' }
       );
     });

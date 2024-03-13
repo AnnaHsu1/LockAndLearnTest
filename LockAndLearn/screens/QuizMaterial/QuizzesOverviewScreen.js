@@ -27,7 +27,7 @@ const QuizzesOverviewScreen = ({ route }) => {
   const fetchQuizzes = async () => {
     const user = await getUser();
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes/' + user._id, {
+      const response = await fetch('https://lockandlearn.onrender.com/quizzes/allQuizzes/' + user._id, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const QuizzesOverviewScreen = ({ route }) => {
   const confirmDelete = async () => {
     if (selectedQuizId) {
       try {
-        const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${selectedQuizId}`, {
+        const response = await fetch(`https://lockandlearn.onrender.com/quizzes/deleteQuiz/${selectedQuizId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ const QuizzesOverviewScreen = ({ route }) => {
   };  
 
   const updateQuizApproval = async (quizId, approved) => {
-    const url = `http://localhost:4000/quizzes/${quizId}`;
+    const url = `https://lockandlearn.onrender.com/quizzes/${quizId}`;
     const options = {
       method: 'PUT',
       headers: {

@@ -29,7 +29,7 @@ const AdminSubcategories = ({ navigation }) => {
 
   const fetchSubcategories = async () => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/fetchAll');
+      const response = await fetch('https://lockandlearn.onrender.com/subcategories/fetchAll');
       if (response.ok) {
         const data = await response.json();
         setSubcategories(data);
@@ -44,7 +44,7 @@ const AdminSubcategories = ({ navigation }) => {
   const handleDeleteConfirmation = async () => {
     try {
       // Call the admin password check endpoint
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ const AdminSubcategories = ({ navigation }) => {
       if (response.ok) {
         // Admin password check successful, proceed with subcategory deletion
         const responseDelete = await fetch(
-          `http://localhost:4000/subcategories/delete/${selectedSubcategory}`,
+          `https://lockandlearn.onrender.com/subcategories/delete/${selectedSubcategory}`,
           {
             method: 'DELETE',
           }
@@ -86,7 +86,7 @@ const AdminSubcategories = ({ navigation }) => {
   const handleCreatePress = async () => {
     try {
       // Call the createCourse endpoint with the new subcategory name
-      const response = await fetch('http://localhost:4000/subcategories/createCourse', {
+      const response = await fetch('https://lockandlearn.onrender.com/subcategories/createCourse', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const AdminSubcategories = ({ navigation }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:4000/subcategories/addSubcategoryToGrade', {
+      const response = await fetch('https://lockandlearn.onrender.com/subcategories/addSubcategoryToGrade', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ const AdminSubcategories = ({ navigation }) => {
   const handleSubcategoryDeleteConfirmation = async () => {
     try {
       // Call the admin password check endpoint
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -184,7 +184,7 @@ const AdminSubcategories = ({ navigation }) => {
       if (response.ok) {
         // Admin password check successful, proceed with subcategory deletion
         const responseDelete = await fetch(
-          `http://localhost:4000/subcategories/deleteSubcategoryFromGrade/${selectedSubcategoryToDelete.subcategoryId}/${selectedSubcategoryToDelete.grade}/${selectedSubcategoryToDelete.subcategoryIndex}`,
+          `https://lockandlearn.onrender.com/subcategories/deleteSubcategoryFromGrade/${selectedSubcategoryToDelete.subcategoryId}/${selectedSubcategoryToDelete.grade}/${selectedSubcategoryToDelete.subcategoryIndex}`,
           {
             method: 'DELETE',
             headers: {

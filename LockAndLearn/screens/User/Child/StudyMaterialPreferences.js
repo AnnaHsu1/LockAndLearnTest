@@ -23,7 +23,7 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
   //fetching all the subcategories
   const fetchSubcategories = async () => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/fetchAll');
+      const response = await fetch('https://lockandlearn.onrender.com/subcategories/fetchAll');
       if (response.ok) {
         const data = await response.json();
         setSubcategories(data);
@@ -69,7 +69,7 @@ const StudyMaterialPreferences = ({ route, navigation }) => {
         ...fdata,
         Preferences: selectedLabels,
       };
-      await fetch('http://localhost:4000/child/updatechild/' + childInfo._id, {
+      await fetch('https://lockandlearn.onrender.com/child/updatechild/' + childInfo._id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

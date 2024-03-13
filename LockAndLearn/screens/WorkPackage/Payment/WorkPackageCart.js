@@ -67,7 +67,7 @@ const WorkPackageCart = () => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
+          `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesCart/${userId}`,
           {
             method: 'GET',
             headers: {
@@ -95,7 +95,7 @@ const WorkPackageCart = () => {
     const userId = user._id;
     try {
       const response = await fetch(
-        `http://localhost:4000/workPackages/deleteFromCart/${userId}/${selectedWorkPackage}`,
+        `https://lockandlearn.onrender.com/workPackages/deleteFromCart/${userId}/${selectedWorkPackage}`,
         {
           method: 'DELETE',
         }
@@ -136,7 +136,7 @@ const WorkPackageCart = () => {
   //          return;
   //      }
   //    if (userId) {
-  //      const response = await fetch('http://localhost:4000/payment/initOrder', {
+  //      const response = await fetch('https://lockandlearn.onrender.com/payment/initOrder', {
   //        method: 'POST',
   //        headers: {
   //          'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ const WorkPackageCart = () => {
             const userId = user._id;
 
             if (userId) {
-                const response = await fetch(`http://localhost:4000/payment/${orderId}/capture`, {
+                const response = await fetch(`https://lockandlearn.onrender.com/payment/${orderId}/capture`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ const WorkPackageCart = () => {
     };
     const transferToPurchasedWorkPackage = async (userId) => {
         try {
-            const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}`, {
+            const response = await fetch(`https://lockandlearn.onrender.com/payment/transferWorkPackages/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

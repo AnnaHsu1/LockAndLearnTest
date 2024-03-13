@@ -90,7 +90,7 @@ const ViewUploadedFilesScreen = () => {
     setDeleteDataFile([]);
     if (userId) {
       try {
-        const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
+        const response = await fetch(`https://lockandlearn.onrender.com/files/specificUploadFiles/${userId}`, {
           method: 'GET',
         });
         const files = await response.json();
@@ -128,7 +128,7 @@ const ViewUploadedFilesScreen = () => {
   const handleDelete = async (itemId) => {
     try {
       const response = await fetch(
-        `http://localhost:4000/files/deleteUploadFiles/${deleteDataFile[itemId - 1]._id}`,
+        `https://lockandlearn.onrender.com/files/deleteUploadFiles/${deleteDataFile[itemId - 1]._id}`,
         {
           method: 'DELETE',
         }
@@ -149,7 +149,7 @@ const ViewUploadedFilesScreen = () => {
 
   // function to display files
   const displayFile = async (fileName) => {
-    const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
+    const response = await fetch(`https://lockandlearn.onrender.com/files/uploadFiles/${fileName}`, {
       method: 'GET',
     });
 

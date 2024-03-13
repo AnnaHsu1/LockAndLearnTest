@@ -23,7 +23,7 @@ const SelectQuizToAdd = () => {
   const getQuizzes = async () => {
     const user = await getUser();
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes/' + user._id, {
+      const response = await fetch('https://lockandlearn.onrender.com/quizzes/allQuizzes/' + user._id, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ const SelectQuizToAdd = () => {
         const data = await response.json();
         setQuizzes(data);
         // set checked (true) to checkboxes that are already selected in the package
-        const quizzesInDb = await fetch(`http://localhost:4000/packages/fetchQuizzes/${p_id}`, {
+        const quizzesInDb = await fetch(`https://lockandlearn.onrender.com/packages/fetchQuizzes/${p_id}`, {
           method: 'GET',
         });
         const selectedQuizzesDb = await quizzesInDb.json();
@@ -63,7 +63,7 @@ const SelectQuizToAdd = () => {
   // Function to add selected quizzes to the work package
   const addQuizzesToWorkPackage = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/addContent/${p_id}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/packages/addContent/${p_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

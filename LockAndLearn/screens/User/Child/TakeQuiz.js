@@ -18,7 +18,7 @@ const TakeQuiz = ({ route }) => {
   const fetchQuizzes = async () => {
     console.log("AAAAAAAAAA FETCH QUIZZES");
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes', {
+      const response = await fetch('https://lockandlearn.onrender.com/quizzes/allQuizzes', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

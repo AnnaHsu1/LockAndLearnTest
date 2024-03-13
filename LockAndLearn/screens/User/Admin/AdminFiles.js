@@ -13,7 +13,7 @@ const AdminFiles = ({ route, navigation }) => {
 
   const fetchFiles = async () => {
     try {
-      const response = await fetch('http://localhost:4000/files/allFiles');
+      const response = await fetch('https://lockandlearn.onrender.com/files/allFiles');
       if (response.ok) {
         const data = await response.json();
         setFiles(data.allFiles);
@@ -27,7 +27,7 @@ const AdminFiles = ({ route, navigation }) => {
 
   const deleteFile = async (fileId) => {
     try {
-      const response = await fetch(`http://localhost:4000/files/deleteUploadFiles/${fileId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/files/deleteUploadFiles/${fileId}`, {
         method: 'DELETE',
       });
 
@@ -59,7 +59,7 @@ const AdminFiles = ({ route, navigation }) => {
   const handleDeletePress = async () => {
     try {
       // Call the admin password check endpoint
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

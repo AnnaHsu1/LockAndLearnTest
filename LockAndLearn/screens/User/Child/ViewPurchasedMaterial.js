@@ -16,7 +16,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -56,7 +56,7 @@ const ViewPurchasedMaterial = ({ route, navigation }) => {
     if (userId) {
       try {
         const response = await fetch(
-          'http://localhost:4000/workPackages/updateWorkPackage/' + workPackage._id,
+          'https://lockandlearn.onrender.com/workPackages/updateWorkPackage/' + workPackage._id,
           {
             method: 'PUT',
             headers: {

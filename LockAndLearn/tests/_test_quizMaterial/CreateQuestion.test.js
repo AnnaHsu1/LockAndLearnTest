@@ -140,7 +140,7 @@ describe('CreateQuestion Tests', () => {
       fireEvent.press(getByText('Create Question'));
     });
 
-    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/addQuestion/123', expect.any(Object));
+    expect(fetchMock).toHaveBeenCalledWith('https://lockandlearn.onrender.com/quizzes/addQuestion/123', expect.any(Object));
   });
 
   test('sends a new question to the server on submission', async () => {

@@ -22,7 +22,7 @@ const QuestionsOverviewScreen = ({ route }) => {
 
   const fetchQuiz = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/quiz/${quizId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const QuestionsOverviewScreen = ({ route }) => {
     // Filter out the question with the specified ID to delete it
     try {
       const response = await fetch(
-        `http://localhost:4000/quizzes/deleteQuestion/${quizId}/${questionIndex}`,
+        `https://lockandlearn.onrender.com/quizzes/deleteQuestion/${quizId}/${questionIndex}`,
         {
           method: 'DELETE',
           headers: {

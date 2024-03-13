@@ -13,7 +13,7 @@ const AdminQuizzes = ({ route, navigation }) => {
   //fetching quizzes to be able to view
   const fetchQuizzes = async () => {
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes');
+      const response = await fetch('https://lockandlearn.onrender.com/quizzes/allQuizzes');
       if (response.ok) {
         const data = await response.json();
         setQuizzes(data);
@@ -27,7 +27,7 @@ const AdminQuizzes = ({ route, navigation }) => {
 
   const deleteQuiz = async (quizId) => {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${quizId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/deleteQuiz/${quizId}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -58,7 +58,7 @@ const AdminQuizzes = ({ route, navigation }) => {
   const handleDeletePress = async () => {
     try {
       // Call the admin login endpoint to check the admin password
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -118,7 +118,7 @@ const DisplayQuizzScreen = ({ route }) => {
     // Fetch the current question from the server
     const fetchQuestion = async () => {
         try {
-            const response = await fetch(`http://localhost:4000/quizzes/getQuestion/${quizId}/${questionIndex}`, {
+            const response = await fetch(`https://lockandlearn.onrender.com/quizzes/getQuestion/${quizId}/${questionIndex}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ const DisplayQuizzScreen = ({ route }) => {
 
     const fetchThreshold = async () => {
         // add part fetching threshold
-        const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childID}`, {
+        const response = await fetch(`https://lockandlearn.onrender.com/child/getPreviousPassingGrades/${childID}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -213,7 +213,7 @@ const DisplayQuizzScreen = ({ route }) => {
             }
             console.log("NEW QUIZ RESULT OBJECT", newChildQuizResult);
 
-            const response = await fetch('http://localhost:4000/childQuizResults/addChildQuizResults', {
+            const response = await fetch('https://lockandlearn.onrender.com/childQuizResults/addChildQuizResults', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

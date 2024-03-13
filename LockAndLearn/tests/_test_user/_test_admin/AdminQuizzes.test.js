@@ -18,7 +18,7 @@ it('fetches quizzes on component mount', async () => {
     render(<AdminQuizzes />);
 
     await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('http://localhost:4000/quizzes/allQuizzes');
+        expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/quizzes/allQuizzes');
     });
 });
 

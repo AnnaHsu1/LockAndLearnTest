@@ -46,7 +46,7 @@ describe('AddChildScreen', () => {
     fireEvent.press(getByTestId('signup-button'));
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith(
-      'http://localhost:4000/child/addchild',
+      'https://lockandlearn.onrender.com/child/addchild',
       {
         method: 'POST',
         headers: {

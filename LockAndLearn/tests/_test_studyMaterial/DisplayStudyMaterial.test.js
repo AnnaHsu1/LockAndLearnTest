@@ -44,7 +44,7 @@ describe('DisplayStudyMaterial Component Tests', () => {
     }));
 
     const { findByTestId } = render(<DisplayStudyMaterial />);
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/child/getPackagesInfo/testChildId', expect.anything());
+    expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/child/getPackagesInfo/testChildId', expect.anything());
   });
 
   it('logs an error message for non-200 response', async () => {

@@ -25,14 +25,14 @@ const Payment = ({ navigation, route }) => {
                 const user = JSON.parse(token);
                 const userId = user._id;
                 // Fetch publishable key
-                const configResponse = await fetch("http://localhost:4000/payment/config");
+                const configResponse = await fetch("https://lockandlearn.onrender.com/payment/config");
                 const { publishableKey } = await configResponse.json();
                 console.log("Received PK: ", publishableKey);
                 setStripePromise(loadStripe(publishableKey));
                 console.log("Stripe Promise set.");
 
                 // Fetch client secret
-                const orderResponse = await fetch(`http://localhost:4000/payment/initOrderStripe/${userId}`, {
+                const orderResponse = await fetch(`https://lockandlearn.onrender.com/payment/initOrderStripe/${userId}`, {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json',

@@ -33,7 +33,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
 
   // function to get all previously assigned work packages from the child
   const fetchPreviouslyAssignedWorkPackages = async () => {
-    const response = await fetch(`http://localhost:4000/child/getWorkPackages/${child._id}`, {
+    const response = await fetch(`https://lockandlearn.onrender.com/child/getWorkPackages/${child._id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   // function get workpackage id from quiz id
   const findWpIDfromQuizIDandPackageID = async (quizId, packageId) => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchWpByQuizAndPackage/${quizId}/${packageId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/packages/fetchWpByQuizAndPackage/${quizId}/${packageId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
   const childQuizResults = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/childQuizResults/getQuizResults/${child._id}`,
+        `https://lockandlearn.onrender.com/childQuizResults/getQuizResults/${child._id}`,
         {
           method: 'GET',
           headers: {
@@ -97,7 +97,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
     const userId = user._id;
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -147,7 +147,7 @@ const AssignChildMaterial = ({ route, navigation }) => {
       .filter(([key, value]) => value)
       // only take the key (wp id)
       .map(([key, value]) => key);
-    const response = await fetch(`http://localhost:4000/child/addChildMaterial/${child._id}`, {
+    const response = await fetch(`https://lockandlearn.onrender.com/child/addChildMaterial/${child._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

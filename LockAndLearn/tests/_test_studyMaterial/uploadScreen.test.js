@@ -117,7 +117,7 @@ describe('<UploadScreen />', () => {
   //     expect(DocumentPicker.getDocumentAsync).toHaveBeenCalled();
   //     fireEvent.press(getByTestId('uploadButton'));
   //     expect(fetch).toHaveBeenCalledWith(
-  //       'http://localhost:4000/files/uploadFiles',
+  //       'https://lockandlearn.onrender.com/files/uploadFiles',
   //       expect.any(Object)
   //     );
   //   });

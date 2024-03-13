@@ -18,7 +18,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
 
   const fetchWorkPackages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/workPackages/allWorkPackages');
+      const response = await fetch('https://lockandlearn.onrender.com/workPackages/allWorkPackages');
       if (response.ok) {
         const data = await response.json();
         setWorkPackages(data);
@@ -33,7 +33,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
   const deleteWorkPackage = async (workPackageId) => {
     // Assuming there's an endpoint for deleting work packages
     try {
-      const response = await fetch(`http://localhost:4000/workPackages/delete/${workPackageId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/workPackages/delete/${workPackageId}`, {
         method: 'DELETE',
       });
 
@@ -65,7 +65,7 @@ const AdminWorkPackages = ({ route, navigation }) => {
   const handleDeletePress = async () => {
     try {
       // Call the admin password check endpoint
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

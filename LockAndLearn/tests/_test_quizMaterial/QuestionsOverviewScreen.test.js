@@ -59,7 +59,7 @@ describe('QuestionsOverviewScreen Tests', () => {
     fireEvent.press(deleteButton);
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/quizzes/deleteQuestion/123/0', {
+      expect(fetchMock).toHaveBeenCalledWith('https://lockandlearn.onrender.com/quizzes/deleteQuestion/123/0', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

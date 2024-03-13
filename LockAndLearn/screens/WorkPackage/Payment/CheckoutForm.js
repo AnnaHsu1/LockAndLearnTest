@@ -73,7 +73,7 @@ const CheckoutForm = ({ stripePayingSplits }) => {
    */
   const transferToPurchasedWorkPackage = async (userId, stripeId, stripeSale) => {
     try {
-      const response = await fetch(`http://localhost:4000/payment/transferWorkPackages/${userId}/${stripeId}/${stripeSale}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/payment/transferWorkPackages/${userId}/${stripeId}/${stripeSale}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ const CheckoutForm = ({ stripePayingSplits }) => {
    */
   const processTransfers = async (stripePayingSplits) => {
     try {
-      const response = await fetch(`http://localhost:4000/payment/transferPayments`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/payment/transferPayments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -63,7 +63,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         const token = await getItem('@token');
         if (token) {
           const user = JSON.parse(token);
-          const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
+          const response = await fetch('https://lockandlearn.onrender.com/child/getchildren/' + user._id, {
             method: 'GET',
             credentials: 'include', // Include cookies in the request
           });
@@ -121,7 +121,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -152,7 +152,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesCart/${userId}`,
+          `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesCart/${userId}`,
           {
             method: 'GET',
             headers: {
@@ -186,7 +186,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
     if (userId) {
       try {
         const response = await fetch(
-          `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+          `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
           {
             method: 'GET',
             headers: {
@@ -285,7 +285,7 @@ const WorkPackageBrowsingScreen = ({ route }) => {
         console.error('User ID or selected work package is missing');
         return;
       }
-      const response = await fetch(`http://localhost:4000/workPackages/addToCart/${userId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/workPackages/addToCart/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

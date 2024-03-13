@@ -32,7 +32,7 @@ const PackageOverview = ({ props }) => {
   // function to get work package information
   const fetchPackages = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchPackages/${_id}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/packages/fetchPackages/${_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ const PackageOverview = ({ props }) => {
   const confirmDelete = async () => {
     if (selectedPackageId) {
       try {
-        const response = await fetch(`http://localhost:4000/packages/delete/${selectedPackageId}`, {
+        const response = await fetch(`https://lockandlearn.onrender.com/packages/delete/${selectedPackageId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

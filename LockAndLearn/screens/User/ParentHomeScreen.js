@@ -32,7 +32,7 @@ const ParentHomeScreen = ({ navigation }) => {
   const isLockingTime = async (child) => {
     try {
       // console.log(child);
-      const response = await fetch('http://localhost:4000/timeframes/gettimeframes/' + child._id, {
+      const response = await fetch('https://lockandlearn.onrender.com/timeframes/gettimeframes/' + child._id, {
         method: 'GET',
         credentials: 'include',
       });
@@ -108,7 +108,7 @@ const ParentHomeScreen = ({ navigation }) => {
       }
 
       try {
-        const response = await fetch('http://localhost:4000/users/createPIN/' + user._id, {
+        const response = await fetch('https://lockandlearn.onrender.com/users/createPIN/' + user._id, {
           method: 'POST',
           credentials: 'include', // Include cookies in the request
           headers: {
@@ -133,7 +133,7 @@ const ParentHomeScreen = ({ navigation }) => {
         return;
       } else {
         try {
-          const response = await fetch('http://localhost:4000/users/getPIN/' + user._id, {
+          const response = await fetch('https://lockandlearn.onrender.com/users/getPIN/' + user._id, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -165,7 +165,7 @@ const ParentHomeScreen = ({ navigation }) => {
   const getChildren = async () => {
     try {
       const user = await getUser();
-      const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
+      const response = await fetch('https://lockandlearn.onrender.com/child/getchildren/' + user._id, {
         method: 'GET',
         credentials: 'include', // Include cookies in the request
       });

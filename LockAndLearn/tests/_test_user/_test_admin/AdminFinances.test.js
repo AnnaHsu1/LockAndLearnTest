@@ -21,7 +21,7 @@ describe('AdminFinances Component', () => {
     ];
 
     global.fetch = jest.fn().mockImplementation((url) => {
-      if (url === 'http://localhost:4000/payment/transactions') {
+      if (url === 'https://lockandlearn.onrender.com/payment/transactions') {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ payments: mockTransactions }),
@@ -48,7 +48,7 @@ describe('AdminFinances Component', () => {
     };
 
     global.fetch = jest.fn().mockImplementation((url) => {
-      if (url === 'http://localhost:4000/payment/balanceAdmin') {
+      if (url === 'https://lockandlearn.onrender.com/payment/balanceAdmin') {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ balance: mockBalance }),

@@ -72,7 +72,7 @@ const PackagePreview = () => {
   // Function to fetch and display the quiz name
   async function fetchQuizName(quizId) {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/quiz/${quizId}`);
       if (response.status === 200 || 201) {
         const data = await response.json();
         return data.name;
@@ -90,7 +90,7 @@ const PackagePreview = () => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:4000/files/filesName/${fileId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/files/filesName/${fileId}`, {
         method: 'GET',
       });
       if (response.status === 201) {
@@ -155,7 +155,7 @@ const PackagePreview = () => {
  * @param {string} fileName - The name of the file to be fetched and displayed.
  */
   const displayFile = async (fileName) => {
-    const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
+    const response = await fetch(`https://lockandlearn.onrender.com/files/uploadFiles/${fileName}`, {
       method: 'GET',
     });
 
@@ -175,7 +175,7 @@ const PackagePreview = () => {
  */
   const displayQuizDetails = async (quizId) => {
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/quiz/${quizId}`);
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/quiz/${quizId}`);
       if (response.status === 200 || response.status === 201) {
         const quizDetails = await response.json();
         setSelectedQuiz(quizDetails);

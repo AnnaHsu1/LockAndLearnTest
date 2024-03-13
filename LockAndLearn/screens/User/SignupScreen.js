@@ -84,7 +84,7 @@ const SignupScreen = ({ navigation }) => {
     // console.log(fdata);
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

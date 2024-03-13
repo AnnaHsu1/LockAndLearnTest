@@ -52,12 +52,12 @@ jest.mock('../../../components/AsyncStorage', () => ({
 
 // Mock fetch API
 global.fetch = jest.fn((url) => {
-  if(url === 'http://localhost:4000/workPackages/fetchWorkpackagesParent/undefined?displayOwned=true') {
+  if(url === 'https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesParent/undefined?displayOwned=true') {
     return Promise.resolve({
       json: () => Promise.resolve(mockPrevAssigned),
       status: 200,
     });
-  } else if(url === 'http://localhost:4000/child/getWorkPackages/child1') {
+  } else if(url === 'https://lockandlearn.onrender.com/child/getWorkPackages/child1') {
     return Promise.resolve({
       json: () => Promise.resolve(mockWorkPackages),
       status: 200,

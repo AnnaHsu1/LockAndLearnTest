@@ -91,7 +91,7 @@ describe('ChildPassingGradePerSubject Screen test', () => {
 
     await waitFor(() => {
       // Check if the correct API call is made
-      expect(global.fetch).toHaveBeenCalledWith(`http://localhost:4000/child/updateUserSubjectsPassingGrade/child123`, expect.anything());
+      expect(global.fetch).toHaveBeenCalledWith(`https://lockandlearn.onrender.com/child/updateUserSubjectsPassingGrade/child123`, expect.anything());
 
       // Check if navigation is called after a successful update
       expect(mockNavigation.navigate).toHaveBeenCalledWith('ChildSettings', expect.anything());

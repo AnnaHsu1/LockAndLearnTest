@@ -35,7 +35,7 @@ jest.mock('@react-navigation/native', () => ({
 
 // Mock fetch API for work packages
 global.fetch = jest.fn((url) => {
-  if (url === 'http://localhost:4000/child/getchildren/user123') {
+  if (url === 'https://lockandlearn.onrender.com/child/getchildren/user123') {
     return Promise.resolve({
       json: () => Promise.resolve([{ _id: 'child1', firstName: 'Child One' }]),
       status: 200,

@@ -35,7 +35,7 @@ const CreatePackage = ({ route }) => {
     try {
       // Fetch subcategories from the server
       const response = await fetch(
-        `http://localhost:4000/subcategories/fetchSubcategories/${name}/${grade}`
+        `https://lockandlearn.onrender.com/subcategories/fetchSubcategories/${name}/${grade}`
       );
       console.log(name, grade);
       if (response.status === 200) {
@@ -67,7 +67,7 @@ const CreatePackage = ({ route }) => {
       const user = JSON.parse(token);
       const userId = user._id;
       if (userId) {
-        const response = await fetch('http://localhost:4000/packages/create', {
+        const response = await fetch('https://lockandlearn.onrender.com/packages/create', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

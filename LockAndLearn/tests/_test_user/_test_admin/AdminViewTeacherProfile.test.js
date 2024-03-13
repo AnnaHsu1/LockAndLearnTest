@@ -25,7 +25,7 @@ describe('AdminViewTeacherProfile component', () => {
     render(<AdminViewTeacherProfile route={{ params: { userId: 'testUserId' } }} navigation={{ navigate: jest.fn() }} />);
     
     // Expect fetch to be called with correct URL
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/workPackages/getWorkPackages/testUserId', {
+    expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/workPackages/getWorkPackages/testUserId', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

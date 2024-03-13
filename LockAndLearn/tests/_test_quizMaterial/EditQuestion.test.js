@@ -192,7 +192,7 @@ describe('EditQuestion Tests', () => {
     await waitFor(() => {
       // The second call to fetchMock (index 1) should be the PUT request
       const putCall = fetchMock.mock.calls[1];
-      expect(putCall[0]).toEqual(`http://localhost:4000/quizzes/updateQuestion/${mockRoute.params.quizId}/${mockRoute.params.questionIndex}`);
+      expect(putCall[0]).toEqual(`https://lockandlearn.onrender.com/quizzes/updateQuestion/${mockRoute.params.quizId}/${mockRoute.params.questionIndex}`);
 
       // The body of the PUT request should match the mockQuestionData
       const putBody = JSON.parse(putCall[1].body);

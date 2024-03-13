@@ -62,8 +62,8 @@ const CreateWorkPackage = (route) => {
       const user = JSON.parse(token);
       const userId = user._id;
       if (userId) {
-        // const response = await fetch('http://localhost:4000/workPackages/create', {
-        const response = await fetch('http://localhost:4000/workPackages/createWorkPackage', {
+        // const response = await fetch('https://lockandlearn.onrender.com/workPackages/create', {
+        const response = await fetch('https://lockandlearn.onrender.com/workPackages/createWorkPackage', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const CreateWorkPackage = (route) => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await fetch('http://localhost:4000/subcategories/allSubjects');
+      const response = await fetch('https://lockandlearn.onrender.com/subcategories/allSubjects');
       if (response.status === 200 || 201) {
         const data = await response.json();
         if (Array.isArray(data)) {

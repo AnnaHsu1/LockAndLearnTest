@@ -74,7 +74,7 @@ describe('Edit Child Profile Screen test', () => {
 
     await waitFor(() =>
       expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/updatechild/' + mockChild._id,
+        'https://lockandlearn.onrender.com/child/updatechild/' + mockChild._id,
         {
           method: 'PUT',
           headers: {

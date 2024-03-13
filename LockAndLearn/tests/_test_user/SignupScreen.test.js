@@ -76,7 +76,7 @@ describe('SignupScreen', () => {
     expect(mockFetch).toHaveBeenCalled();
   
     // Verify that the fetch was called with the correct body
-    const actualFetchCall = mockFetch.mock.calls.find(call => call[0] === 'http://localhost:4000/users/signup');
+    const actualFetchCall = mockFetch.mock.calls.find(call => call[0] === 'https://lockandlearn.onrender.com/users/signup');
     const actualBody = JSON.parse(actualFetchCall[1].body);
   
     const expectedBody = {

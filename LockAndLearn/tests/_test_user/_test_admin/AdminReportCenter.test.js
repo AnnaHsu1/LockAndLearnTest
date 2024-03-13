@@ -62,7 +62,7 @@ describe('AdminReportCenter Component', () => {
 
     it('fetches reports when the component mounts', async () => {
         render(<AdminReportCenter route={mockedRoute} navigation={{ navigate: mockedNavigate }} />);
-        await waitFor(() => expect(fetch).toHaveBeenCalledWith('http://localhost:4000/reports/all-reports'));
+        await waitFor(() => expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/reports/all-reports'));
     });
      
     

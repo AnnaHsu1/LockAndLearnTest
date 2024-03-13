@@ -66,7 +66,7 @@ const WorkPackagePreview = () => {
           reason
         );
 
-        const response = await fetch('http://localhost:4000/reports/create-report', {
+        const response = await fetch('https://lockandlearn.onrender.com/reports/create-report', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const WorkPackagePreview = () => {
   // function to get work package information
   const fetchPackages = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/packages/fetchPackages/${_id}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/packages/fetchPackages/${_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

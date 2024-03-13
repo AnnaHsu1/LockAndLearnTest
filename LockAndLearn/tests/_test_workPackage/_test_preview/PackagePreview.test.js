@@ -76,7 +76,7 @@ describe('PackagePreview Component', () => {
     const {getByText} = render(<PackagePreview />);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(expect.stringContaining(`http://localhost:4000/quizzes/quiz/`));
+      expect(fetch).toHaveBeenCalledWith(expect.stringContaining(`https://lockandlearn.onrender.com/quizzes/quiz/`));
       expect(getByText('Sample Quiz Name')).toBeTruthy();
     });
   });

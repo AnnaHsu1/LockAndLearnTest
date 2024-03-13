@@ -48,7 +48,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
       }
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/child/addchild', {
+      const response = await fetch('https://lockandlearn.onrender.com/child/addchild', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

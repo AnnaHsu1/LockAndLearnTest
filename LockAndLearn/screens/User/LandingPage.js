@@ -48,7 +48,7 @@ const LandingPage = ({ navigation }) => {
   const getStatus = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/certificates/getCertificatesStatus/${userId}`,
+        `https://lockandlearn.onrender.com/certificates/getCertificatesStatus/${userId}`,
         {
           method: 'GET',
         }
@@ -139,7 +139,7 @@ const LandingPage = ({ navigation }) => {
     fileData.append('highestDegree', highestDegree);
 
     try {
-      const response = await fetch('http://localhost:4000/certificates/uploadCertificates', {
+      const response = await fetch('https://lockandlearn.onrender.com/certificates/uploadCertificates', {
         method: 'POST',
         body: fileData,
       });
@@ -180,7 +180,7 @@ const LandingPage = ({ navigation }) => {
     fileData.append('fullName', fullName);
     fileData.append('highestDegree', highestDegree);
     try {
-      const response = await fetch('http://localhost:4000/certificates/overwriteCertificates', {
+      const response = await fetch('https://lockandlearn.onrender.com/certificates/overwriteCertificates', {
         method: 'PUT',
         body: fileData,
       });

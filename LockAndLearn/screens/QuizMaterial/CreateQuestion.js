@@ -79,7 +79,7 @@ const CreateQuestion = ({ route }) => {
 
     // Make a POST request to your server to create the question
     try {
-      const response = await fetch(`http://localhost:4000/quizzes/addQuestion/${quizId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/quizzes/addQuestion/${quizId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const CreateQuestion = ({ route }) => {
 
   const updateQuizApproval = async (quizId, approved) => {
     try {
-      const updateQuizResponse = await fetch(`http://localhost:4000/quizzes/${quizId}`, {
+      const updateQuizResponse = await fetch(`https://lockandlearn.onrender.com/quizzes/${quizId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

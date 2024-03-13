@@ -115,7 +115,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   // Save the edited timeframes
   const saveEditTimeframes = async () => {
     try {
-      const response = await fetch('http://localhost:4000/timeframes/updateEditTimeframe', {
+      const response = await fetch('https://lockandlearn.onrender.com/timeframes/updateEditTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -149,7 +149,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const getChildTimeframes = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/timeframes/gettimeframes/' + childSelected._id,
+        'https://lockandlearn.onrender.com/timeframes/gettimeframes/' + childSelected._id,
         {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
@@ -175,7 +175,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const getChildPreferences = async () => {
     try {
       const response = await fetch(
-        'http://localhost:4000/child/getPreferences/' + childSelected._id,
+        'https://lockandlearn.onrender.com/child/getPreferences/' + childSelected._id,
         {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
@@ -232,7 +232,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   // Add a new timeframe
   const addTimeframe = async () => {
     try {
-      const response = await fetch('http://localhost:4000/timeframes/addtimeframe', {
+      const response = await fetch('https://lockandlearn.onrender.com/timeframes/addtimeframe', {
         method: 'POST',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -294,7 +294,7 @@ const ChildTimeframes = ({ route, navigation }) => {
       if (Object.keys(toggleSwitchItem).length === 0) {
         return;
       }
-      const response = await fetch('http://localhost:4000/timeframes/updateTimeframe', {
+      const response = await fetch('https://lockandlearn.onrender.com/timeframes/updateTimeframe', {
         method: 'PUT',
         credentials: 'include', // Include cookies in the request
         headers: {
@@ -325,7 +325,7 @@ const ChildTimeframes = ({ route, navigation }) => {
   const handleDeleteTimeframe = async (timeframeId) => {
     try {
       const response = await fetch(
-        'http://localhost:4000/timeframes/deletetimeframe/' + timeframeId,
+        'https://lockandlearn.onrender.com/timeframes/deletetimeframe/' + timeframeId,
         {
           method: 'DELETE',
           credentials: 'include', // Include cookies in the request

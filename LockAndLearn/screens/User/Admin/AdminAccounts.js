@@ -21,7 +21,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch('http://localhost:4000/users/allUsers');
+      const response = await fetch('https://lockandlearn.onrender.com/users/allUsers');
       if (response.ok) {
         const data = await response.json();
         // Filter out the admin account
@@ -67,7 +67,7 @@ const AdminAccount = ({ route, navigation }) => {
 
   const suspendUser = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:4000/users/suspendUser/${userId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/users/suspendUser/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const AdminAccount = ({ route, navigation }) => {
   const handleSuspendPress = async () => {
     try {
       // Call the admin password check endpoint
-      const response = await fetch('http://localhost:4000/users/adminCheckPassword', {
+      const response = await fetch('https://lockandlearn.onrender.com/users/adminCheckPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ const AdminViewTeacherProfile = ({ route, navigation }) => {
 
   const getWorkPackages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/workPackages/getWorkPackages/' + userId, {
+      const response = await fetch('https://lockandlearn.onrender.com/workPackages/getWorkPackages/' + userId, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

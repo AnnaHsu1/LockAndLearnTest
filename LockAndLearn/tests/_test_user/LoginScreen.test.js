@@ -61,14 +61,14 @@ describe('LoginScreen Component', () => {
     });
   
     // Perform the action you want to test
-    const response = await fetch('http://localhost:4000/users/login', {
+    const response = await fetch('https://lockandlearn.onrender.com/users/login', {
       method: 'POST',
       body: JSON.stringify(mockLoginUser),
       headers: { 'Content-Type': 'application/json' },
     });
   
     // Check that fetch was called with the correct parameters
-    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/users/login', {
+    expect(fetchMock).toHaveBeenCalledWith('https://lockandlearn.onrender.com/users/login', {
       method: 'POST',
       body: JSON.stringify(mockLoginUser),
       headers: { 'Content-Type': 'application/json' },

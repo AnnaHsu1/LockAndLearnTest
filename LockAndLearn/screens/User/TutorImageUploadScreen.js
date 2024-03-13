@@ -139,7 +139,7 @@ const TutorImageUploadScreen = ({ navigation }) => {
     });
 
     try {
-      const response = await fetch(`http://localhost:4000/certificates/uploadImages/${userId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/certificates/uploadImages/${userId}`, {
         method: 'PUT',
         body: fileData,
       });

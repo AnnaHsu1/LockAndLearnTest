@@ -57,7 +57,7 @@ describe('FinanceInstructor component', () => {
         // Wait for the component to make the delete account request
         await waitFor(() => {
             // Assert that it successfully deletes the account
-            expect(fetch).toHaveBeenCalledWith('http://localhost:4000/payment/delete-account/test-account-id', {
+            expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/payment/delete-account/test-account-id', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });

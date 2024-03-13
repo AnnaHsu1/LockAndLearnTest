@@ -31,19 +31,19 @@ describe('view uploaded certificates tests', () => {
   it('make PUT request and test connection to server', async () => {
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'Successfully downloaded certificate' }));
     const downloadCertificateHandler = async (userId) => {
-      await fetchMock(`http://localhost:4000/certificates/acceptUserCertificates/${userId}`, {
+      await fetchMock(`https://lockandlearn.onrender.com/certificates/acceptUserCertificates/${userId}`, {
         method: 'PUT',
       });
     };
     await downloadCertificateHandler('123');
     expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:4000/certificates/acceptUserCertificates/123',
+      'https://lockandlearn.onrender.com/certificates/acceptUserCertificates/123',
       {
         method: 'PUT',
       }
     );
     const response = await fetchMock(
-      'http://localhost:4000/certificates/acceptUserCertificates/123',
+      'https://lockandlearn.onrender.com/certificates/acceptUserCertificates/123',
       {
         method: 'PUT',
       }

@@ -30,7 +30,7 @@ const ParentAccountScreen = ({ navigation }) => {
       const token = await getItem('@token');
       if (token) {
         const user = JSON.parse(token);
-        const response = await fetch('http://localhost:4000/child/getchildren/' + user._id, {
+        const response = await fetch('https://lockandlearn.onrender.com/child/getchildren/' + user._id, {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
         });

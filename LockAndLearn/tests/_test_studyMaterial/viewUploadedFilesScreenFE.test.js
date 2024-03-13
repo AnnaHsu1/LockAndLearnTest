@@ -97,7 +97,7 @@ describe('view uploaded files tests', () => {
       findByTestId('deleteButton-0');
       expect(getByTestId('deleteButton-0')).toBeInTheDocument();
       fireEvent.press(getByTestId('deleteButton-0'));
-      expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/files/deleteUploadFiles/1', {
+      expect(fetchMock).toHaveBeenCalledWith('https://lockandlearn.onrender.com/files/deleteUploadFiles/1', {
         method: 'POST',
       });
       expect(getByTestId('fileTouchableOpacity-0')).toBeNull();

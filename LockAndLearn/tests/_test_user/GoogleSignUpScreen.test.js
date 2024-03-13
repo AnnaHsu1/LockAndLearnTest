@@ -52,7 +52,7 @@ describe('GoogleSignUpScreen', () => {
     await act(async () => {});
 
     // Check if the fetch call was made correctly
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/users/signup', expect.anything());
+    expect(fetch).toHaveBeenCalledWith('https://lockandlearn.onrender.com/users/signup', expect.anything());
 
     // Check navigation based on user type (mocked response)
     expect(mockNavigate).toHaveBeenCalledWith('UserLandingPage');

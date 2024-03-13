@@ -35,7 +35,7 @@ const SelectStudyMaterialToAdd = () => {
     const token = await getItem('@token');
     const user = JSON.parse(token);
     const userId = user._id;
-    const response = await fetch(`http://localhost:4000/files/specificUploadFiles/${userId}`, {
+    const response = await fetch(`https://lockandlearn.onrender.com/files/specificUploadFiles/${userId}`, {
       method: 'GET',
     });
     const files = await response.json();
@@ -50,7 +50,7 @@ const SelectStudyMaterialToAdd = () => {
     setDataFile(formattedFiles);
 
     // set checked (true) to checkboxes that are already selected in the package 
-    const materialsInDb = await fetch(`http://localhost:4000/packages/fetchMaterials/${p_id}`, {
+    const materialsInDb = await fetch(`https://lockandlearn.onrender.com/packages/fetchMaterials/${p_id}`, {
       method: 'GET',
     });
     const selectedFiles = await materialsInDb.json();
@@ -67,7 +67,7 @@ const SelectStudyMaterialToAdd = () => {
 
   // function to download file
   const downloadFile = async (fileName) => {
-    const response = await fetch(`http://localhost:4000/files/uploadFiles/${fileName}`, {
+    const response = await fetch(`https://lockandlearn.onrender.com/files/uploadFiles/${fileName}`, {
       method: 'GET',
     });
 
@@ -99,7 +99,7 @@ const SelectStudyMaterialToAdd = () => {
         .filter(([key, value]) => value)
         .map(([key, value]) => dataFile.find(file => file.id === parseInt(key)).originalId);
       const response = await fetch(
-        `http://localhost:4000/packages/addContent/${p_id}`,
+        `https://lockandlearn.onrender.com/packages/addContent/${p_id}`,
         {
           method: 'PUT',
           headers: {

@@ -58,7 +58,7 @@ const FinanceInstructor = ({ navigation, route }) => {
       const token = await getItem('@token');
       const user = JSON.parse(token);
       const userId = user._id;
-      const response = await fetch(`http://localhost:4000/payment/checkStripeCapabilities/${userId}`); // Replace 'currentUserId' with the actual user ID
+      const response = await fetch(`https://lockandlearn.onrender.com/payment/checkStripeCapabilities/${userId}`); // Replace 'currentUserId' with the actual user ID
       const data = await response.json();
 
       if (response.ok) {
@@ -84,7 +84,7 @@ const FinanceInstructor = ({ navigation, route }) => {
             const token = await getItem('@token');
             const user = JSON.parse(token);
             const userId = user._id;
-            const response = await fetch(`http://localhost:4000/payment/balanceInstructorStripe/${userId}`, {
+            const response = await fetch(`https://lockandlearn.onrender.com/payment/balanceInstructorStripe/${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ const FinanceInstructor = ({ navigation, route }) => {
     // Function to fetch a transaction by ID
     const fetchTransaction = async (transactionId) => {
         try {
-            const response = await fetch(`http://localhost:4000/payment/transactions/${transactionId}`);
+            const response = await fetch(`https://lockandlearn.onrender.com/payment/transactions/${transactionId}`);
             if (response.ok) {
                 const data = await response.json();
                 return data.payment; // Return the transaction data
@@ -160,7 +160,7 @@ const FinanceInstructor = ({ navigation, route }) => {
         try {
             const userToken = await getUser();
             const response = await fetch(
-                'http://localhost:4000/workPackages/getWorkPackages/' + userToken._id,
+                'https://lockandlearn.onrender.com/workPackages/getWorkPackages/' + userToken._id,
                 {
                     method: 'GET',
                     headers: {
@@ -240,7 +240,7 @@ const FinanceInstructor = ({ navigation, route }) => {
       const user = JSON.parse(token);
       const userId = user._id;
       const response = await fetch(
-        `http://localhost:4000/payment/initiateStripeBusinessAccount/${userId}`
+        `https://lockandlearn.onrender.com/payment/initiateStripeBusinessAccount/${userId}`
       );
       const data = await response.json();
       console.log('Stripe setup link received:', data.url);
@@ -263,7 +263,7 @@ const FinanceInstructor = ({ navigation, route }) => {
       const stripeId = accountIdToDelete;
 
       // Make a request to your server to trigger the account deletion
-      const response = await fetch(`http://localhost:4000/payment/delete-account/${stripeId}`, {
+      const response = await fetch(`https://lockandlearn.onrender.com/payment/delete-account/${stripeId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

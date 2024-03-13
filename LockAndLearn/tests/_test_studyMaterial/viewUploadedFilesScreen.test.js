@@ -6,19 +6,19 @@ describe('test download connection', () => {
   it('make GET request and test connection to server', async () => {
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'Successfully downloaded file' }));
     const downloadFilesHandler = async (fileName) => {
-      await fetchMock(`http://localhost:4000/files/uploadFiles/${fileName}`, {
+      await fetchMock(`https://lockandlearn.onrender.com/files/uploadFiles/${fileName}`, {
         method: 'GET',
       });
     };
     await downloadFilesHandler('1698621228023-sample2.txt');
     expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:4000/files/uploadFiles/1698621228023-sample2.txt',
+      'https://lockandlearn.onrender.com/files/uploadFiles/1698621228023-sample2.txt',
       {
         method: 'GET',
       }
     );
     const response = await fetchMock(
-      'http://localhost:4000/files/uploadFiles/1698621228023-sample2.txt',
+      'https://lockandlearn.onrender.com/files/uploadFiles/1698621228023-sample2.txt',
       {
         method: 'GET',
       }

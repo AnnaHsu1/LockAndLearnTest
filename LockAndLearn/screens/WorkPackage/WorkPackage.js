@@ -20,7 +20,7 @@ const WorkPackage = ({ navigation, route }) => {
     try {
       const userToken = await getUser();
       const response = await fetch(
-        'http://localhost:4000/workPackages/getWorkPackages/' + userToken._id,
+        'https://lockandlearn.onrender.com/workPackages/getWorkPackages/' + userToken._id,
         {
           method: 'GET',
           headers: {

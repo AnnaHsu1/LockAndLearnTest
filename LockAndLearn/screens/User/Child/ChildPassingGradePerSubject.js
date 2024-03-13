@@ -22,7 +22,7 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
 
     // function to get all previously assigned work packages from the child
     const fetchPrevPassingGrades = async () => {
-        const response = await fetch(`http://localhost:4000/child/getPreviousPassingGrades/${childSelected._id}`, {
+        const response = await fetch(`https://lockandlearn.onrender.com/child/getPreviousPassingGrades/${childSelected._id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
         if (userId) {
             try {
                 const response = await fetch( 
-                    `http://localhost:4000/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
+                    `https://lockandlearn.onrender.com/workPackages/fetchWorkpackagesParent/${userId}?displayOwned=${displayOwned}`,
                     {
                         method: 'GET',
                         headers: {
@@ -103,7 +103,7 @@ const ChildPassingGradePerSubject = ({ route, navigation }) => {
             // Log the transformed subjects array
             console.log("Transformed SUBJECTS", transformedSubjects);
             console.log("CHILD IDDDD", childSelected._id);
-          const response = await fetch(`http://localhost:4000/child/updateUserSubjectsPassingGrade/${childSelected._id}`, {
+          const response = await fetch(`https://lockandlearn.onrender.com/child/updateUserSubjectsPassingGrade/${childSelected._id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

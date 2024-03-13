@@ -63,7 +63,7 @@ describe('StudyMaterialPreferences tests', () => {
     fetchMock.mockResponseOnce(
       JSON.stringify({ message: 'Successfully fetched all subcategories' })
     );
-    const response = await fetchMock('http://localhost:4000/subcategories/fetchAll', {
+    const response = await fetchMock('https://lockandlearn.onrender.com/subcategories/fetchAll', {
       method: 'GET',
     });
     if (response.status) {
@@ -73,15 +73,15 @@ describe('StudyMaterialPreferences tests', () => {
   it('make PUT request for changing subject selection', async () => {
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'Preferences saved successfully!' }));
     const updateSubjects = async (userId) => {
-      await fetchMock(`http://localhost:4000/child/updatechild/${userId}`, {
+      await fetchMock(`https://lockandlearn.onrender.com/child/updatechild/${userId}`, {
         method: 'PUT',
       });
     };
     await updateSubjects('child123');
-    expect(fetchMock).toHaveBeenCalledWith('http://localhost:4000/child/updatechild/child123', {
+    expect(fetchMock).toHaveBeenCalledWith('https://lockandlearn.onrender.com/child/updatechild/child123', {
       method: 'PUT',
     });
-    const response = await fetchMock('http://localhost:4000/child/updatechild/123', {
+    const response = await fetchMock('https://lockandlearn.onrender.com/child/updatechild/123', {
       method: 'PUT',
     });
     if (response.status) {

@@ -34,7 +34,7 @@ const CreateQuiz = () => {
       };
 
       // Send a POST request to create the quiz
-      const response = await fetch('http://localhost:4000/quizzes/create', {
+      const response = await fetch('https://lockandlearn.onrender.com/quizzes/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

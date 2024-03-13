@@ -85,7 +85,7 @@ const EditQuestion = ({ route }) => {
   const updateQuestionApproval = async (quizId) => {
     try {
       const updateQuestionResponse = await fetch(
-        `http://localhost:4000/quizzes/${quizId}`,
+        `https://lockandlearn.onrender.com/quizzes/${quizId}`,
         {
           method: 'PUT',
           headers: {
@@ -142,7 +142,7 @@ const EditQuestion = ({ route }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/quizzes/updateQuestion/${quizId}/${questionIndex}`,
+        `https://lockandlearn.onrender.com/quizzes/updateQuestion/${quizId}/${questionIndex}`,
         {
           method: 'PUT',
           headers: {
@@ -175,7 +175,7 @@ const EditQuestion = ({ route }) => {
   const fetchQuestion = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/quizzes/getQuestion/${quizId}/${questionIndex}`,
+        `https://lockandlearn.onrender.com/quizzes/getQuestion/${quizId}/${questionIndex}`,
         {
           method: 'GET',
           headers: {
