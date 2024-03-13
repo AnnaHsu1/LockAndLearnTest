@@ -25,7 +25,7 @@ describe('AdminViewTeacherProfile component', () => {
     render(<AdminViewTeacherProfile route={{ params: { userId: 'testUserId' } }} navigation={{ navigate: jest.fn() }} />);
     
     // Expect fetch to be called with correct URL
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/workPackages/getWorkPackages/testUserId', {
+    expect(fetch).toHaveBeenCalledWith('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getWorkPackagesByInstructorId?instructorID=testUserId', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

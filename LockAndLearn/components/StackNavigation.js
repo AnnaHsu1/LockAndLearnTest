@@ -45,7 +45,6 @@ import AdminReportCenter from '../screens/User/Admin/AdminReportCenter';
 import PurchasedMaterial from '../screens/User/Child/ViewPurchasedMaterial';
 import WorkPackageBrowsing from '../screens/WorkPackage/WorkPackageBrowsing';
 import WorkPackageCart from '../screens/WorkPackage/Payment/WorkPackageCart';
-import TakeQuiz from '../screens/User/Child/TakeQuiz';
 import DisplayQuizzScreen from '../screens/StudyMaterial/DisplayQuizzScreen';
 import QuizGradeScreen from '../screens/StudyMaterial/QuizGradeScreen';
 import AdminPackages from '../screens/User/Admin/AdminPackages';
@@ -64,6 +63,8 @@ import AdminViewTeacherProfile from '../screens/User/Admin/AdminViewTeacherProfi
 import SuspendedUser from '../screens/User/SuspendedUser';
 import TutorImageUploadScreen from '../screens/User/TutorImageUploadScreen';
 import FinanceInstructor from '../screens/WorkPackage/Payment/FinanceInstructor';
+import ContactUs from '../screens/User/ContactUs';
+import AdminContactUs from '../screens/User/Admin/AdminContactUs';
 
 const Stack = createNativeStackNavigator();
 
@@ -301,6 +302,11 @@ const StackNavigation = () => {
           name="AdminPackages"
           component={AdminPackages}
           options={{ title: 'AdminPackages' }}
+              />
+        <Stack.Screen
+            name="AdminContactUs"
+            component={AdminContactUs}
+            options={{ title: 'AdminContactUs' }}
         />
         <Stack.Screen
           name="AddChildMaterial"
@@ -316,11 +322,11 @@ const StackNavigation = () => {
           name="WorkPackageBrowsing"
           component={WorkPackageBrowsing}
           options={{ title: 'Work Package Browsing' }}
-              />
+        />
         <Stack.Screen
-            name="FinanceInstructor"
-            component={FinanceInstructor}
-            options={{ title: 'Finance Instructor' }}
+          name="FinanceInstructor"
+          component={FinanceInstructor}
+          options={{ title: 'Finance Instructor' }}
         />
         <Stack.Screen
           name="WorkPackageCart"
@@ -348,7 +354,6 @@ const StackNavigation = () => {
           component={EditWorkPackage}
           options={{ title: 'Edit work package' }}
         />
-        <Stack.Screen name="TakeQuiz" component={TakeQuiz} options={{ title: 'Take Quiz' }} />
         <Stack.Screen
           name="DisplayStudyMaterial"
           component={DisplayStudyMaterial}
@@ -409,6 +414,11 @@ const StackNavigation = () => {
           name="SuspendedUser"
           component={SuspendedUser}
           options={{ title: `SuspendedUser` }}
+        />
+        <Stack.Screen
+            name="ContactUs"
+            component={ContactUs}
+            options={{ title: `ContactUs` }}
         />
       </Stack.Navigator>
     </NavigationContainer>

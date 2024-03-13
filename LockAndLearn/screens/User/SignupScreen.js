@@ -12,10 +12,12 @@ import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styl
 import { setUserTokenWithExpiry } from '../../components/AsyncStorage';
 import PropTypes from 'prop-types';
 import { FcGoogle } from 'react-icons/fc';
+import { parseISO, isBefore, startOfDay, differenceInYears, set } from 'date-fns';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const SignupScreen = ({ navigation }) => {
+  var bcrypt = require('bcryptjs');
   const [googleUserInfo, setGoogleUserInfo] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: '113548474045-u200bnbcqe8h4ba7mul1be61pv8ldnkg.apps.googleusercontent.com',
@@ -43,8 +45,6 @@ const SignupScreen = ({ navigation }) => {
     DOB: '',
     Other: '',
   });
-
-  const storageExpirationTimeInMinutes = 30;
 
   // Handle google sign in when user attempts to login
   useEffect(() => {
@@ -80,92 +80,228 @@ const SignupScreen = ({ navigation }) => {
     }));
   }, [checked]);
 
-  const handleSubmit = async () => {
-    // console.log(fdata);
-    // Package the user data into a JSON format and ship it to the backend
+  const validateInputs = async () => {
+    setErrors({
+      Fields: '',
+      Name: '',
+      Email: '',
+      Password: '',
+      CPassword: '',
+      DOB: '',
+      Other: '',
+    });
+    // Input validations
+    if (
+      !fdata.FirstName ||
+      !fdata.LastName ||
+      !fdata.Email ||
+      !fdata.Password ||
+      !fdata.CPassword ||
+      !fdata.DOB ||
+      !fdata.isParent
+    ) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Fields: 'All fields must be filled.',
+      }));
+      return false;
+    }
+
+    // Validate FirstName and LastName with regular expressions
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!nameRegex.test(fdata.FirstName) || !nameRegex.test(fdata.LastName)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Name: 'First and Last names can only contain letters.',
+      }));
+      return false;
+    }
+    if (!(fdata.Email.includes('@') && fdata.Email.includes('.'))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Email: 'Invalid email format.',
+      }));
+      return false;
+    }
+
+    // Check if the email is already in use     TODOOOOOO
+    // const emailCheck = await getUserByEmail(Email);
+
+    if (fdata.Password.length < 6) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        Password: 'Password must be at least 6 characters long.',
+      }));
+      return false;
+    }
+
+    if (fdata.Password !== fdata.CPassword) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        CPassword: 'Passwords must match.',
+      }));
+      return false;
+    }
+
+    const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!fdata.DOB || !dobRegex.test(fdata.DOB)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'Invalid date format. Please use YYYY-MM-DD.',
+      }));
+      return false;
+    }
+
+    // Attempt to parse the date of birth
+    let dob;
     try {
-      const response = await fetch('http://localhost:4000/users/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fdata), // Send user data as JSON
-      });
-      const data = await response.json();
-      // console.log(response.status);
-      if (response.status === 201) {
-        // User created successfully
-        console.log('User created successfully in database!', data);
-        await setUserTokenWithExpiry('@token', data.user);
-        //Add redirect
-        {
-          data?.user.isParent
-            ? navigation.navigate('ParentAccount')
-            : navigation.navigate('UserLandingPage');
-        }
-      } else {
-        setErrors({
-          Fields: '',
-          Name: '',
-          Email: '',
-          Password: '',
-          CPassword: '',
-          DOB: '',
-          Other: '',
-        });
-        if (data.msg === 'All fields must be filled.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Fields: data.msg,
-          }));
-        } else if (
-          data.msg === 'Invalid email format.' ||
-          data.msg === 'Email is already in use.' ||
-          data.msg === 'Email is already in use.'
-        ) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Email: data.msg,
-          }));
-        } else if (data.msg === 'Password must be at least 6 characters long.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Password: data.msg,
-          }));
-        } else if (data.msg === 'Passwords must match.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            CPassword: data.msg,
-          }));
-        } else if (data.msg === 'First and Last names can only contain letters.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Name: data.msg,
-          }));
-        } else if (
-          data.msg === 'Invalid date format. Please use YYYY-MM-DD.' ||
-          'Invalid date of birth. It should be a day before the current day.' ||
-          'You must be at least 18 years old to register.' ||
-          'Invalid date. Please provide a valid date in the format YYYY-MM-DD.'
-        ) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            DOB: data.msg,
-          }));
-        } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            DOB: data.msg,
-          }));
-        } else if (checked === null) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            Other: 'Please select your account type.',
-          }));
-        }
-      }
+      dob = parseISO(fdata.DOB);
     } catch (error) {
-      console.error('Submitting error when creating user:', error);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'Invalid date. Please provide a valid date in the format YYYY-MM-DD.',
+      }));
+      return false;
+    }
+
+    // Parse the current date
+    const currentDate = new Date();
+
+    // Check if the date of birth is a day before the current day
+    const isBeforeCurrentDay = isBefore(dob, startOfDay(currentDate));
+
+    if (!isBeforeCurrentDay) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'Invalid date of birth. Date cannot be ahead of today.',
+      }));
+      return false;
+    }
+
+    // Check if the user is older than 18
+    const isOlderThan18 = differenceInYears(currentDate, dob) >= 18;
+
+    if (!isOlderThan18) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        DOB: 'You must be at least 18 years old to register.',
+      }));
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    const valid = await validateInputs();
+    if (!valid) return;
+    else {
+      // console.log('fdata:', fdata);
+      // Ensure that the first name and last name start with a capital letter
+      const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+      const capitalizedFirstName = capitalizeFirstLetter(fdata.FirstName);
+      const capitalizedLastName = capitalizeFirstLetter(fdata.LastName);
+
+      //Encrypt the input password
+      const salt = await bcrypt.genSalt();
+      const passwordHash = await bcrypt.hash(fdata.Password, salt);
+
+      // console.log(fdata);
+      // Package the user data into a JSON format and ship it to the backend
+      try {
+        const response = await fetch(
+          'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/userSignup',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              FirstName: capitalizedFirstName,
+              LastName: capitalizedLastName,
+              isParent: fdata.isParent,
+              Email: fdata.Email,
+              Password: passwordHash,
+              DOB: fdata.DOB,
+            }), // Send user data as JSON
+          }
+        );
+        const data = await response.json();
+        if (response.status === 201) {
+          // User created successfully
+          // console.log('User created successfully in database!', data);
+          await setUserTokenWithExpiry('@token', data);
+          //Add redirect
+          {
+            data?.isParent
+              ? navigation.navigate('ParentHomeScreen')
+              : navigation.navigate('UserLandingPage');
+          }
+        } else {
+          setErrors({
+            Fields: '',
+            Name: '',
+            Email: '',
+            Password: '',
+            CPassword: '',
+            DOB: '',
+            Other: '',
+          });
+          if (data.msg === 'All fields must be filled.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Fields: data.msg,
+            }));
+          } else if (
+            data.msg === 'Invalid email format.' ||
+            data.msg === 'Email is already in use.' ||
+            data.msg === 'Email is already in use.'
+          ) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Email: data.msg,
+            }));
+          } else if (data.msg === 'Password must be at least 6 characters long.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Password: data.msg,
+            }));
+          } else if (data.msg === 'Passwords must match.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              CPassword: data.msg,
+            }));
+          } else if (data.msg === 'First and Last names can only contain letters.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Name: data.msg,
+            }));
+          } else if (
+            data.msg === 'Invalid date format. Please use YYYY-MM-DD.' ||
+            'Invalid date of birth. It should be a day before the current day.' ||
+            'You must be at least 18 years old to register.' ||
+            'Invalid date. Please provide a valid date in the format YYYY-MM-DD.'
+          ) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              DOB: data.msg,
+            }));
+          } else if (data.msg === 'Invalid date of birth. Date cannot be ahead of today.') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              DOB: data.msg,
+            }));
+          } else if (checked === null) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              Other: 'Please select your account type.',
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Submitting error when creating user:', error);
+      }
     }
   };
 

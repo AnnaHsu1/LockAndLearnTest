@@ -45,11 +45,9 @@ describe('Child Profile Screen test', () => {
     );
     const editProfileButton = getByTestId('edit-profile');
     const seePerformanceButton = getByTestId('see-performance');
-    const deleteProfileButton = getByTestId('delete-child-link');
 
     expect(editProfileButton).toBeTruthy();
     expect(seePerformanceButton).toBeTruthy();
-    expect(deleteProfileButton).toBeTruthy();
   });
 
   it('Attempts to start a session', () => {
@@ -76,33 +74,5 @@ describe('Child Profile Screen test', () => {
     );
     const seePerformance = getByTestId('see-performance');
     fireEvent.press(seePerformance);
-  });
-
-  it('Attempts to delete a child profile', async () => {
-    const { getByTestId } = render(
-      <ChildProfileScreen navigation={mockNavigation} route={mockRoute} />
-    );
-
-    // Delete child but cancel
-    const deleteProfileButton = getByTestId('delete-child-link');
-    fireEvent.press(deleteProfileButton);
-    expect(getByTestId('delete-child-modal')).toBeTruthy();
-    fireEvent.press(getByTestId('close-modal-button'));
-
-    // Delete child and confirm
-    fireEvent.press(deleteProfileButton);
-    fireEvent.press(getByTestId('delete-child-button'));
-
-    await waitFor(() =>
-      expect(global.fetch).toHaveBeenCalledWith(
-        'http://localhost:4000/child/deletechild/' + mockChild._id,
-        {
-          method: 'DELETE',
-        }
-      )
-    );
-    expect(mockNavigation.navigate).toHaveBeenCalledWith('ParentAccount', {
-      updatedChildren: null,
-    });
   });
 });

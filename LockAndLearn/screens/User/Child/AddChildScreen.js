@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Text, TextInput, View, Image } from 'react-native';
 import Modal from 'react-native-modal';
 import { CreateResponsiveStyle, DEVICE_SIZES, minSize } from 'rn-responsive-styles';
@@ -18,7 +18,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
     FirstName: '',
     LastName: '',
     Grade: '',
-      PassingGrade: '',
+    PassingGrade: '',
     ParentId: '',
   });
 
@@ -29,7 +29,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
 
     if (auth) {
       const user = JSON.parse(auth);
-      console.log(user);
+      // console.log(user);
 
       fdata.ParentId = user._id;
     } else {
@@ -37,24 +37,45 @@ const AddChildScreen = ({ navigation, setToken }) => {
       console.log('User not found in AsyncStorage');
     }
 
-    console.log(fdata);
-      // Validation check for PassingGrade
-      if (fdata.PassingGrade !== '') {
-          const passingGradeNumber = parseInt(fdata.PassingGrade);
-          if (isNaN(passingGradeNumber) || passingGradeNumber < 1 || passingGradeNumber > 100) {
-              setErrors('Passing Grade must be a number between 1 and 100.');
-              return;
-          }
-      }
+    // console.log(fdata);
+    // Validation check for PassingGrade
+    if (!fdata.FirstName || !fdata.LastName || !fdata.Grade || !fdata.ParentId) {
+      setErrors('All fields must be filled.');
+      return;
+    }
+
+    if (fdata.Grade < 1 || fdata.Grade > 13) {
+      setErrors('Grade must be between 1 and 12.');
+      return;
+    }
+
+    if (!fdata.FirstName.match(/^[a-zA-Z]+$/) && !fdata.LastName.match(/^[a-zA-Z]+$/)) {
+      setErrors('First and last name must only contain letters.');
+      return;
+    }
+    const passingGradeNumber = parseInt(fdata.PassingGrade);
+    if (isNaN(passingGradeNumber) || passingGradeNumber < 1 || passingGradeNumber > 100) {
+      setErrors('Passing Grade must be a number between 1 and 100.');
+      return;
+    }
     // Package the user data into a JSON format and ship it to the backend
     try {
-      const response = await fetch('http://localhost:4000/child/addchild', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fdata), // Send user data as JSON
-      });
+      const response = await fetch(
+        'https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/addChild',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            FirstName: fdata.FirstName,
+            LastName: fdata.LastName,
+            Grade: fdata.Grade,
+            PassingGrade: fdata.PassingGrade,
+            ParentId: fdata.ParentId,
+          }), // Send user data as JSON
+        }
+      );
 
       const data = await response.json();
 
@@ -62,7 +83,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
         setErrors('');
         setModalVisible(true);
         // User created successfully
-        console.log('child added successfully in database!', data);
+        // console.log('child added successfully in database!', data);
 
         // Update the updatedChildrenData with the new child data
         setUpdatedChildrenData([...updatedChildrenData, data]);
@@ -82,7 +103,7 @@ const AddChildScreen = ({ navigation, setToken }) => {
         <Text style={styles.title}>Add child</Text>
         {errors ? <Text style={styles.box}>{errors}</Text> : null}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <View style={[styles.half_width, { flex: 1}]}>
+          <View style={[styles.half_width, { flex: 1 }]}>
             <Text style={styles.field}>First Name</Text>
             <TextInput
               testID="first-name-input"
@@ -103,22 +124,22 @@ const AddChildScreen = ({ navigation, setToken }) => {
           </View>
         </View>
 
-                      <View style={[styles.containerPicker, { marginTop: 10 }]}>
-                  <Text style={{ color: '#ADADAD' }}>Grade</Text>
-                  <Picker
-                      testID="grade-input"
-                      selectedValue={fdata.Grade}
-                      onValueChange={(newText) => {
-                          setFdata({ ...fdata, Grade: newText });
-                      }}
-                      style={styles.textbox}
-                  >
-                      <Picker.Item label="Choose a Grade" value="Choose a Grade" />
-                      {[...Array(12)].map((_, index) => (
-                          <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
-                      ))}
-                  </Picker>
-              </View>
+        <View style={[styles.containerPicker, { marginTop: 10 }]}>
+          <Text style={{ color: '#ADADAD' }}>Grade</Text>
+          <Picker
+            testID="grade-input"
+            selectedValue={fdata.Grade}
+            onValueChange={(newText) => {
+              setFdata({ ...fdata, Grade: newText });
+            }}
+            style={styles.textbox}
+          >
+            <Picker.Item label="Choose a Grade" value="Choose a Grade" />
+            {[...Array(12)].map((_, index) => (
+              <Picker.Item key={index} label={`${index + 1}`} value={`${index + 1}`} />
+            ))}
+          </Picker>
+        </View>
 
         {/* Parent can set passing grade here */}
         <View style={styles.input}>
@@ -179,8 +200,8 @@ const AddChildScreen = ({ navigation, setToken }) => {
 
 // PropTypes
 AddChildScreen.propTypes = {
-    navigation: PropTypes.object.isRequired,
-    setToken: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
+  setToken: PropTypes.func.isRequired,
 };
 
 const useStyles = CreateResponsiveStyle(

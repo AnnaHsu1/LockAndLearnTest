@@ -28,13 +28,13 @@ const CreateQuiz = () => {
       // Prepare the quiz object with the entered name and userId
       const newQuiz = {
         name: quizName,
-        userId: userId, // Add userId to the quiz object
+        userId: userId._id, // Add userId to the quiz object
         questions: [], // Initially, the questions array is empty
         approved: false,
       };
 
       // Send a POST request to create the quiz
-      const response = await fetch('http://localhost:4000/quizzes/create', {
+      const response = await fetch('https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/createQuiz', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

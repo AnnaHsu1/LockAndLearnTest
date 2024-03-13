@@ -25,8 +25,9 @@ const QuizzesOverviewScreen = ({ route }) => {
 
   const fetchQuizzes = async () => {
     const user = await getUser();
+    const userId = user._id;
     try {
-      const response = await fetch('http://localhost:4000/quizzes/allQuizzes/' + user._id, {
+        const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/getQuizzesByUserId?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ const QuizzesOverviewScreen = ({ route }) => {
   const confirmDelete = async () => {
     if (selectedQuizId) {
       try {
-        const response = await fetch(`http://localhost:4000/quizzes/deleteQuiz/${selectedQuizId}`, {
+        const response = await fetch(`https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/deleteQuizbyquizId?quizId=${selectedQuizId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -153,7 +154,7 @@ const QuizzesOverviewScreen = ({ route }) => {
   };
 
   const updateQuizApproval = async (quizId, approved) => {
-    const url = `http://localhost:4000/quizzes/${quizId}`;
+    const url = `https://data.mongodb-api.com/app/lock-and-learn-xqnet/endpoint/updateQuiz?quizId=${quizId}`;
     const options = {
       method: 'PUT',
       headers: {

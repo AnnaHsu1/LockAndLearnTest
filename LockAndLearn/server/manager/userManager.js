@@ -1,4 +1,5 @@
 const User = require('../schema/userSchema.js');
+const Contact = require('../schema/contactUsSchema.js');
 
 // Function to create a user within DB
 exports.createUser = async function createUser(fdata) {
@@ -55,4 +56,29 @@ exports.getUserByEmail = async function getUserByEmail(email) {
     console.error('Error finding user:', error);
     throw error;
   }
+};
+
+exports.createContact = async function createContact(fdata) {
+    try {
+        // Extract the relevant data from fdata
+        const { name, email, subject, message, userID} = fdata;
+
+        const newContact = new Contact({
+            name: name,
+            email: email,
+            subject: subject,
+            message: message,
+            userID: userID,
+        });
+
+        // Save the user to the database
+        await newContact.save();
+
+        return newContact;
+    } catch (error) {
+        // Log the error and throw an exception
+        console.error('Error creating contact us inquiry:', error);
+
+        throw error;
+    }
 };
