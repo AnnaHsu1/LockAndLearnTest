@@ -40,7 +40,7 @@ app.set('trust proxy', 1);
 
 app.use(
   cors({
-    origin: 'https://localhost:19006',
+    origin: 'https://lockandlearntest.netlify.app',
     methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE'],
     credentials: true, // Enable credentials (cookies, authorization headers, etc.)
   })
